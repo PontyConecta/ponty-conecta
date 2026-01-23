@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import PaywallModal from '@/components/PaywallModal';
 import { 
   Search,
   Calendar,
@@ -32,13 +31,14 @@ import {
   MapPin,
   Building2,
   Sparkles,
-  Filter,
   Send,
   Crown,
-  Instagram,
-  Youtube,
   CheckCircle2,
-  ExternalLink
+  Eye,
+  Hash,
+  AtSign,
+  ListChecks,
+  Ban
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -56,6 +56,9 @@ export default function OpportunityFeed() {
   const [applying, setApplying] = useState(false);
   const [applicationMessage, setApplicationMessage] = useState('');
   const [proposedRate, setProposedRate] = useState('');
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [viewingDetails, setViewingDetails] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -69,6 +72,7 @@ export default function OpportunityFeed() {
       const creators = await base44.entities.Creator.filter({ user_id: userData.id });
       if (creators.length > 0) {
         setCreator(creators[0]);
+        setIsSubscribed(creators[0].subscription_status === 'active' || creators[0].account_state === 'active');
         
         const apps = await base44.entities.Application.filter({ creator_id: creators[0].id });
         setMyApplications(apps);
@@ -78,7 +82,7 @@ export default function OpportunityFeed() {
       const campaignsData = await base44.entities.Campaign.filter({ status: 'active' }, '-created_date');
       setCampaigns(campaignsData);
 
-      // Load brands for these campaigns
+      // Load brands
       const brandIds = [...new Set(campaignsData.map(c => c.brand_id))];
       const brandsData = await Promise.all(brandIds.map(id => 
         base44.entities.Brand.filter({ id })
@@ -97,6 +101,11 @@ export default function OpportunityFeed() {
   const handleApply = async () => {
     if (!creator || !selectedCampaign) return;
     
+    if (!isSubscribed) {
+      setShowPaywall(true);
+      return;
+    }
+    
     setApplying(true);
     try {
       await base44.entities.Application.create({
@@ -108,7 +117,6 @@ export default function OpportunityFeed() {
         status: 'pending'
       });
 
-      // Increment campaign applications count
       await base44.entities.Campaign.update(selectedCampaign.id, {
         total_applications: (selectedCampaign.total_applications || 0) + 1
       });
@@ -117,6 +125,7 @@ export default function OpportunityFeed() {
       setSelectedCampaign(null);
       setApplicationMessage('');
       setProposedRate('');
+      setViewingDetails(false);
     } catch (error) {
       console.error('Error applying:', error);
     } finally {
@@ -126,6 +135,19 @@ export default function OpportunityFeed() {
 
   const hasApplied = (campaignId) => {
     return myApplications.some(a => a.campaign_id === campaignId);
+  };
+
+  const openCampaignDetails = (campaign) => {
+    setSelectedCampaign(campaign);
+    setViewingDetails(true);
+  };
+
+  const startApplication = () => {
+    if (!isSubscribed) {
+      setShowPaywall(true);
+      return;
+    }
+    setViewingDetails(false);
   };
 
   const filteredCampaigns = campaigns.filter(c => {
@@ -151,8 +173,6 @@ export default function OpportunityFeed() {
     }
   };
 
-  const isExploring = creator?.account_state !== 'active';
-
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -166,18 +186,18 @@ export default function OpportunityFeed() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
-            <Sparkles className="w-8 h-8 text-orange-500" />
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-2">
+            <Sparkles className="w-7 h-7 lg:w-8 lg:h-8 text-orange-500" />
             Oportunidades
           </h1>
           <p className="text-slate-600 mt-1">
-            {filteredCampaigns.length} campanhas disponíveis para você
+            {filteredCampaigns.length} campanhas disponíveis
           </p>
         </div>
       </div>
 
-      {/* Exploring Mode Alert */}
-      {isExploring && (
+      {/* Subscription Banner */}
+      {!isSubscribed && (
         <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
@@ -187,14 +207,15 @@ export default function OpportunityFeed() {
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-900">Modo Exploração</h3>
                 <p className="text-sm text-slate-600">
-                  Você pode ver todas as oportunidades, mas precisa assinar para se candidatar.
+                  Você pode ver as oportunidades, mas precisa assinar para se candidatar.
                 </p>
               </div>
-              <Link to={createPageUrl('Subscription')}>
-                <Button className="bg-orange-500 hover:bg-orange-600">
-                  Assinar Agora
-                </Button>
-              </Link>
+              <Button 
+                className="bg-orange-500 hover:bg-orange-600"
+                onClick={() => setShowPaywall(true)}
+              >
+                Assinar
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -213,9 +234,9 @@ export default function OpportunityFeed() {
                 className="pl-10"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0">
               <Select value={filterPlatform} onValueChange={setFilterPlatform}>
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-32 flex-shrink-0">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -227,7 +248,7 @@ export default function OpportunityFeed() {
                 </SelectContent>
               </Select>
               <Select value={filterRemuneration} onValueChange={setFilterRemuneration}>
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-32 flex-shrink-0">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -244,7 +265,7 @@ export default function OpportunityFeed() {
 
       {/* Campaigns Grid */}
       {filteredCampaigns.length > 0 ? (
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
           {filteredCampaigns.map((campaign, index) => {
             const brand = brands[campaign.brand_id];
             const remuneration = getRemunerationLabel(campaign.remuneration_type, campaign);
@@ -257,8 +278,15 @@ export default function OpportunityFeed() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="h-full hover:shadow-lg transition-all group">
-                  <CardContent className="p-6 flex flex-col h-full">
+                <Card className="h-full hover:shadow-lg transition-all group cursor-pointer" onClick={() => openCampaignDetails(campaign)}>
+                  {/* Cover */}
+                  {campaign.cover_image_url && (
+                    <div className="h-32 overflow-hidden">
+                      <img src={campaign.cover_image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                    </div>
+                  )}
+                  
+                  <CardContent className="p-4 lg:p-6 flex flex-col h-full">
                     {/* Brand Info */}
                     <div className="flex items-center gap-3 mb-4">
                       {brand?.logo_url ? (
@@ -282,7 +310,7 @@ export default function OpportunityFeed() {
                     <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
                       {campaign.title}
                     </h3>
-                    <p className="text-slate-600 text-sm line-clamp-3 mb-4 flex-1">
+                    <p className="text-slate-600 text-sm line-clamp-2 mb-4 flex-1">
                       {campaign.description}
                     </p>
 
@@ -333,12 +361,11 @@ export default function OpportunityFeed() {
                       ) : (
                         <Button
                           size="sm"
-                          onClick={() => !isExploring && setSelectedCampaign(campaign)}
-                          disabled={isExploring}
-                          className={isExploring ? 'bg-slate-300' : 'bg-orange-500 hover:bg-orange-600'}
+                          onClick={(e) => { e.stopPropagation(); openCampaignDetails(campaign); }}
+                          className="bg-orange-500 hover:bg-orange-600"
                         >
-                          <Send className="w-4 h-4 mr-1" />
-                          Candidatar
+                          <Eye className="w-4 h-4 mr-1" />
+                          Ver
                         </Button>
                       )}
                     </div>
@@ -364,85 +391,260 @@ export default function OpportunityFeed() {
         </Card>
       )}
 
-      {/* Application Dialog */}
-      <Dialog open={!!selectedCampaign} onOpenChange={() => setSelectedCampaign(null)}>
-        <DialogContent className="max-w-lg">
+      {/* Campaign Details / Application Dialog */}
+      <Dialog open={!!selectedCampaign} onOpenChange={() => { setSelectedCampaign(null); setViewingDetails(false); }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Candidatar-se à Campanha</DialogTitle>
+            <DialogTitle>
+              {viewingDetails ? 'Detalhes da Campanha' : 'Candidatar-se à Campanha'}
+            </DialogTitle>
           </DialogHeader>
           
           {selectedCampaign && (
             <div className="space-y-6 py-4">
-              {/* Campaign Summary */}
-              <div className="p-4 bg-slate-50 rounded-xl">
-                <h4 className="font-semibold text-slate-900 mb-1">{selectedCampaign.title}</h4>
-                <p className="text-sm text-slate-500">
-                  {brands[selectedCampaign.brand_id]?.company_name || 'Marca'}
-                </p>
-              </div>
-
-              {/* Application Form */}
-              <div>
-                <Label>Sua Mensagem *</Label>
-                <Textarea
-                  value={applicationMessage}
-                  onChange={(e) => setApplicationMessage(e.target.value)}
-                  placeholder="Conte por que você é ideal para esta campanha..."
-                  className="mt-2 min-h-[120px]"
-                />
-                <p className="text-xs text-slate-500 mt-1">
-                  Dica: Mencione trabalhos anteriores relevantes e por que você se identifica com a marca.
-                </p>
-              </div>
-
-              {selectedCampaign.remuneration_type !== 'barter' && (
-                <div>
-                  <Label>Sua Proposta de Valor (R$)</Label>
-                  <Input
-                    type="number"
-                    value={proposedRate}
-                    onChange={(e) => setProposedRate(e.target.value)}
-                    placeholder={`Ex: ${selectedCampaign.budget_min || 500}`}
-                    className="mt-2"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Orçamento da marca: R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
-                  </p>
-                </div>
-              )}
-
-              {/* Requirements Preview */}
-              {selectedCampaign.requirements && (
-                <div className="p-4 bg-amber-50 rounded-xl">
-                  <h5 className="font-medium text-amber-900 mb-2">Requisitos da Campanha</h5>
-                  <p className="text-sm text-amber-800">{selectedCampaign.requirements}</p>
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button variant="outline" onClick={() => setSelectedCampaign(null)}>
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={handleApply}
-                  disabled={applying || !applicationMessage}
-                  className="bg-orange-500 hover:bg-orange-600"
-                >
-                  {applying ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Enviar Candidatura
-                    </>
+              {viewingDetails ? (
+                // Campaign Details View
+                <>
+                  {/* Cover */}
+                  {selectedCampaign.cover_image_url && (
+                    <div className="h-40 rounded-xl overflow-hidden">
+                      <img src={selectedCampaign.cover_image_url} alt="" className="w-full h-full object-cover" />
+                    </div>
                   )}
-                </Button>
-              </div>
+
+                  {/* Brand & Title */}
+                  <div className="flex items-center gap-4">
+                    {brands[selectedCampaign.brand_id]?.logo_url ? (
+                      <img src={brands[selectedCampaign.brand_id].logo_url} alt="" className="w-14 h-14 rounded-lg object-cover" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center">
+                        <Building2 className="w-7 h-7 text-slate-400" />
+                      </div>
+                    )}
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">{selectedCampaign.title}</h2>
+                      <p className="text-slate-500">{brands[selectedCampaign.brand_id]?.company_name}</p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <h4 className="font-medium text-slate-900 mb-2">Descrição</h4>
+                    <p className="text-slate-600">{selectedCampaign.description}</p>
+                  </div>
+
+                  {/* Target Audience */}
+                  {selectedCampaign.target_audience && (
+                    <div>
+                      <h4 className="font-medium text-slate-900 mb-2">Público-Alvo</h4>
+                      <p className="text-slate-600">{selectedCampaign.target_audience}</p>
+                    </div>
+                  )}
+
+                  {/* Requirements */}
+                  {selectedCampaign.requirements && (
+                    <div className="p-4 bg-indigo-50 rounded-xl">
+                      <h4 className="font-medium text-indigo-900 mb-2">Requisitos e Entregas</h4>
+                      <p className="text-indigo-800">{selectedCampaign.requirements}</p>
+                    </div>
+                  )}
+
+                  {/* Content Guidelines */}
+                  {selectedCampaign.content_guidelines && (
+                    <div>
+                      <h4 className="font-medium text-slate-900 mb-2">Diretrizes de Conteúdo</h4>
+                      <p className="text-slate-600">{selectedCampaign.content_guidelines}</p>
+                    </div>
+                  )}
+
+                  {/* Do's and Don'ts */}
+                  {(selectedCampaign.dos?.length > 0 || selectedCampaign.donts?.length > 0) && (
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {selectedCampaign.dos?.filter(d => d).length > 0 && (
+                        <div className="p-4 bg-emerald-50 rounded-xl">
+                          <h4 className="font-medium text-emerald-900 mb-2 flex items-center gap-2">
+                            <ListChecks className="w-4 h-4" />
+                            O que FAZER
+                          </h4>
+                          <ul className="space-y-1">
+                            {selectedCampaign.dos.filter(d => d).map((item, i) => (
+                              <li key={i} className="text-sm text-emerald-800 flex items-start gap-2">
+                                <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {selectedCampaign.donts?.filter(d => d).length > 0 && (
+                        <div className="p-4 bg-red-50 rounded-xl">
+                          <h4 className="font-medium text-red-900 mb-2 flex items-center gap-2">
+                            <Ban className="w-4 h-4" />
+                            O que NÃO FAZER
+                          </h4>
+                          <ul className="space-y-1">
+                            {selectedCampaign.donts.filter(d => d).map((item, i) => (
+                              <li key={i} className="text-sm text-red-800 flex items-start gap-2">
+                                <Ban className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Hashtags & Mentions */}
+                  {(selectedCampaign.hashtags?.filter(h => h).length > 0 || selectedCampaign.mentions?.filter(m => m).length > 0) && (
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCampaign.hashtags?.filter(h => h).map((tag, i) => (
+                        <Badge key={i} className="bg-blue-100 text-blue-700 border-0">
+                          <Hash className="w-3 h-3 mr-1" />
+                          {tag}
+                        </Badge>
+                      ))}
+                      {selectedCampaign.mentions?.filter(m => m).map((mention, i) => (
+                        <Badge key={i} className="bg-violet-100 text-violet-700 border-0">
+                          <AtSign className="w-3 h-3 mr-1" />
+                          {mention}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Platforms & Content Types */}
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCampaign.platforms?.map((p, i) => (
+                      <Badge key={i} variant="outline">{p}</Badge>
+                    ))}
+                    {selectedCampaign.content_type?.map((ct, i) => (
+                      <Badge key={i} variant="outline" className="bg-slate-50">{ct}</Badge>
+                    ))}
+                  </div>
+
+                  {/* Remuneration */}
+                  <div className="p-4 bg-emerald-50 rounded-xl">
+                    <h4 className="font-medium text-emerald-900 mb-2">Remuneração</h4>
+                    {selectedCampaign.remuneration_type === 'cash' && (
+                      <p className="text-emerald-800 text-lg font-semibold">
+                        R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
+                      </p>
+                    )}
+                    {selectedCampaign.remuneration_type === 'barter' && (
+                      <div>
+                        <Badge className="bg-pink-100 text-pink-700 border-0 mb-2">Permuta</Badge>
+                        {selectedCampaign.barter_description && (
+                          <p className="text-emerald-800">{selectedCampaign.barter_description}</p>
+                        )}
+                        {selectedCampaign.barter_value && (
+                          <p className="text-sm text-emerald-700 mt-1">Valor estimado: R$ {selectedCampaign.barter_value}</p>
+                        )}
+                      </div>
+                    )}
+                    {selectedCampaign.remuneration_type === 'mixed' && (
+                      <div>
+                        <Badge className="bg-violet-100 text-violet-700 border-0 mb-2">Misto</Badge>
+                        <p className="text-emerald-800">
+                          R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0} + Permuta
+                        </p>
+                        {selectedCampaign.barter_description && (
+                          <p className="text-sm text-emerald-700 mt-1">{selectedCampaign.barter_description}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action */}
+                  <div className="flex gap-3">
+                    <Button variant="outline" onClick={() => setSelectedCampaign(null)} className="flex-1">
+                      Fechar
+                    </Button>
+                    {!hasApplied(selectedCampaign.id) && (
+                      <Button onClick={startApplication} className="flex-1 bg-orange-500 hover:bg-orange-600">
+                        <Send className="w-4 h-4 mr-2" />
+                        Candidatar-se
+                      </Button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                // Application Form View
+                <>
+                  {/* Campaign Summary */}
+                  <div className="p-4 bg-slate-50 rounded-xl">
+                    <h4 className="font-semibold text-slate-900 mb-1">{selectedCampaign.title}</h4>
+                    <p className="text-sm text-slate-500">
+                      {brands[selectedCampaign.brand_id]?.company_name || 'Marca'}
+                    </p>
+                  </div>
+
+                  {/* Application Form */}
+                  <div>
+                    <Label>Sua Mensagem *</Label>
+                    <Textarea
+                      value={applicationMessage}
+                      onChange={(e) => setApplicationMessage(e.target.value)}
+                      placeholder="Conte por que você é ideal para esta campanha..."
+                      className="mt-2 min-h-[120px]"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">
+                      Dica: Mencione trabalhos anteriores relevantes e por que você se identifica com a marca.
+                    </p>
+                  </div>
+
+                  {selectedCampaign.remuneration_type !== 'barter' && (
+                    <div>
+                      <Label>Sua Proposta de Valor (R$)</Label>
+                      <Input
+                        type="number"
+                        value={proposedRate}
+                        onChange={(e) => setProposedRate(e.target.value)}
+                        placeholder={`Ex: ${selectedCampaign.budget_min || 500}`}
+                        className="mt-2"
+                      />
+                      <p className="text-xs text-slate-500 mt-1">
+                        Orçamento da marca: R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex justify-end gap-3 pt-4 border-t">
+                    <Button variant="outline" onClick={() => setViewingDetails(true)}>
+                      Voltar
+                    </Button>
+                    <Button
+                      onClick={handleApply}
+                      disabled={applying || !applicationMessage}
+                      className="bg-orange-500 hover:bg-orange-600"
+                    >
+                      {applying ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          Enviar Candidatura
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        title="Recurso Premium"
+        description="Você precisa de uma assinatura ativa para se candidatar a campanhas."
+        feature="Candidaturas ilimitadas"
+        isAuthenticated={true}
+      />
     </div>
   );
 }

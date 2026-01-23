@@ -14,6 +14,7 @@ import SelectProfile from './pages/SelectProfile';
 import Subscription from './pages/Subscription';
 import DiscoverCreators from './pages/DiscoverCreators';
 import DiscoverBrands from './pages/DiscoverBrands';
+import AdminDisputes from './pages/AdminDisputes';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "Subscription": Subscription,
     "DiscoverCreators": DiscoverCreators,
     "DiscoverBrands": DiscoverBrands,
+    "AdminDisputes": AdminDisputes,
 }
 
 export const pagesConfig = {
