@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import PaywallModal from '@/components/PaywallModal';
 import { 
   Plus, 
   Search,
@@ -35,12 +40,19 @@ import {
   Pause,
   Play,
   Loader2,
-  ArrowRight,
   Gift,
   Package,
   Target,
   MapPin,
-  Hash
+  MoreVertical,
+  XCircle,
+  CheckCircle2,
+  AlertTriangle,
+  Hash,
+  AtSign,
+  ListChecks,
+  Ban,
+  Upload
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -54,6 +66,8 @@ export default function CampaignManager() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -72,7 +86,14 @@ export default function CampaignManager() {
     barter_value: '',
     slots_total: 1,
     profile_size_min: '',
-    proof_requirements: ''
+    proof_requirements: '',
+    target_audience: '',
+    content_guidelines: '',
+    dos: [''],
+    donts: [''],
+    hashtags: [''],
+    mentions: [''],
+    cover_image_url: ''
   });
 
   const platforms = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads'];
@@ -91,6 +112,7 @@ export default function CampaignManager() {
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
         setBrand(brands[0]);
+        setIsSubscribed(brands[0].subscription_status === 'active' || brands[0].account_state === 'active');
         const campaignsData = await base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date');
         setCampaigns(campaignsData);
       }
@@ -114,7 +136,45 @@ export default function CampaignManager() {
     }));
   };
 
+  const handleArrayFieldChange = (field, index, value) => {
+    setFormData(prev => {
+      const newArray = [...prev[field]];
+      newArray[index] = value;
+      return { ...prev, [field]: newArray };
+    });
+  };
+
+  const addArrayField = (field) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: [...prev[field], '']
+    }));
+  };
+
+  const removeArrayField = (field, index) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      handleChange('cover_image_url', file_url);
+    } catch (error) {
+      console.error('Error uploading cover:', error);
+    }
+  };
+
   const handleSubmit = async () => {
+    if (!isSubscribed) {
+      setShowPaywall(true);
+      return;
+    }
+
     setSaving(true);
     try {
       const campaignData = {
@@ -124,7 +184,11 @@ export default function CampaignManager() {
         budget_max: formData.budget_max ? parseFloat(formData.budget_max) : null,
         barter_value: formData.barter_value ? parseFloat(formData.barter_value) : null,
         slots_total: parseInt(formData.slots_total) || 1,
-        status: 'draft'
+        dos: formData.dos.filter(d => d.trim()),
+        donts: formData.donts.filter(d => d.trim()),
+        hashtags: formData.hashtags.filter(h => h.trim()),
+        mentions: formData.mentions.filter(m => m.trim()),
+        status: editingCampaign ? editingCampaign.status : 'draft'
       };
 
       if (editingCampaign) {
@@ -161,7 +225,14 @@ export default function CampaignManager() {
       barter_value: '',
       slots_total: 1,
       profile_size_min: '',
-      proof_requirements: ''
+      proof_requirements: '',
+      target_audience: '',
+      content_guidelines: '',
+      dos: [''],
+      donts: [''],
+      hashtags: [''],
+      mentions: [''],
+      cover_image_url: ''
     });
     setEditingCampaign(null);
   };
@@ -185,12 +256,23 @@ export default function CampaignManager() {
       barter_value: campaign.barter_value || '',
       slots_total: campaign.slots_total || 1,
       profile_size_min: campaign.profile_size_min || '',
-      proof_requirements: campaign.proof_requirements || ''
+      proof_requirements: campaign.proof_requirements || '',
+      target_audience: campaign.target_audience || '',
+      content_guidelines: campaign.content_guidelines || '',
+      dos: campaign.dos?.length ? campaign.dos : [''],
+      donts: campaign.donts?.length ? campaign.donts : [''],
+      hashtags: campaign.hashtags?.length ? campaign.hashtags : [''],
+      mentions: campaign.mentions?.length ? campaign.mentions : [''],
+      cover_image_url: campaign.cover_image_url || ''
     });
     setIsCreateOpen(true);
   };
 
   const updateCampaignStatus = async (campaignId, newStatus) => {
+    if (!isSubscribed && newStatus === 'active') {
+      setShowPaywall(true);
+      return;
+    }
     try {
       await base44.entities.Campaign.update(campaignId, { status: newStatus });
       await loadData();
@@ -207,14 +289,21 @@ export default function CampaignManager() {
 
   const getStatusBadge = (status) => {
     const styles = {
-      draft: { label: 'Rascunho', color: 'bg-slate-100 text-slate-700' },
-      under_review: { label: 'Em Análise', color: 'bg-yellow-100 text-yellow-700' },
-      active: { label: 'Ativa', color: 'bg-emerald-100 text-emerald-700' },
-      paused: { label: 'Pausada', color: 'bg-orange-100 text-orange-700' },
-      closed: { label: 'Encerrada', color: 'bg-slate-100 text-slate-700' }
+      draft: { label: 'Rascunho', color: 'bg-slate-100 text-slate-700', icon: Edit },
+      under_review: { label: 'Em Análise', color: 'bg-yellow-100 text-yellow-700', icon: AlertTriangle },
+      active: { label: 'Ativa', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
+      paused: { label: 'Pausada', color: 'bg-orange-100 text-orange-700', icon: Pause },
+      applications_closed: { label: 'Inscrições Fechadas', color: 'bg-blue-100 text-blue-700', icon: XCircle },
+      completed: { label: 'Concluída', color: 'bg-violet-100 text-violet-700', icon: CheckCircle2 },
+      cancelled: { label: 'Cancelada', color: 'bg-red-100 text-red-700', icon: Ban }
     };
     const style = styles[status] || styles.draft;
-    return <Badge className={`${style.color} border-0`}>{style.label}</Badge>;
+    return (
+      <Badge className={`${style.color} border-0`}>
+        <style.icon className="w-3 h-3 mr-1" />
+        {style.label}
+      </Badge>
+    );
   };
 
   const getRemunerationIcon = (type) => {
@@ -238,269 +327,24 @@ export default function CampaignManager() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Campanhas</h1>
-          <p className="text-slate-600 mt-1">Gerencie suas campanhas de marketing</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Campanhas</h1>
+          <p className="text-slate-600 mt-1">Gerencie suas campanhas</p>
         </div>
         
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              className="bg-indigo-600 hover:bg-indigo-700"
-              onClick={() => { resetForm(); setIsCreateOpen(true); }}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Nova Campanha
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingCampaign ? 'Editar Campanha' : 'Nova Campanha'}
-              </DialogTitle>
-            </DialogHeader>
-            
-            <div className="space-y-6 py-4">
-              {/* Basic Info */}
-              <div className="space-y-4">
-                <div>
-                  <Label>Título da Campanha *</Label>
-                  <Input
-                    value={formData.title}
-                    onChange={(e) => handleChange('title', e.target.value)}
-                    placeholder="Ex: Lançamento Coleção Verão 2024"
-                    className="mt-2"
-                  />
-                </div>
-                
-                <div>
-                  <Label>Descrição *</Label>
-                  <Textarea
-                    value={formData.description}
-                    onChange={(e) => handleChange('description', e.target.value)}
-                    placeholder="Descreva o objetivo da campanha..."
-                    className="mt-2 min-h-[100px]"
-                  />
-                </div>
-
-                <div>
-                  <Label>Requisitos e Entregas *</Label>
-                  <Textarea
-                    value={formData.requirements}
-                    onChange={(e) => handleChange('requirements', e.target.value)}
-                    placeholder="Liste exatamente o que o criador deve entregar..."
-                    className="mt-2 min-h-[80px]"
-                  />
-                </div>
-              </div>
-
-              {/* Platforms & Content */}
-              <div className="space-y-4">
-                <div>
-                  <Label>Plataformas *</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {platforms.map((p) => (
-                      <Badge
-                        key={p}
-                        variant={formData.platforms.includes(p) ? "default" : "outline"}
-                        className={`cursor-pointer ${formData.platforms.includes(p) ? 'bg-indigo-600' : ''}`}
-                        onClick={() => toggleArrayItem('platforms', p)}
-                      >
-                        {p}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Tipos de Conteúdo</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {contentTypes.map((ct) => (
-                      <Badge
-                        key={ct}
-                        variant={formData.content_type.includes(ct) ? "default" : "outline"}
-                        className={`cursor-pointer ${formData.content_type.includes(ct) ? 'bg-violet-600' : ''}`}
-                        onClick={() => toggleArrayItem('content_type', ct)}
-                      >
-                        {ct}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Nichos Preferidos</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {niches.map((n) => (
-                      <Badge
-                        key={n}
-                        variant={formData.niche_required.includes(n) ? "default" : "outline"}
-                        className={`cursor-pointer ${formData.niche_required.includes(n) ? 'bg-emerald-600' : ''}`}
-                        onClick={() => toggleArrayItem('niche_required', n)}
-                      >
-                        {n}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Dates & Location */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Prazo de Candidaturas</Label>
-                  <Input
-                    type="date"
-                    value={formData.application_deadline}
-                    onChange={(e) => handleChange('application_deadline', e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
-                <div>
-                  <Label>Prazo Final de Entrega *</Label>
-                  <Input
-                    type="date"
-                    value={formData.deadline}
-                    onChange={(e) => handleChange('deadline', e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label>Localização (opcional)</Label>
-                <Input
-                  value={formData.location}
-                  onChange={(e) => handleChange('location', e.target.value)}
-                  placeholder="Ex: São Paulo, SP ou Nacional"
-                  className="mt-2"
-                />
-              </div>
-
-              {/* Remuneration */}
-              <div className="space-y-4">
-                <div>
-                  <Label>Tipo de Remuneração *</Label>
-                  <Select value={formData.remuneration_type} onValueChange={(v) => handleChange('remuneration_type', v)}>
-                    <SelectTrigger className="mt-2">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cash">💵 Pagamento em Dinheiro</SelectItem>
-                      <SelectItem value="barter">🎁 Permuta (Produtos/Serviços)</SelectItem>
-                      <SelectItem value="mixed">📦 Misto (Dinheiro + Permuta)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {(formData.remuneration_type === 'cash' || formData.remuneration_type === 'mixed') && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>Valor Mínimo (R$)</Label>
-                      <Input
-                        type="number"
-                        value={formData.budget_min}
-                        onChange={(e) => handleChange('budget_min', e.target.value)}
-                        placeholder="500"
-                        className="mt-2"
-                      />
-                    </div>
-                    <div>
-                      <Label>Valor Máximo (R$)</Label>
-                      <Input
-                        type="number"
-                        value={formData.budget_max}
-                        onChange={(e) => handleChange('budget_max', e.target.value)}
-                        placeholder="2000"
-                        className="mt-2"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {(formData.remuneration_type === 'barter' || formData.remuneration_type === 'mixed') && (
-                  <div className="space-y-4">
-                    <div>
-                      <Label>Descrição da Permuta</Label>
-                      <Textarea
-                        value={formData.barter_description}
-                        onChange={(e) => handleChange('barter_description', e.target.value)}
-                        placeholder="Descreva os produtos/serviços oferecidos..."
-                        className="mt-2"
-                      />
-                    </div>
-                    <div>
-                      <Label>Valor Estimado da Permuta (R$)</Label>
-                      <Input
-                        type="number"
-                        value={formData.barter_value}
-                        onChange={(e) => handleChange('barter_value', e.target.value)}
-                        placeholder="500"
-                        className="mt-2"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Slots & Profile */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Número de Vagas</Label>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={formData.slots_total}
-                    onChange={(e) => handleChange('slots_total', e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
-                <div>
-                  <Label>Tamanho Mínimo do Perfil</Label>
-                  <Select value={formData.profile_size_min} onValueChange={(v) => handleChange('profile_size_min', v)}>
-                    <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="Qualquer" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="nano">Nano (1K-10K)</SelectItem>
-                      <SelectItem value="micro">Micro (10K-50K)</SelectItem>
-                      <SelectItem value="mid">Mid (50K-500K)</SelectItem>
-                      <SelectItem value="macro">Macro (500K-1M)</SelectItem>
-                      <SelectItem value="mega">Mega (1M+)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Proof Requirements */}
-              <div>
-                <Label>Como o Criador Deve Provar a Entrega *</Label>
-                <Textarea
-                  value={formData.proof_requirements}
-                  onChange={(e) => handleChange('proof_requirements', e.target.value)}
-                  placeholder="Ex: Screenshot do post publicado, link do conteúdo, métricas de alcance..."
-                  className="mt-2"
-                />
-                <p className="text-xs text-slate-500 mt-1">
-                  Seja específico. Estas regras serão usadas para aprovar ou contestar entregas.
-                </p>
-              </div>
-
-              {/* Actions */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button 
-                  onClick={handleSubmit} 
-                  disabled={saving || !formData.title || !formData.description || !formData.deadline}
-                  className="bg-indigo-600 hover:bg-indigo-700"
-                >
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar Campanha'}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button 
+          className="bg-indigo-600 hover:bg-indigo-700"
+          onClick={() => { 
+            if (!isSubscribed) {
+              setShowPaywall(true);
+            } else {
+              resetForm(); 
+              setIsCreateOpen(true); 
+            }
+          }}
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Nova Campanha
+        </Button>
       </div>
 
       {/* Filters */}
@@ -517,7 +361,7 @@ export default function CampaignManager() {
               />
             </div>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-44">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -525,7 +369,8 @@ export default function CampaignManager() {
                 <SelectItem value="draft">Rascunho</SelectItem>
                 <SelectItem value="active">Ativa</SelectItem>
                 <SelectItem value="paused">Pausada</SelectItem>
-                <SelectItem value="closed">Encerrada</SelectItem>
+                <SelectItem value="applications_closed">Inscrições Fechadas</SelectItem>
+                <SelectItem value="completed">Concluída</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -546,22 +391,97 @@ export default function CampaignManager() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
                 <Card className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-slate-900 truncate">
-                            {campaign.title}
-                          </h3>
-                          {getStatusBadge(campaign.status)}
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                      {/* Cover Image */}
+                      {campaign.cover_image_url && (
+                        <div className="lg:w-24 lg:h-24 w-full h-32 rounded-lg overflow-hidden flex-shrink-0">
+                          <img src={campaign.cover_image_url} alt="" className="w-full h-full object-cover" />
                         </div>
+                      )}
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-lg font-semibold text-slate-900 truncate">
+                              {campaign.title}
+                            </h3>
+                            {getStatusBadge(campaign.status)}
+                          </div>
+                          
+                          {/* Actions Dropdown */}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEditDialog(campaign)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Editar
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              {campaign.status === 'draft' && (
+                                <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                                  <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                                  Publicar
+                                </DropdownMenuItem>
+                              )}
+                              {campaign.status === 'active' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'paused')}>
+                                    <Pause className="w-4 h-4 mr-2 text-orange-600" />
+                                    Pausar
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'applications_closed')}>
+                                    <XCircle className="w-4 h-4 mr-2 text-blue-600" />
+                                    Fechar Inscrições
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
+                                    <CheckCircle2 className="w-4 h-4 mr-2 text-violet-600" />
+                                    Marcar como Concluída
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              {campaign.status === 'paused' && (
+                                <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                                  <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                                  Reativar
+                                </DropdownMenuItem>
+                              )}
+                              {campaign.status === 'applications_closed' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                                    <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                                    Reabrir Inscrições
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
+                                    <CheckCircle2 className="w-4 h-4 mr-2 text-violet-600" />
+                                    Marcar como Concluída
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem 
+                                onClick={() => updateCampaignStatus(campaign.id, 'cancelled')}
+                                className="text-red-600"
+                              >
+                                <Ban className="w-4 h-4 mr-2" />
+                                Cancelar
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                        
                         <p className="text-slate-600 text-sm line-clamp-2 mb-3">
                           {campaign.description}
                         </p>
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+                        
+                        <div className="flex flex-wrap items-center gap-3 lg:gap-4 text-sm text-slate-500">
                           <span className="flex items-center gap-1">
                             <Users className="w-4 h-4" />
-                            {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas
+                            {campaign.slots_filled || 0}/{campaign.slots_total || 1}
                           </span>
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
@@ -574,55 +494,12 @@ export default function CampaignManager() {
                             {campaign.remuneration_type === 'mixed' && 'Misto'}
                           </span>
                           {campaign.total_applications > 0 && (
-                            <span className="flex items-center gap-1">
+                            <span className="flex items-center gap-1 text-indigo-600">
                               <Target className="w-4 h-4" />
                               {campaign.total_applications} candidaturas
                             </span>
                           )}
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openEditDialog(campaign)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        
-                        {campaign.status === 'draft' && (
-                          <Button
-                            size="sm"
-                            onClick={() => updateCampaignStatus(campaign.id, 'active')}
-                            className="bg-emerald-600 hover:bg-emerald-700"
-                          >
-                            <Play className="w-4 h-4 mr-1" />
-                            Publicar
-                          </Button>
-                        )}
-                        
-                        {campaign.status === 'active' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => updateCampaignStatus(campaign.id, 'paused')}
-                          >
-                            <Pause className="w-4 h-4 mr-1" />
-                            Pausar
-                          </Button>
-                        )}
-                        
-                        {campaign.status === 'paused' && (
-                          <Button
-                            size="sm"
-                            onClick={() => updateCampaignStatus(campaign.id, 'active')}
-                            className="bg-indigo-600 hover:bg-indigo-700"
-                          >
-                            <Play className="w-4 h-4 mr-1" />
-                            Reativar
-                          </Button>
-                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -643,17 +520,413 @@ export default function CampaignManager() {
             <p className="text-slate-500 mb-6">
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
-                : 'Crie sua primeira campanha para começar a conectar com criadores'}
+                : 'Crie sua primeira campanha para conectar com criadores'}
             </p>
             {!searchTerm && filterStatus === 'all' && (
-              <Button onClick={() => setIsCreateOpen(true)} className="bg-indigo-600 hover:bg-indigo-700">
+              <Button 
+                onClick={() => {
+                  if (!isSubscribed) {
+                    setShowPaywall(true);
+                  } else {
+                    setIsCreateOpen(true);
+                  }
+                }} 
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
                 <Plus className="w-4 h-4 mr-2" />
-                Criar Primeira Campanha
+                Criar Campanha
               </Button>
             )}
           </CardContent>
         </Card>
       )}
+
+      {/* Create/Edit Campaign Dialog */}
+      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingCampaign ? 'Editar Campanha' : 'Nova Campanha'}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Cover Image */}
+            <div>
+              <Label>Imagem de Capa</Label>
+              <div className="mt-2">
+                {formData.cover_image_url ? (
+                  <div className="relative h-32 rounded-lg overflow-hidden">
+                    <img src={formData.cover_image_url} alt="" className="w-full h-full object-cover" />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 bg-black/50 hover:bg-black/70"
+                      onClick={() => handleChange('cover_image_url', '')}
+                    >
+                      <XCircle className="w-4 h-4 text-white" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="flex items-center justify-center h-32 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-indigo-400 transition-colors">
+                    <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} />
+                    <div className="text-center">
+                      <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                      <span className="text-sm text-slate-500">Upload de imagem</span>
+                    </div>
+                  </label>
+                )}
+              </div>
+            </div>
+
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <div>
+                <Label>Título da Campanha *</Label>
+                <Input
+                  value={formData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  placeholder="Ex: Lançamento Coleção Verão 2024"
+                  className="mt-2"
+                />
+              </div>
+              
+              <div>
+                <Label>Descrição *</Label>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  placeholder="Descreva o objetivo da campanha..."
+                  className="mt-2 min-h-[100px]"
+                />
+              </div>
+
+              <div>
+                <Label>Público-Alvo</Label>
+                <Textarea
+                  value={formData.target_audience}
+                  onChange={(e) => handleChange('target_audience', e.target.value)}
+                  placeholder="Descreva o público que você quer atingir..."
+                  className="mt-2"
+                />
+              </div>
+
+              <div>
+                <Label>Requisitos e Entregas *</Label>
+                <Textarea
+                  value={formData.requirements}
+                  onChange={(e) => handleChange('requirements', e.target.value)}
+                  placeholder="Liste exatamente o que o criador deve entregar..."
+                  className="mt-2 min-h-[80px]"
+                />
+              </div>
+
+              <div>
+                <Label>Diretrizes de Conteúdo</Label>
+                <Textarea
+                  value={formData.content_guidelines}
+                  onChange={(e) => handleChange('content_guidelines', e.target.value)}
+                  placeholder="Estilo, tom, referências visuais..."
+                  className="mt-2"
+                />
+              </div>
+            </div>
+
+            {/* Do's and Don'ts */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="flex items-center gap-2">
+                  <ListChecks className="w-4 h-4 text-emerald-600" />
+                  O que FAZER
+                </Label>
+                <div className="space-y-2 mt-2">
+                  {formData.dos.map((item, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={item}
+                        onChange={(e) => handleArrayFieldChange('dos', index, e.target.value)}
+                        placeholder="Ex: Usar luz natural"
+                      />
+                      {formData.dos.length > 1 && (
+                        <Button variant="ghost" size="icon" onClick={() => removeArrayField('dos', index)}>
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={() => addArrayField('dos')}>
+                    <Plus className="w-4 h-4 mr-1" /> Adicionar
+                  </Button>
+                </div>
+              </div>
+              <div>
+                <Label className="flex items-center gap-2">
+                  <Ban className="w-4 h-4 text-red-600" />
+                  O que NÃO FAZER
+                </Label>
+                <div className="space-y-2 mt-2">
+                  {formData.donts.map((item, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={item}
+                        onChange={(e) => handleArrayFieldChange('donts', index, e.target.value)}
+                        placeholder="Ex: Mencionar concorrentes"
+                      />
+                      {formData.donts.length > 1 && (
+                        <Button variant="ghost" size="icon" onClick={() => removeArrayField('donts', index)}>
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={() => addArrayField('donts')}>
+                    <Plus className="w-4 h-4 mr-1" /> Adicionar
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Hashtags and Mentions */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="flex items-center gap-2">
+                  <Hash className="w-4 h-4" />
+                  Hashtags Obrigatórias
+                </Label>
+                <div className="space-y-2 mt-2">
+                  {formData.hashtags.map((item, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={item}
+                        onChange={(e) => handleArrayFieldChange('hashtags', index, e.target.value)}
+                        placeholder="#suamarca"
+                      />
+                      {formData.hashtags.length > 1 && (
+                        <Button variant="ghost" size="icon" onClick={() => removeArrayField('hashtags', index)}>
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={() => addArrayField('hashtags')}>
+                    <Plus className="w-4 h-4 mr-1" /> Adicionar
+                  </Button>
+                </div>
+              </div>
+              <div>
+                <Label className="flex items-center gap-2">
+                  <AtSign className="w-4 h-4" />
+                  Menções Obrigatórias
+                </Label>
+                <div className="space-y-2 mt-2">
+                  {formData.mentions.map((item, index) => (
+                    <div key={index} className="flex gap-2">
+                      <Input
+                        value={item}
+                        onChange={(e) => handleArrayFieldChange('mentions', index, e.target.value)}
+                        placeholder="@suamarca"
+                      />
+                      {formData.mentions.length > 1 && (
+                        <Button variant="ghost" size="icon" onClick={() => removeArrayField('mentions', index)}>
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={() => addArrayField('mentions')}>
+                    <Plus className="w-4 h-4 mr-1" /> Adicionar
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Platforms & Content */}
+            <div className="space-y-4">
+              <div>
+                <Label>Plataformas *</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {platforms.map((p) => (
+                    <Badge
+                      key={p}
+                      variant={formData.platforms.includes(p) ? "default" : "outline"}
+                      className={`cursor-pointer ${formData.platforms.includes(p) ? 'bg-indigo-600' : ''}`}
+                      onClick={() => toggleArrayItem('platforms', p)}
+                    >
+                      {p}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label>Tipos de Conteúdo</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {contentTypes.map((ct) => (
+                    <Badge
+                      key={ct}
+                      variant={formData.content_type.includes(ct) ? "default" : "outline"}
+                      className={`cursor-pointer ${formData.content_type.includes(ct) ? 'bg-violet-600' : ''}`}
+                      onClick={() => toggleArrayItem('content_type', ct)}
+                    >
+                      {ct}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label>Nichos Preferidos</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {niches.map((n) => (
+                    <Badge
+                      key={n}
+                      variant={formData.niche_required.includes(n) ? "default" : "outline"}
+                      className={`cursor-pointer ${formData.niche_required.includes(n) ? 'bg-emerald-600' : ''}`}
+                      onClick={() => toggleArrayItem('niche_required', n)}
+                    >
+                      {n}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Dates & Location */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Prazo de Candidaturas</Label>
+                <Input
+                  type="date"
+                  value={formData.application_deadline}
+                  onChange={(e) => handleChange('application_deadline', e.target.value)}
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label>Prazo de Entrega *</Label>
+                <Input
+                  type="date"
+                  value={formData.deadline}
+                  onChange={(e) => handleChange('deadline', e.target.value)}
+                  className="mt-2"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label>Localização (opcional)</Label>
+              <Input
+                value={formData.location}
+                onChange={(e) => handleChange('location', e.target.value)}
+                placeholder="Ex: São Paulo, SP ou Nacional"
+                className="mt-2"
+              />
+            </div>
+
+            {/* Remuneration */}
+            <div className="space-y-4">
+              <div>
+                <Label>Tipo de Remuneração *</Label>
+                <Select value={formData.remuneration_type} onValueChange={(v) => handleChange('remuneration_type', v)}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cash">💵 Pagamento em Dinheiro</SelectItem>
+                    <SelectItem value="barter">🎁 Permuta (Produtos/Serviços)</SelectItem>
+                    <SelectItem value="mixed">📦 Misto (Dinheiro + Permuta)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {(formData.remuneration_type === 'cash' || formData.remuneration_type === 'mixed') && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Valor Mínimo (R$)</Label>
+                    <Input type="number" value={formData.budget_min} onChange={(e) => handleChange('budget_min', e.target.value)} placeholder="500" className="mt-2" />
+                  </div>
+                  <div>
+                    <Label>Valor Máximo (R$)</Label>
+                    <Input type="number" value={formData.budget_max} onChange={(e) => handleChange('budget_max', e.target.value)} placeholder="2000" className="mt-2" />
+                  </div>
+                </div>
+              )}
+
+              {(formData.remuneration_type === 'barter' || formData.remuneration_type === 'mixed') && (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Descrição da Permuta</Label>
+                    <Textarea value={formData.barter_description} onChange={(e) => handleChange('barter_description', e.target.value)} placeholder="Descreva os produtos/serviços oferecidos..." className="mt-2" />
+                  </div>
+                  <div>
+                    <Label>Valor Estimado (R$)</Label>
+                    <Input type="number" value={formData.barter_value} onChange={(e) => handleChange('barter_value', e.target.value)} placeholder="500" className="mt-2" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Slots & Profile */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Número de Vagas</Label>
+                <Input type="number" min="1" value={formData.slots_total} onChange={(e) => handleChange('slots_total', e.target.value)} className="mt-2" />
+              </div>
+              <div>
+                <Label>Tamanho Mínimo</Label>
+                <Select value={formData.profile_size_min} onValueChange={(v) => handleChange('profile_size_min', v)}>
+                  <SelectTrigger className="mt-2"><SelectValue placeholder="Qualquer" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nano">Nano (1K-10K)</SelectItem>
+                    <SelectItem value="micro">Micro (10K-50K)</SelectItem>
+                    <SelectItem value="mid">Mid (50K-500K)</SelectItem>
+                    <SelectItem value="macro">Macro (500K-1M)</SelectItem>
+                    <SelectItem value="mega">Mega (1M+)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Proof Requirements */}
+            <div>
+              <Label>Como Provar a Entrega *</Label>
+              <Textarea
+                value={formData.proof_requirements}
+                onChange={(e) => handleChange('proof_requirements', e.target.value)}
+                placeholder="Ex: Screenshot do post publicado, link do conteúdo, métricas de alcance..."
+                className="mt-2"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                Seja específico. Estas regras serão usadas para aprovar ou contestar entregas.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSubmit} 
+                disabled={saving || !formData.title || !formData.description || !formData.deadline}
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar Campanha'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        title="Recurso Premium"
+        description="Você precisa de uma assinatura ativa para criar e publicar campanhas."
+        feature="Criar campanhas ilimitadas"
+        isAuthenticated={true}
+      />
     </div>
   );
 }
