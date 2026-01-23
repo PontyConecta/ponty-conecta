@@ -7,6 +7,10 @@ import BrandDashboard from './pages/BrandDashboard';
 import CreatorDashboard from './pages/CreatorDashboard';
 import CampaignManager from './pages/CampaignManager';
 import OpportunityFeed from './pages/OpportunityFeed';
+import ApplicationsManager from './pages/ApplicationsManager';
+import DeliveriesManager from './pages/DeliveriesManager';
+import MyApplications from './pages/MyApplications';
+import MyDeliveries from './pages/MyDeliveries';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +24,10 @@ export const PAGES = {
     "CreatorDashboard": CreatorDashboard,
     "CampaignManager": CampaignManager,
     "OpportunityFeed": OpportunityFeed,
+    "ApplicationsManager": ApplicationsManager,
+    "DeliveriesManager": DeliveriesManager,
+    "MyApplications": MyApplications,
+    "MyDeliveries": MyDeliveries,
 }
 
 export const pagesConfig = {
