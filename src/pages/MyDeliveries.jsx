@@ -113,6 +113,13 @@ export default function MyDeliveries() {
 
   const handleSubmitDelivery = async () => {
     if (!selectedDelivery) return;
+    
+    // Mandatory proof validation
+    if (proofUrls.length === 0) {
+      alert('É obrigatório anexar pelo menos uma prova da entrega (screenshot, foto, etc).');
+      return;
+    }
+    
     setSubmitting(true);
     
     try {
@@ -467,6 +474,13 @@ export default function MyDeliveries() {
               {/* Submit Button */}
               {selectedDelivery.status === 'pending' && (
                 <div className="pt-4 border-t">
+                  <div className={`p-3 rounded-lg mb-3 ${proofUrls.length === 0 ? 'bg-red-50' : 'bg-emerald-50'}`}>
+                    <p className={`text-sm font-medium ${proofUrls.length === 0 ? 'text-red-700' : 'text-emerald-700'}`}>
+                      {proofUrls.length === 0 
+                        ? '⚠️ Você precisa anexar pelo menos uma prova para enviar' 
+                        : '✓ Prova anexada'}
+                    </p>
+                  </div>
                   <Button
                     onClick={handleSubmitDelivery}
                     disabled={submitting || proofUrls.length === 0}
