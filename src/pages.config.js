@@ -11,6 +11,7 @@ import ApplicationsManager from './pages/ApplicationsManager';
 import DeliveriesManager from './pages/DeliveriesManager';
 import MyApplications from './pages/MyApplications';
 import MyDeliveries from './pages/MyDeliveries';
+import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "DeliveriesManager": DeliveriesManager,
     "MyApplications": MyApplications,
     "MyDeliveries": MyDeliveries,
+    "Profile": Profile,
 }
 
 export const pagesConfig = {
