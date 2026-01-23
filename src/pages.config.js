@@ -12,6 +12,8 @@ import OpportunityFeed from './pages/OpportunityFeed';
 import Profile from './pages/Profile';
 import SelectProfile from './pages/SelectProfile';
 import Subscription from './pages/Subscription';
+import DiscoverCreators from './pages/DiscoverCreators';
+import DiscoverBrands from './pages/DiscoverBrands';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +32,8 @@ export const PAGES = {
     "Profile": Profile,
     "SelectProfile": SelectProfile,
     "Subscription": Subscription,
+    "DiscoverCreators": DiscoverCreators,
+    "DiscoverBrands": DiscoverBrands,
 }
 
 export const pagesConfig = {
