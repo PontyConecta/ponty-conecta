@@ -362,11 +362,11 @@ export default function Home() {
             </div>
 
             <div className="flex items-center gap-6">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition text-sm font-medium">
+              <a href="https://www.instagram.com/pontycreators/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition text-sm font-medium">
                 Instagram
               </a>
               <span className="text-gray-700">•</span>
-              <a href="mailto:contato@ponty.com" className="text-gray-400 hover:text-white transition text-sm font-medium">
+              <a href="https://wa.me/5555619985914?text=Olá%2C%20entrei%20em%20contato%20por%20meio%20da%20página%2C%20gostaria%20de%20mais%20informações." target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition text-sm font-medium">
                 Contato Suporte
               </a>
             </div>
