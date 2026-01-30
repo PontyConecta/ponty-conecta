@@ -56,20 +56,43 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero Image */}
+            {/* Hero Visual */}
             <div className="relative h-96 sm:h-[500px] lg:h-[600px] flex items-center justify-center">
-              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-50 to-orange-50">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/674bbffed_ConexaoHerov3.png"
-                  alt="Conexão entre Marcas e Criadores"
-                  className="w-full h-full object-contain"
-                  loading="eager"
-                  style={{
-                    transform: `translateY(${scrollY * 0.3}px)`,
-                    transition: 'transform 0.1s ease-out',
-                    imageRendering: '-webkit-optimize-contrast'
-                  }}
-                />
+              <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-600 via-indigo-600 to-orange-500 p-12 flex items-center justify-center"
+                style={{
+                  transform: `translateY(${scrollY * 0.3}px)`,
+                  transition: 'transform 0.1s ease-out'
+                }}>
+                <div className="grid grid-cols-2 gap-8 w-full max-w-md">
+                  {/* Brand Side */}
+                  <div className="space-y-4">
+                    <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-white">
+                      <Shield className="w-12 h-12 mb-3" />
+                      <div className="text-sm font-semibold">Brands</div>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-white/80 text-xs">
+                      <TrendingUp className="w-8 h-8" />
+                    </div>
+                  </div>
+                  
+                  {/* Connection */}
+                  <div className="space-y-4">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-white/80 text-xs">
+                      <Sparkles className="w-8 h-8" />
+                    </div>
+                    <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-white">
+                      <Users className="w-12 h-12 mb-3" />
+                      <div className="text-sm font-semibold">Creators</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Center Connection */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <div className="bg-white rounded-full p-6 shadow-2xl">
+                    <Zap className="w-12 h-12 text-purple-600 animate-pulse" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -128,14 +151,36 @@ export default function Home() {
             {/* Brands Tab */}
             <TabsContent value="brands" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[450px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group bg-gradient-to-br from-purple-900 to-indigo-900">
-                  <img
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/2be0a789e_ConhecimentoPrevioManus1.png"
-                    alt="Para Marcas"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
-                  />
+                <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-2xl group bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-12">
+                  <div className="relative h-full flex flex-col justify-between">
+                    <div className="space-y-6">
+                      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
+                        <Shield className="w-16 h-16 text-white" />
+                      </div>
+                      <div className="space-y-3">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 w-3/4">
+                          <div className="h-3 bg-white/30 rounded"></div>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 w-full">
+                          <div className="h-3 bg-white/30 rounded"></div>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 w-2/3">
+                          <div className="h-3 bg-white/30 rounded"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex-1">
+                        <TrendingUp className="w-6 h-6 text-white/80" />
+                      </div>
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex-1">
+                        <Users className="w-6 h-6 text-white/80" />
+                      </div>
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex-1">
+                        <CheckCircle className="w-6 h-6 text-white/80" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-8">
@@ -184,14 +229,38 @@ export default function Home() {
             {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[450px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group bg-gradient-to-br from-orange-600 to-amber-600">
-                  <img
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/defb18121_CrescimentodeCriadores.png"
-                    alt="Para Criadores"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
-                  />
+                <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-2xl group bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-600 p-12">
+                  <div className="relative h-full flex flex-col justify-between">
+                    <div className="space-y-6">
+                      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
+                        <Sparkles className="w-16 h-16 text-white" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
+                          <div className="text-2xl font-bold text-white mb-1">2.5K+</div>
+                          <div className="text-xs text-white/70">Criadores</div>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
+                          <div className="text-2xl font-bold text-white mb-1">500+</div>
+                          <div className="text-xs text-white/70">Campanhas</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
+                        <CheckCircle className="w-8 h-8 text-white mx-auto mb-2" />
+                        <div className="text-xs text-white/80">Verificado</div>
+                      </div>
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
+                        <TrendingUp className="w-8 h-8 text-white mx-auto mb-2" />
+                        <div className="text-xs text-white/80">Crescendo</div>
+                      </div>
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
+                        <Sparkles className="w-8 h-8 text-white mx-auto mb-2" />
+                        <div className="text-xs text-white/80">Premium</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-8">
