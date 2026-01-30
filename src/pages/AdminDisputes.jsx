@@ -37,6 +37,7 @@ import {
   Eye
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function AdminDisputes() {
   const [user, setUser] = useState(null);
@@ -102,6 +103,7 @@ export default function AdminDisputes() {
 
     } catch (error) {
       console.error('Error loading data:', error);
+      toast.error('Erro ao carregar disputas');
     } finally {
       setLoading(false);
     }
@@ -141,8 +143,10 @@ export default function AdminDisputes() {
       setSelectedDispute(null);
       setResolution('');
       setResolutionType('');
+      toast.success('Disputa resolvida com sucesso');
     } catch (error) {
       console.error('Error resolving dispute:', error);
+      toast.error('Erro ao resolver disputa');
     } finally {
       setProcessing(false);
     }

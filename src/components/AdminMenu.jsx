@@ -21,15 +21,41 @@ import {
 } from 'lucide-react';
 
 export default function AdminMenu({ currentPageName }) {
-  const adminPages = [
-    { name: 'Dashboard', page: 'AdminDashboard', icon: LayoutDashboard },
-    { name: 'Usuários', page: 'AdminUsers', icon: Users },
-    { name: 'Campanhas', page: 'AdminCampaigns', icon: Megaphone },
-    { name: 'Disputas', page: 'AdminDisputes', icon: AlertTriangle },
-    { name: 'Audit Logs', page: 'AdminAuditLogs', icon: FileText },
+  const adminCategories = [
+    {
+      label: 'Visão Geral',
+      items: [
+        { name: 'Dashboard', page: 'AdminDashboard', icon: LayoutDashboard }
+      ]
+    },
+    {
+      label: 'Gestão de Usuários',
+      items: [
+        { name: 'Usuários', page: 'AdminUsers', icon: Users }
+      ]
+    },
+    {
+      label: 'Gestão de Campanhas',
+      items: [
+        { name: 'Campanhas', page: 'AdminCampaigns', icon: Megaphone }
+      ]
+    },
+    {
+      label: 'Moderação',
+      items: [
+        { name: 'Disputas', page: 'AdminDisputes', icon: AlertTriangle }
+      ]
+    },
+    {
+      label: 'Sistema',
+      items: [
+        { name: 'Logs de Auditoria', page: 'AdminAuditLogs', icon: FileText }
+      ]
+    }
   ];
 
-  const isAdminPage = adminPages.some(p => p.page === currentPageName);
+  const allAdminPages = adminCategories.flatMap(cat => cat.items);
+  const isAdminPage = allAdminPages.some(p => p.page === currentPageName);
 
   return (
     <DropdownMenu>
@@ -44,21 +70,27 @@ export default function AdminMenu({ currentPageName }) {
           <ChevronDown className="w-3 h-3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <div className="px-2 py-1.5">
-          <p className="text-xs font-medium text-slate-500">Administração</p>
-        </div>
-        <DropdownMenuSeparator />
-        {adminPages.map((item) => (
-          <DropdownMenuItem key={item.page} asChild>
-            <Link 
-              to={createPageUrl(item.page)} 
-              className={`cursor-pointer ${currentPageName === item.page ? 'bg-red-50 text-red-700' : ''}`}
-            >
-              <item.icon className="w-4 h-4 mr-2" />
-              {item.name}
-            </Link>
-          </DropdownMenuItem>
+      <DropdownMenuContent align="end" className="w-64">
+        {adminCategories.map((category, idx) => (
+          <React.Fragment key={category.label}>
+            {idx > 0 && <DropdownMenuSeparator />}
+            <div className="px-2 py-1.5">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                {category.label}
+              </p>
+            </div>
+            {category.items.map((item) => (
+              <DropdownMenuItem key={item.page} asChild>
+                <Link 
+                  to={createPageUrl(item.page)} 
+                  className={`cursor-pointer ${currentPageName === item.page ? 'bg-red-50 text-red-700 font-medium' : ''}`}
+                >
+                  <item.icon className="w-4 h-4 mr-2" />
+                  {item.name}
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </React.Fragment>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>

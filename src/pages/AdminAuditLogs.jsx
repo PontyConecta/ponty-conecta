@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from 'sonner';
 
 export default function AdminAuditLogs() {
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,7 @@ export default function AdminAuditLogs() {
       setLogs(logsData);
     } catch (error) {
       console.error('Error loading logs:', error);
+      toast.error('Erro ao carregar logs de auditoria');
     } finally {
       setLoading(false);
     }
