@@ -171,67 +171,68 @@ export default function Home() {
             {/* Brands Tab */}
             <TabsContent value="brands" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[450px] rounded-3xl overflow-hidden">
+                <div className="relative h-[500px] rounded-3xl overflow-hidden">
                   {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-purple-50"></div>
-                  
+
                   {/* Floating shapes */}
                   <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-2xl"></div>
                   <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-purple-500/15 to-violet-400/15 rounded-full blur-2xl"></div>
-                  
+
                   {/* Content */}
-                  <div className="relative h-full flex items-center justify-center p-12">
-                    <div className="text-center space-y-6">
-                      <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl shadow-lg">
-                        <Shield className="w-12 h-12 text-purple-600" />
+                  <div className="relative h-full flex items-center justify-center p-8 lg:p-12">
+                    <div className="space-y-8 max-w-md">
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
+                          <Shield className="w-10 h-10 text-purple-600" />
+                        </div>
+                        <h3 className="text-2xl font-black leading-tight mb-2">
+                          Ferramentas profissionais para marcas
+                        </h3>
                       </div>
-                      <div className="space-y-2">
-                        <h4 className="text-2xl font-bold text-gray-900">Controle Total</h4>
-                        <p className="text-gray-600">Gerencie campanhas com precisão</p>
+
+                      <div className="space-y-4">
+                        {[
+                          {
+                            icon: Users,
+                            title: 'Criadores Verificados',
+                            description: 'Perfis com histórico comprovado'
+                          },
+                          {
+                            icon: TrendingUp,
+                            title: 'Campanhas Estruturadas',
+                            description: 'Requisitos claros desde o início'
+                          },
+                          {
+                            icon: Shield,
+                            title: 'Gestão Simplificada',
+                            description: 'Acompanhe entregas em um só lugar'
+                          }
+                        ].map((feature, idx) => (
+                          <div key={idx} className="flex gap-3 bg-white/50 backdrop-blur-sm p-3 rounded-lg">
+                            <div className="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                              <feature.icon className="w-5 h-5 text-purple-600" />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-sm text-gray-900">{feature.title}</h4>
+                              <p className="text-xs text-gray-600 mt-0.5">{feature.description}</p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
+
+                      <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white w-full">
+                        Começar como Marca
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </Button>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-8">
-                  <h3 className="text-2xl sm:text-3xl font-black leading-tight">
-                    Ferramentas profissionais desenhadas para o sucesso de marcas
-                  </h3>
-
-                  <div className="space-y-6">
-                    {[
-                      {
-                        icon: Users,
-                        title: 'Criadores Verificados',
-                        description: 'Perfis com histórico e reputação comprovados'
-                      },
-                      {
-                        icon: TrendingUp,
-                        title: 'Campanhas Estruturadas',
-                        description: 'Requisitos claros e documentados desde o início'
-                      },
-                      {
-                        icon: Shield,
-                        title: 'Gestão Simplificada',
-                        description: 'Acompanhe todas as entregas em um só lugar'
-                      }
-                    ].map((feature, idx) => (
-                      <div key={idx} className="flex gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <feature.icon className="w-6 h-6 text-purple-600" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-gray-900">{feature.title}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{feature.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto">
-                    Começar como Marca
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
+                <div className="space-y-6 lg:hidden">
+                  <p className="text-gray-600 text-center">
+                    Organize, execute e escale suas campanhas com ferramentas profissionais e criadores verificados.
+                  </p>
                 </div>
               </div>
             </TabsContent>
