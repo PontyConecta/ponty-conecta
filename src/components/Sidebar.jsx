@@ -27,8 +27,8 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
       title: 'Gestão',
       items: [
         { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
-        { name: 'Candidaturas', page: 'ApplicationsManager', icon: Users },
-        { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
+        { name: 'Candidaturas', page: 'Applications', icon: Users },
+        { name: 'Entregas', page: 'Deliveries', icon: FileText },
       ]
     }
   ];
@@ -45,8 +45,8 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
     {
       title: 'Minhas Atividades',
       items: [
-        { name: 'Minhas Candidaturas', page: 'MyApplications', icon: FileText },
-        { name: 'Minhas Entregas', page: 'MyDeliveries', icon: FileText },
+        { name: 'Minhas Candidaturas', page: 'Applications', icon: FileText },
+        { name: 'Minhas Entregas', page: 'Deliveries', icon: FileText },
       ]
     }
   ];
