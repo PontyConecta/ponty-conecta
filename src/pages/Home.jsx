@@ -388,27 +388,18 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             <div>
               <h3 className="font-bold text-lg mb-4">Ponty</h3>
               <p className="text-gray-400 text-sm">A ponte profissional entre marcas e criadores</p>
             </div>
 
             <div>
-              <h3 className="font-bold text-lg mb-4">Produto</h3>
+              <h3 className="font-bold text-lg mb-4">Suporte</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Para Marcas</a></li>
-                <li><a href="#" className="hover:text-white transition">Para Criadores</a></li>
-                <li><a href="#" className="hover:text-white transition">Preços</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-lg mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Termos de Uso</a></li>
-                <li><a href="#" className="hover:text-white transition">Privacidade</a></li>
-                <li><a href="#" className="hover:text-white transition">Suporte</a></li>
+                <li><a href="#" className="hover:text-white transition">Central de Ajuda</a></li>
+                <li><a href="#" className="hover:text-white transition">Contato</a></li>
+                <li><a href="#" className="hover:text-white transition">FAQ</a></li>
               </ul>
             </div>
 
