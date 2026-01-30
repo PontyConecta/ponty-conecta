@@ -61,7 +61,6 @@ import Deliveries from './pages/Deliveries';
 import DeliveriesManager from './pages/DeliveriesManager';
 import DiscoverBrands from './pages/DiscoverBrands';
 import DiscoverCreators from './pages/DiscoverCreators';
-import Home from './pages/Home';
 import MyApplications from './pages/MyApplications';
 import MyDeliveries from './pages/MyDeliveries';
 import OnboardingBrand from './pages/OnboardingBrand';
@@ -89,7 +88,6 @@ export const PAGES = {
     "DeliveriesManager": DeliveriesManager,
     "DiscoverBrands": DiscoverBrands,
     "DiscoverCreators": DiscoverCreators,
-    "Home": Home,
     "MyApplications": MyApplications,
     "MyDeliveries": MyDeliveries,
     "OnboardingBrand": OnboardingBrand,
@@ -102,7 +100,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Home",
+    mainPage: "AdminAuditLogs",
     Pages: PAGES,
     Layout: __Layout,
 };
