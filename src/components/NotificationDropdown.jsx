@@ -12,6 +12,7 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function NotificationDropdown() {
   const { user, profile, profileType } = useAuth();
@@ -54,7 +55,8 @@ export default function NotificationDropdown() {
             color: 'text-blue-600',
             timestamp: app.created_date,
             read: false,
-            actionUrl: createPageUrl('Applications')
+            actionUrl: createPageUrl('Applications'),
+            relatedEntityId: app.id
           });
         });
 
@@ -69,7 +71,8 @@ export default function NotificationDropdown() {
             color: 'text-green-600',
             timestamp: del.submitted_at,
             read: false,
-            actionUrl: createPageUrl('Deliveries')
+            actionUrl: createPageUrl('Deliveries'),
+            relatedEntityId: del.id
           });
         });
 
@@ -77,26 +80,53 @@ export default function NotificationDropdown() {
         campaigns.forEach(camp => {
           if (camp.deadline && new Date(camp.deadline) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) {
             const daysLeft = Math.ceil((new Date(camp.deadline) - new Date()) / (24 * 60 * 60 * 1000));
-            notificationsList.push({
-              id: `campaign-${camp.id}`,
-              type: 'campaign',
-              title: 'Campanha Próxima do Prazo',
-              message: `${camp.title} vence em ${daysLeft} dias`,
-              icon: Clock,
-              color: 'text-orange-600',
-              timestamp: camp.created_date,
-              read: false,
-              actionUrl: createPageUrl('CampaignManager')
-            });
+            if (daysLeft > 0) {
+              notificationsList.push({
+                id: `campaign-${camp.id}`,
+                type: 'campaign',
+                title: 'Campanha Próxima do Prazo',
+                message: `${camp.title} vence em ${daysLeft} dias`,
+                icon: Clock,
+                color: 'text-orange-600',
+                timestamp: camp.created_date,
+                read: false,
+                actionUrl: createPageUrl('CampaignManager'),
+                relatedEntityId: camp.id
+              });
+            }
           }
         });
 
       } else if (profileType === 'creator') {
         // Creator notifications: application status, deliveries
-        const [applications, deliveries] = await Promise.all([
+        const [applications, deliveries, campaigns] = await Promise.all([
           base44.entities.Application.filter({ creator_id: profile.id }),
-          base44.entities.Delivery.filter({ creator_id: profile.id })
+          base44.entities.Delivery.filter({ creator_id: profile.id }),
+          base44.entities.Campaign.filter({ status: 'active' })
         ]);
+
+        // Buscar brands para campanhas
+        const campaignIds = campaigns.slice(0, 3).map(c => c.brand_id);
+        const brands = campaignIds.length > 0 ? await base44.entities.Brand.list() : [];
+        const brandMap = {};
+        brands.forEach(b => { brandMap[b.id] = b; });
+
+        // New opportunities com brand name
+        campaigns.slice(0, 3).forEach(opp => {
+          const brand = brandMap[opp.brand_id];
+          notificationsList.push({
+            id: `opp-${opp.id}`,
+            type: 'opportunity',
+            title: 'Nova Oportunidade',
+            message: `${brand?.company_name || 'Uma marca'} lançou uma nova campanha`,
+            icon: Megaphone,
+            color: 'text-purple-600',
+            timestamp: opp.created_date,
+            read: false,
+            actionUrl: createPageUrl('OpportunityFeed'),
+            relatedEntityId: opp.id
+          });
+        });
 
         // Application status updates
         applications.filter(app => app.status === 'accepted').slice(0, 3).forEach(app => {
@@ -109,7 +139,8 @@ export default function NotificationDropdown() {
             color: 'text-green-600',
             timestamp: app.accepted_at || app.created_date,
             read: false,
-            actionUrl: createPageUrl('Applications')
+            actionUrl: createPageUrl('Applications'),
+            relatedEntityId: app.id
           });
         });
 
@@ -124,7 +155,8 @@ export default function NotificationDropdown() {
             color: 'text-green-600',
             timestamp: del.approved_at || del.created_date,
             read: false,
-            actionUrl: createPageUrl('Deliveries')
+            actionUrl: createPageUrl('Deliveries'),
+            relatedEntityId: del.id
           });
         });
 
@@ -139,42 +171,151 @@ export default function NotificationDropdown() {
             color: 'text-red-600',
             timestamp: del.contested_at || del.created_date,
             read: false,
-            actionUrl: createPageUrl('Deliveries')
+            actionUrl: createPageUrl('Deliveries'),
+            relatedEntityId: del.id
           });
         });
       }
 
-      // Sort by timestamp, newest first
-      notificationsList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      // Carregar estado de leitura do banco
+      const existingNotifications = await base44.entities.Notification.filter({ user_id: user.id });
+      const readMap = {};
+      const dismissedSet = new Set();
+      
+      existingNotifications.forEach(n => {
+        if (n.read_at) readMap[n.notification_key] = true;
+        if (n.dismissed_at) dismissedSet.add(n.notification_key);
+      });
 
-      setNotifications(notificationsList);
-      setUnreadCount(notificationsList.filter(n => !n.read).length);
+      // Aplicar estado de leitura e filtrar descartadas
+      const filteredNotifications = notificationsList
+        .filter(n => !dismissedSet.has(n.id))
+        .map(n => ({
+          ...n,
+          read: readMap[n.id] || false
+        }));
+
+      // Sort by timestamp, newest first
+      filteredNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      setNotifications(filteredNotifications);
+      setUnreadCount(filteredNotifications.filter(n => !n.read).length);
     } catch (error) {
       console.error('Error loading notifications:', error);
+      toast?.error?.('Erro ao carregar notificações');
     } finally {
       setLoading(false);
     }
   };
 
-  const markAsRead = (notificationId) => {
-    setNotifications(prev =>
-      prev.map(n =>
-        n.id === notificationId ? { ...n, read: true } : n
-      )
-    );
-    setUnreadCount(prev => Math.max(0, prev - 1));
+  const markAsRead = async (notificationId) => {
+    try {
+      // Persistir no banco
+      const existing = await base44.entities.Notification.filter({ 
+        user_id: user.id, 
+        notification_key: notificationId 
+      });
+
+      if (existing.length > 0) {
+        await base44.entities.Notification.update(existing[0].id, {
+          read_at: new Date().toISOString()
+        });
+      } else {
+        const notification = notifications.find(n => n.id === notificationId);
+        if (notification) {
+          await base44.entities.Notification.create({
+            user_id: user.id,
+            notification_key: notificationId,
+            type: notification.type,
+            title: notification.title,
+            message: notification.message,
+            action_url: notification.actionUrl,
+            related_entity_id: notification.relatedEntityId,
+            read_at: new Date().toISOString()
+          });
+        }
+      }
+
+      setNotifications(prev =>
+        prev.map(n =>
+          n.id === notificationId ? { ...n, read: true } : n
+        )
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error('Error marking as read:', error);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(n => ({ ...n, read: true }))
-    );
-    setUnreadCount(0);
+  const markAllAsRead = async () => {
+    try {
+      const promises = notifications.filter(n => !n.read).map(async (notification) => {
+        const existing = await base44.entities.Notification.filter({ 
+          user_id: user.id, 
+          notification_key: notification.id 
+        });
+
+        if (existing.length > 0) {
+          return base44.entities.Notification.update(existing[0].id, {
+            read_at: new Date().toISOString()
+          });
+        } else {
+          return base44.entities.Notification.create({
+            user_id: user.id,
+            notification_key: notification.id,
+            type: notification.type,
+            title: notification.title,
+            message: notification.message,
+            action_url: notification.actionUrl,
+            related_entity_id: notification.relatedEntityId,
+            read_at: new Date().toISOString()
+          });
+        }
+      });
+
+      await Promise.all(promises);
+      
+      setNotifications(prev =>
+        prev.map(n => ({ ...n, read: true }))
+      );
+      setUnreadCount(0);
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    }
   };
 
-  const dismissNotification = (notificationId) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    setUnreadCount(prev => Math.max(0, prev - 1));
+  const dismissNotification = async (notificationId) => {
+    try {
+      const existing = await base44.entities.Notification.filter({ 
+        user_id: user.id, 
+        notification_key: notificationId 
+      });
+
+      if (existing.length > 0) {
+        await base44.entities.Notification.update(existing[0].id, {
+          dismissed_at: new Date().toISOString()
+        });
+      } else {
+        const notification = notifications.find(n => n.id === notificationId);
+        if (notification) {
+          await base44.entities.Notification.create({
+            user_id: user.id,
+            notification_key: notificationId,
+            type: notification.type,
+            title: notification.title,
+            message: notification.message,
+            action_url: notification.actionUrl,
+            related_entity_id: notification.relatedEntityId,
+            dismissed_at: new Date().toISOString()
+          });
+        }
+      }
+
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error('Error dismissing notification:', error);
+    }
   };
 
   const handleNotificationClick = (notification) => {
