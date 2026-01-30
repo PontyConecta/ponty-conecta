@@ -96,15 +96,15 @@ export default function AdminDashboard() {
       </div>
 
       {/* Date Range Filter */}
-      <div className="flex gap-2">
-        {['week', 'month', 'year'].map(range => (
+      <div className="flex gap-2 flex-wrap">
+        {['day', 'week', 'month', 'year', 'custom'].map(range => (
           <Button
             key={range}
             variant={dateRange === range ? 'default' : 'outline'}
             onClick={() => setDateRange(range)}
             size="sm"
           >
-            {range === 'week' ? 'Semana' : range === 'month' ? 'Mês' : 'Ano'}
+            {range === 'day' ? 'Diário' : range === 'week' ? 'Semana' : range === 'month' ? 'Mês' : range === 'year' ? 'Ano' : 'Personalizado'}
           </Button>
         ))}
       </div>
