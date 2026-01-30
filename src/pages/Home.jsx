@@ -59,7 +59,7 @@ export default function Home() {
             {/* Hero Image */}
             <div className="relative h-96 sm:h-[500px] flex items-center justify-center">
               <img
-                src="/images/hero-innovation.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/674bbffed_ConexaoHerov3.png"
                 alt="Conexão entre Marcas e Criadores"
                 className="w-full h-full object-contain drop-shadow-2xl"
                 style={{
@@ -126,7 +126,7 @@ export default function Home() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="relative h-96 rounded-lg overflow-hidden shadow-lg">
                   <img
-                    src="/images/brands-section.png"
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/2be0a789e_ConhecimentoPrevioManus1.png"
                     alt="Para Marcas"
                     className="w-full h-full object-cover"
                   />
@@ -180,7 +180,7 @@ export default function Home() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="relative h-96 rounded-lg overflow-hidden shadow-lg">
                   <img
-                    src="/images/creators-section.png"
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/defb18121_CrescimentodeCriadores.png"
                     alt="Para Criadores"
                     className="w-full h-full object-cover"
                   />
