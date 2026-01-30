@@ -1,29 +1,185 @@
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from 'react';
+import { Bell, X, CheckCircle2, AlertCircle, MessageSquare, Megaphone, Clock } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, CheckCircle2, Sparkles, Info } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/components/contexts/AuthContext';
+import { createPageUrl } from '@/utils';
+import { Link } from 'react-router-dom';
 
 export default function NotificationDropdown() {
-  const [notifications] = useState([
-    {
-      id: 1,
-      type: 'welcome',
-      title: 'Bem-vindo ao Ponty Conecta!',
-      description: 'Complete seu perfil para começar',
-      icon: Sparkles,
-      color: 'text-indigo-600',
-      unread: true
-    }
-  ]);
+  const { user, profile, profileType } = useAuth();
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  useEffect(() => {
+    if (user && profile) {
+      loadNotifications();
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(loadNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, profile]);
+
+  const loadNotifications = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch different notification types based on profile type
+      const notificationsList = [];
+
+      if (profileType === 'brand') {
+        // Brand notifications: applications, deliveries, campaigns
+        const [applications, deliveries, campaigns] = await Promise.all([
+          base44.entities.Application.filter({ brand_id: profile.id, status: 'pending' }),
+          base44.entities.Delivery.filter({ brand_id: profile.id, status: 'submitted' }),
+          base44.entities.Campaign.filter({ brand_id: profile.id })
+        ]);
+
+        // New applications
+        applications.slice(0, 5).forEach(app => {
+          notificationsList.push({
+            id: `app-${app.id}`,
+            type: 'application',
+            title: 'Nova Candidatura',
+            message: `Um criador se candidatou para sua campanha`,
+            icon: MessageSquare,
+            color: 'text-blue-600',
+            timestamp: app.created_date,
+            read: false,
+            actionUrl: createPageUrl('Applications')
+          });
+        });
+
+        // Pending deliveries
+        deliveries.slice(0, 5).forEach(del => {
+          notificationsList.push({
+            id: `delivery-${del.id}`,
+            type: 'delivery',
+            title: 'Entrega Pendente',
+            message: `Criador enviou conteúdo para revisão`,
+            icon: CheckCircle2,
+            color: 'text-green-600',
+            timestamp: del.submitted_at,
+            read: false,
+            actionUrl: createPageUrl('Deliveries')
+          });
+        });
+
+        // Campaign milestones
+        campaigns.forEach(camp => {
+          if (camp.deadline && new Date(camp.deadline) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) {
+            const daysLeft = Math.ceil((new Date(camp.deadline) - new Date()) / (24 * 60 * 60 * 1000));
+            notificationsList.push({
+              id: `campaign-${camp.id}`,
+              type: 'campaign',
+              title: 'Campanha Próxima do Prazo',
+              message: `${camp.title} vence em ${daysLeft} dias`,
+              icon: Clock,
+              color: 'text-orange-600',
+              timestamp: camp.created_date,
+              read: false,
+              actionUrl: createPageUrl('CampaignManager')
+            });
+          }
+        });
+
+      } else if (profileType === 'creator') {
+        // Creator notifications: application status, deliveries
+        const [applications, deliveries] = await Promise.all([
+          base44.entities.Application.filter({ creator_id: profile.id }),
+          base44.entities.Delivery.filter({ creator_id: profile.id })
+        ]);
+
+        // Application status updates
+        applications.filter(app => app.status === 'accepted').slice(0, 3).forEach(app => {
+          notificationsList.push({
+            id: `app-accepted-${app.id}`,
+            type: 'application_accepted',
+            title: 'Candidatura Aceita! 🎉',
+            message: `Sua candidatura foi aceita para uma campanha`,
+            icon: CheckCircle2,
+            color: 'text-green-600',
+            timestamp: app.accepted_at || app.created_date,
+            read: false,
+            actionUrl: createPageUrl('Applications')
+          });
+        });
+
+        // Delivery feedback
+        deliveries.filter(del => del.status === 'approved').slice(0, 3).forEach(del => {
+          notificationsList.push({
+            id: `delivery-approved-${del.id}`,
+            type: 'delivery_approved',
+            title: 'Entrega Aprovada',
+            message: `Sua entrega foi aprovada pela marca`,
+            icon: CheckCircle2,
+            color: 'text-green-600',
+            timestamp: del.approved_at || del.created_date,
+            read: false,
+            actionUrl: createPageUrl('Deliveries')
+          });
+        });
+
+        // Delivery contested
+        deliveries.filter(del => del.status === 'contested').slice(0, 3).forEach(del => {
+          notificationsList.push({
+            id: `delivery-contested-${del.id}`,
+            type: 'delivery_contested',
+            title: 'Entrega Contestada',
+            message: `A marca contestou sua entrega. Revise os comentários.`,
+            icon: AlertCircle,
+            color: 'text-red-600',
+            timestamp: del.contested_at || del.created_date,
+            read: false,
+            actionUrl: createPageUrl('Deliveries')
+          });
+        });
+      }
+
+      // Sort by timestamp, newest first
+      notificationsList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      setNotifications(notificationsList);
+      setUnreadCount(notificationsList.filter(n => !n.read).length);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markAsRead = (notificationId) => {
+    setNotifications(prev =>
+      prev.map(n =>
+        n.id === notificationId ? { ...n, read: true } : n
+      )
+    );
+    setUnreadCount(prev => Math.max(0, prev - 1));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev =>
+      prev.map(n => ({ ...n, read: true }))
+    );
+    setUnreadCount(0);
+  };
+
+  const dismissNotification = (notificationId) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    setUnreadCount(prev => Math.max(0, prev - 1));
+  };
+
+  const handleNotificationClick = (notification) => {
+    markAsRead(notification.id);
+  };
 
   return (
     <DropdownMenu>
@@ -31,66 +187,95 @@ export default function NotificationDropdown() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative hover:bg-slate-100 hover:shadow-sm transition-all"
-          aria-label="Notificações"
+          className="relative hover:bg-slate-100 transition-all"
         >
           <Bell className="w-5 h-5 text-slate-700" />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white shadow-sm"></span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white"></span>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
-        <div className="px-4 py-3 border-b border-slate-100">
+
+      <DropdownMenuContent align="end" className="w-96 max-h-96 overflow-y-auto">
+        <div className="p-4 border-b border-slate-200">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-slate-900">Notificações</h3>
             {unreadCount > 0 && (
-              <Badge variant="secondary" className="bg-orange-100 text-orange-700 border-0">
-                {unreadCount} nova{unreadCount > 1 ? 's' : ''}
-              </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={markAllAsRead}
+                className="text-xs text-blue-600 hover:text-blue-700"
+              >
+                Marcar tudo como lido
+              </Button>
             )}
           </div>
         </div>
 
-        <div className="max-h-[400px] overflow-y-auto">
-          {notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <DropdownMenuItem 
-                key={notification.id}
-                className="px-4 py-3 cursor-pointer focus:bg-slate-50"
-              >
-                <div className="flex gap-3 w-full">
-                  <div className={`w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0`}>
-                    <notification.icon className={`w-5 h-5 ${notification.color}`} />
+        {loading ? (
+          <div className="p-8 text-center text-slate-500">
+            <div className="w-6 h-6 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin mx-auto"></div>
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className="p-8 text-center text-slate-500">
+            <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Nenhuma notificação no momento</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-200">
+            {notifications.map((notification) => {
+              const Icon = notification.icon;
+              return (
+                <Link
+                  key={notification.id}
+                  to={notification.actionUrl}
+                  className={`block p-4 hover:bg-slate-50 cursor-pointer transition-colors ${
+                    !notification.read ? 'bg-blue-50/50' : ''
+                  }`}
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <div className="flex gap-3">
+                    <div className={`flex-shrink-0 w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center ${notification.color}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="font-medium text-slate-900 text-sm">
+                            {notification.title}
+                            {!notification.read && (
+                              <span className="ml-2 w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                            )}
+                          </p>
+                          <p className="text-sm text-slate-600 mt-1">
+                            {notification.message}
+                          </p>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            dismissNotification(notification.id);
+                          }}
+                          className="text-slate-400 hover:text-slate-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-2">
+                        {new Date(notification.timestamp).toLocaleDateString('pt-BR', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
-                      {notification.title}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      {notification.description}
-                    </p>
-                  </div>
-                  {notification.unread && (
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0 mt-2"></div>
-                  )}
-                </div>
-              </DropdownMenuItem>
-            ))
-          ) : (
-            <div className="px-4 py-8 text-center">
-              <Bell className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-sm text-slate-500">Nenhuma notificação</p>
-            </div>
-          )}
-        </div>
-
-        <DropdownMenuSeparator />
-        <div className="px-4 py-2">
-          <Button variant="ghost" size="sm" className="w-full text-xs text-slate-600 hover:text-slate-900">
-            Marcar todas como lidas
-          </Button>
-        </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
