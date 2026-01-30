@@ -343,10 +343,12 @@ export default function Home() {
             Junte-se a centenas de marcas e criadores que já estão transformando suas relações profissionais
           </p>
 
-          <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100">
-            Começar Agora
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
+          <Link to={createPageUrl('SelectProfile')}>
+            <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100">
+              Começar Agora
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </Link>
         </div>
       </section>
 
