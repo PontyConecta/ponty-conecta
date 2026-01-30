@@ -45,11 +45,11 @@ export default function Home() {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white">
+                <Button size="lg" variant="outline" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50">
                   Sou uma Marca
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
+                <Button size="lg" variant="outline" className="border-2 border-orange-500 text-orange-500 hover:bg-orange-50">
                   Sou Criador
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
