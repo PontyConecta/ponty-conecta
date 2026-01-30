@@ -22,11 +22,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-gradient-to-br from-white via-purple-50 to-orange-50 overflow-hidden">
+      <section className="relative min-h-[75vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-gradient-to-br from-white via-purple-50 to-orange-50 overflow-hidden">
         <div className="max-w-7xl w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Hero Text */}
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-6 lg:gap-8">
               {/* Badge */}
               <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full w-fit text-sm font-semibold">
                 <Zap className="w-4 h-4 animate-pulse" />
@@ -57,7 +57,7 @@ export default function Home() {
             </div>
 
             {/* Hero Visual */}
-            <div className="relative h-96 sm:h-[500px] lg:h-[600px] flex items-center justify-center">
+            <div className="relative h-[400px] sm:h-[450px] lg:h-[500px] flex items-center justify-center">
               <div className="relative w-full h-full">
                 {/* Abstract Background Shapes */}
                 <div className="absolute inset-0 overflow-hidden rounded-3xl">
@@ -352,13 +352,13 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-8 mb-12">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 items-center">
+            <div className="text-center md:text-left">
               <h3 className="font-bold text-lg mb-2">Ponty</h3>
               <p className="text-gray-400 text-sm">A ponte profissional entre marcas e criadores</p>
             </div>
 
-            <div className="flex gap-8">
+            <div className="flex justify-center gap-8">
               <a href="#" className="text-gray-400 hover:text-white transition text-sm">
                 Contato Suporte
               </a>
@@ -366,10 +366,10 @@ export default function Home() {
                 Instagram
               </a>
             </div>
-          </div>
 
-          <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2024 Ponty Conecta. Todos os direitos reservados.</p>
+            <div className="text-center md:text-right text-sm text-gray-400">
+              <p>&copy; 2024 Ponty Conecta</p>
+            </div>
           </div>
         </div>
       </footer>
