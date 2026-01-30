@@ -61,6 +61,7 @@ import Deliveries from './pages/Deliveries';
 import DeliveriesManager from './pages/DeliveriesManager';
 import DiscoverBrands from './pages/DiscoverBrands';
 import DiscoverCreators from './pages/DiscoverCreators';
+import Home from './pages/Home';
 import MyApplications from './pages/MyApplications';
 import MyDeliveries from './pages/MyDeliveries';
 import OnboardingBrand from './pages/OnboardingBrand';
@@ -70,7 +71,6 @@ import Profile from './pages/Profile';
 import SelectProfile from './pages/SelectProfile';
 import Subscription from './pages/Subscription';
 import SubscriptionPage from './pages/SubscriptionPage';
-import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
@@ -89,6 +89,7 @@ export const PAGES = {
     "DeliveriesManager": DeliveriesManager,
     "DiscoverBrands": DiscoverBrands,
     "DiscoverCreators": DiscoverCreators,
+    "Home": Home,
     "MyApplications": MyApplications,
     "MyDeliveries": MyDeliveries,
     "OnboardingBrand": OnboardingBrand,
@@ -98,7 +99,6 @@ export const PAGES = {
     "SelectProfile": SelectProfile,
     "Subscription": Subscription,
     "SubscriptionPage": SubscriptionPage,
-    "Home": Home,
 }
 
 export const pagesConfig = {
