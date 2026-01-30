@@ -258,10 +258,12 @@ export default function Home() {
                         ))}
                       </div>
 
-                      <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white w-full">
-                        Começar como Criador
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                      </Button>
+                      <Link to={createPageUrl('OnboardingCreator')} className="block w-full">
+                        <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white w-full">
+                          Começar como Criador
+                          <ArrowRight className="w-5 h-5 ml-2" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </div>
