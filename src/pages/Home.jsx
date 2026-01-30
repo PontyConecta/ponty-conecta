@@ -75,42 +75,6 @@ export default function Home() {
                     }}
                   ></div>
                 </div>
-
-                {/* Floating Icons */}
-                <div className="relative w-full h-full flex items-center justify-center">
-                  <div className="relative w-full max-w-md h-full flex items-center justify-center">
-                    {/* Left Icon - Brands */}
-                    <div className="absolute left-8 top-1/3 -translate-y-1/2"
-                      style={{
-                        animation: 'float 4s ease-in-out infinite',
-                        animationDelay: '0s'
-                      }}>
-                      <div className="bg-white rounded-2xl p-6 shadow-xl">
-                        <Shield className="w-16 h-16 text-purple-600" />
-                      </div>
-                    </div>
-
-                    {/* Right Icon - Creators */}
-                    <div className="absolute right-8 bottom-1/3 translate-y-1/2"
-                      style={{
-                        animation: 'float 4s ease-in-out infinite',
-                        animationDelay: '2s'
-                      }}>
-                      <div className="bg-white rounded-2xl p-6 shadow-xl">
-                        <Users className="w-16 h-16 text-orange-500" />
-                      </div>
-                    </div>
-
-                    {/* Center Connection Icon */}
-                    <div className="bg-gradient-to-br from-purple-600 to-orange-500 rounded-full p-8 shadow-2xl"
-                      style={{
-                        animation: 'float 4s ease-in-out infinite',
-                        animationDelay: '1s'
-                      }}>
-                      <Zap className="w-20 h-20 text-white animate-pulse" />
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -171,7 +135,7 @@ export default function Home() {
             {/* Brands Tab */}
             <TabsContent value="brands" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[500px] rounded-3xl overflow-hidden">
+                <div className="relative h-[600px] rounded-3xl overflow-hidden">
                   {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-purple-50"></div>
 
@@ -180,7 +144,7 @@ export default function Home() {
                   <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-purple-500/15 to-violet-400/15 rounded-full blur-2xl"></div>
 
                   {/* Content */}
-                  <div className="relative h-full flex items-center justify-center p-8 lg:p-12">
+                  <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
                     <div className="space-y-8 max-w-md">
                       <div className="text-center">
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
@@ -240,7 +204,7 @@ export default function Home() {
             {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[500px] rounded-3xl overflow-hidden">
+                <div className="relative h-[600px] rounded-3xl overflow-hidden">
                   {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50"></div>
 
@@ -249,7 +213,7 @@ export default function Home() {
                   <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-orange-500/15 to-yellow-400/15 rounded-full blur-2xl"></div>
 
                   {/* Content */}
-                  <div className="relative h-full flex items-center justify-center p-8 lg:p-12">
+                  <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
                     <div className="space-y-8 max-w-md">
                       <div className="text-center">
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
@@ -388,28 +352,19 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-8 mb-12">
             <div>
-              <h3 className="font-bold text-lg mb-4">Ponty</h3>
+              <h3 className="font-bold text-lg mb-2">Ponty</h3>
               <p className="text-gray-400 text-sm">A ponte profissional entre marcas e criadores</p>
             </div>
 
-            <div>
-              <h3 className="font-bold text-lg mb-4">Suporte</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Central de Ajuda</a></li>
-                <li><a href="#" className="hover:text-white transition">Contato</a></li>
-                <li><a href="#" className="hover:text-white transition">FAQ</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-lg mb-4">Redes Sociais</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">LinkedIn</a></li>
-                <li><a href="#" className="hover:text-white transition">Instagram</a></li>
-                <li><a href="#" className="hover:text-white transition">Twitter</a></li>
-              </ul>
+            <div className="flex gap-8">
+              <a href="#" className="text-gray-400 hover:text-white transition text-sm">
+                Contato Suporte
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition text-sm">
+                Instagram
+              </a>
             </div>
           </div>
 
