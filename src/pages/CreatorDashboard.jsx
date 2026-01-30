@@ -119,9 +119,12 @@ export default function CreatorDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">
-            Olá, {creator?.display_name?.split(' ')[0]} ✨
+            Bem-vindo, {creator?.display_name?.split(' ')[0]} ✨
           </h1>
           <p className="text-slate-600 mt-1">
+            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
+          </p>
+          <p className="text-sm text-slate-500 mt-0.5">
             {isExploring 
               ? 'Você está no modo exploração. Assine para se candidatar.'
               : 'Confira novas oportunidades e suas entregas'}
