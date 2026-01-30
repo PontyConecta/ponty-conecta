@@ -64,6 +64,8 @@ import OpportunityFeed from './pages/OpportunityFeed';
 import Profile from './pages/Profile';
 import SelectProfile from './pages/SelectProfile';
 import Subscription from './pages/Subscription';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminUsers from './pages/AdminUsers';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +87,8 @@ export const PAGES = {
     "Profile": Profile,
     "SelectProfile": SelectProfile,
     "Subscription": Subscription,
+    "AdminDashboard": AdminDashboard,
+    "AdminUsers": AdminUsers,
 }
 
 export const pagesConfig = {
