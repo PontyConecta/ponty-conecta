@@ -141,25 +141,6 @@ function LayoutContent({ children, currentPageName }) {
             <span className="text-lg lg:text-xl font-semibold text-slate-900 hidden sm:block">Ponty</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.page}
-                to={createPageUrl(item.page)}
-                className={`
-                  flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                  ${currentPageName === item.page 
-                    ? 'bg-indigo-50 text-indigo-700' 
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}
-                `}
-              >
-                <item.icon className="w-4 h-4" />
-                {item.name}
-              </Link>
-            ))}
-            </nav>
-
           {/* Right Section */}
           <div className="flex items-center gap-2 lg:gap-3">
             {!isSubscribed && (
