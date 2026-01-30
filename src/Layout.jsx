@@ -139,11 +139,11 @@ function LayoutContent({ children, currentPageName }) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
           {/* Logo */}
-          <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2">
-            <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
+            <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <span className="text-white font-bold text-base lg:text-lg">P</span>
             </div>
-            <span className="text-lg lg:text-xl font-semibold text-slate-900 hidden sm:block">Ponty</span>
+            <span className="text-lg lg:text-xl font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent hidden sm:block">Ponty</span>
           </Link>
 
           {/* Right Section */}
@@ -227,7 +227,7 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-8 min-h-screen">
+      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-8 min-h-screen bg-gradient-to-br from-slate-50/50 via-white to-indigo-50/20">
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">
           {children}
         </div>

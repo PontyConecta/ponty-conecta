@@ -79,9 +79,9 @@ export default function CreatorCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all group border-slate-200">
+    <Card className="overflow-hidden hover:shadow-2xl hover:border-orange-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
       {/* Cover Image */}
-      <div className="h-24 bg-gradient-to-r from-orange-400 to-amber-400 relative">
+      <div className="h-24 bg-gradient-to-r from-orange-500 to-amber-500 relative">
         {creator.cover_image_url && (
           <img 
             src={creator.cover_image_url} 
@@ -100,9 +100,9 @@ export default function CreatorCard({
       <CardContent className="pt-0 -mt-10 relative">
         {/* Avatar */}
         <div className="flex justify-between items-end mb-4">
-          <Avatar className="w-20 h-20 border-4 border-white shadow-lg">
+          <Avatar className="w-20 h-20 border-4 border-white shadow-xl ring-2 ring-orange-100 group-hover:ring-orange-200 transition-all">
             <AvatarImage src={creator.avatar_url} />
-            <AvatarFallback className="bg-orange-100 text-orange-700 text-2xl">
+            <AvatarFallback className="bg-gradient-to-br from-orange-500 to-amber-500 text-white text-2xl">
               {creator.display_name?.[0]}
             </AvatarFallback>
           </Avatar>
@@ -186,7 +186,7 @@ export default function CreatorCard({
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 border-slate-300 hover:bg-slate-100 hover:border-slate-400 transition-colors"
+              className="flex-1 border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
               onClick={onViewProfile}
             >
               <Eye className="w-4 h-4 mr-1" />
@@ -195,7 +195,7 @@ export default function CreatorCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all"
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg hover:shadow-xl transition-all"
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />
@@ -205,7 +205,7 @@ export default function CreatorCard({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="flex-1 border-slate-300 text-slate-500 cursor-not-allowed"
+                className="flex-1 border-orange-200 text-orange-600 bg-orange-50 cursor-not-allowed"
                 disabled
               >
                 <Lock className="w-4 h-4 mr-1" />

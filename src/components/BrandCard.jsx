@@ -70,9 +70,9 @@ export default function BrandCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-xl hover:border-indigo-200 transition-all group border-slate-200">
+    <Card className="overflow-hidden hover:shadow-2xl hover:border-indigo-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
       {/* Cover Image */}
-      <div className="h-24 bg-gradient-to-r from-indigo-500 to-violet-500 relative">
+      <div className="h-24 bg-gradient-to-r from-indigo-600 to-violet-600 relative">
         {brand.cover_image_url && (
           <img 
             src={brand.cover_image_url} 
@@ -89,11 +89,11 @@ export default function BrandCard({
             <img 
               src={brand.logo_url} 
               alt={brand.company_name} 
-              className="w-20 h-20 rounded-xl border-4 border-white shadow-lg object-cover bg-white"
+              className="w-20 h-20 rounded-xl border-4 border-white shadow-xl ring-2 ring-indigo-100 group-hover:ring-indigo-200 transition-all object-cover bg-white"
             />
           ) : (
-            <div className="w-20 h-20 rounded-xl border-4 border-white shadow-lg bg-indigo-100 flex items-center justify-center">
-              <Building2 className="w-10 h-10 text-indigo-600" />
+            <div className="w-20 h-20 rounded-xl border-4 border-white shadow-xl ring-2 ring-indigo-100 group-hover:ring-indigo-200 transition-all bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+              <Building2 className="w-10 h-10 text-white" />
             </div>
           )}
           {brand.industry && (
@@ -160,7 +160,7 @@ export default function BrandCard({
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 border-slate-300 hover:bg-slate-100 hover:border-slate-400 transition-colors"
+              className="flex-1 border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
               onClick={onViewProfile}
             >
               <Eye className="w-4 h-4 mr-1" />
@@ -169,7 +169,7 @@ export default function BrandCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all"
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg hover:shadow-xl transition-all"
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />
@@ -179,7 +179,7 @@ export default function BrandCard({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="flex-1 border-slate-300 text-slate-500 cursor-not-allowed"
+                className="flex-1 border-indigo-200 text-indigo-600 bg-indigo-50 cursor-not-allowed"
                 disabled
               >
                 <Lock className="w-4 h-4 mr-1" />

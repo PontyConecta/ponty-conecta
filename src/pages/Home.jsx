@@ -80,15 +80,15 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-slate-200/50 shadow-sm">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-slate-200/50 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div className="flex items-center gap-2 group cursor-pointer">
+              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-lg lg:text-xl">P</span>
               </div>
-              <span className="text-xl lg:text-2xl font-semibold text-slate-900">Ponty</span>
-              <Badge variant="outline" className="ml-2 text-xs font-normal hidden sm:inline-flex">Conecta</Badge>
+              <span className="text-xl lg:text-2xl font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Ponty</span>
+              <Badge variant="outline" className="ml-2 text-xs font-normal hidden sm:inline-flex border-indigo-200 text-indigo-700">Conecta</Badge>
             </div>
             
             <div className="flex items-center gap-2 lg:gap-4">
@@ -100,10 +100,10 @@ export default function Home() {
                   </Button>
                 ) : (
                   <>
-                    <Button variant="ghost" onClick={() => base44.auth.redirectToLogin()} className="h-9 text-sm">
+                    <Button variant="ghost" onClick={() => base44.auth.redirectToLogin()} className="h-9 text-sm hover:bg-indigo-50 hover:text-indigo-700">
                       Entrar
                     </Button>
-                    <Button onClick={handleGetStarted} className="bg-indigo-600 hover:bg-indigo-700 h-9 lg:h-10 text-sm lg:text-base">
+                    <Button onClick={handleGetStarted} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 h-9 lg:h-10 text-sm lg:text-base shadow-lg hover:shadow-xl transition-all">
                       <span className="hidden sm:inline">Começar</span>
                       <span className="sm:hidden">Criar</span>
                     </Button>
@@ -129,8 +129,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Badge className="bg-white/80 backdrop-blur-sm text-indigo-700 border border-indigo-200/50 px-4 py-2 text-sm font-medium mb-8 shadow-lg shadow-indigo-500/10">
-                <Zap className="w-4 h-4 mr-2" />
+              <Badge className="bg-white/90 backdrop-blur-sm text-indigo-700 border border-indigo-200/50 px-4 py-2 text-sm font-medium mb-8 shadow-xl hover:shadow-2xl hover:scale-105 transition-all">
+                <Zap className="w-4 h-4 mr-2 text-orange-500" />
                 Mediação Profissional de Última Geração
               </Badge>
               
@@ -154,7 +154,7 @@ export default function Home() {
                 <Button 
                   size="lg" 
                   onClick={handleGetStarted}
-                  className="rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-lg h-14 lg:h-16 px-8 lg:px-10 shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-all"
+                  className="rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-lg h-14 lg:h-16 px-8 lg:px-10 shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-105 transition-all"
                 >
                   <Building2 className="w-5 h-5 mr-2" />
                   Sou uma Marca
@@ -162,7 +162,7 @@ export default function Home() {
                 <Button 
                   size="lg" 
                   onClick={handleGetStarted}
-                  className="rounded-full bg-white hover:bg-slate-50 text-slate-900 text-lg h-14 lg:h-16 px-8 lg:px-10 border-2 border-slate-200 shadow-xl hover:shadow-2xl transition-all"
+                  className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-lg h-14 lg:h-16 px-8 lg:px-10 shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 transition-all"
                 >
                   <Star className="w-5 h-5 mr-2" />
                   Sou Criador
@@ -223,8 +223,8 @@ export default function Home() {
             className="mt-24 lg:mt-32 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
           >
             {stats.map((stat, index) => (
-              <div key={index} className="text-center p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-200/50 shadow-lg hover:shadow-xl transition-all">
-                <div className="text-3xl lg:text-5xl font-bold text-slate-900 mb-2 bg-gradient-to-br from-slate-900 to-slate-600 bg-clip-text text-transparent">{stat.value}</div>
+              <div key={index} className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 shadow-xl hover:shadow-2xl hover:scale-105 transition-all">
+                <div className="text-3xl lg:text-5xl font-bold text-slate-900 mb-2 bg-gradient-to-br from-indigo-600 to-violet-600 bg-clip-text text-transparent">{stat.value}</div>
                 <div className="text-sm lg:text-base text-slate-600 font-medium">{stat.label}</div>
               </div>
             ))}
@@ -256,7 +256,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="relative group"
             >
-              <div className="relative bg-white rounded-3xl p-10 lg:p-12 border border-slate-200 shadow-xl hover:shadow-2xl transition-all duration-300 h-full overflow-hidden">
+              <div className="relative bg-white rounded-3xl p-10 lg:p-12 border-2 border-slate-200 shadow-xl hover:shadow-2xl hover:border-indigo-300 hover:scale-[1.02] transition-all duration-300 h-full overflow-hidden">
                 {/* Gradient overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
@@ -304,7 +304,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="relative group"
             >
-              <div className="relative bg-white rounded-3xl p-10 lg:p-12 border border-slate-200 shadow-xl hover:shadow-2xl transition-all duration-300 h-full overflow-hidden">
+              <div className="relative bg-white rounded-3xl p-10 lg:p-12 border-2 border-slate-200 shadow-xl hover:shadow-2xl hover:border-orange-300 hover:scale-[1.02] transition-all duration-300 h-full overflow-hidden">
                 {/* Gradient overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
