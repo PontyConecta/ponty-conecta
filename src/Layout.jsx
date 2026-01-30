@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { AuthProvider, useAuth } from '@/auth/AuthContext';
+import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import BottomNav from '@/components/BottomNav';
