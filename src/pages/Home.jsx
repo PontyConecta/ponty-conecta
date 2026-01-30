@@ -49,7 +49,7 @@ export default function Home() {
                   Sou uma Marca
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-orange-500 text-orange-500 hover:bg-orange-50">
+                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
                   Sou Criador
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
