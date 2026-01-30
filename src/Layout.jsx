@@ -6,6 +6,7 @@ import { SubscriptionProvider, useSubscription } from '@/components/contexts/Sub
 import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
+import AdminMenu from '@/components/AdminMenu';
 import { Toaster } from 'sonner';
 import { 
   LayoutDashboard, 
@@ -21,8 +22,7 @@ import {
   Bell,
   ChevronDown,
   Search,
-  Building2,
-  Shield
+  Building2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
@@ -94,24 +94,16 @@ function LayoutContent({ children, currentPageName }) {
     { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
-    { name: 'Candidaturas', page: 'ApplicationsManager', icon: Users },
-    { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
+    { name: 'Candidaturas', page: 'Applications', icon: Users },
+    { name: 'Entregas', page: 'Deliveries', icon: FileText },
   ];
 
   const creatorNavItems = [
     { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
     { name: 'Marcas', page: 'DiscoverBrands', icon: Building2 },
-    { name: 'Candidaturas', page: 'MyApplications', icon: FileText },
-    { name: 'Entregas', page: 'MyDeliveries', icon: FileText },
-  ];
-
-  const adminNavItems = [
-    { name: 'Dashboard', page: 'AdminDashboard', icon: LayoutDashboard },
-    { name: 'Usuários', page: 'AdminUsers', icon: Users },
-    { name: 'Campanhas', page: 'AdminCampaigns', icon: Megaphone },
-    { name: 'Disputas', page: 'AdminDisputes', icon: Shield },
-    { name: 'Audit Logs', page: 'AdminAuditLogs', icon: FileText },
+    { name: 'Candidaturas', page: 'Applications', icon: FileText },
+    { name: 'Entregas', page: 'Deliveries', icon: FileText },
   ];
 
   const navItems = profileType === 'brand' ? brandNavItems : creatorNavItems;
@@ -166,22 +158,7 @@ function LayoutContent({ children, currentPageName }) {
                 {item.name}
               </Link>
             ))}
-            {isAdmin && adminNavItems.map((item) => (
-              <Link
-                key={item.page}
-                to={createPageUrl(item.page)}
-                className={`
-                  flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                  ${currentPageName === item.page 
-                    ? 'bg-red-50 text-red-700' 
-                    : 'text-red-600 hover:bg-red-50'}
-                `}
-              >
-                <item.icon className="w-4 h-4" />
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+            </nav>
 
           {/* Right Section */}
           <div className="flex items-center gap-2 lg:gap-3">
@@ -196,6 +173,8 @@ function LayoutContent({ children, currentPageName }) {
             )}
 
             <NotificationDropdown />
+
+            {isAdmin && <AdminMenu currentPageName={currentPageName} />}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
