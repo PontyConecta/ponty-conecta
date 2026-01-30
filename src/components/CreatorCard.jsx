@@ -41,7 +41,7 @@ export default function CreatorCard({
 
   if (compact) {
     return (
-      <Card className="hover:shadow-md transition-all cursor-pointer group" onClick={onViewProfile}>
+      <Card className="hover:shadow-lg hover:border-orange-200 transition-all cursor-pointer group border-slate-200" onClick={onViewProfile}>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12">
@@ -79,7 +79,7 @@ export default function CreatorCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all group">
+    <Card className="overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all group border-slate-200">
       {/* Cover Image */}
       <div className="h-24 bg-gradient-to-r from-orange-400 to-amber-400 relative">
         {creator.cover_image_url && (
@@ -173,7 +173,7 @@ export default function CreatorCard({
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1"
+              className="flex-1 border-slate-300 hover:bg-slate-100 hover:border-slate-400 transition-colors"
               onClick={onViewProfile}
             >
               <Eye className="w-4 h-4 mr-1" />
@@ -182,7 +182,7 @@ export default function CreatorCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all"
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />
@@ -192,7 +192,7 @@ export default function CreatorCard({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="flex-1"
+                className="flex-1 border-slate-300 text-slate-500 cursor-not-allowed"
                 disabled
               >
                 <Lock className="w-4 h-4 mr-1" />

@@ -4,6 +4,8 @@ import { createPageUrl } from './utils';
 import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
 import BottomNav from '@/components/BottomNav';
+import Sidebar from '@/components/Sidebar';
+import NotificationDropdown from '@/components/NotificationDropdown';
 import { Toaster } from 'sonner';
 import { 
   LayoutDashboard, 
@@ -114,7 +116,7 @@ function LayoutContent({ children, currentPageName }) {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
+    <div className="min-h-screen bg-slate-50">
       <Toaster position="top-right" richColors closeButton />
       <style>{`
         :root {
@@ -133,7 +135,7 @@ function LayoutContent({ children, currentPageName }) {
       `}</style>
 
       {/* Top Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/60">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
           {/* Logo */}
           <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2">
@@ -189,10 +191,9 @@ function LayoutContent({ children, currentPageName }) {
               </Link>
             )}
 
-            <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors relative hidden lg:flex">
-              <Bell className="w-5 h-5 text-slate-600" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full"></span>
-            </button>
+            <div className="hidden lg:block">
+              <NotificationDropdown />
+            </div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -245,8 +246,15 @@ function LayoutContent({ children, currentPageName }) {
         </div>
       </header>
 
+      {/* Sidebar Navigation - Desktop */}
+      <Sidebar 
+        profileType={profileType} 
+        currentPageName={currentPageName}
+        isSubscribed={isSubscribed}
+      />
+
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 pb-20 lg:pb-8 min-h-screen">
+      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-8 min-h-screen">
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">
           {children}
         </div>
