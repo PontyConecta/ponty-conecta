@@ -58,39 +58,57 @@ export default function Home() {
 
             {/* Hero Visual */}
             <div className="relative h-96 sm:h-[500px] lg:h-[600px] flex items-center justify-center">
-              <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-600 via-indigo-600 to-orange-500 p-12 flex items-center justify-center"
-                style={{
-                  transform: `translateY(${scrollY * 0.3}px)`,
-                  transition: 'transform 0.1s ease-out'
-                }}>
-                <div className="grid grid-cols-2 gap-8 w-full max-w-md">
-                  {/* Brand Side */}
-                  <div className="space-y-4">
-                    <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-white">
-                      <Shield className="w-12 h-12 mb-3" />
-                      <div className="text-sm font-semibold">Brands</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-white/80 text-xs">
-                      <TrendingUp className="w-8 h-8" />
-                    </div>
-                  </div>
-                  
-                  {/* Connection */}
-                  <div className="space-y-4">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-white/80 text-xs">
-                      <Sparkles className="w-8 h-8" />
-                    </div>
-                    <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-white">
-                      <Users className="w-12 h-12 mb-3" />
-                      <div className="text-sm font-semibold">Creators</div>
-                    </div>
-                  </div>
+              <div className="relative w-full h-full">
+                {/* Abstract Background Shapes */}
+                <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                  <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-400/30 to-indigo-500/20 rounded-full blur-3xl animate-pulse"
+                    style={{
+                      transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.2}px)`,
+                      transition: 'transform 0.1s ease-out'
+                    }}
+                  ></div>
+                  <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-orange-400/30 to-amber-500/20 rounded-full blur-3xl animate-pulse"
+                    style={{
+                      transform: `translate(-${scrollY * 0.15}px, -${scrollY * 0.1}px)`,
+                      transition: 'transform 0.1s ease-out',
+                      animationDelay: '1s'
+                    }}
+                  ></div>
                 </div>
-                
-                {/* Center Connection */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <div className="bg-white rounded-full p-6 shadow-2xl">
-                    <Zap className="w-12 h-12 text-purple-600 animate-pulse" />
+
+                {/* Floating Icons */}
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <div className="relative w-full max-w-md h-full flex items-center justify-center">
+                    {/* Left Icon - Brands */}
+                    <div className="absolute left-8 top-1/3 -translate-y-1/2"
+                      style={{
+                        animation: 'float 4s ease-in-out infinite',
+                        animationDelay: '0s'
+                      }}>
+                      <div className="bg-white rounded-2xl p-6 shadow-xl">
+                        <Shield className="w-16 h-16 text-purple-600" />
+                      </div>
+                    </div>
+
+                    {/* Right Icon - Creators */}
+                    <div className="absolute right-8 bottom-1/3 translate-y-1/2"
+                      style={{
+                        animation: 'float 4s ease-in-out infinite',
+                        animationDelay: '2s'
+                      }}>
+                      <div className="bg-white rounded-2xl p-6 shadow-xl">
+                        <Users className="w-16 h-16 text-orange-500" />
+                      </div>
+                    </div>
+
+                    {/* Center Connection Icon */}
+                    <div className="bg-gradient-to-br from-purple-600 to-orange-500 rounded-full p-8 shadow-2xl"
+                      style={{
+                        animation: 'float 4s ease-in-out infinite',
+                        animationDelay: '1s'
+                      }}>
+                      <Zap className="w-20 h-20 text-white animate-pulse" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -151,33 +169,23 @@ export default function Home() {
             {/* Brands Tab */}
             <TabsContent value="brands" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-2xl group bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 p-12">
-                  <div className="relative h-full flex flex-col justify-between">
-                    <div className="space-y-6">
-                      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                        <Shield className="w-16 h-16 text-white" />
+                <div className="relative h-[450px] rounded-3xl overflow-hidden">
+                  {/* Abstract gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-purple-50"></div>
+                  
+                  {/* Floating shapes */}
+                  <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-2xl"></div>
+                  <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-purple-500/15 to-violet-400/15 rounded-full blur-2xl"></div>
+                  
+                  {/* Content */}
+                  <div className="relative h-full flex items-center justify-center p-12">
+                    <div className="text-center space-y-6">
+                      <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl shadow-lg">
+                        <Shield className="w-12 h-12 text-purple-600" />
                       </div>
-                      <div className="space-y-3">
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 w-3/4">
-                          <div className="h-3 bg-white/30 rounded"></div>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 w-full">
-                          <div className="h-3 bg-white/30 rounded"></div>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 w-2/3">
-                          <div className="h-3 bg-white/30 rounded"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex-1">
-                        <TrendingUp className="w-6 h-6 text-white/80" />
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex-1">
-                        <Users className="w-6 h-6 text-white/80" />
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex-1">
-                        <CheckCircle className="w-6 h-6 text-white/80" />
+                      <div className="space-y-2">
+                        <h4 className="text-2xl font-bold text-gray-900">Controle Total</h4>
+                        <p className="text-gray-600">Gerencie campanhas com precisão</p>
                       </div>
                     </div>
                   </div>
@@ -229,35 +237,23 @@ export default function Home() {
             {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-2xl group bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-600 p-12">
-                  <div className="relative h-full flex flex-col justify-between">
-                    <div className="space-y-6">
-                      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                        <Sparkles className="w-16 h-16 text-white" />
+                <div className="relative h-[450px] rounded-3xl overflow-hidden">
+                  {/* Abstract gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50"></div>
+                  
+                  {/* Floating shapes */}
+                  <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-full blur-2xl"></div>
+                  <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-orange-500/15 to-yellow-400/15 rounded-full blur-2xl"></div>
+                  
+                  {/* Content */}
+                  <div className="relative h-full flex items-center justify-center p-12">
+                    <div className="text-center space-y-6">
+                      <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl shadow-lg">
+                        <Sparkles className="w-12 h-12 text-orange-500" />
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                          <div className="text-2xl font-bold text-white mb-1">2.5K+</div>
-                          <div className="text-xs text-white/70">Criadores</div>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                          <div className="text-2xl font-bold text-white mb-1">500+</div>
-                          <div className="text-xs text-white/70">Campanhas</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
-                        <CheckCircle className="w-8 h-8 text-white mx-auto mb-2" />
-                        <div className="text-xs text-white/80">Verificado</div>
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
-                        <TrendingUp className="w-8 h-8 text-white mx-auto mb-2" />
-                        <div className="text-xs text-white/80">Crescendo</div>
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
-                        <Sparkles className="w-8 h-8 text-white mx-auto mb-2" />
-                        <div className="text-xs text-white/80">Premium</div>
+                      <div className="space-y-2">
+                        <h4 className="text-2xl font-bold text-gray-900">Oportunidades</h4>
+                        <p className="text-gray-600">Cresça sua carreira com clareza</p>
                       </div>
                     </div>
                   </div>
