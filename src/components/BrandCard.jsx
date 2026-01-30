@@ -114,7 +114,7 @@ export default function BrandCard({
                 <CheckCircle2 className="w-5 h-5 text-blue-500" />
               )}
             </div>
-            {brand.website && (
+            {brand.website && isSubscribed && (
               <a 
                 href={brand.website} 
                 target="_blank" 
@@ -124,6 +124,17 @@ export default function BrandCard({
               >
                 <Globe className="w-3 h-3" />
                 Website
+              </a>
+            )}
+            {brand.social_instagram && isSubscribed && (
+              <a 
+                href={`https://instagram.com/${brand.social_instagram.replace('@', '')}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-pink-600 hover:underline flex items-center gap-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Instagram
               </a>
             )}
           </div>
