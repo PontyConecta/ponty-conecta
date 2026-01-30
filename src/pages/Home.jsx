@@ -48,13 +48,13 @@ export default function Home() {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to={createPageUrl('OnboardingBrand')}>
-                  <Button size="lg" variant="outline" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50 w-full sm:w-auto">
+                  <Button size="lg" className="bg-purple-600 text-white hover:bg-purple-700 w-full sm:w-auto sm:bg-white sm:text-purple-600 sm:border-2 sm:border-purple-600 sm:hover:bg-purple-50">
                     Sou uma Marca
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 <Link to={createPageUrl('OnboardingCreator')}>
-                  <Button size="lg" variant="outline" className="border-2 border-orange-500 text-orange-500 hover:bg-orange-50 w-full sm:w-auto">
+                  <Button size="lg" className="bg-orange-500 text-white hover:bg-orange-600 w-full sm:w-auto sm:bg-white sm:text-orange-500 sm:border-2 sm:border-orange-500 sm:hover:bg-orange-50">
                     Sou Criador
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
@@ -111,7 +111,7 @@ export default function Home() {
       </section>
 
       {/* Why Section */}
-      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="por-que-ponty" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
@@ -343,12 +343,16 @@ export default function Home() {
             Junte-se a centenas de marcas e criadores que já estão transformando suas relações profissionais
           </p>
 
-          <Link to={createPageUrl('SelectProfile')}>
-            <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100">
-              Começar Agora
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </Link>
+          <Button 
+            size="lg" 
+            className="bg-white text-purple-600 hover:bg-gray-100"
+            onClick={() => {
+              document.getElementById('por-que-ponty').scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Começar Agora
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
         </div>
       </section>
 
