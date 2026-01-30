@@ -191,9 +191,7 @@ function LayoutContent({ children, currentPageName }) {
               </Link>
             )}
 
-            <div className="hidden lg:block">
-              <NotificationDropdown />
-            </div>
+            <NotificationDropdown />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

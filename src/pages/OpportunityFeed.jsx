@@ -222,7 +222,7 @@ export default function OpportunityFeed() {
       )}
 
       {/* Filters */}
-      <Card>
+      <Card className="border-slate-200 shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
@@ -278,7 +278,7 @@ export default function OpportunityFeed() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="h-full hover:shadow-lg transition-all group cursor-pointer" onClick={() => openCampaignDetails(campaign)}>
+                <Card className="h-full hover:shadow-xl hover:border-orange-200 transition-all duration-300 group cursor-pointer border-slate-200" onClick={() => openCampaignDetails(campaign)}>
                   {/* Cover */}
                   {campaign.cover_image_url && (
                     <div className="h-32 overflow-hidden">
@@ -307,7 +307,7 @@ export default function OpportunityFeed() {
                     </div>
 
                     {/* Campaign Title & Description */}
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-orange-700 transition-colors">
                       {campaign.title}
                     </h3>
                     <p className="text-slate-600 text-sm line-clamp-2 mb-4 flex-1">
@@ -354,7 +354,7 @@ export default function OpportunityFeed() {
                       </div>
                       
                       {applied ? (
-                        <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                        <Badge className="bg-emerald-100 text-emerald-700 border-0 shadow-sm">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Candidatado
                         </Badge>
@@ -362,7 +362,7 @@ export default function OpportunityFeed() {
                         <Button
                           size="sm"
                           onClick={(e) => { e.stopPropagation(); openCampaignDetails(campaign); }}
-                          className="bg-orange-500 hover:bg-orange-600"
+                          className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm hover:shadow-md transition-all"
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           Ver

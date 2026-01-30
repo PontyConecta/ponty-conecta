@@ -31,12 +31,12 @@ export default function NotificationDropdown() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative hover:bg-slate-100 transition-colors"
+          className="relative hover:bg-slate-100 hover:shadow-sm transition-all"
           aria-label="Notificações"
         >
-          <Bell className="w-5 h-5 text-slate-600" />
+          <Bell className="w-5 h-5 text-slate-700" />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white"></span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white shadow-sm"></span>
           )}
         </Button>
       </DropdownMenuTrigger>
