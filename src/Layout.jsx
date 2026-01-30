@@ -22,7 +22,11 @@ import {
   Bell,
   ChevronDown,
   Search,
-  Building2
+  Building2,
+  User,
+  HelpCircle,
+  BarChart3,
+  Zap
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
@@ -169,8 +173,8 @@ function LayoutContent({ children, currentPageName }) {
                   <ChevronDown className="w-4 h-4 text-slate-400 hidden lg:block" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-3 py-2">
+              <DropdownMenuContent align="end" className="w-64">
+                <div className="px-3 py-2.5">
                   <p className="font-medium text-sm">{profile?.display_name || profile?.company_name || user?.full_name}</p>
                   <p className="text-xs text-slate-500">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-2">
@@ -186,21 +190,62 @@ function LayoutContent({ children, currentPageName }) {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="cursor-pointer">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={createPageUrl('Profile')} className="cursor-pointer">
+                    <User className="w-4 h-4 mr-2" />
+                    Meu Perfil
+                  </Link>
+                </DropdownMenuItem>
+                {profileType === 'brand' && (
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('CampaignManager')} className="cursor-pointer">
+                      <Megaphone className="w-4 h-4 mr-2" />
+                      Minhas Campanhas
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {profileType === 'creator' && (
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('OpportunityFeed')} className="cursor-pointer">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Oportunidades
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem asChild>
+                  <Link to={createPageUrl(profileType === 'brand' ? 'Applications' : 'Applications')} className="cursor-pointer">
+                    <Users className="w-4 h-4 mr-2" />
+                    Candidaturas
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={createPageUrl('Deliveries')} className="cursor-pointer">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Entregas
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to={createPageUrl('Subscription')} className="cursor-pointer">
+                    <Crown className="w-4 h-4 mr-2" />
+                    {isSubscribed ? 'Gerenciar Assinatura' : 'Assinar Premium'}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to={createPageUrl('Profile')} className="cursor-pointer">
                     <Settings className="w-4 h-4 mr-2" />
                     Configurações
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl('Subscription')} className="cursor-pointer">
-                    <Crown className="w-4 h-4 mr-2" />
-                    Assinatura
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
                   <LogOut className="w-4 h-4 mr-2" />
-                  Sair
+                  Sair da Conta
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
