@@ -80,7 +80,7 @@ export default function Home() {
           </div>
 
           {/* Benefits Cards */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-6xl px-4 z-10">
+          <div className="mt-12 w-full max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais' },
@@ -337,38 +337,34 @@ export default function Home() {
             Junte-se a centenas de marcas e criadores que já estão transformando suas relações profissionais
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100">
-              Começar Agora
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-            <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10">
-              Saber Mais
-            </Button>
-          </div>
+          <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100">
+            Começar Agora
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <footer className="bg-gray-900 text-white px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 items-center">
-            <div className="text-center md:text-left">
-              <h3 className="font-bold text-lg mb-2">Ponty</h3>
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-center">
+              <h3 className="font-bold text-xl mb-2">Ponty</h3>
               <p className="text-gray-400 text-sm">A ponte profissional entre marcas e criadores</p>
             </div>
 
-            <div className="flex justify-center gap-8">
-              <a href="#" className="text-gray-400 hover:text-white transition text-sm">
+            <div className="flex items-center gap-6">
+              <a href="#" className="text-gray-400 hover:text-white transition text-sm font-medium">
                 Contato Suporte
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition text-sm">
+              <span className="text-gray-700">•</span>
+              <a href="#" className="text-gray-400 hover:text-white transition text-sm font-medium">
                 Instagram
               </a>
             </div>
 
-            <div className="text-center md:text-right text-sm text-gray-400">
-              <p>&copy; 2024 Ponty Conecta</p>
+            <div className="text-center text-xs text-gray-500 border-t border-gray-800 pt-6 w-full">
+              <p>&copy; 2024 Ponty Conecta. Todos os direitos reservados.</p>
             </div>
           </div>
         </div>
