@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import BottomNav from '@/components/BottomNav';
+import { Toaster } from 'sonner';
 import { 
   LayoutDashboard, 
   Megaphone, 
@@ -32,48 +34,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 export default function Layout({ children, currentPageName }) {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [profileType, setProfileType] = useState(null);
+  const { user, profile, profileType, loading, logout } = useAuth();
+  const { isSubscribed } = useSubscription();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  const loadUserData = async () => {
-    try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const userData = await base44.auth.me();
-        setUser(userData);
-        
-        const [brands, creators] = await Promise.all([
-          base44.entities.Brand.filter({ user_id: userData.id }),
-          base44.entities.Creator.filter({ user_id: userData.id })
-        ]);
-        
-        if (brands.length > 0) {
-          setProfile(brands[0]);
-          setProfileType('brand');
-          setIsSubscribed(brands[0].subscription_status === 'active' || brands[0].account_state === 'active');
-        } else if (creators.length > 0) {
-          setProfile(creators[0]);
-          setProfileType('creator');
-          setIsSubscribed(creators[0].subscription_status === 'active' || creators[0].account_state === 'active');
-        }
-      }
-    } catch (error) {
-      console.error('Error loading user:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleLogout = () => {
-    base44.auth.logout('/');
+    logout('/');
   };
 
   // Public/Guest pages
@@ -149,6 +115,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-slate-50/50">
+      <Toaster position="top-right" richColors closeButton />
       <style>{`
         :root {
           --primary: 79 70 229;

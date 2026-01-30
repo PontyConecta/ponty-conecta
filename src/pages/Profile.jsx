@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
+import { toast } from '@/lib/toast';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,13 +43,11 @@ import {
 } from 'lucide-react';
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [profileType, setProfileType] = useState(null);
+  const { user, profile, profileType, refresh, updateProfile: updateAuthProfile, logout } = useAuth();
+  const { isSubscribed } = useSubscription();
   const [subscription, setSubscription] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [savedMessage, setSavedMessage] = useState(false);
   const [formData, setFormData] = useState({});
 
   // Creator-specific states
@@ -59,66 +60,56 @@ export default function Profile() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [profile]);
 
   const loadData = async () => {
+    if (!profile || !user) return;
+
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-
-      const [brands, creators, subscriptions] = await Promise.all([
-        base44.entities.Brand.filter({ user_id: userData.id }),
-        base44.entities.Creator.filter({ user_id: userData.id }),
-        base44.entities.Subscription.filter({ user_id: userData.id, status: 'active' })
-      ]);
-
-      if (brands.length > 0) {
-        setProfile(brands[0]);
-        setProfileType('brand');
-        setFormData({
-          company_name: brands[0].company_name || '',
-          industry: brands[0].industry || '',
-          description: brands[0].description || '',
-          website: brands[0].website || '',
-          contact_email: brands[0].contact_email || userData.email,
-          contact_phone: brands[0].contact_phone || '',
-          logo_url: brands[0].logo_url || '',
-          cover_image_url: brands[0].cover_image_url || '',
-          social_instagram: brands[0].social_instagram || '',
-          social_linkedin: brands[0].social_linkedin || '',
-          target_audience: brands[0].target_audience || '',
-          content_guidelines: brands[0].content_guidelines || ''
-        });
-      } else if (creators.length > 0) {
-        setProfile(creators[0]);
-        setProfileType('creator');
-        setFormData({
-          display_name: creators[0].display_name || '',
-          bio: creators[0].bio || '',
-          avatar_url: creators[0].avatar_url || '',
-          cover_image_url: creators[0].cover_image_url || '',
-          location: creators[0].location || '',
-          portfolio_url: creators[0].portfolio_url || '',
-          portfolio_images: creators[0].portfolio_images || [],
-          rate_cash_min: creators[0].rate_cash_min || '',
-          rate_cash_max: creators[0].rate_cash_max || '',
-          accepts_barter: creators[0].accepts_barter !== false,
-          niche: creators[0].niche || [],
-          content_types: creators[0].content_types || [],
-          platforms: creators[0].platforms || [],
-          profile_size: creators[0].profile_size || '',
-          contact_email: creators[0].contact_email || userData.email,
-          contact_whatsapp: creators[0].contact_whatsapp || ''
-        });
-      }
-
+      const subscriptions = await base44.entities.Subscription.filter({ user_id: user.id, status: 'active' });
       if (subscriptions.length > 0) {
         setSubscription(subscriptions[0]);
       }
+
+      // Initialize form data from profile
+      if (profileType === 'brand') {
+        setFormData({
+          company_name: profile.company_name || '',
+          industry: profile.industry || '',
+          description: profile.description || '',
+          website: profile.website || '',
+          contact_email: profile.contact_email || user.email,
+          contact_phone: profile.contact_phone || '',
+          logo_url: profile.logo_url || '',
+          cover_image_url: profile.cover_image_url || '',
+          social_instagram: profile.social_instagram || '',
+          social_linkedin: profile.social_linkedin || '',
+          target_audience: profile.target_audience || '',
+          content_guidelines: profile.content_guidelines || ''
+        });
+      } else if (profileType === 'creator') {
+        setFormData({
+          display_name: profile.display_name || '',
+          bio: profile.bio || '',
+          avatar_url: profile.avatar_url || '',
+          cover_image_url: profile.cover_image_url || '',
+          location: profile.location || '',
+          portfolio_url: profile.portfolio_url || '',
+          portfolio_images: profile.portfolio_images || [],
+          rate_cash_min: profile.rate_cash_min || '',
+          rate_cash_max: profile.rate_cash_max || '',
+          accepts_barter: profile.accepts_barter !== false,
+          niche: profile.niche || [],
+          content_types: profile.content_types || [],
+          platforms: profile.platforms || [],
+          profile_size: profile.profile_size || '',
+          contact_email: profile.contact_email || user.email,
+          contact_whatsapp: profile.contact_whatsapp || ''
+        });
+      }
     } catch (error) {
       console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
+      toast.error('Erro ao carregar dados do perfil');
     }
   };
 
@@ -192,30 +183,27 @@ export default function Profile() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      if (profileType === 'brand') {
-        await base44.entities.Brand.update(profile.id, formData);
-      } else {
-        await base44.entities.Creator.update(profile.id, {
-          ...formData,
-          rate_cash_min: formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null,
-          rate_cash_max: formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null
-        });
-      }
-      setSavedMessage(true);
-      setTimeout(() => setSavedMessage(false), 3000);
-      await loadData();
+      const updates = profileType === 'creator' ? {
+        ...formData,
+        rate_cash_min: formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null,
+        rate_cash_max: formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null
+      } : formData;
+
+      await updateAuthProfile(updates);
+      toast.success('Perfil atualizado com sucesso!');
     } catch (error) {
       console.error('Error saving profile:', error);
+      toast.error('Erro ao salvar perfil. Tente novamente.');
     } finally {
       setSaving(false);
     }
   };
 
   const handleLogout = () => {
-    base44.auth.logout('/');
+    logout('/');
   };
 
-  if (loading) {
+  if (!profile) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
@@ -224,7 +212,6 @@ export default function Profile() {
   }
 
   const isBrand = profileType === 'brand';
-  const isSubscribed = profile?.subscription_status === 'active' || profile?.account_state === 'active';
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-8">
@@ -235,12 +222,6 @@ export default function Profile() {
           <p className="text-slate-600 mt-1">Atualize suas informações</p>
         </div>
         <div className="flex items-center gap-2">
-          {savedMessage && (
-            <Badge className="bg-emerald-100 text-emerald-700 border-0">
-              <CheckCircle2 className="w-3 h-3 mr-1" />
-              Salvo!
-            </Badge>
-          )}
           <Badge variant="outline" className="capitalize">
             {isBrand ? 'Marca' : 'Criador'}
           </Badge>

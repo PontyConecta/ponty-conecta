@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
+import { toast } from '@/lib/toast';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,8 +60,8 @@ import {
 import { motion } from 'framer-motion';
 
 export default function CampaignManager() {
-  const [user, setUser] = useState(null);
-  const [brand, setBrand] = useState(null);
+  const { user, profile: brand } = useAuth();
+  const { isSubscribed } = useSubscription();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,7 +70,6 @@ export default function CampaignManager() {
   const [saving, setSaving] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -105,19 +107,17 @@ export default function CampaignManager() {
   }, []);
 
   const loadData = async () => {
-    try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+    if (!brand) {
+      setLoading(false);
+      return;
+    }
 
-      const brands = await base44.entities.Brand.filter({ user_id: userData.id });
-      if (brands.length > 0) {
-        setBrand(brands[0]);
-        setIsSubscribed(brands[0].subscription_status === 'active' || brands[0].account_state === 'active');
-        const campaignsData = await base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date');
-        setCampaigns(campaignsData);
-      }
+    try {
+      const campaignsData = await base44.entities.Campaign.filter({ brand_id: brand.id }, '-created_date');
+      setCampaigns(campaignsData);
     } catch (error) {
       console.error('Error loading data:', error);
+      toast.error('Erro ao carregar campanhas');
     } finally {
       setLoading(false);
     }
@@ -193,8 +193,10 @@ export default function CampaignManager() {
 
       if (editingCampaign) {
         await base44.entities.Campaign.update(editingCampaign.id, campaignData);
+        toast.success('Campanha atualizada com sucesso!');
       } else {
         await base44.entities.Campaign.create(campaignData);
+        toast.success('Campanha criada com sucesso!');
       }
 
       await loadData();
@@ -202,6 +204,7 @@ export default function CampaignManager() {
       resetForm();
     } catch (error) {
       console.error('Error saving campaign:', error);
+      toast.error('Erro ao salvar campanha. Tente novamente.');
     } finally {
       setSaving(false);
     }
@@ -275,9 +278,11 @@ export default function CampaignManager() {
     }
     try {
       await base44.entities.Campaign.update(campaignId, { status: newStatus });
+      toast.success('Status da campanha atualizado!');
       await loadData();
     } catch (error) {
       console.error('Error updating campaign:', error);
+      toast.error('Erro ao atualizar status da campanha');
     }
   };
 
