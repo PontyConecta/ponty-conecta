@@ -621,7 +621,7 @@ export default function Profile() {
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label>Instagram</Label>
+                      <Label>Instagram Username</Label>
                       <div className="relative mt-2">
                         <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <Input
@@ -631,6 +631,7 @@ export default function Profile() {
                           placeholder="@suamarca"
                         />
                       </div>
+                      <p className="text-xs text-slate-500 mt-1">Digite seu @username para ajudar marcas a verificar seu perfil</p>
                     </div>
                     <div>
                       <Label>LinkedIn</Label>

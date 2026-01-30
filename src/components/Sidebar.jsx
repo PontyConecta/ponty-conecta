@@ -11,51 +11,79 @@ import {
   Search,
   Sparkles,
   Building2,
-  Shield,
   Crown
 } from 'lucide-react';
 
 export default function Sidebar({ profileType, currentPageName, isSubscribed }) {
-  const brandNavItems = [
-    { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
-    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
-    { name: 'Descobrir Criadores', page: 'DiscoverCreators', icon: Search },
-    { name: 'Candidaturas', page: 'ApplicationsManager', icon: Users },
-    { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
+  const brandNavSections = [
+    {
+      title: 'Principal',
+      items: [
+        { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
+        { name: 'Descobrir Criadores', page: 'DiscoverCreators', icon: Search },
+      ]
+    },
+    {
+      title: 'Gestão',
+      items: [
+        { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
+        { name: 'Candidaturas', page: 'ApplicationsManager', icon: Users },
+        { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
+      ]
+    }
   ];
 
-  const creatorNavItems = [
-    { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
-    { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
-    { name: 'Descobrir Marcas', page: 'DiscoverBrands', icon: Building2 },
-    { name: 'Minhas Candidaturas', page: 'MyApplications', icon: FileText },
-    { name: 'Minhas Entregas', page: 'MyDeliveries', icon: FileText },
+  const creatorNavSections = [
+    {
+      title: 'Principal',
+      items: [
+        { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
+        { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
+        { name: 'Descobrir Marcas', page: 'DiscoverBrands', icon: Building2 },
+      ]
+    },
+    {
+      title: 'Minhas Atividades',
+      items: [
+        { name: 'Minhas Candidaturas', page: 'MyApplications', icon: FileText },
+        { name: 'Minhas Entregas', page: 'MyDeliveries', icon: FileText },
+      ]
+    }
   ];
 
-  const navItems = profileType === 'brand' ? brandNavItems : creatorNavItems;
+  const navSections = profileType === 'brand' ? brandNavSections : creatorNavSections;
 
   return (
     <aside className="hidden lg:flex fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-slate-200 flex-col">
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = currentPageName === item.page;
-          return (
-            <Link
-              key={item.page}
-              to={createPageUrl(item.page)}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                isActive 
-                  ? 'bg-indigo-50 text-indigo-700 shadow-sm' 
-                  : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-              )}
-            >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              <span>{item.name}</span>
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-3 py-6 space-y-6 overflow-y-auto">
+        {navSections.map((section, sectionIndex) => (
+          <div key={sectionIndex}>
+            <h3 className="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              {section.title}
+            </h3>
+            <div className="space-y-1">
+              {section.items.map((item) => {
+                const isActive = currentPageName === item.page;
+                return (
+                  <Link
+                    key={item.page}
+                    to={createPageUrl(item.page)}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                      isActive 
+                        ? 'bg-indigo-50 text-indigo-700 shadow-sm' 
+                        : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                    )}
+                  >
+                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Premium CTA */}

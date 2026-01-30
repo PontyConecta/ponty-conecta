@@ -38,10 +38,11 @@ export default function PaywallModal({
     'Suporte prioritário'
   ];
 
-  const handleAction = () => {
+  const handleAction = async () => {
     if (!isAuthenticated) {
       base44.auth.redirectToLogin(createPageUrl('Subscription'));
     } else {
+      // Redirect to Subscription page which will handle Stripe checkout
       window.location.href = createPageUrl('Subscription');
     }
     onClose();
