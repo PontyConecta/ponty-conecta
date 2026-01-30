@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/auth/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
@@ -240,10 +241,12 @@ function LayoutContent({ children, currentPageName }) {
 
 export default function Layout({ children, currentPageName }) {
   return (
-    <AuthProvider>
-      <SubscriptionProvider>
-        <LayoutContent children={children} currentPageName={currentPageName} />
-      </SubscriptionProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <SubscriptionProvider>
+          <LayoutContent children={children} currentPageName={currentPageName} />
+        </SubscriptionProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
