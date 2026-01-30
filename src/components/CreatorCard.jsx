@@ -124,12 +124,25 @@ export default function CreatorCard({
                 <CheckCircle2 className="w-5 h-5 text-blue-500" />
               )}
             </div>
-            {creator.location && (
-              <p className="text-sm text-slate-500 flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                {creator.location}
-              </p>
-            )}
+            <div className="flex flex-wrap gap-2 text-sm text-slate-500">
+              {creator.location && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {creator.location}
+                </span>
+              )}
+              {creator.platforms?.[0] && isSubscribed && (
+                <a 
+                  href={`https://instagram.com/${creator.platforms.find(p => p.name === 'Instagram')?.handle?.replace('@', '') || ''}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-pink-600 hover:underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Instagram
+                </a>
+              )}
+            </div>
           </div>
 
           {creator.bio && (
