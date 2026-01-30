@@ -136,8 +136,7 @@ export default function Home() {
 
             {/* Brands Tab */}
             <TabsContent value="brands" className="mt-12">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[600px] rounded-3xl overflow-hidden">
+              <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
                   {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-purple-50"></div>
 
@@ -196,19 +195,12 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-
-                <div className="space-y-6 lg:hidden">
-                  <p className="text-gray-600 text-center">
-                    Organize, execute e escale suas campanhas com ferramentas profissionais e criadores verificados.
-                  </p>
-                </div>
               </div>
             </TabsContent>
 
             {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[600px] rounded-3xl overflow-hidden">
+              <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
                   {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50"></div>
 
@@ -266,12 +258,6 @@ export default function Home() {
                       </Link>
                     </div>
                   </div>
-                </div>
-
-                <div className="space-y-6 lg:hidden">
-                  <p className="text-gray-600 text-center">
-                    Encontre oportunidades profissionais com expectativas claras e construa sua reputação verificada.
-                  </p>
                 </div>
               </div>
             </TabsContent>
