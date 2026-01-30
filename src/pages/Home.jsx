@@ -115,29 +115,31 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Floating Stats Cards */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col sm:flex-row gap-4 sm:gap-6 z-10">
-            {[
-              { number: '500+', label: 'Marcas Ativas' },
-              { number: '2.500+', label: 'Criadores' },
-              { number: '98%', label: 'Satisfação' }
-            ].map((stat, idx) => (
-              <Card
-                key={idx}
-                className="bg-white shadow-lg hover:shadow-xl transition-shadow"
-                style={{
-                  animation: `float 3s ease-in-out infinite`,
-                  animationDelay: `${idx * 0.5}s`
-                }}
-              >
-                <CardContent className="pt-6 text-center">
-                  <div className="text-3xl font-black bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">
-                    {stat.number}
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2">{stat.label}</p>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Benefits Cards */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-6xl px-4 z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais' },
+                { icon: '📊', title: 'Gestão Descomplicada', description: 'Organize campanhas de forma simples' },
+                { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência e segurança em cada projeto' },
+                { icon: '📈', title: 'Crescimento Sustentável', description: 'Construa reputação e explore oportunidades' }
+              ].map((benefit, idx) => (
+                <Card
+                  key={idx}
+                  className="bg-white shadow-lg hover:shadow-xl transition-shadow"
+                  style={{
+                    animation: `float 3s ease-in-out infinite`,
+                    animationDelay: `${idx * 0.3}s`
+                  }}
+                >
+                  <CardContent className="pt-6 text-center">
+                    <div className="text-3xl mb-3">{benefit.icon}</div>
+                    <h4 className="font-bold text-sm mb-2">{benefit.title}</h4>
+                    <p className="text-xs text-gray-600">{benefit.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>
