@@ -240,67 +240,68 @@ export default function Home() {
             {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-[450px] rounded-3xl overflow-hidden">
+                <div className="relative h-[500px] rounded-3xl overflow-hidden">
                   {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50"></div>
-                  
+
                   {/* Floating shapes */}
                   <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-full blur-2xl"></div>
                   <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-orange-500/15 to-yellow-400/15 rounded-full blur-2xl"></div>
-                  
+
                   {/* Content */}
-                  <div className="relative h-full flex items-center justify-center p-12">
-                    <div className="text-center space-y-6">
-                      <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl shadow-lg">
-                        <Sparkles className="w-12 h-12 text-orange-500" />
+                  <div className="relative h-full flex items-center justify-center p-8 lg:p-12">
+                    <div className="space-y-8 max-w-md">
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
+                          <Sparkles className="w-10 h-10 text-orange-500" />
+                        </div>
+                        <h3 className="text-2xl font-black leading-tight mb-2">
+                          Oportunidades profissionais para criadores
+                        </h3>
                       </div>
-                      <div className="space-y-2">
-                        <h4 className="text-2xl font-bold text-gray-900">Oportunidades</h4>
-                        <p className="text-gray-600">Cresça sua carreira com clareza</p>
+
+                      <div className="space-y-4">
+                        {[
+                          {
+                            icon: Sparkles,
+                            title: 'Campanhas Profissionais',
+                            description: 'Briefings detalhados e objetivos'
+                          },
+                          {
+                            icon: CheckCircle,
+                            title: 'Requisitos Claros',
+                            description: 'Saiba o que entregar e quando'
+                          },
+                          {
+                            icon: TrendingUp,
+                            title: 'Reputação Verificada',
+                            description: 'Construa histórico profissional'
+                          }
+                        ].map((feature, idx) => (
+                          <div key={idx} className="flex gap-3 bg-white/50 backdrop-blur-sm p-3 rounded-lg">
+                            <div className="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                              <feature.icon className="w-5 h-5 text-orange-500" />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-sm text-gray-900">{feature.title}</h4>
+                              <p className="text-xs text-gray-600 mt-0.5">{feature.description}</p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
+
+                      <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white w-full">
+                        Começar como Criador
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </Button>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-8">
-                  <h3 className="text-2xl sm:text-3xl font-black leading-tight">
-                    Oportunidades profissionais com expectativas claras
-                  </h3>
-
-                  <div className="space-y-6">
-                    {[
-                      {
-                        icon: Sparkles,
-                        title: 'Oportunidades Profissionais',
-                        description: 'Campanhas com briefing detalhado e objetivo'
-                      },
-                      {
-                        icon: CheckCircle,
-                        title: 'Requisitos Claros',
-                        description: 'Saiba exatamente o que entregar e quando'
-                      },
-                      {
-                        icon: TrendingUp,
-                        title: 'Reputação Garantida',
-                        description: 'Construa seu histórico profissional verificado'
-                      }
-                    ].map((feature, idx) => (
-                      <div key={idx} className="flex gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                          <feature.icon className="w-6 h-6 text-orange-500" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-gray-900">{feature.title}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{feature.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto">
-                    Começar como Criador
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
+                <div className="space-y-6 lg:hidden">
+                  <p className="text-gray-600 text-center">
+                    Encontre oportunidades profissionais com expectativas claras e construa sua reputação verificada.
+                  </p>
                 </div>
               </div>
             </TabsContent>
