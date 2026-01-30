@@ -55,7 +55,7 @@ function LayoutContent({ children, currentPageName }) {
   const isPublicPage = publicPages.includes(currentPageName);
 
   // Guest experience pages (show limited nav)
-  const guestPages = ['Home', 'ExploreCampaigns', 'ExploreCreators', 'ExploreBrands'];
+  const guestPages = ['ExploreCampaigns', 'ExploreCreators', 'ExploreBrands'];
   const isGuestPage = guestPages.includes(currentPageName) && !user;
 
   if (currentPageName === 'Home' && !user) {

@@ -52,10 +52,12 @@ import AdminCampaigns from './pages/AdminCampaigns';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDisputes from './pages/AdminDisputes';
 import AdminUsers from './pages/AdminUsers';
+import Applications from './pages/Applications';
 import ApplicationsManager from './pages/ApplicationsManager';
 import BrandDashboard from './pages/BrandDashboard';
 import CampaignManager from './pages/CampaignManager';
 import CreatorDashboard from './pages/CreatorDashboard';
+import Deliveries from './pages/Deliveries';
 import DeliveriesManager from './pages/DeliveriesManager';
 import DiscoverBrands from './pages/DiscoverBrands';
 import DiscoverCreators from './pages/DiscoverCreators';
@@ -68,8 +70,6 @@ import OpportunityFeed from './pages/OpportunityFeed';
 import Profile from './pages/Profile';
 import SelectProfile from './pages/SelectProfile';
 import Subscription from './pages/Subscription';
-import Applications from './pages/Applications';
-import Deliveries from './pages/Deliveries';
 import __Layout from './Layout.jsx';
 
 
@@ -79,10 +79,12 @@ export const PAGES = {
     "AdminDashboard": AdminDashboard,
     "AdminDisputes": AdminDisputes,
     "AdminUsers": AdminUsers,
+    "Applications": Applications,
     "ApplicationsManager": ApplicationsManager,
     "BrandDashboard": BrandDashboard,
     "CampaignManager": CampaignManager,
     "CreatorDashboard": CreatorDashboard,
+    "Deliveries": Deliveries,
     "DeliveriesManager": DeliveriesManager,
     "DiscoverBrands": DiscoverBrands,
     "DiscoverCreators": DiscoverCreators,
@@ -95,8 +97,6 @@ export const PAGES = {
     "Profile": Profile,
     "SelectProfile": SelectProfile,
     "Subscription": Subscription,
-    "Applications": Applications,
-    "Deliveries": Deliveries,
 }
 
 export const pagesConfig = {
