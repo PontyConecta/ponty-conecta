@@ -43,7 +43,7 @@ import {
 } from 'lucide-react';
 
 export default function Profile() {
-  const { user, profile, profileType, refresh, updateProfile: updateAuthProfile, logout } = useAuth();
+  const { user, profile, profileType, refreshProfile, logout } = useAuth();
   const { isSubscribed } = useSubscription();
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -189,7 +189,9 @@ export default function Profile() {
         rate_cash_max: formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null
       } : formData;
 
-      await updateAuthProfile(updates);
+      const EntityModel = profileType === 'brand' ? base44.entities.Brand : base44.entities.Creator;
+      await EntityModel.update(profile.id, updates);
+      await refreshProfile();
       toast.success('Perfil atualizado com sucesso!');
     } catch (error) {
       console.error('Error saving profile:', error);
