@@ -80,7 +80,7 @@ export default function Home() {
           </div>
 
           {/* Benefits Cards */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-6xl px-4 z-10">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl px-4 z-10">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais' },
