@@ -15,7 +15,11 @@ import {
   Loader2,
   Building2,
   Star,
-  CheckCircle2
+  CheckCircle2,
+  Activity,
+  Clock,
+  Target,
+  Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -100,18 +104,123 @@ export default function AdminDashboard() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <Card>
               <CardContent className="p-6">
-                <div className="text-sm text-slate-600 mb-2">Taxa de Conversão</div>
+                <div className="text-sm text-slate-600 mb-2">ARPU (Receita Média)</div>
                 <div className="text-3xl font-bold text-slate-900">
-                  {analytics.users.total > 0 
-                    ? ((analytics.revenue.activeSubscriptions / analytics.users.total) * 100).toFixed(1)
-                    : 0}%
+                  R$ {analytics.revenue.arpu}
                 </div>
-                <div className="text-xs text-slate-500 mt-2">
-                  {analytics.revenue.activeSubscriptions} de {analytics.users.total} usuários
-                </div>
+                <div className="text-xs text-slate-500 mt-2">Por usuário ativo</div>
               </CardContent>
             </Card>
           </motion.div>
+        </div>
+      </div>
+
+      {/* Activity Metrics */}
+      <div>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <Activity className="w-5 h-5 text-blue-600" />
+          Atividade de Usuários
+        </h2>
+        <div className="grid md:grid-cols-4 gap-6">
+          <Card className="border-blue-200 bg-blue-50/50">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Zap className="w-5 h-5 text-blue-600" />
+                <Badge className="bg-blue-100 text-blue-700 border-0">
+                  {analytics.engagement.recentlyActiveUsers}
+                </Badge>
+              </div>
+              <div className="text-sm text-slate-600">Recentemente Ativos</div>
+              <div className="text-xs text-slate-500 mt-1">Últimos 30 minutos</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Activity className="w-5 h-5 text-emerald-600" />
+                <Badge variant="outline">{analytics.engagement.dailyActiveUsers}</Badge>
+              </div>
+              <div className="text-sm text-slate-600">DAU</div>
+              <div className="text-xs text-slate-500 mt-1">Ativos hoje</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Users className="w-5 h-5 text-violet-600" />
+                <Badge variant="outline">{analytics.engagement.monthlyActiveUsers}</Badge>
+              </div>
+              <div className="text-sm text-slate-600">MAU</div>
+              <div className="text-xs text-slate-500 mt-1">Ativos este mês</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Target className="w-5 h-5 text-orange-600" />
+                <Badge variant="outline">
+                  {analytics.engagement.monthlyActiveUsers > 0 
+                    ? ((analytics.engagement.dailyActiveUsers / analytics.engagement.monthlyActiveUsers) * 100).toFixed(0)
+                    : 0}%
+                </Badge>
+              </div>
+              <div className="text-sm text-slate-600">DAU/MAU</div>
+              <div className="text-xs text-slate-500 mt-1">Índice de engajamento</div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Marketplace Health */}
+      <div>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <Target className="w-5 h-5 text-indigo-600" />
+          Saúde do Marketplace
+        </h2>
+        <div className="grid md:grid-cols-4 gap-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm text-slate-600 mb-2">Fill Rate</div>
+              <div className="text-3xl font-bold text-slate-900">
+                {analytics.marketplace.fillRate}%
+              </div>
+              <div className="text-xs text-slate-500 mt-2">Campanhas com candidaturas</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm text-slate-600 mb-2">Time to Hire</div>
+              <div className="text-3xl font-bold text-slate-900 flex items-baseline gap-1">
+                {analytics.marketplace.timeToHireDays}
+                <span className="text-base text-slate-500">dias</span>
+              </div>
+              <div className="text-xs text-slate-500 mt-2">Média para aceitar</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm text-slate-600 mb-2">Campaign Density</div>
+              <div className="text-3xl font-bold text-slate-900">
+                {analytics.engagement.campaignDensity}
+              </div>
+              <div className="text-xs text-slate-500 mt-2">Campanhas por marca ativa</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm text-slate-600 mb-2">Application Velocity</div>
+              <div className="text-3xl font-bold text-slate-900">
+                {analytics.engagement.applicationVelocity}
+              </div>
+              <div className="text-xs text-slate-500 mt-2">Candidaturas por criador</div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
@@ -240,21 +349,33 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        <Card className="mt-6">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-slate-600 mb-1">Taxa de Sucesso das Entregas</div>
-                <div className="text-3xl font-bold text-slate-900">{analytics.engagement.successRate}%</div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-slate-500">
-                  {analytics.engagement.pendingApplications} candidaturas pendentes
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-slate-600 mb-1">Taxa de Sucesso</div>
+                  <div className="text-3xl font-bold text-emerald-600">{analytics.engagement.successRate}%</div>
                 </div>
+                <CheckCircle2 className="w-8 h-8 text-emerald-600" />
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="text-xs text-slate-500 mt-2">Entregas aprovadas</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-slate-600 mb-1">Taxa de Disputas</div>
+                  <div className="text-3xl font-bold text-red-600">{analytics.engagement.disputeRate}%</div>
+                </div>
+                <AlertCircle className="w-8 h-8 text-red-600" />
+              </div>
+              <div className="text-xs text-slate-500 mt-2">Entregas em disputa</div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* User Distribution */}

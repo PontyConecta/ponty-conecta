@@ -25,7 +25,8 @@ Deno.serve(async (req) => {
       allCampaigns,
       allApplications,
       allDeliveries,
-      allSubscriptions
+      allSubscriptions,
+      allDisputes
     ] = await Promise.all([
       base44.asServiceRole.entities.User.list(),
       base44.asServiceRole.entities.Brand.list(),
@@ -33,7 +34,8 @@ Deno.serve(async (req) => {
       base44.asServiceRole.entities.Campaign.list(),
       base44.asServiceRole.entities.Application.list(),
       base44.asServiceRole.entities.Delivery.list(),
-      base44.asServiceRole.entities.Subscription.list()
+      base44.asServiceRole.entities.Subscription.list(),
+      base44.asServiceRole.entities.Dispute.list()
     ]);
 
     // Calculate active subscriptions MRR
@@ -46,6 +48,11 @@ Deno.serve(async (req) => {
       }
       return sum;
     }, 0);
+
+    // Calculate ARPU (Average Revenue Per User)
+    const arpu = activeSubscriptions.length > 0 
+      ? Math.round(monthlyRevenue / activeSubscriptions.length)
+      : 0;
 
     // Growth metrics
     const newBrandsToday = allBrands.filter(b => 
@@ -90,9 +97,58 @@ Deno.serve(async (req) => {
       ? ((approvedDeliveries / allDeliveries.length) * 100).toFixed(1)
       : 0;
 
+    // Dispute Rate
+    const disputeRate = allDeliveries.length > 0
+      ? ((disputedDeliveries / allDeliveries.length) * 100).toFixed(1)
+      : 0;
+
+    // Fill Rate - campaigns with at least one application
+    const campaignsWithApplications = allCampaigns.filter(c => c.total_applications > 0).length;
+    const fillRate = allCampaigns.length > 0
+      ? ((campaignsWithApplications / allCampaigns.length) * 100).toFixed(1)
+      : 0;
+
+    // Time to Hire - average time from application creation to acceptance
+    const acceptedApplications = allApplications.filter(a => a.status === 'accepted' && a.accepted_at);
+    const timeToHireMs = acceptedApplications.reduce((sum, app) => {
+      const createdAt = new Date(app.created_date).getTime();
+      const acceptedAt = new Date(app.accepted_at).getTime();
+      return sum + (acceptedAt - createdAt);
+    }, 0);
+    const timeToHireDays = acceptedApplications.length > 0
+      ? (timeToHireMs / acceptedApplications.length / (1000 * 60 * 60 * 24)).toFixed(1)
+      : 0;
+
+    // Campaign Density - campaigns per active brand
+    const campaignDensity = activeBrands > 0
+      ? (allCampaigns.length / activeBrands).toFixed(1)
+      : 0;
+
+    // Application Velocity - applications per active creator
+    const applicationVelocity = activeCreators > 0
+      ? (allApplications.length / activeCreators).toFixed(1)
+      : 0;
+
+    // Recently Active Users - users active in last 30 minutes
+    const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000);
+    const recentlyActiveUsers = allUsers.filter(u => 
+      u.last_active && new Date(u.last_active) >= thirtyMinutesAgo
+    ).length;
+
+    // DAU - users active today
+    const dailyActiveUsers = allUsers.filter(u => 
+      u.last_active && new Date(u.last_active) >= todayStart
+    ).length;
+
+    // MAU - users active this month
+    const monthlyActiveUsers = allUsers.filter(u => 
+      u.last_active && new Date(u.last_active) >= monthStart
+    ).length;
+
     return Response.json({
       revenue: {
         mrr: Math.round(monthlyRevenue),
+        arpu: arpu,
         activeSubscriptions: activeSubscriptions.length,
         totalRevenue: Math.round(monthlyRevenue * activeSubscriptions.length)
       },
@@ -107,7 +163,17 @@ Deno.serve(async (req) => {
         pendingApplications,
         approvedDeliveries,
         disputedDeliveries,
-        successRate: parseFloat(successRate)
+        successRate: parseFloat(successRate),
+        disputeRate: parseFloat(disputeRate),
+        recentlyActiveUsers,
+        dailyActiveUsers,
+        monthlyActiveUsers,
+        campaignDensity: parseFloat(campaignDensity),
+        applicationVelocity: parseFloat(applicationVelocity)
+      },
+      marketplace: {
+        fillRate: parseFloat(fillRate),
+        timeToHireDays: parseFloat(timeToHireDays)
       },
       users: {
         total: allUsers.length,

@@ -47,7 +47,11 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AdminAuditLogs from './pages/AdminAuditLogs';
+import AdminCampaigns from './pages/AdminCampaigns';
+import AdminDashboard from './pages/AdminDashboard';
 import AdminDisputes from './pages/AdminDisputes';
+import AdminUsers from './pages/AdminUsers';
 import ApplicationsManager from './pages/ApplicationsManager';
 import BrandDashboard from './pages/BrandDashboard';
 import CampaignManager from './pages/CampaignManager';
@@ -64,15 +68,15 @@ import OpportunityFeed from './pages/OpportunityFeed';
 import Profile from './pages/Profile';
 import SelectProfile from './pages/SelectProfile';
 import Subscription from './pages/Subscription';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminUsers from './pages/AdminUsers';
-import AdminCampaigns from './pages/AdminCampaigns';
-import AdminAuditLogs from './pages/AdminAuditLogs';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AdminAuditLogs": AdminAuditLogs,
+    "AdminCampaigns": AdminCampaigns,
+    "AdminDashboard": AdminDashboard,
     "AdminDisputes": AdminDisputes,
+    "AdminUsers": AdminUsers,
     "ApplicationsManager": ApplicationsManager,
     "BrandDashboard": BrandDashboard,
     "CampaignManager": CampaignManager,
@@ -89,10 +93,6 @@ export const PAGES = {
     "Profile": Profile,
     "SelectProfile": SelectProfile,
     "Subscription": Subscription,
-    "AdminDashboard": AdminDashboard,
-    "AdminUsers": AdminUsers,
-    "AdminCampaigns": AdminCampaigns,
-    "AdminAuditLogs": AdminAuditLogs,
 }
 
 export const pagesConfig = {
