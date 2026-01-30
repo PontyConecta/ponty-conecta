@@ -22,9 +22,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[75vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-gradient-to-br from-white via-purple-50 to-orange-50 overflow-hidden">
-        <div className="max-w-7xl w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-gradient-to-br from-white via-purple-50 to-orange-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
             {/* Hero Text */}
             <div className="flex flex-col gap-6 lg:gap-8">
               {/* Badge */}
@@ -56,53 +56,49 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero Visual */}
-            <div className="relative h-[400px] sm:h-[450px] lg:h-[500px] flex items-center justify-center">
-              <div className="relative w-full h-full">
-                {/* Abstract Background Shapes */}
-                <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                  <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-400/30 to-indigo-500/20 rounded-full blur-3xl animate-pulse"
-                    style={{
-                      transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.2}px)`,
-                      transition: 'transform 0.1s ease-out'
-                    }}
-                  ></div>
-                  <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-orange-400/30 to-amber-500/20 rounded-full blur-3xl animate-pulse"
-                    style={{
-                      transform: `translate(-${scrollY * 0.15}px, -${scrollY * 0.1}px)`,
-                      transition: 'transform 0.1s ease-out',
-                      animationDelay: '1s'
-                    }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Benefits Cards */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl px-4 z-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais' },
-                { icon: '📊', title: 'Gestão Descomplicada', description: 'Organize campanhas de forma simples' },
-                { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência e segurança em cada projeto' },
-                { icon: '📈', title: 'Crescimento Sustentável', description: 'Construa reputação e explore oportunidades' }
-              ].map((benefit, idx) => (
-                <Card
-                  key={idx}
-                  className="bg-white shadow-lg hover:shadow-xl transition-shadow"
+            {/* Hero Visual with Benefits */}
+            <div className="relative min-h-[500px] flex items-center justify-center">
+              {/* Gradient Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-orange-50 rounded-3xl overflow-hidden">
+                <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-400/30 to-indigo-500/20 rounded-full blur-3xl animate-pulse"
                   style={{
-                    animation: `float 3s ease-in-out infinite`,
-                    animationDelay: `${idx * 0.3}s`
+                    transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.2}px)`,
+                    transition: 'transform 0.1s ease-out'
                   }}
-                >
-                  <CardContent className="pt-6 text-center">
-                    <div className="text-3xl mb-3">{benefit.icon}</div>
-                    <h4 className="font-bold text-sm mb-2">{benefit.title}</h4>
-                    <p className="text-xs text-gray-600">{benefit.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
+                ></div>
+                <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-orange-400/30 to-amber-500/20 rounded-full blur-3xl animate-pulse"
+                  style={{
+                    transform: `translate(-${scrollY * 0.15}px, -${scrollY * 0.1}px)`,
+                    transition: 'transform 0.1s ease-out',
+                    animationDelay: '1s'
+                  }}
+                ></div>
+              </div>
+
+              {/* Benefits Cards Centered */}
+              <div className="relative z-10 grid grid-cols-2 gap-4 p-6">
+                {[
+                  { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais' },
+                  { icon: '📊', title: 'Gestão Descomplicada', description: 'Organize campanhas de forma simples' },
+                  { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência e segurança em cada projeto' },
+                  { icon: '📈', title: 'Crescimento Sustentável', description: 'Construa reputação e explore oportunidades' }
+                ].map((benefit, idx) => (
+                  <Card
+                    key={idx}
+                    className="bg-white shadow-lg hover:shadow-xl transition-shadow"
+                    style={{
+                      animation: `float 3s ease-in-out infinite`,
+                      animationDelay: `${idx * 0.3}s`
+                    }}
+                  >
+                    <CardContent className="pt-6 text-center">
+                      <div className="text-3xl mb-3">{benefit.icon}</div>
+                      <h4 className="font-bold text-sm mb-2">{benefit.title}</h4>
+                      <p className="text-xs text-gray-600">{benefit.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           </div>
         </div>
