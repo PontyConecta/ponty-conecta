@@ -192,11 +192,10 @@ export default function Home() {
                           <ArrowRight className="w-5 h-5 ml-2" />
                         </Button>
                       </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
+                      </div>
+                      </div>
+                      </div>
+                      </TabsContent>
 
             {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
