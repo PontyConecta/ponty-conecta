@@ -107,7 +107,11 @@ function LayoutContent({ children, currentPageName }) {
   ];
 
   const adminNavItems = [
+    { name: 'Dashboard', page: 'AdminDashboard', icon: LayoutDashboard },
+    { name: 'Usuários', page: 'AdminUsers', icon: Users },
+    { name: 'Campanhas', page: 'AdminCampaigns', icon: Megaphone },
     { name: 'Disputas', page: 'AdminDisputes', icon: Shield },
+    { name: 'Audit Logs', page: 'AdminAuditLogs', icon: FileText },
   ];
 
   const navItems = profileType === 'brand' ? brandNavItems : creatorNavItems;

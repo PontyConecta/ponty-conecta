@@ -66,6 +66,8 @@ import SelectProfile from './pages/SelectProfile';
 import Subscription from './pages/Subscription';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
+import AdminCampaigns from './pages/AdminCampaigns';
+import AdminAuditLogs from './pages/AdminAuditLogs';
 import __Layout from './Layout.jsx';
 
 
@@ -89,6 +91,8 @@ export const PAGES = {
     "Subscription": Subscription,
     "AdminDashboard": AdminDashboard,
     "AdminUsers": AdminUsers,
+    "AdminCampaigns": AdminCampaigns,
+    "AdminAuditLogs": AdminAuditLogs,
 }
 
 export const pagesConfig = {
