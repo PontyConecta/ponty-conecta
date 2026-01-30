@@ -362,11 +362,11 @@ export default function Home() {
             </div>
 
             <div className="flex items-center gap-6">
-              <a href="#" className="text-gray-400 hover:text-white transition text-sm font-medium">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition text-sm font-medium">
                 Instagram
               </a>
               <span className="text-gray-700">•</span>
-              <a href="#" className="text-gray-400 hover:text-white transition text-sm font-medium">
+              <a href="mailto:contato@ponty.com" className="text-gray-400 hover:text-white transition text-sm font-medium">
                 Contato Suporte
               </a>
             </div>
