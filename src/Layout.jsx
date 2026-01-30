@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useAuth } from '@/components/contexts/AuthContext';
+import { useSubscription } from '@/components/contexts/SubscriptionContext';
 import BottomNav from '@/components/BottomNav';
 import { Toaster } from 'sonner';
 import { 
