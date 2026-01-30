@@ -58,15 +58,17 @@ export default function Home() {
 
             {/* Hero Image */}
             <div className="relative h-96 sm:h-[500px] flex items-center justify-center">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/674bbffed_ConexaoHerov3.png"
-                alt="Conexão entre Marcas e Criadores"
-                className="w-full h-full object-contain drop-shadow-2xl"
-                style={{
-                  transform: `translateY(${scrollY * 0.3}px)`,
-                  transition: 'transform 0.1s ease-out'
-                }}
-              />
+              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/674bbffed_ConexaoHerov3.png"
+                  alt="Conexão entre Marcas e Criadores"
+                  className="w-full h-full object-cover"
+                  style={{
+                    transform: `translateY(${scrollY * 0.3}px)`,
+                    transition: 'transform 0.1s ease-out'
+                  }}
+                />
+              </div>
             </div>
           </div>
 
@@ -124,12 +126,13 @@ export default function Home() {
             {/* Brands Tab */}
             <TabsContent value="brands" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-96 rounded-lg overflow-hidden shadow-lg">
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group">
                   <img
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/2be0a789e_ConhecimentoPrevioManus1.png"
                     alt="Para Marcas"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
 
                 <div className="space-y-8">
@@ -178,12 +181,13 @@ export default function Home() {
             {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="relative h-96 rounded-lg overflow-hidden shadow-lg">
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group">
                   <img
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6973b6ce8fe26c592bc9f3c9/defb18121_CrescimentodeCriadores.png"
                     alt="Para Criadores"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
 
                 <div className="space-y-8">
