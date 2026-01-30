@@ -130,14 +130,14 @@ export default function Home() {
               </Badge>
               
               <h1 className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-slate-900 leading-tight mb-4 lg:mb-6">
-                Conexões que
+                A Ponte Profissional
                 <span className="block bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
-                  geram resultados
+                  Entre Marcas e Criadores
                 </span>
               </h1>
               
               <p className="text-base lg:text-xl text-slate-600 mb-6 lg:mb-10 max-w-2xl mx-auto leading-relaxed px-4">
-                A plataforma que garante regras claras, prazos cumpridos e resolução justa entre marcas e criadores.
+                Organize, execute e escale suas relações profissionais com regras automatizadas e entrega garantida.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center px-4">
@@ -179,148 +179,239 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Campaigns Preview */}
-      {featuredCampaigns.length > 0 && (
-        <section className="py-12 lg:py-20 bg-white px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6 lg:mb-8">
-              <div>
-                <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-2">Em Destaque</Badge>
-                <h2 className="text-2xl lg:text-3xl font-bold text-slate-900">Campanhas Ativas</h2>
-              </div>
-              <Link to={createPageUrl('ExploreCampaigns')}>
-                <Button variant="ghost" className="text-indigo-600">
-                  Ver todas <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-              {featuredCampaigns.map((campaign, index) => (
-                <motion.div
-                  key={campaign.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                >
-                  <Card className="hover:shadow-lg transition-all cursor-pointer group" onClick={() => handleProtectedAction('Ver detalhes da campanha')}>
-                    <CardContent className="p-4 lg:p-6">
-                      <div className="flex items-start justify-between mb-3">
-                        <Badge variant="outline" className="text-xs">
-                          {campaign.remuneration_type === 'cash' ? '💵 Pago' : campaign.remuneration_type === 'barter' ? '🎁 Permuta' : '📦 Misto'}
-                        </Badge>
-                        <Lock className="w-4 h-4 text-slate-300" />
-                      </div>
-                      <h3 className="font-semibold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-1">
-                        {campaign.title}
-                      </h3>
-                      <p className="text-sm text-slate-500 line-clamp-2 mb-4">
-                        {campaign.description?.slice(0, 80)}...
-                      </p>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-500">
-                          {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas
-                        </span>
-                        <Button size="sm" variant="ghost" className="text-indigo-600 h-8">
-                          <Eye className="w-4 h-4 mr-1" />
-                          Ver
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Featured Creators Preview */}
-      {featuredCreators.length > 0 && (
-        <section className="py-12 lg:py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6 lg:mb-8">
-              <div>
-                <Badge className="bg-orange-100 text-orange-700 border-0 mb-2">Criadores</Badge>
-                <h2 className="text-2xl lg:text-3xl font-bold text-slate-900">Talentos em Destaque</h2>
-              </div>
-              <Link to={createPageUrl('ExploreCreators')}>
-                <Button variant="ghost" className="text-indigo-600">
-                  Ver todos <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-              {featuredCreators.map((creator, index) => (
-                <motion.div
-                  key={creator.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                >
-                  <CreatorCard 
-                    creator={creator}
-                    isSubscribed={false}
-                    compact={true}
-                    onViewProfile={() => handleProtectedAction('Ver perfil completo do criador')}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* How it Works */}
+      {/* Dual Value Proposition */}
       <section className="py-12 lg:py-20 bg-white px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 lg:mb-16">
+          <div className="text-center mb-12 lg:mb-16">
+            <Badge className="bg-slate-100 text-slate-700 border-0 px-4 py-1.5 text-sm font-medium mb-4">
+              Por que escolher Ponty
+            </Badge>
+            <h2 className="text-2xl lg:text-4xl font-bold text-slate-900 mb-4">
+              A solução certa para cada perfil
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* For Brands */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="relative"
+            >
+              <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-3xl p-8 lg:p-10 border-2 border-indigo-100 h-full">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center mb-6 shadow-xl shadow-indigo-500/25">
+                  <Building2 className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">Para Marcas</h3>
+                <p className="text-slate-600 mb-6 lg:mb-8">
+                  Encontre e gerencie criadores profissionais com total transparência e controle.
+                </p>
+                <div className="space-y-4">
+                  {[
+                    { icon: CheckCircle2, title: 'Criadores Verificados', desc: 'Perfis com histórico e reputação' },
+                    { icon: FileCheck, title: 'Campanhas Estruturadas', desc: 'Requisitos claros e documentados' },
+                    { icon: Shield, title: 'Gestão Simplificada', desc: 'Acompanhe tudo em um só lugar' }
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+                        <item.icon className="w-5 h-5 text-indigo-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">{item.title}</h4>
+                        <p className="text-sm text-slate-600">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* For Creators */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="relative"
+            >
+              <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-3xl p-8 lg:p-10 border-2 border-orange-100 h-full">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-6 shadow-xl shadow-orange-500/25">
+                  <Star className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">Para Criadores</h3>
+                <p className="text-slate-600 mb-6 lg:mb-8">
+                  Acesse oportunidades profissionais com expectativas claras e pagamento garantido.
+                </p>
+                <div className="space-y-4">
+                  {[
+                    { icon: Sparkles, title: 'Oportunidades Profissionais', desc: 'Campanhas com briefing detalhado' },
+                    { icon: FileCheck, title: 'Requisitos Claros', desc: 'Saiba exatamente o que entregar' },
+                    { icon: TrendingUp, title: 'Reputação Garantida', desc: 'Construa seu histórico profissional' }
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+                        <item.icon className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">{item.title}</h4>
+                        <p className="text-sm text-slate-600">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works */}
+      <section className="py-12 lg:py-20 bg-gradient-to-b from-slate-50 to-white px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 lg:mb-16">
             <Badge className="bg-violet-100 text-violet-700 border-0 px-4 py-1.5 text-sm font-medium mb-4">
               Como Funciona
             </Badge>
             <h2 className="text-2xl lg:text-4xl font-bold text-slate-900 mb-4">
-              Mediação profissional em cada etapa
+              Simples para ambos os lados
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Processo transparente e estruturado do início ao fim
+            </p>
+          </div>
+
+          {/* For Brands Flow */}
+          <div className="mb-12 lg:mb-16">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-indigo-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-900">Para Marcas</h3>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+              {[
+                { 
+                  step: '01', 
+                  title: 'Crie',
+                  description: 'Defina sua campanha com requisitos detalhados e orçamento',
+                  icon: Megaphone
+                },
+                { 
+                  step: '02', 
+                  title: 'Selecione',
+                  description: 'Analise candidaturas e escolha os criadores ideais',
+                  icon: Users
+                },
+                { 
+                  step: '03', 
+                  title: 'Aprove',
+                  description: 'Revise entregas e aprove baseado nos critérios definidos',
+                  icon: CheckCircle2
+                }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="relative p-6 lg:p-8 rounded-2xl bg-white border-2 border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all"
+                >
+                  <div className="text-5xl font-bold text-indigo-100 absolute top-4 right-4">{item.step}</div>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20">
+                    <item.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">{item.title}</h3>
+                  <p className="text-slate-600 leading-relaxed">{item.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* For Creators Flow */}
+          <div>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                <Star className="w-5 h-5 text-orange-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-900">Para Criadores</h3>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+              {[
+                { 
+                  step: '01', 
+                  title: 'Navegue',
+                  description: 'Explore oportunidades que combinam com seu perfil',
+                  icon: Sparkles
+                },
+                { 
+                  step: '02', 
+                  title: 'Execute',
+                  description: 'Produza conteúdo seguindo os requisitos da campanha',
+                  icon: FileCheck
+                },
+                { 
+                  step: '03', 
+                  title: 'Seja Reconhecido',
+                  description: 'Construa sua reputação e atraia mais oportunidades',
+                  icon: TrendingUp
+                }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="relative p-6 lg:p-8 rounded-2xl bg-white border-2 border-slate-100 hover:border-orange-200 hover:shadow-lg transition-all"
+                >
+                  <div className="text-5xl font-bold text-orange-100 absolute top-4 right-4">{item.step}</div>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-orange-500/20">
+                    <item.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">{item.title}</h3>
+                  <p className="text-slate-600 leading-relaxed">{item.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust & Social Proof */}
+      <section className="py-12 lg:py-20 bg-white px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <Badge className="bg-emerald-100 text-emerald-700 border-0 px-4 py-1.5 text-sm font-medium mb-4">
+              Números que Falam
+            </Badge>
+            <h2 className="text-2xl lg:text-4xl font-bold text-slate-900">
+              Confiado por profissionais
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {[
-              { 
-                step: '01', 
-                title: 'Marca Define',
-                description: 'O quê, onde, quando, como provar. Tudo documentado.',
-                icon: FileCheck
-              },
-              { 
-                step: '02', 
-                title: 'Criador Executa',
-                description: 'Com regras claras, produz e entrega com provas.',
-                icon: Users
-              },
-              { 
-                step: '03', 
-                title: 'Plataforma Valida',
-                description: 'Aprovação baseada em critérios objetivos.',
-                icon: Shield
-              }
-            ].map((item, index) => (
+              { value: '200+', label: 'Campanhas Ativas', icon: Megaphone, color: 'indigo' },
+              { value: '500+', label: 'Criadores Verificados', icon: Users, color: 'orange' },
+              { value: '1.200+', label: 'Entregas Bem-Sucedidas', icon: CheckCircle2, color: 'emerald' },
+              { value: '4.8/5', label: 'Satisfação Média', icon: Star, color: 'amber' }
+            ].map((stat, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative p-6 lg:p-8 rounded-2xl lg:rounded-3xl bg-slate-50 hover:bg-slate-100 transition-all"
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className={`text-center p-6 lg:p-8 rounded-2xl bg-${stat.color}-50 border border-${stat.color}-100`}
               >
-                <div className="text-4xl lg:text-6xl font-bold text-slate-200 absolute top-4 right-4 lg:right-6">{item.step}</div>
-                <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-xl lg:rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center mb-4 lg:mb-6 shadow-lg shadow-indigo-500/20">
-                  <item.icon className="w-6 h-6 lg:w-7 lg:h-7 text-white" />
+                <div className={`w-12 h-12 rounded-xl bg-${stat.color}-100 flex items-center justify-center mx-auto mb-4`}>
+                  <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
                 </div>
-                <h3 className="text-lg lg:text-xl font-semibold text-slate-900 mb-2 lg:mb-3">{item.title}</h3>
-                <p className="text-sm lg:text-base text-slate-600 leading-relaxed">{item.description}</p>
+                <div className="text-3xl lg:text-4xl font-bold text-slate-900 mb-2">{stat.value}</div>
+                <div className="text-sm text-slate-600">{stat.label}</div>
               </motion.div>
             ))}
           </div>
