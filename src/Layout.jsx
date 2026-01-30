@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { useAuth } from '@/components/contexts/AuthContext';
-import { useSubscription } from '@/components/contexts/SubscriptionContext';
+import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
+import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
 import BottomNav from '@/components/BottomNav';
 import { Toaster } from 'sonner';
 import { 
@@ -33,7 +33,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-export default function Layout({ children, currentPageName }) {
+function LayoutContent({ children, currentPageName }) {
   const { user, profile, profileType, loading, logout } = useAuth();
   const { isSubscribed } = useSubscription();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -255,5 +255,15 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Bottom Navigation */}
       <BottomNav profileType={profileType} currentPageName={currentPageName} />
     </div>
+  );
+}
+
+export default function Layout({ children, currentPageName }) {
+  return (
+    <AuthProvider>
+      <SubscriptionProvider>
+        <LayoutContent children={children} currentPageName={currentPageName} />
+      </SubscriptionProvider>
+    </AuthProvider>
   );
 }
