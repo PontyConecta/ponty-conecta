@@ -281,15 +281,15 @@ function LayoutContent({ children, currentPageName }) {
       }
 
       export default function Layout({ children, currentPageName }) {
-  return (
-    <ErrorBoundary>
-      <AuthProvider>
-        <SubscriptionProvider>
-          <ThemeProvider>
-            <LayoutContent children={children} currentPageName={currentPageName} />
-          </ThemeProvider>
-        </SubscriptionProvider>
-      </AuthProvider>
-    </ErrorBoundary>
-  );
-}
+        return (
+          <ErrorBoundary>
+            <AuthProvider>
+              <SubscriptionProvider>
+                <ThemeProvider>
+                  <LayoutContent children={children} currentPageName={currentPageName} />
+                </ThemeProvider>
+              </SubscriptionProvider>
+            </AuthProvider>
+          </ErrorBoundary>
+        );
+      }
