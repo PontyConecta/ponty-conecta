@@ -354,6 +354,16 @@ export default function Subscription() {
             </>
           )}
         </Button>
+        
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={() => window.location.href = createPageUrl(isBrand ? 'BrandDashboard' : 'CreatorDashboard')}
+          className="text-slate-600 hover:text-slate-900"
+        >
+          Continuar explorando gratuitamente
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
       </div>
 
       <p className="text-center text-sm text-slate-500 mt-6">
