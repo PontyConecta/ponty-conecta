@@ -228,7 +228,7 @@ export default function BrandDashboard() {
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Campanhas Recentes</CardTitle>
             <Link to={createPageUrl('CampaignManager')}>
-              <Button variant="ghost" size="sm" className="text-indigo-600">
+              <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
@@ -272,7 +272,7 @@ export default function BrandDashboard() {
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Candidaturas Pendentes</CardTitle>
             <Link to={createPageUrl('ApplicationsManager')}>
-              <Button variant="ghost" size="sm" className="text-indigo-600">
+                  <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
@@ -312,7 +312,7 @@ export default function BrandDashboard() {
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Entregas Recentes</CardTitle>
           <Link to={createPageUrl('DeliveriesManager')}>
-            <Button variant="ghost" size="sm" className="text-indigo-600">
+            <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
