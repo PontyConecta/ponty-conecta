@@ -63,7 +63,7 @@ export default function AdminMenu({ currentPageName }) {
         <Button 
           variant="ghost"
           size="icon"
-          className="h-8 w-8 lg:h-9 lg:w-9"
+          className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
         >
           <Shield className="w-4 h-4 lg:w-5 lg:h-5" />
         </Button>
