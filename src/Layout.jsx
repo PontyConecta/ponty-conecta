@@ -152,44 +152,48 @@ function LayoutContent({ children, currentPageName }) {
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       <Toaster position="top-right" richColors closeButton />
       <style>{`
-        :root {
-          --primary: 79 70 229;
-          --primary-foreground: 255 255 255;
-          --accent: 249 115 22;
-          --bg-primary: #f8fafc;
-          --bg-secondary: #ffffff;
-          --text-primary: #0f172a;
-          --text-secondary: #64748b;
-          --border-color: #e2e8f0;
-          --accent-primary: #4f46e5;
-        }
+      :root {
+      --primary: 79 70 229;
+      --primary-foreground: 255 255 255;
+      --accent: 249 115 22;
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --text-input: #0f172a;
+      --border-color: #e2e8f0;
+      --accent-primary: #4f46e5;
+      }
 
-        [data-theme="light"] {
-          --bg-primary: #f8fafc;
-          --bg-secondary: #ffffff;
-          --text-primary: #0f172a;
-          --text-secondary: #64748b;
-          --border-color: #e2e8f0;
-          --accent-primary: #4f46e5;
-        }
+      [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --text-input: #0f172a;
+      --border-color: #e2e8f0;
+      --accent-primary: #4f46e5;
+      }
 
-        [data-theme="dark"] {
-          --bg-primary: #0a0e27;
-          --bg-secondary: #1a1f3a;
-          --text-primary: #f0f4f8;
-          --text-secondary: #a0aac0;
-          --border-color: #ffffff;
-          --accent-primary: #7c3aed;
-        }
+      [data-theme="dark"] {
+      --bg-primary: #0a0e27;
+      --bg-secondary: #1a1f3a;
+      --text-primary: #f0f4f8;
+      --text-secondary: #a0aac0;
+      --text-input: #f0f4f8;
+      --border-color: #ffffff;
+      --accent-primary: #7c3aed;
+      }
 
-        [data-theme="musk"] {
-          --bg-primary: #1a1624;
-          --bg-secondary: #2d1f3a;
-          --text-primary: #f5f1f8;
-          --text-secondary: #b8a5c4;
-          --border-color: #ffffff;
-          --accent-primary: #d946ef;
-        }
+      [data-theme="musk"] {
+      --bg-primary: #1a1624;
+      --bg-secondary: #2d1f3a;
+      --text-primary: #f5f1f8;
+      --text-secondary: #b8a5c4;
+      --text-input: #f5f1f8;
+      --border-color: #ffffff;
+      --accent-primary: #d946ef;
+      }
 
         .safe-area-bottom {
           padding-bottom: env(safe-area-inset-bottom);
