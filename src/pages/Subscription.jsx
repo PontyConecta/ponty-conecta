@@ -57,6 +57,12 @@ export default function Subscription() {
   };
 
   const handleSubscribe = async () => {
+    // Check if running inside iframe (preview mode)
+    if (window.self !== window.top) {
+      alert('⚠️ O checkout do Stripe só funciona no aplicativo publicado.\n\nPor favor, publique seu app e acesse-o diretamente para realizar o pagamento.');
+      return;
+    }
+
     setSubscribing(true);
     try {
       const planType = `${profileType}_${selectedPlan}`;
