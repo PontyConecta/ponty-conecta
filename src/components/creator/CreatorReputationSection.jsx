@@ -113,7 +113,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
             transition={{ duration: 0.3, delay: 0.2 }}
             className="flex flex-col justify-center"
           >
-            <div className="rounded-xl p-4 shadow-sm transition-colors" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="rounded-xl p-4 shadow-sm border transition-colors" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-violet-600" />
