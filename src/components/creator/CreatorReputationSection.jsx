@@ -21,8 +21,8 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
   };
 
   return (
-    <Card className="lg:col-span-2 overflow-hidden border-0 shadow-lg">
-      <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+    <Card className="lg:col-span-2 overflow-hidden border-0 shadow-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <div className="p-8 transition-colors" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Pontuação Principal */}
           <motion.div
