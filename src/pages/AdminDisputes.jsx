@@ -40,6 +40,7 @@ import { validateTransition } from '../components/utils/stateTransitions';
 import { usePagination } from '../components/hooks/usePagination';
 import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import SearchFilter from '../components/common/SearchFilter';
 import DisputeStatsCards from '../components/disputes/DisputeStatsCards';
 import Pagination from '../components/common/Pagination';
 
@@ -177,9 +178,27 @@ export default function AdminDisputes() {
 
 
 
+  const [searchTerm, setSearchTerm] = useState('');
+
   const filteredDisputes = disputes.filter(d => {
-    return filterStatus === 'all' || d.status === filterStatus;
+    const matchesSearch = searchTerm === '' || 
+      campaigns[d.campaign_id]?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      creators[d.creator_id]?.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      brands[d.brand_id]?.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = filterStatus === 'all' || d.status === filterStatus;
+    
+    return matchesSearch && matchesStatus;
   });
+
+  // Aplica paginação
+  const paginatedDisputes = pagination.paginate(filteredDisputes);
+  const totalPages = pagination.totalPages(filteredDisputes.length);
+
+  // Reset pagination quando filtros mudam
+  useEffect(() => {
+    pagination.reset();
+  }, [searchTerm, filterStatus]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -201,21 +220,29 @@ export default function AdminDisputes() {
       {/* Stats */}
       <DisputeStatsCards disputes={disputes} />
 
-      {/* Filter */}
+      {/* Filters */}
       <Card>
         <CardContent className="p-4">
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              <SelectItem value="open">Abertas</SelectItem>
-              <SelectItem value="under_review">Em Análise</SelectItem>
-              <SelectItem value="resolved_brand_favor">Favorável à Marca</SelectItem>
-              <SelectItem value="resolved_creator_favor">Favorável ao Criador</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <SearchFilter
+              value={searchTerm}
+              onChange={setSearchTerm}
+              placeholder="Buscar por campanha, marca ou criador..."
+              className="flex-1"
+            />
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                <SelectItem value="open">Abertas</SelectItem>
+                <SelectItem value="under_review">Em Análise</SelectItem>
+                <SelectItem value="resolved_brand_favor">Favorável à Marca</SelectItem>
+                <SelectItem value="resolved_creator_favor">Favorável ao Criador</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardContent>
       </Card>
 
