@@ -262,7 +262,7 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-8 min-h-screen bg-gradient-to-br from-slate-50/50 via-white to-indigo-50/20">
+      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-8 min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">
           {children}
         </div>
