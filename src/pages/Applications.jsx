@@ -136,6 +136,16 @@ export default function Applications() {
     
     try {
       const campaign = campaigns[selectedApplication.campaign_id];
+      const currentSlotsFilled = campaign.slots_filled || 0;
+      const totalSlots = campaign.slots_total || 1;
+
+      // Validate slots available
+      if (currentSlotsFilled >= totalSlots) {
+        alert(`Não é possível aceitar esta candidatura. Todos os ${totalSlots} slot(s) da campanha já foram preenchidos.`);
+        setProcessing(false);
+        return;
+      }
+
       const rate = agreedRate ? parseFloat(agreedRate) : selectedApplication.proposed_rate;
 
       await base44.entities.Application.update(selectedApplication.id, {
@@ -145,7 +155,7 @@ export default function Applications() {
       });
 
       await base44.entities.Campaign.update(campaign.id, {
-        slots_filled: (campaign.slots_filled || 0) + 1
+        slots_filled: currentSlotsFilled + 1
       });
 
       await base44.entities.Delivery.create({
@@ -162,6 +172,7 @@ export default function Applications() {
       setAgreedRate('');
     } catch (error) {
       console.error('Error accepting application:', error);
+      alert('Erro ao aceitar candidatura. Tente novamente.');
     } finally {
       setProcessing(false);
     }
