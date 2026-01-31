@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     
     const { event, eventData = {}, fbp, fbc, user_agent, url, user_email } = body;
 
-    const pixelId = Deno.env.get('VITE_FACEBOOK_PIXEL_ID') || Deno.env.get('FACEBOOK_PIXEL_ID');
+    const pixelId = Deno.env.get('VITE_FACEBOOK_PIXEL_ID');
     const accessToken = Deno.env.get('META_API_TOKEN');
 
     if (!pixelId || !accessToken) {
