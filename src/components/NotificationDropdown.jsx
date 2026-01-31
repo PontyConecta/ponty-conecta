@@ -328,9 +328,9 @@ export default function NotificationDropdown() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative hover:bg-slate-100 transition-all"
+          className="relative hover:bg-white/10 transition-all"
         >
-          <Bell className="w-5 h-5 text-slate-700" />
+          <Bell className="w-5 h-5 text-white" />
           {unreadCount > 0 && (
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white"></span>
           )}
