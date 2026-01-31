@@ -16,7 +16,7 @@ export function SubscriptionProvider({ children }) {
     }
 
     const status = profile.subscription_status || 'none';
-    const isActive = status === 'active' || profile.account_state === 'active';
+    const isActive = status === 'active';
     
     setSubscriptionStatus(status);
     setIsSubscribed(isActive);

@@ -106,7 +106,7 @@ export default function BrandDashboard() {
     return <Badge className={`${style.color} border-0`}>{style.label}</Badge>;
   };
 
-  const isExploring = brand?.account_state !== 'active';
+  const isExploring = brand?.subscription_status !== 'active';
 
   return (
     <div className="space-y-8">

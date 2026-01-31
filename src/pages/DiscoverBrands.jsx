@@ -68,10 +68,10 @@ export default function DiscoverBrands() {
       const creators = await base44.entities.Creator.filter({ user_id: userData.id });
       if (creators.length > 0) {
         setCreator(creators[0]);
-        setIsSubscribed(creators[0].subscription_status === 'active' || creators[0].account_state === 'active');
+        setIsSubscribed(creators[0].subscription_status === 'active');
       }
 
-      const brandsData = await base44.entities.Brand.filter({ account_state: 'active' }, '-created_date');
+      const brandsData = await base44.entities.Brand.filter({ subscription_status: 'active' }, '-created_date');
       setBrands(brandsData);
     } catch (error) {
       console.error('Error loading data:', error);

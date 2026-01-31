@@ -99,7 +99,7 @@ export default function CreatorDashboard() {
     }
   ];
 
-  const isExploring = creator?.account_state !== 'active';
+  const isExploring = creator?.subscription_status !== 'active';
 
   const getStatusBadge = (status) => {
     const styles = {
