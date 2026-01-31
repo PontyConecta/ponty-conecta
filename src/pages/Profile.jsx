@@ -742,11 +742,11 @@ export default function Profile() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 bg-slate-50 rounded-xl">
+                <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-slate-900">Email</h4>
-                      <p className="text-sm text-slate-600">{user?.email}</p>
+                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Email</h4>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{user?.email}</p>
                     </div>
                     <Badge variant="outline">Verificado</Badge>
                   </div>
