@@ -112,7 +112,6 @@ async function handleCheckoutCompleted(base44, session) {
   // Update profile
   const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
   await base44.asServiceRole.entities[EntityType].update(profileId, {
-    account_state: 'active',
     subscription_status: 'active',
     stripe_customer_id: session.customer
   });
