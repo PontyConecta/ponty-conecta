@@ -304,7 +304,7 @@ export default function Profile() {
                       <div>
                         <Label>Segmento</Label>
                         <Select value={formData.industry} onValueChange={(v) => handleChange('industry', v)}>
-                          <SelectTrigger className="mt-2">
+                          <SelectTrigger className="mt-2 h-12">
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                           <SelectContent>
@@ -426,7 +426,7 @@ export default function Profile() {
                     <div>
                       <Label>Tamanho do Perfil</Label>
                       <Select value={formData.profile_size} onValueChange={(v) => handleChange('profile_size', v)}>
-                        <SelectTrigger className="mt-2">
+                        <SelectTrigger className="mt-2 h-12">
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
@@ -458,7 +458,7 @@ export default function Profile() {
                         
                         <div className="grid grid-cols-3 gap-2">
                           <Select value={newPlatform.name} onValueChange={(v) => setNewPlatform(p => ({ ...p, name: v }))}>
-                            <SelectTrigger><SelectValue placeholder="Plataforma" /></SelectTrigger>
+                            <SelectTrigger className="h-12"><SelectValue placeholder="Plataforma" /></SelectTrigger>
                             <SelectContent>
                               {platformOptions.map((opt) => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}
                             </SelectContent>
