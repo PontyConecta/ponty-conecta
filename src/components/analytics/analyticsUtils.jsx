@@ -24,52 +24,9 @@ export const sendFacebookEvent = async (eventName, eventData = {}, userEmail = n
   }
 };
 
-// Enviar evento para Google Analytics
-export const sendGoogleAnalyticsEvent = async (eventName, eventParams = {}) => {
-  try {
-    const measurementId = import.meta.env.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID;
-    
-    if (!measurementId) {
-      console.warn('Google Analytics Measurement ID not configured');
-      return;
-    }
-
-    // Gera um cliente ID simples (em produção, use gtag)
-    const clientId = localStorage.getItem('ga_client_id') || 
-      `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
-    if (!localStorage.getItem('ga_client_id')) {
-      localStorage.setItem('ga_client_id', clientId);
-    }
-
-    const payload = {
-      measurementId: measurementId,
-      clientId: clientId,
-      events: [
-        {
-          name: eventName,
-          params: {
-            ...eventParams,
-            timestamp: Date.now(),
-          },
-        },
-      ],
-    };
-
-    await base44.functions.invoke('googleAnalytics', payload);
-    console.log('Google Analytics event sent:', eventName);
-  } catch (error) {
-    console.error('Error sending Google Analytics event:', error);
-  }
-};
-
 // Rastrear página visualizada
 export const trackPageView = (pageTitle = null) => {
   sendFacebookEvent('PageView');
-  sendGoogleAnalyticsEvent('page_view', {
-    page_title: pageTitle || document.title,
-    page_location: window.location.href,
-  });
 };
 
 // Rastrear lead
@@ -78,7 +35,6 @@ export const trackLead = (leadData = {}) => {
     content_name: leadData.content_name || 'Lead',
     ...leadData,
   });
-  sendGoogleAnalyticsEvent('generate_lead', leadData);
 };
 
 // Rastrear compra
@@ -89,13 +45,6 @@ export const trackPurchase = (purchaseData) => {
     content_type: purchaseData.content_type || 'product',
     ...purchaseData,
   }, purchaseData.user_email);
-  
-  sendGoogleAnalyticsEvent('purchase', {
-    transaction_id: purchaseData.transaction_id,
-    value: purchaseData.value,
-    currency: purchaseData.currency || 'BRL',
-    items: purchaseData.items || [],
-  });
 };
 
 // Rastrear adição ao carrinho
@@ -107,16 +56,6 @@ export const trackAddToCart = (productData) => {
     value: productData.value,
     currency: productData.currency || 'BRL',
   });
-  
-  sendGoogleAnalyticsEvent('add_to_cart', {
-    items: [
-      {
-        item_id: productData.id,
-        item_name: productData.name,
-        price: productData.value,
-      },
-    ],
-  });
 };
 
 // Rastrear visualização de produto
@@ -127,15 +66,5 @@ export const trackViewContent = (productData) => {
     content_name: productData.name,
     value: productData.value,
     currency: productData.currency || 'BRL',
-  });
-  
-  sendGoogleAnalyticsEvent('view_item', {
-    items: [
-      {
-        item_id: productData.id,
-        item_name: productData.name,
-        price: productData.value,
-      },
-    ],
   });
 };
