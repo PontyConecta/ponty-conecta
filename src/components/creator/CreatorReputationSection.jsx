@@ -99,7 +99,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
               </div>
 
               <div className="pt-2">
-                <p className="text-xs text-slate-500 mb-2">
+                <p className="text-xs mb-2 transition-colors" style={{ color: 'var(--text-secondary)' }}>
                   {reputation?.campaigns_completed || 0} campanhas concluídas
                 </p>
               </div>
