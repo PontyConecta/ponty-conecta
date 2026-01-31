@@ -1,3 +1,13 @@
+// Helper function to hash email/phone using SHA256
+const hashData = async (data) => {
+  if (!data) return undefined;
+  const encoder = new TextEncoder();
+  const dataBuffer = encoder.encode(data.toLowerCase().trim());
+  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
@@ -5,7 +15,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { event, eventData = {}, fbp, fbc, user_agent, url } = body;
+    const { event, eventData = {}, fbp, fbc, user_agent, url, email, phone, first_name, last_name } = body;
 
     const pixelId = Deno.env.get('VITE_FACEBOOK_PIXEL_ID');
     const accessToken = Deno.env.get('META_API_TOKEN');
@@ -16,6 +26,10 @@ Deno.serve(async (req) => {
         { status: 400 }
       );
     }
+
+    // Hash customer data
+    const hashedEmail = await hashData(email);
+    const hashedPhone = await hashData(phone);
 
     const payload = {
       data: [
@@ -28,7 +42,10 @@ Deno.serve(async (req) => {
             client_user_agent: user_agent,
             fbp: fbp || undefined,
             fbc: fbc || undefined,
-            client_ip_address: undefined,
+            em: hashedEmail,
+            ph: hashedPhone,
+            fn: first_name ? first_name.toLowerCase().trim() : undefined,
+            ln: last_name ? last_name.toLowerCase().trim() : undefined,
           },
           custom_data: eventData,
         },
