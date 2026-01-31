@@ -200,7 +200,7 @@ export default function OpportunityFeed() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
       </div>
     );
   }
@@ -210,11 +210,11 @@ export default function OpportunityFeed() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-2">
-            <Sparkles className="w-7 h-7 lg:w-8 lg:h-8 text-orange-500" />
+          <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <Sparkles className="w-7 h-7 lg:w-8 lg:h-8" style={{ color: 'var(--accent-primary)' }} />
             Oportunidades
           </h1>
-          <p className="text-slate-600 mt-1">
+          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
             {filteredCampaigns.length} campanhas disponíveis
           </p>
         </div>
@@ -230,15 +230,15 @@ export default function OpportunityFeed() {
 
       {/* Subscription Banner */}
       {!isSubscribed && profileValidation.isComplete && (
-        <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
                 <Crown className="w-6 h-6 text-orange-600" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-slate-900">Modo Exploração</h3>
-                <p className="text-sm text-slate-600">
+                <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Modo Exploração</h3>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                   Você pode ver as oportunidades, mas precisa assinar para se candidatar.
                 </p>
               </div>
@@ -254,11 +254,11 @@ export default function OpportunityFeed() {
       )}
 
       {/* Filters */}
-      <Card className="border-slate-200 shadow-sm">
+      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -310,7 +310,7 @@ export default function OpportunityFeed() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="h-full hover:shadow-xl hover:border-orange-200 transition-all duration-300 group cursor-pointer border-slate-200" onClick={() => openCampaignDetails(campaign)}>
+                <Card className="h-full hover:shadow-xl transition-all duration-300 group cursor-pointer" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} onClick={() => openCampaignDetails(campaign)}>
                   {/* Cover */}
                   {campaign.cover_image_url && (
                     <div className="h-32 overflow-hidden">
@@ -324,14 +324,14 @@ export default function OpportunityFeed() {
                       {brand?.logo_url ? (
                         <img src={brand.logo_url} alt={brand.company_name} className="w-10 h-10 rounded-lg object-cover" />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
-                          <Building2 className="w-5 h-5 text-slate-400" />
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                          <Building2 className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-slate-900 truncate">{brand?.company_name || 'Marca'}</h4>
+                        <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{brand?.company_name || 'Marca'}</h4>
                         {brand?.verified && (
-                          <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700">
+                          <Badge variant="outline" className="text-xs" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent-primary)' }}>
                             Verificada
                           </Badge>
                         )}
@@ -339,10 +339,10 @@ export default function OpportunityFeed() {
                     </div>
 
                     {/* Campaign Title & Description */}
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-orange-700 transition-colors">
+                    <h3 className="text-lg font-semibold mb-2 line-clamp-2 transition-colors" style={{ color: 'var(--text-primary)' }}>
                       {campaign.title}
                     </h3>
-                    <p className="text-slate-600 text-sm line-clamp-2 mb-4 flex-1">
+                    <p className="text-sm line-clamp-2 mb-4 flex-1" style={{ color: 'var(--text-secondary)' }}>
                       {campaign.description}
                     </p>
 
@@ -361,7 +361,7 @@ export default function OpportunityFeed() {
                     </div>
 
                     {/* Meta Info */}
-                    <div className="flex flex-wrap gap-3 text-sm text-slate-500 mb-4">
+                    <div className="flex flex-wrap gap-3 text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {campaign.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '-'}
@@ -379,7 +379,7 @@ export default function OpportunityFeed() {
                     </div>
 
                     {/* Remuneration & Action */}
-                    <div className="flex items-center justify-between pt-4 border-t">
+                    <div className="flex items-center justify-between pt-4" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
                       <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${remuneration.color}`}>
                         <remuneration.icon className="w-4 h-4" />
                         {remuneration.label}
@@ -408,13 +408,13 @@ export default function OpportunityFeed() {
           })}
         </div>
       ) : (
-        <Card>
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-12 text-center">
-            <Sparkles className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <Sparkles className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma oportunidade encontrada
             </h3>
-            <p className="text-slate-500">
+            <p style={{ color: 'var(--text-secondary)' }}>
               {searchTerm || filterPlatform !== 'all' || filterRemuneration !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'Novas campanhas serão adicionadas em breve'}
@@ -435,59 +435,59 @@ export default function OpportunityFeed() {
           {selectedCampaign && (
             <div className="space-y-6 py-4">
               {viewingDetails ? (
-                // Campaign Details View
-                <>
-                  {/* Cover */}
-                  {selectedCampaign.cover_image_url && (
-                    <div className="h-40 rounded-xl overflow-hidden">
-                      <img src={selectedCampaign.cover_image_url} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  )}
+                        // Campaign Details View
+                        <>
+                          {/* Cover */}
+                          {selectedCampaign.cover_image_url && (
+                            <div className="h-40 rounded-xl overflow-hidden">
+                              <img src={selectedCampaign.cover_image_url} alt="" className="w-full h-full object-cover" />
+                            </div>
+                          )}
 
-                  {/* Brand & Title */}
-                  <div className="flex items-center gap-4">
-                    {brands[selectedCampaign.brand_id]?.logo_url ? (
-                      <img src={brands[selectedCampaign.brand_id].logo_url} alt="" className="w-14 h-14 rounded-lg object-cover" />
-                    ) : (
-                      <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center">
-                        <Building2 className="w-7 h-7 text-slate-400" />
-                      </div>
-                    )}
-                    <div>
-                      <h2 className="text-xl font-bold text-slate-900">{selectedCampaign.title}</h2>
-                      <p className="text-slate-500">{brands[selectedCampaign.brand_id]?.company_name}</p>
-                    </div>
-                  </div>
+                          {/* Brand & Title */}
+                          <div className="flex items-center gap-4">
+                            {brands[selectedCampaign.brand_id]?.logo_url ? (
+                              <img src={brands[selectedCampaign.brand_id].logo_url} alt="" className="w-14 h-14 rounded-lg object-cover" />
+                            ) : (
+                              <div className="w-14 h-14 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                                <Building2 className="w-7 h-7" style={{ color: 'var(--text-secondary)' }} />
+                              </div>
+                            )}
+                            <div>
+                              <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{selectedCampaign.title}</h2>
+                              <p style={{ color: 'var(--text-secondary)' }}>{brands[selectedCampaign.brand_id]?.company_name}</p>
+                            </div>
+                          </div>
 
-                  {/* Description */}
-                  <div>
-                    <h4 className="font-medium text-slate-900 mb-2">Descrição</h4>
-                    <p className="text-slate-600">{selectedCampaign.description}</p>
-                  </div>
+                          {/* Description */}
+                          <div>
+                            <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Descrição</h4>
+                            <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.description}</p>
+                          </div>
 
-                  {/* Target Audience */}
-                  {selectedCampaign.target_audience && (
-                    <div>
-                      <h4 className="font-medium text-slate-900 mb-2">Público-Alvo</h4>
-                      <p className="text-slate-600">{selectedCampaign.target_audience}</p>
-                    </div>
-                  )}
+                          {/* Target Audience */}
+                          {selectedCampaign.target_audience && (
+                            <div>
+                              <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Público-Alvo</h4>
+                              <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.target_audience}</p>
+                            </div>
+                          )}
 
-                  {/* Requirements */}
-                  {selectedCampaign.requirements && (
-                    <div className="p-4 bg-indigo-50 rounded-xl">
-                      <h4 className="font-medium text-indigo-900 mb-2">Requisitos e Entregas</h4>
-                      <p className="text-indigo-800">{selectedCampaign.requirements}</p>
-                    </div>
-                  )}
+                          {/* Requirements */}
+                          {selectedCampaign.requirements && (
+                            <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                              <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Requisitos e Entregas</h4>
+                              <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.requirements}</p>
+                            </div>
+                          )}
 
-                  {/* Content Guidelines */}
-                  {selectedCampaign.content_guidelines && (
-                    <div>
-                      <h4 className="font-medium text-slate-900 mb-2">Diretrizes de Conteúdo</h4>
-                      <p className="text-slate-600">{selectedCampaign.content_guidelines}</p>
-                    </div>
-                  )}
+                          {/* Content Guidelines */}
+                          {selectedCampaign.content_guidelines && (
+                            <div>
+                              <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Diretrizes de Conteúdo</h4>
+                              <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.content_guidelines}</p>
+                            </div>
+                          )}
 
                   {/* Do's and Don'ts */}
                   {(selectedCampaign.dos?.length > 0 || selectedCampaign.donts?.length > 0) && (
@@ -556,32 +556,32 @@ export default function OpportunityFeed() {
                   </div>
 
                   {/* Remuneration */}
-                  <div className="p-4 bg-emerald-50 rounded-xl">
-                    <h4 className="font-medium text-emerald-900 mb-2">Remuneração</h4>
+                  <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Remuneração</h4>
                     {selectedCampaign.remuneration_type === 'cash' && (
-                      <p className="text-emerald-800 text-lg font-semibold">
-                        R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
-                      </p>
-                    )}
+                       <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                         R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
+                       </p>
+                     )}
                     {selectedCampaign.remuneration_type === 'barter' && (
                       <div>
                         <Badge className="bg-pink-100 text-pink-700 border-0 mb-2">Permuta</Badge>
                         {selectedCampaign.barter_description && (
-                          <p className="text-emerald-800">{selectedCampaign.barter_description}</p>
+                          <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.barter_description}</p>
                         )}
                         {selectedCampaign.barter_value && (
-                          <p className="text-sm text-emerald-700 mt-1">Valor estimado: R$ {selectedCampaign.barter_value}</p>
+                          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Valor estimado: R$ {selectedCampaign.barter_value}</p>
                         )}
                       </div>
                     )}
                     {selectedCampaign.remuneration_type === 'mixed' && (
                       <div>
                         <Badge className="bg-violet-100 text-violet-700 border-0 mb-2">Misto</Badge>
-                        <p className="text-emerald-800">
+                        <p style={{ color: 'var(--text-secondary)' }}>
                           R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0} + Permuta
                         </p>
                         {selectedCampaign.barter_description && (
-                          <p className="text-sm text-emerald-700 mt-1">{selectedCampaign.barter_description}</p>
+                          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.barter_description}</p>
                         )}
                       </div>
                     )}
@@ -602,14 +602,14 @@ export default function OpportunityFeed() {
                 </>
               ) : (
                 // Application Form View
-                <>
-                  {/* Campaign Summary */}
-                  <div className="p-4 bg-slate-50 rounded-xl">
-                    <h4 className="font-semibold text-slate-900 mb-1">{selectedCampaign.title}</h4>
-                    <p className="text-sm text-slate-500">
-                      {brands[selectedCampaign.brand_id]?.company_name || 'Marca'}
-                    </p>
-                  </div>
+                  <>
+                    {/* Campaign Summary */}
+                    <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                      <h4 className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{selectedCampaign.title}</h4>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {brands[selectedCampaign.brand_id]?.company_name || 'Marca'}
+                      </p>
+                    </div>
 
                   {/* Application Form */}
                   <div>
@@ -642,7 +642,7 @@ export default function OpportunityFeed() {
                   )}
 
                   {/* Actions */}
-                  <div className="flex justify-end gap-3 pt-4 border-t">
+                  <div className="flex justify-end gap-3 pt-4" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
                     <Button variant="outline" onClick={() => setViewingDetails(true)}>
                       Voltar
                     </Button>
