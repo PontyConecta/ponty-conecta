@@ -78,7 +78,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                     <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     </div>
-                    <span className="text-sm font-medium text-slate-700">Aprovadas</span>
+                    <span className="text-sm font-medium transition-colors" style={{ color: 'var(--text-primary)' }}>Aprovadas</span>
                   </div>
                   <span className="text-2xl font-bold text-emerald-600">{approvedDeliveries}</span>
                 </div>
