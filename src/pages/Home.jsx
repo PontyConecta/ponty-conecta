@@ -26,6 +26,16 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
+          {/* Logo */}
+          <div className="flex justify-center mb-8 lg:mb-12">
+            <div className="flex items-center gap-3 group">
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                <span className="text-white font-bold text-2xl lg:text-3xl">P</span>
+              </div>
+              <span className="text-2xl lg:text-3xl font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Ponty</span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
             {/* Hero Text */}
             <div className="flex flex-col gap-6 lg:gap-8">
