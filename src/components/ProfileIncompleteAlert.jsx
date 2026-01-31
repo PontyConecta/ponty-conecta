@@ -17,8 +17,8 @@ export default function ProfileIncompleteAlert({ missingFields, profileType }) {
 
   const message = getMissingFieldsMessage(missingFields);
   const actionLabel = profileType === 'brand' 
-    ? 'criar campanhas' 
-    : 'se candidatar a oportunidades';
+    ? 'criar campanhas e aparecer no expositor de marcas' 
+    : 'se candidatar a oportunidades e aparecer no expositor de criadores';
 
   return (
     <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-300 shadow-md">
