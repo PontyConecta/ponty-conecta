@@ -8,16 +8,16 @@ import { motion } from 'framer-motion';
 export default function MissionTracker({ missions = [] }) {
   if (missions.length === 0) {
     return (
-      <Card>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
             <Flame className="w-5 h-5 text-orange-500" />
             Missões
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <p className="text-slate-500">Nenhuma missão ativa no momento</p>
+            <p style={{ color: 'var(--text-secondary)' }}>Nenhuma missão ativa no momento</p>
           </div>
         </CardContent>
       </Card>
@@ -25,9 +25,9 @@ export default function MissionTracker({ missions = [] }) {
   }
 
   return (
-    <Card>
+    <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+        <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
           <Flame className="w-5 h-5 text-orange-500" />
           Missões ({missions.filter(m => m.status === 'active').length} ativas)
         </CardTitle>
