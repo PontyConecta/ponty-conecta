@@ -65,11 +65,12 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
                     key={item.page}
                     to={createPageUrl(item.page)}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                      isActive 
-                        ? 'bg-indigo-50 text-indigo-700 shadow-sm' 
-                        : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700'
-                    )}
+                       "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                       isActive 
+                         ? 'text-indigo-600 shadow-sm' 
+                         : 'hover:opacity-70'
+                     )}
+                     style={isActive ? { backgroundColor: 'rgba(79, 70, 229, 0.1)' } : { color: 'var(--text-secondary)' }}
                   >
                     <item.icon className="w-5 h-5 flex-shrink-0" />
                     <span>{item.name}</span>
