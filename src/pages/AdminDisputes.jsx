@@ -35,6 +35,8 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDate } from '../components/utils/formatters';
 import { arrayToMap } from '../components/utils/entityHelpers';
+import { disputeResolutionSchema, validate } from '../components/utils/validationSchemas';
+import { validateTransition } from '../components/utils/stateTransitions';
 import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import DisputeStatsCards from '../components/disputes/DisputeStatsCards';
@@ -99,7 +101,25 @@ export default function AdminDisputes() {
   };
 
   const handleResolve = async () => {
-    if (!selectedDispute || !resolution || !resolutionType) return;
+    if (!selectedDispute || !resolution || !resolutionType) {
+      toast.error('Preencha todos os campos obrigatórios');
+      return;
+    }
+
+    // Valida dados da resolução
+    const validation = validate(disputeResolutionSchema, { resolution, resolution_type: resolutionType });
+    if (!validation.success) {
+      const firstError = Object.values(validation.errors)[0];
+      toast.error(firstError);
+      return;
+    }
+
+    // Valida transição de estado
+    const transitionValidation = validateTransition('dispute', selectedDispute, resolutionType);
+    if (!transitionValidation.valid) {
+      toast.error(transitionValidation.error || transitionValidation.errors?.[0]);
+      return;
+    }
     
     setProcessing(true);
     try {

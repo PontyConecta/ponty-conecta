@@ -35,6 +35,8 @@ import {
   Target
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { validateTransition } from '../components/utils/stateTransitions';
+import { toast } from 'sonner';
 
 export default function Applications() {
   const [user, setUser] = useState(null);
@@ -132,19 +134,20 @@ export default function Applications() {
 
   const handleAccept = async () => {
     if (!selectedApplication) return;
+    
+    const campaign = campaigns[selectedApplication.campaign_id];
+    
+    // Valida transição de estado
+    const validation = validateTransition('application', selectedApplication, 'accepted', { campaign });
+    if (!validation.valid) {
+      toast.error(validation.error || validation.errors?.[0]);
+      return;
+    }
+
     setProcessing(true);
     
     try {
-      const campaign = campaigns[selectedApplication.campaign_id];
       const currentSlotsFilled = campaign.slots_filled || 0;
-      const totalSlots = campaign.slots_total || 1;
-
-      // Validate slots available
-      if (currentSlotsFilled >= totalSlots) {
-        alert(`Não é possível aceitar esta candidatura. Todos os ${totalSlots} slot(s) da campanha já foram preenchidos.`);
-        setProcessing(false);
-        return;
-      }
 
       const rate = agreedRate ? parseFloat(agreedRate) : selectedApplication.proposed_rate;
 
