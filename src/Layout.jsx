@@ -145,7 +145,41 @@ function LayoutContent({ children, currentPageName }) {
           --primary: 79 70 229;
           --primary-foreground: 255 255 255;
           --accent: 249 115 22;
+          --bg-primary: #f8fafc;
+          --bg-secondary: #ffffff;
+          --text-primary: #0f172a;
+          --text-secondary: #64748b;
+          --border-color: #e2e8f0;
+          --accent-primary: #4f46e5;
         }
+
+        [data-theme="light"] {
+          --bg-primary: #f8fafc;
+          --bg-secondary: #ffffff;
+          --text-primary: #0f172a;
+          --text-secondary: #64748b;
+          --border-color: #e2e8f0;
+          --accent-primary: #4f46e5;
+        }
+
+        [data-theme="dark"] {
+          --bg-primary: #0f172a;
+          --bg-secondary: #1e293b;
+          --text-primary: #f1f5f9;
+          --text-secondary: #cbd5e1;
+          --border-color: #334155;
+          --accent-primary: #6366f1;
+        }
+
+        [data-theme="musk"] {
+          --bg-primary: #1a1a2e;
+          --bg-secondary: #16213e;
+          --text-primary: #eaeaea;
+          --text-secondary: #b0b0b0;
+          --border-color: #2d3561;
+          --accent-primary: #e94560;
+        }
+
         .safe-area-bottom {
           padding-bottom: env(safe-area-inset-bottom);
         }
