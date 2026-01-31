@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatDate, formatCurrencyRange } from '@/utils/formatters';
+import { formatDate, formatCurrencyRange } from '@/components/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import SearchFilter from '@/components/common/SearchFilter';

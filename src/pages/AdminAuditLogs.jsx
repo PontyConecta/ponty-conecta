@@ -11,8 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from 'sonner';
-import { formatDateTime } from '@/utils/formatters';
-import { auditLogActionConfig } from '@/utils/statusConfigs';
+import { formatDateTime } from '@/components/utils/formatters';
+import { auditLogActionConfig } from '@/components/utils/statusConfigs';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import SearchFilter from '@/components/common/SearchFilter';
 
