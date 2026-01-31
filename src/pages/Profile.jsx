@@ -722,9 +722,9 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                    <CreditCard className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                    <h4 className="font-semibold text-slate-900 mb-2">Sem assinatura ativa</h4>
-                    <p className="text-slate-500 mb-4 text-sm">Assine para acessar todas as funcionalidades</p>
+                       <CreditCard className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-secondary)' }} />
+                       <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Sem assinatura ativa</h4>
+                       <p className="mb-4 text-sm" style={{ color: 'var(--text-secondary)' }}>Assine para acessar todas as funcionalidades</p>
                     <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-indigo-600 hover:bg-indigo-700">
                       Ver Planos
                     </Button>
