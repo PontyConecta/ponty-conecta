@@ -75,21 +75,23 @@ function LayoutContent({ children, currentPageName }) {
                   }
 
                   [data-theme="dark"] {
-                    --bg-primary: #0a0e27;
-                    --bg-secondary: #1a1f3a;
-                    --text-primary: #f0f4f8;
-                    --text-secondary: #a0aac0;
-                    --border-color: #2d3d5f;
+                    --bg-primary: #0f1419;
+                    --bg-secondary: #1a2332;
+                    --text-primary: #e8ecf1;
+                    --text-secondary: #9ba8b8;
+                    --border-color: #2a3a52;
                     --accent-primary: #7c3aed;
+                    --card-bg: #1a2332;
                   }
 
                   [data-theme="musk"] {
-                    --bg-primary: #1a1624;
-                    --bg-secondary: #2d1f3a;
-                    --text-primary: #f5f1f8;
-                    --text-secondary: #b8a5c4;
-                    --border-color: #4a3861;
+                    --bg-primary: #17101e;
+                    --bg-secondary: #2a1c38;
+                    --text-primary: #f3eef8;
+                    --text-secondary: #b8a5c8;
+                    --border-color: #5a3a75;
                     --accent-primary: #d946ef;
+                    --card-bg: #2a1c38;
                   }
 
                   :root {
