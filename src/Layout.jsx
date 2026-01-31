@@ -136,10 +136,15 @@ function LayoutContent({ children, currentPageName }) {
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
           {/* Logo */}
           <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <span className="text-white font-bold text-base lg:text-lg">P</span>
             </div>
-            <span className="text-lg lg:text-xl font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent hidden sm:block">Ponty</span>
+            <div className="flex flex-col hidden sm:flex">
+              <span className="text-base lg:text-lg font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent leading-tight">Ponty</span>
+              <span className="text-[10px] lg:text-xs font-medium text-slate-500 leading-tight">
+                {profileType === 'brand' ? 'Marcas' : 'Creators'}
+              </span>
+            </div>
           </Link>
 
           {/* Right Section */}
