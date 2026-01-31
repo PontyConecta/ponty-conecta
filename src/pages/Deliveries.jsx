@@ -180,7 +180,7 @@ export default function Deliveries() {
     
     try {
       await base44.entities.Delivery.update(selectedDelivery.id, {
-        status: 'contested',
+        status: 'in_dispute',
         contested_at: new Date().toISOString(),
         reviewed_at: new Date().toISOString(),
         contest_reason: contestReason
