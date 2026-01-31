@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
 import { ArrowRight, Zap, Users, TrendingUp, Shield, Sparkles, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -77,18 +78,22 @@ export default function Home() {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to={createPageUrl('OnboardingBrand')}>
-                  <Button size="lg" className="bg-purple-600 text-white hover:bg-purple-700 w-full sm:w-auto sm:bg-white sm:text-purple-600 sm:border-2 sm:border-purple-600 sm:hover:bg-purple-50">
-                    Sou uma Marca
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-                <Link to={createPageUrl('OnboardingCreator')}>
-                  <Button size="lg" className="bg-orange-500 text-white hover:bg-orange-600 w-full sm:w-auto sm:bg-white sm:text-orange-500 sm:border-2 sm:border-orange-500 sm:hover:bg-orange-50">
-                    Sou Criador
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="bg-purple-600 text-white hover:bg-purple-700 w-full sm:w-auto sm:bg-white sm:text-purple-600 sm:border-2 sm:border-purple-600 sm:hover:bg-purple-50"
+                  onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
+                >
+                  Sou uma Marca
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  className="bg-orange-500 text-white hover:bg-orange-600 w-full sm:w-auto sm:bg-white sm:text-orange-500 sm:border-2 sm:border-orange-500 sm:hover:bg-orange-50"
+                  onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
+                >
+                  Sou Criador
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
               </div>
             </div>
 
@@ -216,12 +221,14 @@ export default function Home() {
                         ))}
                       </div>
 
-                      <Link to={createPageUrl('OnboardingBrand')} className="block w-full">
-                        <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white w-full">
-                          Começar como Marca
-                          <ArrowRight className="w-5 h-5 ml-2" />
-                        </Button>
-                      </Link>
+                      <Button 
+                        size="lg" 
+                        className="bg-purple-600 hover:bg-purple-700 text-white w-full"
+                        onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
+                      >
+                        Começar como Marca
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </Button>
                       </div>
                       </div>
                       </div>
@@ -279,12 +286,14 @@ export default function Home() {
                         ))}
                       </div>
 
-                      <Link to={createPageUrl('OnboardingCreator')} className="block w-full">
-                        <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white w-full">
-                          Começar como Criador
-                          <ArrowRight className="w-5 h-5 ml-2" />
-                        </Button>
-                      </Link>
+                      <Button 
+                        size="lg" 
+                        className="bg-orange-500 hover:bg-orange-600 text-white w-full"
+                        onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
+                      >
+                        Começar como Criador
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </Button>
                     </div>
                   </div>
                 </div>
