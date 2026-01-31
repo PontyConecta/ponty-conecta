@@ -70,7 +70,7 @@ function LayoutContent({ children, currentPageName }) {
                     --bg-secondary: #ffffff;
                     --text-primary: #0f172a;
                     --text-secondary: #64748b;
-                    --border-color: #e2e8f0;
+                    --border-color: #ffffff;
                     --accent-primary: #4f46e5;
                   }
 
