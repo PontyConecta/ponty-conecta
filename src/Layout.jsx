@@ -168,7 +168,7 @@ function LayoutContent({ children, currentPageName }) {
           --bg-secondary: #1a1f3a;
           --text-primary: #f0f4f8;
           --text-secondary: #a0aac0;
-          --border-color: #2d3d5f;
+          --border-color: #ffffff;
           --accent-primary: #7c3aed;
         }
 
@@ -177,7 +177,7 @@ function LayoutContent({ children, currentPageName }) {
           --bg-secondary: #2d1f3a;
           --text-primary: #f5f1f8;
           --text-secondary: #b8a5c4;
-          --border-color: #4a3861;
+          --border-color: #ffffff;
           --accent-primary: #d946ef;
         }
 
