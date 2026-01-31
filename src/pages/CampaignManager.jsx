@@ -580,7 +580,7 @@ export default function CampaignManager() {
 
       {/* Create/Edit Campaign Dialog */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto pb-safe">
           <DialogHeader>
             <DialogTitle>
               {editingCampaign ? 'Editar Campanha' : 'Nova Campanha'}

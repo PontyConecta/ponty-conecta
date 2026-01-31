@@ -109,7 +109,12 @@ function LayoutContent({ children, currentPageName }) {
         }
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
           .pb-safe {
-            padding-bottom: calc(env(safe-area-inset-bottom) + 64px);
+            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+          }
+        }
+        @media (max-width: 1024px) {
+          .pb-safe {
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
           }
         }
       `}</style>

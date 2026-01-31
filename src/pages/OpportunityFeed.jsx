@@ -425,7 +425,7 @@ export default function OpportunityFeed() {
 
       {/* Campaign Details / Application Dialog */}
       <Dialog open={!!selectedCampaign} onOpenChange={() => { setSelectedCampaign(null); setViewingDetails(false); }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto pb-safe">
           <DialogHeader>
             <DialogTitle>
               {viewingDetails ? 'Detalhes da Campanha' : 'Candidatar-se à Campanha'}
