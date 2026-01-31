@@ -54,14 +54,14 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-4xl font-bold text-slate-900">
+                <div className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
                   {reputation?.total_score || 100}
                 </div>
-                <div className="text-xs text-slate-500">/100</div>
+                <div className="text-xs transition-colors" style={{ color: 'var(--text-secondary)' }}>/100</div>
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-slate-900 text-center">Sua Reputação</h3>
-            <p className="text-sm text-slate-600 mt-1">Pontuação Geral</p>
+            <h3 className="text-lg font-semibold text-center transition-colors" style={{ color: 'var(--text-primary)' }}>Sua Reputação</h3>
+            <p className="text-sm mt-1 transition-colors" style={{ color: 'var(--text-secondary)' }}>Pontuação Geral</p>
           </motion.div>
 
           {/* Entregas */}
