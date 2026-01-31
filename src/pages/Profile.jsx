@@ -221,8 +221,8 @@ export default function Profile() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Editar Perfil</h1>
-          <p className="text-slate-600 mt-1">Atualize suas informações</p>
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Editar Perfil</h1>
+          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>Atualize suas informações</p>
         </div>
         <div className="flex items-center gap-2">
           <ThemeSelector />
