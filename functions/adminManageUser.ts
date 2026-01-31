@@ -99,6 +99,24 @@ Deno.serve(async (req) => {
         auditAction = 'user_flagged';
         break;
 
+      case 'unflag_review':
+        const [brandsFlagRm, creatorsFlagRm] = await Promise.all([
+          base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
+          base44.asServiceRole.entities.Creator.filter({ user_id: userId })
+        ]);
+
+        if (brandsFlagRm.length > 0) {
+          result = await base44.asServiceRole.entities.Brand.update(brandsFlagRm[0].id, {
+            account_state: 'active'
+          });
+        } else if (creatorsFlagRm.length > 0) {
+          result = await base44.asServiceRole.entities.Creator.update(creatorsFlagRm[0].id, {
+            account_state: 'active'
+          });
+        }
+        auditAction = 'user_unflagged';
+        break;
+
       default:
         return Response.json({ error: 'Invalid action' }, { status: 400 });
     }
