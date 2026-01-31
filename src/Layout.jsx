@@ -270,11 +270,17 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Mobile Bottom Navigation */}
       <BottomNav profileType={profileType} currentPageName={currentPageName} />
-    </div>
-  );
-}
+      </div>
+      </ThemeProviderWrapper>
+      );
+      }
 
-export default function Layout({ children, currentPageName }) {
+      function ThemeProviderWrapper({ children }) {
+      const { theme } = useTheme();
+      return <div data-theme={theme}>{children}</div>;
+      }
+
+      export default function Layout({ children, currentPageName }) {
   return (
     <ErrorBoundary>
       <AuthProvider>
