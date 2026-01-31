@@ -127,16 +127,25 @@ export default function AdminDisputes() {
       if (delivery) {
         const newDeliveryStatus = resolutionType === 'resolved_creator_favor' ? 'approved' : 'closed';
         await base44.entities.Delivery.update(delivery.id, {
-          status: 'resolved',
+          status: newDeliveryStatus,
+          approved_at: resolutionType === 'resolved_creator_favor' ? new Date().toISOString() : delivery.approved_at,
           payment_status: resolutionType === 'resolved_creator_favor' ? 'completed' : 'disputed'
         });
       }
 
-      // Update application if creator won
+      // Update application and creator stats if creator won
       if (resolutionType === 'resolved_creator_favor' && delivery) {
         await base44.entities.Application.update(delivery.application_id, {
           status: 'completed'
         });
+        
+        // Update creator stats
+        const creator = await base44.entities.Creator.filter({ id: delivery.creator_id });
+        if (creator.length > 0) {
+          await base44.entities.Creator.update(creator[0].id, {
+            completed_campaigns: (creator[0].completed_campaigns || 0) + 1
+          });
+        }
       }
 
       await loadData();
