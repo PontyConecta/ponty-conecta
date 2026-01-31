@@ -94,7 +94,7 @@ export default function MissionTracker({ missions = [] }) {
 
               {isActive && (
                 <>
-                  <div className="flex items-center justify-between text-xs text-slate-600 mb-2">
+                  <div className="flex items-center justify-between text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
                     <span>Progresso</span>
                     <span className="font-semibold">
                       {mission.current_progress}/{mission.target_value}
