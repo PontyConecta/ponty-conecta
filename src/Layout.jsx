@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
+import { trackPageView } from '@/components/analytics/analyticsUtils';
 import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
 import { ThemeProvider, useTheme } from '@/components/contexts/ThemeContext';
@@ -52,10 +53,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 function LayoutContent({ children, currentPageName }) {
-          const { user, profile, profileType, loading, logout } = useAuth();
-          const { isSubscribed } = useSubscription();
-        const [isMenuOpen, setIsMenuOpen] = useState(false);
-        const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
+                const { user, profile, profileType, loading, logout } = useAuth();
+                const { isSubscribed } = useSubscription();
+              const [isMenuOpen, setIsMenuOpen] = useState(false);
+              const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
+
+              // Rastrear página visualizada
+              useEffect(() => {
+                trackPageView(currentPageName);
+              }, [currentPageName]);
 
   const handleLogout = () => {
     logout('/');
@@ -73,8 +79,31 @@ function LayoutContent({ children, currentPageName }) {
         // Pages without full layout (Home, SelectProfile, Onboarding)
         if (noLayoutPages.includes(currentPageName)) {
           return (
-            <div className="min-h-screen">
-                <style>{`
+                      <div className="min-h-screen">
+                          {/* Facebook Pixel */}
+                          <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
+                          <script>{`
+                            fbq('init', '${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}');
+                            fbq('track', 'PageView');
+                          `}</script>
+                          <noscript>
+                            <img 
+                              height="1" 
+                              width="1" 
+                              style={{display: 'none'}}
+                              src="https://www.facebook.com/tr?id=${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}&ev=PageView&noscript=1"
+                            />
+                          </noscript>
+
+                          {/* Google Analytics */}
+                          <script async src={`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID || ''}`}></script>
+                          <script>{`
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag(){dataLayer.push(arguments);}
+                            gtag('js', new Date());
+                            gtag('config', '${import.meta.env.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID || ''}');
+                          `}</script>
+                          <style>{`
                   [data-theme="light"] {
                     --bg-primary: #f8fafc;
                     --bg-secondary: #ffffff;
