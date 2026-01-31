@@ -113,12 +113,12 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
             transition={{ duration: 0.3, delay: 0.2 }}
             className="flex flex-col justify-center"
           >
-            <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="rounded-xl p-4 shadow-sm transition-colors" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-violet-600" />
                 </div>
-                <span className="text-sm font-medium text-slate-700">Taxa no Prazo</span>
+                <span className="text-sm font-medium transition-colors" style={{ color: 'var(--text-primary)' }}>Taxa no Prazo</span>
               </div>
 
               <div className="mb-4">
@@ -126,7 +126,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                 <Progress value={onTimeRate} className="h-2" />
               </div>
 
-              <div className="text-xs text-slate-600 text-center">
+              <div className="text-xs text-center transition-colors" style={{ color: 'var(--text-secondary)' }}>
                 {reputation?.on_time_deliveries || 0} de {reputation?.campaigns_completed || 0} no prazo
               </div>
             </div>
