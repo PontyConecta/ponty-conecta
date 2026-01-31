@@ -27,6 +27,7 @@ import { validateCreatorProfile } from '@/components/utils/profileValidation';
 import CreatorMetricsChart from '@/components/charts/CreatorMetricsChart';
 import MissionTracker from '@/components/MissionTracker';
 import RecentAchievements from '@/components/RecentAchievements';
+import CreatorReputationSection from '@/components/creator/CreatorReputationSection';
 
 export default function CreatorDashboard() {
   const [user, setUser] = useState(null);
@@ -226,47 +227,11 @@ export default function CreatorDashboard() {
       {/* Gráficos de Métricas */}
       <CreatorMetricsChart deliveries={deliveries} />
 
-      {/* Profile Completion & Reputation */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-              <Award className="w-5 h-5 text-violet-500" />
-              Sua Reputação
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-slate-600">Pontuação Geral</span>
-                <span className="text-lg font-bold text-slate-900">{reputation?.total_score || 100}/100</span>
-              </div>
-              <Progress value={reputation?.total_score || 100} className="h-2" />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-600">{reputation?.on_time_deliveries || 0}</div>
-                <div className="text-xs text-slate-500">Entregas no prazo</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{reputation?.campaigns_completed || 0}</div>
-                <div className="text-xs text-slate-500">Campanhas concluídas</div>
-              </div>
-            </div>
+      {/* Reputation Section */}
+      <CreatorReputationSection reputation={reputation} deliveries={deliveries} />
 
-            {reputation?.badges?.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-4 border-t">
-                {reputation.badges.map((badge, i) => (
-                  <Badge key={i} variant="outline" className="bg-violet-50 border-violet-200 text-violet-700">
-                    {badge}
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
+      {/* Achievements & Upcoming Deadlines */}
+      <div className="grid lg:grid-cols-2 gap-6">
         <RecentAchievements achievements={achievements} limit={3} />
 
         {/* Upcoming Deadlines */}
