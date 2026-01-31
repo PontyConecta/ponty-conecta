@@ -9,6 +9,7 @@ import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
 import AdminMenu from '@/components/AdminMenu';
+import ThemeSelector from '@/components/ThemeSelector';
 import { Toaster } from 'sonner';
 import { 
   LayoutDashboard, 
