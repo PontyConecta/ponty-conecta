@@ -42,8 +42,8 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
             {/* Hero Text */}
             <div className="flex flex-col gap-6 lg:gap-8">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
+              {/* Badge - Hidden on mobile */}
+              <div className="hidden lg:inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
                 <Zap className="w-4 h-4 animate-pulse" />
                 <span>Mediação Profissional de Última Geração</span>
               </div>
@@ -57,6 +57,12 @@ export default function Home() {
               <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-md">
                 Organize, execute e escale suas relações profissionais com regras automatizadas e entrega garantida.
               </p>
+
+              {/* Free Access Badge */}
+              <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2.5 rounded-lg w-fit text-sm font-medium">
+                <CheckCircle className="w-4 h-4" />
+                <span>Explore gratuitamente • Sem cartão de crédito</span>
+              </div>
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
