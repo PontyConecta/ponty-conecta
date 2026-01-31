@@ -214,6 +214,16 @@ function LayoutContent({ children, currentPageName }) {
 
           {/* Right Section */}
           <div className="flex items-center gap-1 lg:gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
+              onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
+              title="Suporte via WhatsApp"
+            >
+              <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" />
+            </Button>
+
             <ThemeSelector />
 
             {!isSubscribed && (
@@ -225,16 +235,6 @@ function LayoutContent({ children, currentPageName }) {
                 </Button>
               </Link>
             )}
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
-              onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
-              title="Suporte via WhatsApp"
-            >
-              <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" />
-            </Button>
 
             <NotificationDropdown />
 
