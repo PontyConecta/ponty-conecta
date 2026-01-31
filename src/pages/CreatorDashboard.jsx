@@ -196,11 +196,8 @@ export default function CreatorDashboard() {
         </Card>
       )}
 
-      {/* Missões e Conquistas */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <MissionTracker missions={missions} />
-        <RecentAchievements achievements={achievements} />
-      </div>
+      {/* Missões */}
+      <MissionTracker missions={missions} />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -230,7 +227,7 @@ export default function CreatorDashboard() {
       <CreatorMetricsChart deliveries={deliveries} />
 
       {/* Profile Completion & Reputation */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -269,6 +266,8 @@ export default function CreatorDashboard() {
             )}
           </CardContent>
         </Card>
+
+        <RecentAchievements achievements={achievements} limit={3} />
 
         {/* Upcoming Deadlines */}
         <Card>
