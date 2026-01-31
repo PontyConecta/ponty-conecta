@@ -100,19 +100,6 @@ export default function CreatorDashboard() {
       value: deliveries.filter(d => d.status === 'pending' || d.status === 'submitted').length,
       icon: FileText,
       color: 'bg-blue-500'
-    },
-    { 
-      label: 'Entregas Aprovadas', 
-      value: deliveries.filter(d => d.status === 'approved').length,
-      icon: CheckCircle2,
-      color: 'bg-emerald-500'
-    },
-    { 
-      label: 'Pontuação', 
-      value: reputation?.total_score || 100,
-      icon: Award,
-      color: 'bg-violet-500',
-      suffix: '/100'
     }
   ];
 
@@ -201,7 +188,7 @@ export default function CreatorDashboard() {
       <MissionTracker missions={missions} />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
         {stats.map((stat, index) => (
           <motion.div
             key={index}
@@ -230,58 +217,8 @@ export default function CreatorDashboard() {
       {/* Reputation Section */}
       <CreatorReputationSection reputation={reputation} deliveries={deliveries} />
 
-      {/* Achievements & Upcoming Deadlines */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <RecentAchievements achievements={achievements} limit={3} />
-
-        {/* Upcoming Deadlines */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-orange-500" />
-              Próximos Prazos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {deliveries.filter(d => d.status === 'pending' && d.deadline).length > 0 ? (
-              <div className="space-y-3">
-                {deliveries
-                  .filter(d => d.status === 'pending' && d.deadline)
-                  .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
-                  .slice(0, 4)
-                  .map((delivery) => {
-                    const daysLeft = Math.ceil((new Date(delivery.deadline) - new Date()) / (1000 * 60 * 60 * 24));
-                    const isUrgent = daysLeft <= 3;
-                    
-                    return (
-                      <div
-                        key={delivery.id}
-                        className={`flex items-center justify-between p-3 rounded-xl ${isUrgent ? 'bg-red-50' : 'bg-slate-50'}`}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-slate-900 truncate">
-                            Entrega #{delivery.id.slice(-6)}
-                          </h4>
-                          <p className="text-sm text-slate-500">
-                            {new Date(delivery.deadline).toLocaleDateString('pt-BR')}
-                          </p>
-                        </div>
-                        <Badge className={`${isUrgent ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'} border-0`}>
-                          {daysLeft <= 0 ? 'Vencido!' : `${daysLeft} dias`}
-                        </Badge>
-                      </div>
-                    );
-                  })}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">Nenhum prazo pendente</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      {/* Achievements */}
+      <RecentAchievements achievements={achievements} limit={3} />
 
       {/* My Applications */}
       <Card>
