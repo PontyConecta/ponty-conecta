@@ -25,8 +25,6 @@ import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateCreatorProfile } from '@/components/utils/profileValidation';
 import CreatorMetricsChart from '@/components/charts/CreatorMetricsChart';
-import MissionTracker from '@/components/MissionTracker';
-import RecentAchievements from '@/components/RecentAchievements';
 import CreatorReputationSection from '@/components/creator/CreatorReputationSection';
 
 export default function CreatorDashboard() {
@@ -35,8 +33,6 @@ export default function CreatorDashboard() {
   const [applications, setApplications] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
   const [reputation, setReputation] = useState(null);
-  const [missions, setMissions] = useState([]);
-  const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
 
@@ -57,12 +53,10 @@ export default function CreatorDashboard() {
         const validation = validateCreatorProfile(creators[0]);
         setProfileValidation(validation);
         
-        const [applicationsData, deliveriesData, reputationData, missionsData, achievementsData] = await Promise.all([
+        const [applicationsData, deliveriesData, reputationData] = await Promise.all([
           base44.entities.Application.filter({ creator_id: creators[0].id }, '-created_date', 10),
           base44.entities.Delivery.filter({ creator_id: creators[0].id }, '-created_date', 10),
-          base44.entities.Reputation.filter({ user_id: userData.id, profile_type: 'creator' }),
-          base44.entities.Mission.filter({ user_id: userData.id }, '-order', 10),
-          base44.entities.Achievement.filter({ user_id: userData.id }, '-unlocked_at')
+          base44.entities.Reputation.filter({ user_id: userData.id, profile_type: 'creator' })
         ]);
         
         setApplications(applicationsData);
@@ -70,8 +64,6 @@ export default function CreatorDashboard() {
         if (reputationData.length > 0) {
           setReputation(reputationData[0]);
         }
-        setMissions(missionsData);
-        setAchievements(achievementsData);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -184,9 +176,6 @@ export default function CreatorDashboard() {
         </Card>
       )}
 
-      {/* Missões */}
-      <MissionTracker missions={missions} />
-
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
         {stats.map((stat, index) => (
@@ -213,9 +202,6 @@ export default function CreatorDashboard() {
 
       {/* Reputation Section */}
       <CreatorReputationSection reputation={reputation} deliveries={deliveries} />
-
-      {/* Achievements */}
-      <RecentAchievements achievements={achievements} limit={3} />
 
       {/* My Applications */}
       <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>

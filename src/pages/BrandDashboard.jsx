@@ -23,8 +23,7 @@ import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
-import MissionTracker from '@/components/MissionTracker';
-import RecentAchievements from '@/components/RecentAchievements';
+
 
 export default function BrandDashboard() {
   const [user, setUser] = useState(null);
@@ -32,8 +31,7 @@ export default function BrandDashboard() {
   const [campaigns, setCampaigns] = useState([]);
   const [applications, setApplications] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
-  const [missions, setMissions] = useState([]);
-  const [achievements, setAchievements] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
 
@@ -54,19 +52,15 @@ export default function BrandDashboard() {
         const validation = validateBrandProfile(brands[0]);
         setProfileValidation(validation);
         
-        const [campaignsData, applicationsData, deliveriesData, missionsData, achievementsData] = await Promise.all([
+        const [campaignsData, applicationsData, deliveriesData] = await Promise.all([
           base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date', 10),
           base44.entities.Application.filter({ brand_id: brands[0].id, status: 'pending' }, '-created_date', 10),
-          base44.entities.Delivery.filter({ brand_id: brands[0].id }, '-created_date', 10),
-          base44.entities.Mission.filter({ user_id: userData.id }, '-order', 10),
-          base44.entities.Achievement.filter({ user_id: userData.id }, '-unlocked_at')
+          base44.entities.Delivery.filter({ brand_id: brands[0].id }, '-created_date', 10)
         ]);
         
         setCampaigns(campaignsData);
         setApplications(applicationsData);
         setDeliveries(deliveriesData);
-        setMissions(missionsData);
-        setAchievements(achievementsData);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -190,12 +184,6 @@ export default function BrandDashboard() {
           </CardContent>
         </Card>
       )}
-
-      {/* Missões e Conquistas */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <MissionTracker missions={missions} />
-        <RecentAchievements achievements={achievements} />
-      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
