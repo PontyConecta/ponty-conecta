@@ -95,13 +95,14 @@ export default function Applications() {
     campaignsData.forEach(c => { campaignsMap[c.id] = c; });
     setCampaigns(campaignsMap);
 
+    // Batch fetch creators for better performance
     const creatorIds = [...new Set(applicationsData.map(a => a.creator_id))];
-    const creatorsData = await Promise.all(creatorIds.map(id =>
-      base44.entities.Creator.filter({ id })
-    ));
-    const creatorsMap = {};
-    creatorsData.flat().forEach(c => { creatorsMap[c.id] = c; });
-    setCreators(creatorsMap);
+    if (creatorIds.length > 0) {
+      const allCreators = await base44.entities.Creator.list();
+      const creatorsMap = {};
+      allCreators.filter(c => creatorIds.includes(c.id)).forEach(c => { creatorsMap[c.id] = c; });
+      setCreators(creatorsMap);
+    }
   };
 
   const loadCreatorApplications = async (creator) => {
@@ -111,20 +112,21 @@ export default function Applications() {
     );
     setApplications(applicationsData);
 
+    // Batch fetch campaigns and brands for better performance
     const campaignIds = [...new Set(applicationsData.map(a => a.campaign_id))];
-    const campaignsData = await Promise.all(campaignIds.map(id =>
-      base44.entities.Campaign.filter({ id })
-    ));
-    const campaignsMap = {};
-    campaignsData.flat().forEach(c => { campaignsMap[c.id] = c; });
-    setCampaigns(campaignsMap);
-
     const brandIds = [...new Set(applicationsData.map(a => a.brand_id))];
-    const brandsData = await Promise.all(brandIds.map(id =>
-      base44.entities.Brand.filter({ id })
-    ));
+    
+    const [allCampaigns, allBrands] = await Promise.all([
+      campaignIds.length > 0 ? base44.entities.Campaign.list() : Promise.resolve([]),
+      brandIds.length > 0 ? base44.entities.Brand.list() : Promise.resolve([])
+    ]);
+    
+    const campaignsMap = {};
+    allCampaigns.filter(c => campaignIds.includes(c.id)).forEach(c => { campaignsMap[c.id] = c; });
+    setCampaigns(campaignsMap);
+    
     const brandsMap = {};
-    brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
+    allBrands.filter(b => brandIds.includes(b.id)).forEach(b => { brandsMap[b.id] = b; });
     setBrands(brandsMap);
   };
 

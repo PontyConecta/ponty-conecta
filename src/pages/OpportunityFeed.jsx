@@ -82,14 +82,14 @@ export default function OpportunityFeed() {
       const campaignsData = await base44.entities.Campaign.filter({ status: 'active' }, '-created_date');
       setCampaigns(campaignsData);
 
-      // Load brands
+      // Load brands in batch for better performance
       const brandIds = [...new Set(campaignsData.map(c => c.brand_id))];
-      const brandsData = await Promise.all(brandIds.map(id => 
-        base44.entities.Brand.filter({ id })
-      ));
-      const brandsMap = {};
-      brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
-      setBrands(brandsMap);
+      if (brandIds.length > 0) {
+        const allBrands = await base44.entities.Brand.list();
+        const brandsMap = {};
+        allBrands.filter(b => brandIds.includes(b.id)).forEach(b => { brandsMap[b.id] = b; });
+        setBrands(brandsMap);
+      }
 
     } catch (error) {
       console.error('Error loading data:', error);
