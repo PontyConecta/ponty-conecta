@@ -129,13 +129,13 @@ export default function BrandDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
             Bem-vindo, {brand?.company_name?.split(' ')[0]} 👋
           </h1>
-          <p className="text-slate-600 mt-1">
+          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
             {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
           </p>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>
             {isExploring 
               ? 'Você está no modo exploração. Assine para criar campanhas.'
               : 'Gerencie suas campanhas e conexões'}
@@ -211,8 +211,8 @@ export default function BrandDashboard() {
                 <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
                   <stat.icon className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mb-1">{stat.value}</div>
-                <div className="text-sm text-slate-500">{stat.label}</div>
+                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
+                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
               </CardContent>
             </Card>
           </motion.div>
@@ -238,11 +238,12 @@ export default function BrandDashboard() {
               campaigns.slice(0, 5).map((campaign) => (
                 <div
                   key={campaign.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
-                >
+                  className="flex items-center justify-between p-3 rounded-xl transition-colors"
+                  style={{ backgroundColor: 'var(--bg-secondary)' }}
+                  >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-slate-900 truncate">{campaign.title}</h4>
-                    <p className="text-sm text-slate-500">
+                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{campaign.title}</h4>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas preenchidas
                     </p>
                   </div>
@@ -251,8 +252,8 @@ export default function BrandDashboard() {
               ))
             ) : (
               <div className="text-center py-8">
-                <Megaphone className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">Nenhuma campanha criada</p>
+                <Megaphone className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
+                <p style={{ color: 'var(--text-secondary)' }}>Nenhuma campanha criada</p>
                 {!isExploring && (
                   <Link to={createPageUrl('CampaignManager')}>
                     <Button variant="outline" size="sm" className="mt-3">
@@ -281,11 +282,12 @@ export default function BrandDashboard() {
               applications.slice(0, 5).map((app) => (
                 <div
                   key={app.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
-                >
+                  className="flex items-center justify-between p-3 rounded-xl transition-colors"
+                  style={{ backgroundColor: 'var(--bg-secondary)' }}
+                  >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-slate-900 truncate">Candidatura #{app.id.slice(-6)}</h4>
-                    <p className="text-sm text-slate-500 truncate">
+                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>Candidatura #{app.id.slice(-6)}</h4>
+                    <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
                       {app.message?.slice(0, 50) || 'Sem mensagem'}...
                     </p>
                   </div>
@@ -297,8 +299,8 @@ export default function BrandDashboard() {
               ))
             ) : (
               <div className="text-center py-8">
-                <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">Nenhuma candidatura pendente</p>
+                <Users className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
+                <p style={{ color: 'var(--text-secondary)' }}>Nenhuma candidatura pendente</p>
               </div>
             )}
           </CardContent>
@@ -330,11 +332,12 @@ export default function BrandDashboard() {
                 return (
                   <div
                     key={delivery.id}
-                    className="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
-                  >
+                    className="flex items-center justify-between p-4 rounded-xl transition-colors"
+                    style={{ backgroundColor: 'var(--bg-secondary)' }}
+                    >
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-slate-900">Entrega #{delivery.id.slice(-6)}</h4>
-                      <p className="text-sm text-slate-500">
+                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Entrega #{delivery.id.slice(-6)}</h4>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                         {delivery.submitted_at 
                           ? `Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
                           : `Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
@@ -351,8 +354,8 @@ export default function BrandDashboard() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <FileCheck className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500">Nenhuma entrega registrada</p>
+              <FileCheck className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
+              <p style={{ color: 'var(--text-secondary)' }}>Nenhuma entrega registrada</p>
             </div>
           )}
         </CardContent>
