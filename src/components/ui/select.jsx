@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -61,7 +60,7 @@ const SelectContent = React.forwardRef(({ className, children, position = "poppe
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className
       )}
-      style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--foreground)' }}
+      style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
       position={position}
       {...props}>
       <SelectScrollUpButton />
@@ -91,7 +90,9 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
       "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-3 pr-8 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors hover:bg-[var(--accent-primary)]",
       className
     )}
-    style={{ color: 'var(--foreground)' }}
+    style={{ color: 'var(--text-primary)' }}
+    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-primary)'; e.currentTarget.style.color = 'white'; }}
+    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-primary)'; }}
     {...props}>
     <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
