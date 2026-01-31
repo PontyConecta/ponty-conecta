@@ -1,7 +1,7 @@
 import { base44 } from '@/api/base44Client';
 
 // Enviar evento para Facebook CAPI
-export const sendFacebookEvent = async (eventName, eventData = {}, userEmail = null) => {
+export const sendFacebookEvent = async (eventName, eventData = {}, userData = {}) => {
   try {
     const fbp = document.cookie.match(/_fbp=([^;]+)/)?.[1] || null;
     const fbc = document.cookie.match(/_fbc=([^;]+)/)?.[1] || null;
@@ -13,7 +13,10 @@ export const sendFacebookEvent = async (eventName, eventData = {}, userEmail = n
       fbc: fbc,
       user_agent: navigator.userAgent,
       url: window.location.href,
-      user_email: userEmail,
+      email: userData.email,
+      phone: userData.phone,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
     };
 
     const response = await base44.functions.invoke('facebookCAPI', payload);
