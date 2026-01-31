@@ -124,7 +124,7 @@ export default function BrandDashboard() {
             Bem-vindo, {brand?.company_name?.split(' ')[0]} 👋
           </h1>
           <p className="text-slate-600 mt-1">
-            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
+            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
           </p>
           <p className="text-sm text-slate-500 mt-0.5">
             {isExploring 
