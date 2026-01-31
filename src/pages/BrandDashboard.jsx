@@ -22,6 +22,8 @@ import {
 import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
+import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
+import MissionTracker from '@/components/MissionTracker';
 
 export default function BrandDashboard() {
   const [user, setUser] = useState(null);
@@ -29,6 +31,7 @@ export default function BrandDashboard() {
   const [campaigns, setCampaigns] = useState([]);
   const [applications, setApplications] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
+  const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
 
@@ -49,15 +52,17 @@ export default function BrandDashboard() {
         const validation = validateBrandProfile(brands[0]);
         setProfileValidation(validation);
         
-        const [campaignsData, applicationsData, deliveriesData] = await Promise.all([
+        const [campaignsData, applicationsData, deliveriesData, missionsData] = await Promise.all([
           base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date', 10),
           base44.entities.Application.filter({ brand_id: brands[0].id, status: 'pending' }, '-created_date', 10),
-          base44.entities.Delivery.filter({ brand_id: brands[0].id }, '-created_date', 10)
+          base44.entities.Delivery.filter({ brand_id: brands[0].id }, '-created_date', 10),
+          base44.entities.Mission.filter({ user_id: userData.id }, '-order', 5)
         ]);
         
         setCampaigns(campaignsData);
         setApplications(applicationsData);
         setDeliveries(deliveriesData);
+        setMissions(missionsData);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -203,6 +208,12 @@ export default function BrandDashboard() {
           </motion.div>
         ))}
       </div>
+
+      {/* Gráficos de Métricas */}
+      <CampaignMetricsChart campaigns={campaigns} applications={applications} />
+
+      {/* Missões Ativas */}
+      <MissionTracker missions={missions} />
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Campaigns */}
