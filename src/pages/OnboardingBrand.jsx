@@ -351,7 +351,7 @@ export default function OnboardingBrand() {
         </div>
 
         {/* Form Card */}
-        <Card className="shadow-xl border-0">
+        <Card className="shadow-xl border-0 mb-24">
           <CardContent className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
               <motion.div
