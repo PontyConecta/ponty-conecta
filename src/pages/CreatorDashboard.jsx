@@ -122,13 +122,13 @@ export default function CreatorDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
             Bem-vindo, {creator?.display_name?.split(' ')[0]} ✨
           </h1>
-          <p className="text-slate-600 mt-1">
+          <p className="mt-1 transition-colors" style={{ color: 'var(--text-secondary)' }}>
             {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
           </p>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-sm mt-0.5 transition-colors" style={{ color: 'var(--text-secondary)' }}>
             {isExploring 
               ? 'Você está no modo exploração. Assine para se candidatar.'
               : 'Confira novas oportunidades e suas entregas'}
