@@ -206,15 +206,15 @@ export default function BrandDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
-            <Card className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
-                  <stat.icon className="w-5 h-5 text-white" />
-                </div>
-                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
-                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
-              </CardContent>
-            </Card>
+            <Card className="hover:shadow-md transition-shadow" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+                <CardContent className="p-6">
+                  <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
+                    <stat.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
+                  <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
+                </CardContent>
+              </Card>
           </motion.div>
         ))}
       </div>
@@ -224,9 +224,9 @@ export default function BrandDashboard() {
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Campaigns */}
-        <Card>
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <CardTitle className="text-lg font-semibold">Campanhas Recentes</CardTitle>
+            <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Campanhas Recentes</CardTitle>
             <Link to={createPageUrl('CampaignManager')}>
               <Button variant="ghost" size="sm" className="text-indigo-600">
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
@@ -252,8 +252,8 @@ export default function BrandDashboard() {
               ))
             ) : (
               <div className="text-center py-8">
-                <Megaphone className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
-                <p style={{ color: 'var(--text-secondary)' }}>Nenhuma campanha criada</p>
+                  <Megaphone className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
+                  <p style={{ color: 'var(--text-secondary)' }}>Nenhuma campanha criada</p>
                 {!isExploring && (
                   <Link to={createPageUrl('CampaignManager')}>
                     <Button variant="outline" size="sm" className="mt-3">
@@ -268,9 +268,9 @@ export default function BrandDashboard() {
         </Card>
 
         {/* Pending Applications */}
-        <Card>
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <CardTitle className="text-lg font-semibold">Candidaturas Pendentes</CardTitle>
+            <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Candidaturas Pendentes</CardTitle>
             <Link to={createPageUrl('ApplicationsManager')}>
               <Button variant="ghost" size="sm" className="text-indigo-600">
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
@@ -299,8 +299,8 @@ export default function BrandDashboard() {
               ))
             ) : (
               <div className="text-center py-8">
-                <Users className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
-                <p style={{ color: 'var(--text-secondary)' }}>Nenhuma candidatura pendente</p>
+                  <Users className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
+                  <p style={{ color: 'var(--text-secondary)' }}>Nenhuma candidatura pendente</p>
               </div>
             )}
           </CardContent>
@@ -308,9 +308,9 @@ export default function BrandDashboard() {
       </div>
 
       {/* Recent Deliveries */}
-      <Card>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold">Entregas Recentes</CardTitle>
+          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Entregas Recentes</CardTitle>
           <Link to={createPageUrl('DeliveriesManager')}>
             <Button variant="ghost" size="sm" className="text-indigo-600">
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />

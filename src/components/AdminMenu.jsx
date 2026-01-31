@@ -70,7 +70,7 @@ export default function AdminMenu({ currentPageName }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         {adminCategories.map((category, idx) => (
-          <React.Fragment key={`admin-cat-${idx}`}>
+          <div key={`admin-cat-${idx}`}>
             {idx > 0 && <DropdownMenuSeparator />}
             <div className="px-2 py-1.5">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -88,8 +88,8 @@ export default function AdminMenu({ currentPageName }) {
                 </Link>
               </DropdownMenuItem>
             ))}
-          </React.Fragment>
-        ))}
+            </div>
+            ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
