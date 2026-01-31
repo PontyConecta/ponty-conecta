@@ -83,7 +83,7 @@ export default function CreatorDashboard() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function CreatorDashboard() {
       label: 'Trabalhos em Andamento', 
       value: deliveries.filter(d => d.status === 'pending' || d.status === 'submitted').length,
       icon: FileText,
-      color: 'bg-blue-500'
+      color: 'bg-violet-500'
     }
   ];
 
@@ -222,7 +222,7 @@ export default function CreatorDashboard() {
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Candidaturas</CardTitle>
           <Link to={createPageUrl('MyApplications')}>
-            <Button variant="ghost" size="sm" className="text-orange-600">
+            <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
@@ -268,7 +268,7 @@ export default function CreatorDashboard() {
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Entregas</CardTitle>
           <Link to={createPageUrl('MyDeliveries')}>
-            <Button variant="ghost" size="sm" className="text-orange-600">
+            <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
