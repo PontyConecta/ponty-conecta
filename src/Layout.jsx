@@ -162,21 +162,21 @@ function LayoutContent({ children, currentPageName }) {
         }
 
         [data-theme="dark"] {
-          --bg-primary: #0f172a;
-          --bg-secondary: #1e293b;
-          --text-primary: #f1f5f9;
-          --text-secondary: #cbd5e1;
-          --border-color: #334155;
-          --accent-primary: #6366f1;
+          --bg-primary: #0a0e27;
+          --bg-secondary: #1a1f3a;
+          --text-primary: #f0f4f8;
+          --text-secondary: #a0aac0;
+          --border-color: #2d3d5f;
+          --accent-primary: #7c3aed;
         }
 
         [data-theme="musk"] {
-          --bg-primary: #1a1a2e;
-          --bg-secondary: #16213e;
-          --text-primary: #eaeaea;
-          --text-secondary: #b0b0b0;
-          --border-color: #2d3561;
-          --accent-primary: #e94560;
+          --bg-primary: #1a1624;
+          --bg-secondary: #2d1f3a;
+          --text-primary: #f5f1f8;
+          --text-secondary: #b8a5c4;
+          --border-color: #4a3861;
+          --accent-primary: #d946ef;
         }
 
         .safe-area-bottom {
