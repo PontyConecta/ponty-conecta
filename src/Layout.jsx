@@ -45,6 +45,7 @@ import { Badge } from "@/components/ui/badge";
 function LayoutContent({ children, currentPageName }) {
   const { user, profile, profileType, loading, logout } = useAuth();
   const { isSubscribed } = useSubscription();
+  const { theme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
