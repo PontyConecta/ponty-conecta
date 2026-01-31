@@ -446,10 +446,10 @@ export default function Profile() {
                       <Label>Plataformas</Label>
                       <div className="space-y-2 mt-2">
                         {formData.platforms?.map((platform, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                          <div key={index} className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
                             <div className="flex-1">
-                              <span className="font-medium text-slate-900">{platform.name}</span>
-                              <span className="text-slate-500 ml-2">@{platform.handle}</span>
+                              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{platform.name}</span>
+                              <span className="ml-2" style={{ color: 'var(--text-secondary)' }}>@{platform.handle}</span>
                             </div>
                             <Badge variant="outline">{platform.followers?.toLocaleString() || 0}</Badge>
                             <Button variant="ghost" size="icon" onClick={() => removePlatform(index)} className="h-8 w-8">
