@@ -37,6 +37,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import PaywallModal from '@/components/PaywallModal';
+import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
+import { validateBrandProfile } from '@/components/utils/profileValidation';
 import { 
   Plus, 
   Search,
@@ -76,6 +78,7 @@ export default function CampaignManager() {
   const [saving, setSaving] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
   
   const [formData, setFormData] = useState({
     title: '',
@@ -119,6 +122,10 @@ export default function CampaignManager() {
     }
 
     try {
+      // Validar completude do perfil
+      const validation = validateBrandProfile(brand);
+      setProfileValidation(validation);
+      
       const campaignsData = await base44.entities.Campaign.filter({ brand_id: brand.id }, '-created_date');
       setCampaigns(campaignsData);
     } catch (error) {
@@ -176,6 +183,14 @@ export default function CampaignManager() {
   };
 
   const handleSubmit = async () => {
+    // Verificar se o perfil está completo
+    if (!profileValidation.isComplete) {
+      toast.error('Complete seu perfil antes de criar campanhas', {
+        description: 'Preencha os campos obrigatórios no seu perfil'
+      });
+      return;
+    }
+    
     if (!isSubscribed) {
       setShowPaywall(true);
       return;
@@ -343,6 +358,10 @@ export default function CampaignManager() {
         <Button 
           className="bg-indigo-600 hover:bg-indigo-700"
           onClick={() => { 
+            if (!profileValidation.isComplete) {
+              toast.error('Complete seu perfil antes de criar campanhas');
+              return;
+            }
             if (!isSubscribed) {
               setShowPaywall(true);
             } else {
@@ -355,6 +374,14 @@ export default function CampaignManager() {
           Nova Campanha
         </Button>
       </div>
+
+      {/* Profile Incomplete Alert */}
+      {!profileValidation.isComplete && (
+        <ProfileIncompleteAlert 
+          missingFields={profileValidation.missingFields} 
+          profileType="brand"
+        />
+      )}
 
       {/* Filters */}
       <Card>
@@ -531,6 +558,10 @@ export default function CampaignManager() {
             {!searchTerm && filterStatus === 'all' && (
               <Button 
                 onClick={() => {
+                  if (!profileValidation.isComplete) {
+                    toast.error('Complete seu perfil antes de criar campanhas');
+                    return;
+                  }
                   if (!isSubscribed) {
                     setShowPaywall(true);
                   } else {
