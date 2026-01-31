@@ -59,43 +59,42 @@ export default function Subscription() {
   const handleSubscribe = async () => {
     setSubscribing(true);
     try {
-      // For now, simulate subscription activation
-      // In production, this would integrate with Stripe
-      const subscriptionData = {
-        user_id: user.id,
-        plan_type: `${profileType}_${selectedPlan}`,
-        status: 'active',
-        start_date: new Date().toISOString().split('T')[0],
-        end_date: new Date(Date.now() + (selectedPlan === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        amount: selectedPlan === 'monthly' ? 45 : 450,
-        currency: 'BRL'
-      };
+      const planType = `${profileType}_${selectedPlan}`;
+      
+      // Create Stripe checkout session
+      const response = await base44.functions.invoke('createCheckoutSession', {
+        plan_type: planType,
+        profile_type: profileType
+      });
 
-      await base44.entities.Subscription.create(subscriptionData);
-
-      // Update profile to active
-      if (profileType === 'brand') {
-        await base44.entities.Brand.update(profile.id, { 
-          account_state: 'active',
-          subscription_status: 'active'
-        });
-        window.location.href = createPageUrl('BrandDashboard');
+      if (response.data?.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = response.data.url;
       } else {
-        await base44.entities.Creator.update(profile.id, { 
-          account_state: 'active',
-          subscription_status: 'active'
-        });
-        window.location.href = createPageUrl('CreatorDashboard');
+        throw new Error('Failed to create checkout session');
       }
     } catch (error) {
-      console.error('Error subscribing:', error);
+      console.error('Error creating checkout:', error);
+      alert('Erro ao iniciar pagamento. Tente novamente.');
       setSubscribing(false);
     }
   };
 
-  const handleManageSubscription = () => {
-    // In production, this would redirect to Stripe Customer Portal
-    alert('Em breve: Portal de gerenciamento de assinatura via Stripe');
+  const handleManageSubscription = async () => {
+    try {
+      const response = await base44.functions.invoke('createCustomerPortalSession', {
+        profile_type: profileType
+      });
+
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      } else {
+        throw new Error('Failed to create portal session');
+      }
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      alert('Erro ao abrir portal de gerenciamento. Tente novamente.');
+    }
   };
 
   if (loading) {
