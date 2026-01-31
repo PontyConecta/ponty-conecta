@@ -29,9 +29,6 @@ import MissionTracker from '@/components/MissionTracker';
 import RecentAchievements from '@/components/RecentAchievements';
 import CreatorReputationSection from '@/components/creator/CreatorReputationSection';
 
-// Remove duplicated imports
-// ... existing imports ...
-
 export default function CreatorDashboard() {
   const [user, setUser] = useState(null);
   const [creator, setCreator] = useState(null);
