@@ -20,6 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import PaywallModal from '@/components/PaywallModal';
+import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
+import { validateCreatorProfile } from '@/components/utils/profileValidation';
+import { toast } from 'sonner';
 import { 
   Search,
   Calendar,
@@ -59,6 +62,7 @@ export default function OpportunityFeed() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [viewingDetails, setViewingDetails] = useState(false);
+  const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
 
   useEffect(() => {
     loadData();
@@ -73,6 +77,10 @@ export default function OpportunityFeed() {
       if (creators.length > 0) {
         setCreator(creators[0]);
         setIsSubscribed(creators[0].subscription_status === 'active' || creators[0].account_state === 'active');
+        
+        // Validar completude do perfil
+        const validation = validateCreatorProfile(creators[0]);
+        setProfileValidation(validation);
         
         const apps = await base44.entities.Application.filter({ creator_id: creators[0].id });
         setMyApplications(apps);
@@ -100,6 +108,14 @@ export default function OpportunityFeed() {
 
   const handleApply = async () => {
     if (!creator || !selectedCampaign) return;
+    
+    // Verificar se o perfil está completo
+    if (!profileValidation.isComplete) {
+      toast.error('Complete seu perfil antes de se candidatar', {
+        description: 'Preencha os campos obrigatórios no seu perfil'
+      });
+      return;
+    }
     
     if (!isSubscribed) {
       setShowPaywall(true);
@@ -143,6 +159,14 @@ export default function OpportunityFeed() {
   };
 
   const startApplication = () => {
+    // Verificar se o perfil está completo
+    if (!profileValidation.isComplete) {
+      toast.error('Complete seu perfil antes de se candidatar', {
+        description: 'Preencha os campos obrigatórios no seu perfil'
+      });
+      return;
+    }
+    
     if (!isSubscribed) {
       setShowPaywall(true);
       return;
@@ -196,8 +220,16 @@ export default function OpportunityFeed() {
         </div>
       </div>
 
+      {/* Profile Incomplete Alert */}
+      {!profileValidation.isComplete && (
+        <ProfileIncompleteAlert 
+          missingFields={profileValidation.missingFields} 
+          profileType="creator"
+        />
+      )}
+
       {/* Subscription Banner */}
-      {!isSubscribed && (
+      {!isSubscribed && profileValidation.isComplete && (
         <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">

@@ -22,6 +22,8 @@ import {
   Calendar
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
+import { validateCreatorProfile } from '@/components/utils/profileValidation';
 
 export default function CreatorDashboard() {
   const [user, setUser] = useState(null);
@@ -30,6 +32,7 @@ export default function CreatorDashboard() {
   const [deliveries, setDeliveries] = useState([]);
   const [reputation, setReputation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
 
   useEffect(() => {
     loadData();
@@ -43,6 +46,10 @@ export default function CreatorDashboard() {
       const creators = await base44.entities.Creator.filter({ user_id: userData.id });
       if (creators.length > 0) {
         setCreator(creators[0]);
+        
+        // Validar completude do perfil
+        const validation = validateCreatorProfile(creators[0]);
+        setProfileValidation(validation);
         
         const [applicationsData, deliveriesData, reputationData] = await Promise.all([
           base44.entities.Application.filter({ creator_id: creators[0].id }, '-created_date', 10),
@@ -148,8 +155,16 @@ export default function CreatorDashboard() {
         )}
       </div>
 
+      {/* Profile Incomplete Alert */}
+      {!profileValidation.isComplete && (
+        <ProfileIncompleteAlert 
+          missingFields={profileValidation.missingFields} 
+          profileType="creator"
+        />
+      )}
+
       {/* Exploring Mode Alert */}
-      {isExploring && (
+      {isExploring && profileValidation.isComplete && (
         <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">

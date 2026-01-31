@@ -20,6 +20,8 @@ import {
   Crown
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
+import { validateBrandProfile } from '@/components/utils/profileValidation';
 
 export default function BrandDashboard() {
   const [user, setUser] = useState(null);
@@ -28,6 +30,7 @@ export default function BrandDashboard() {
   const [applications, setApplications] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
 
   useEffect(() => {
     loadData();
@@ -41,6 +44,10 @@ export default function BrandDashboard() {
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
         setBrand(brands[0]);
+        
+        // Validar completude do perfil
+        const validation = validateBrandProfile(brands[0]);
+        setProfileValidation(validation);
         
         const [campaignsData, applicationsData, deliveriesData] = await Promise.all([
           base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date', 10),
@@ -143,8 +150,16 @@ export default function BrandDashboard() {
         )}
       </div>
 
+      {/* Profile Incomplete Alert */}
+      {!profileValidation.isComplete && (
+        <ProfileIncompleteAlert 
+          missingFields={profileValidation.missingFields} 
+          profileType="brand"
+        />
+      )}
+
       {/* Exploring Mode Alert */}
-      {isExploring && (
+      {isExploring && profileValidation.isComplete && (
         <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
