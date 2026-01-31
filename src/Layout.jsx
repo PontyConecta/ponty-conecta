@@ -224,15 +224,32 @@ function LayoutContent({ children, currentPageName }) {
 
           {/* Right Section */}
           <div className="flex items-center gap-1 lg:gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
-              onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
-              title="Suporte via WhatsApp"
-            >
-              <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" />
-            </Button>
+            <AlertDialog open={isWhatsAppDialogOpen} onOpenChange={setIsWhatsAppDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
+                  title="Suporte via WhatsApp"
+                >
+                  <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogTitle>Abrir WhatsApp?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Você será redirecionado para o WhatsApp. Deseja continuar?
+                </AlertDialogDescription>
+                <div className="flex gap-3 justify-end">
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
+                  >
+                    Abrir WhatsApp
+                  </AlertDialogAction>
+                </div>
+              </AlertDialogContent>
+            </AlertDialog>
 
             <ThemeSelector />
 
