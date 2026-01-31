@@ -54,8 +54,8 @@ export default function AdminDashboard() {
     return (
       <div className="p-6 text-center">
         <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Acesso Negado</h2>
-        <p className="text-slate-600">Você não tem permissão para acessar este painel.</p>
+        <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Acesso Negado</h2>
+        <p style={{ color: 'var(--text-secondary)' }}>Você não tem permissão para acessar este painel.</p>
       </div>
     );
   }
@@ -75,12 +75,12 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8">
+    <div className="max-w-7xl mx-auto p-6 space-y-8" style={{ color: 'var(--text-primary)' }}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900">Dashboard de Admin</h1>
-          <p className="text-slate-600 mt-1">
+          <h1 className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard de Admin</h1>
+          <p style={{ color: 'var(--text-secondary)' }} className="mt-1">
             Última atualização: {lastRefresh.toLocaleTimeString('pt-BR')}
           </p>
         </div>
@@ -113,12 +113,12 @@ export default function AdminDashboard() {
       {analytics && (
         <>
           <div className="grid md:grid-cols-4 gap-6">
-            <Card>
+            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">MRR</p>
-                    <p className="text-3xl font-bold text-slate-900">
+                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>MRR</p>
+                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       R$ {analytics.mrr?.toLocaleString('pt-BR') || '0'}
                     </p>
                   </div>
@@ -127,12 +127,12 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">Usuários Ativos</p>
-                    <p className="text-3xl font-bold text-slate-900">
+                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Usuários Ativos</p>
+                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.activeUsers || 0}
                     </p>
                   </div>
@@ -141,12 +141,12 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">Taxa de Sucesso</p>
-                    <p className="text-3xl font-bold text-slate-900">
+                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Taxa de Sucesso</p>
+                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.successRate || 0}%
                     </p>
                   </div>
@@ -155,12 +155,12 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">ARPU</p>
-                    <p className="text-3xl font-bold text-slate-900">
+                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>ARPU</p>
+                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       R$ {analytics.arpu?.toFixed(2) || '0.00'}
                     </p>
                   </div>
