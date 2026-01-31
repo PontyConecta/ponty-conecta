@@ -49,14 +49,18 @@ function LayoutContent({ children, currentPageName }) {
     logout('/');
   };
 
-  // Redirect to login if not authenticated (except Home page)
-  if (!loading && !user && currentPageName !== 'Home') {
+  // Páginas públicas (não exigem autenticação)
+  const publicPages = ['Home', 'OnboardingBrand', 'OnboardingCreator'];
+  const isPublicPage = publicPages.includes(currentPageName);
+
+  // Redirect to login if not authenticated (except public pages)
+  if (!loading && !user && !isPublicPage) {
     window.location.href = '/';
     return null;
   }
 
-  // Home page for non-authenticated users
-  if (currentPageName === 'Home' && !user) {
+  // Public pages for non-authenticated users
+  if (isPublicPage && !user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
         <style>{`
