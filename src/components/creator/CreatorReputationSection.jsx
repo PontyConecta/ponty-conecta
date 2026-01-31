@@ -22,7 +22,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
 
   return (
     <Card className="lg:col-span-2 overflow-hidden shadow-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      <div className="p-8 transition-colors" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="p-8 transition-colors" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Pontuação Principal */}
           <motion.div
