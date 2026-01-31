@@ -279,7 +279,9 @@ export default function Layout({ children, currentPageName }) {
     <ErrorBoundary>
       <AuthProvider>
         <SubscriptionProvider>
-          <LayoutContent children={children} currentPageName={currentPageName} />
+          <ThemeProvider>
+            <LayoutContent children={children} currentPageName={currentPageName} />
+          </ThemeProvider>
         </SubscriptionProvider>
       </AuthProvider>
     </ErrorBoundary>
