@@ -162,15 +162,15 @@ export default function CreatorDashboard() {
 
       {/* Exploring Mode Alert */}
       {isExploring && profileValidation.isComplete && (
-        <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+        <Card className="border-orange-200 transition-colors" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
                 <Crown className="w-6 h-6 text-orange-600" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-slate-900">Modo Exploração</h3>
-                <p className="text-sm text-slate-600">
+                <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Modo Exploração</h3>
+                <p className="text-sm transition-colors" style={{ color: 'var(--text-secondary)' }}>
                   Você pode ver oportunidades, mas precisa assinar para se candidatar e executar trabalhos.
                 </p>
               </div>
