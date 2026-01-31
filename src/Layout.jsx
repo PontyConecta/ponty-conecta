@@ -162,7 +162,7 @@ function LayoutContent({ children, currentPageName }) {
       `}</style>
 
       {/* Top Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
+      <header className="fixed top-0 left-0 right-0 z-50 transition-colors" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} className="border-b">
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
           {/* Logo */}
           <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
