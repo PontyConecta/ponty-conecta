@@ -264,9 +264,9 @@ export default function CreatorDashboard() {
       </Card>
 
       {/* My Deliveries */}
-      <Card>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold">Minhas Entregas</CardTitle>
+          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Entregas</CardTitle>
           <Link to={createPageUrl('MyDeliveries')}>
             <Button variant="ghost" size="sm" className="text-orange-600">
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
@@ -288,11 +288,12 @@ export default function CreatorDashboard() {
                 return (
                   <div
                     key={delivery.id}
-                    className="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                    className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors"
+                    style={{ backgroundColor: 'var(--bg-primary)' }}
                   >
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-slate-900">Entrega #{delivery.id.slice(-6)}</h4>
-                      <p className="text-sm text-slate-500">
+                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Entrega #{delivery.id.slice(-6)}</h4>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                         {delivery.submitted_at 
                           ? `Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
                           : `Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
@@ -309,8 +310,8 @@ export default function CreatorDashboard() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500">Nenhuma entrega registrada</p>
+              <FileText className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border-color)' }} />
+              <p style={{ color: 'var(--text-secondary)' }}>Nenhuma entrega registrada</p>
             </div>
           )}
         </CardContent>
