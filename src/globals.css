@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,6 +11,9 @@
   --text-secondary: #64748b;
   --border-color: #e2e8f0;
   --accent-primary: #4f46e5;
+  --foreground: #0f172a;
+  --muted-foreground: #64748b;
+  --input: #e2e8f0;
 }
 
 [data-theme="light"] {
@@ -19,6 +23,9 @@
   --text-secondary: #64748b;
   --border-color: #e2e8f0;
   --accent-primary: #4f46e5;
+  --foreground: #0f172a;
+  --muted-foreground: #64748b;
+  --input: #e2e8f0;
 }
 
 [data-theme="dark"] {
@@ -26,8 +33,11 @@
   --bg-secondary: #1a1f3a;
   --text-primary: #f0f4f8;
   --text-secondary: #a0aac0;
-  --border-color: #ffffff;
+  --border-color: #4a5f7f;
   --accent-primary: #7c3aed;
+  --foreground: #f0f4f8;
+  --muted-foreground: #a0aac0;
+  --input: #4a5f7f;
 }
 
 [data-theme="musk"] {
@@ -35,8 +45,11 @@
   --bg-secondary: #2d1f3a;
   --text-primary: #f5f1f8;
   --text-secondary: #b8a5c4;
-  --border-color: #ffffff;
+  --border-color: #6b4a8a;
   --accent-primary: #d946ef;
+  --foreground: #f5f1f8;
+  --muted-foreground: #b8a5c4;
+  --input: #6b4a8a;
 }
 
 /* Safe Area for Mobile */
