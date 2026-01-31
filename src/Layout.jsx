@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
+import { ThemeProvider, useTheme } from '@/components/contexts/ThemeContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
