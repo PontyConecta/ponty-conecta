@@ -137,7 +137,8 @@ function LayoutContent({ children, currentPageName }) {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <ThemeProviderWrapper>
+      <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       <Toaster position="top-right" richColors closeButton />
       <style>{`
         :root {
