@@ -75,15 +75,15 @@ export default function MissionTracker({ missions = [] }) {
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <h4 className={`font-semibold truncate ${
-                    isCompleted 
-                      ? 'text-emerald-900 line-through' 
-                      : 'text-slate-900'
-                  }`}>
-                    {mission.title}
-                  </h4>
-                  <p className="text-xs text-slate-500 mt-0.5">{mission.description}</p>
-                </div>
+                   <h4 className={`font-semibold truncate ${
+                     isCompleted 
+                       ? 'text-emerald-900 line-through' 
+                       : ''
+                   }`} style={{ color: isCompleted ? undefined : 'var(--text-primary)' }}>
+                     {mission.title}
+                   </h4>
+                   <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{mission.description}</p>
+                 </div>
 
                 {mission.reward_points > 0 && (
                   <Badge className="bg-yellow-100 text-yellow-800 border-0 flex-shrink-0">
