@@ -35,18 +35,13 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
 
   const creatorNavSections = [
     {
-      title: 'Principal',
+      title: 'Navegação',
       items: [
         { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
         { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
         { name: 'Descobrir Marcas', page: 'DiscoverBrands', icon: Building2 },
-      ]
-    },
-    {
-      title: 'Minhas Atividades',
-      items: [
-        { name: 'Minhas Candidaturas', page: 'Applications', icon: FileText },
-        { name: 'Minhas Entregas', page: 'Deliveries', icon: FileText },
+        { name: 'Minhas Candidaturas', page: 'MyApplications', icon: FileText },
+        { name: 'Minhas Entregas', page: 'MyDeliveries', icon: FileText },
       ]
     }
   ];
@@ -73,7 +68,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
                       "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                       isActive 
                         ? 'bg-indigo-50 text-indigo-700 shadow-sm' 
-                        : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                        : 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700'
                     )}
                   >
                     <item.icon className="w-5 h-5 flex-shrink-0" />
