@@ -309,10 +309,7 @@ function LayoutContent({ children, currentPageName }) {
       );
       }
 
-      function ThemeProviderWrapper({ children }) {
-      const { theme } = useTheme();
-      return <div data-theme={theme}>{children}</div>;
-      }
+
 
       export default function Layout({ children, currentPageName }) {
         return (
