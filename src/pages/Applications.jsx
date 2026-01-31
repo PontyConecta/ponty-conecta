@@ -37,6 +37,11 @@ import {
 import { motion } from 'framer-motion';
 import { validateTransition } from '../components/utils/stateTransitions';
 import { toast } from 'sonner';
+import { arrayToMap } from '../components/utils/entityHelpers';
+import { formatDate } from '../components/utils/formatters';
+import StatusBadge from '../components/common/StatusBadge';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import SearchFilter from '../components/common/SearchFilter';
 
 export default function Applications() {
   const [user, setUser] = useState(null);
@@ -92,18 +97,13 @@ export default function Applications() {
     ]);
     
     setApplications(applicationsData);
-    
-    const campaignsMap = {};
-    campaignsData.forEach(c => { campaignsMap[c.id] = c; });
-    setCampaigns(campaignsMap);
+    setCampaigns(arrayToMap(campaignsData));
 
     // Batch fetch creators for better performance
     const creatorIds = [...new Set(applicationsData.map(a => a.creator_id))];
     if (creatorIds.length > 0) {
       const allCreators = await base44.entities.Creator.list();
-      const creatorsMap = {};
-      allCreators.filter(c => creatorIds.includes(c.id)).forEach(c => { creatorsMap[c.id] = c; });
-      setCreators(creatorsMap);
+      setCreators(arrayToMap(allCreators.filter(c => creatorIds.includes(c.id))));
     }
   };
 
@@ -123,13 +123,8 @@ export default function Applications() {
       brandIds.length > 0 ? base44.entities.Brand.list() : Promise.resolve([])
     ]);
     
-    const campaignsMap = {};
-    allCampaigns.filter(c => campaignIds.includes(c.id)).forEach(c => { campaignsMap[c.id] = c; });
-    setCampaigns(campaignsMap);
-    
-    const brandsMap = {};
-    allBrands.filter(b => brandIds.includes(b.id)).forEach(b => { brandsMap[b.id] = b; });
-    setBrands(brandsMap);
+    setCampaigns(arrayToMap(allCampaigns.filter(c => campaignIds.includes(c.id))));
+    setBrands(arrayToMap(allBrands.filter(b => brandIds.includes(b.id))));
   };
 
   const handleAccept = async () => {
@@ -215,16 +210,7 @@ export default function Applications() {
     }
   };
 
-  const getStatusConfig = (status) => {
-    const configs = {
-      pending: { label: profileType === 'brand' ? 'Pendente' : 'Aguardando', color: 'bg-amber-100 text-amber-700', icon: Clock },
-      accepted: { label: 'Aceita', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
-      rejected: { label: 'Recusada', color: 'bg-red-100 text-red-700', icon: XCircle },
-      withdrawn: { label: 'Cancelada', color: 'bg-slate-100 text-slate-700', icon: XCircle },
-      completed: { label: 'Concluída', color: 'bg-blue-100 text-blue-700', icon: CheckCircle2 }
-    };
-    return configs[status] || configs.pending;
-  };
+
 
   const filteredApplications = applications.filter(a => {
     const creator = creators[a.creator_id];
@@ -244,11 +230,7 @@ export default function Applications() {
   });
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   const campaignList = Object.values(campaigns);
@@ -269,15 +251,12 @@ export default function Applications() {
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={profileType === 'brand' ? "Buscar por criador ou campanha..." : "Buscar por campanha ou marca..."}
-                className="pl-10"
-              />
-            </div>
+            <SearchFilter
+              value={searchTerm}
+              onChange={setSearchTerm}
+              placeholder={profileType === 'brand' ? "Buscar por criador ou campanha..." : "Buscar por campanha ou marca..."}
+              className="flex-1"
+            />
             <div className="flex gap-2">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
                 <SelectTrigger className="w-36">
@@ -370,8 +349,8 @@ export default function Applications() {
                               </p>
                               <div className="flex flex-wrap gap-3 mt-2 text-sm text-slate-500">
                                 <span className="flex items-center gap-1">
-                                  <Calendar className="w-4 h-4" />
-                                  {campaign?.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '-'}
+                                 <Calendar className="w-4 h-4" />
+                                 {formatDate(campaign?.deadline)}
                                 </span>
                                 {application.proposed_rate && (
                                   <span className="flex items-center gap-1">
@@ -394,12 +373,9 @@ export default function Applications() {
                           </div>
                         )}
                         <div className="text-slate-500">
-                          {new Date(application.created_date).toLocaleDateString('pt-BR')}
+                          {formatDate(application.created_date)}
                         </div>
-                        <Badge className={`${statusConfig.color} border-0`}>
-                          <statusConfig.icon className="w-3 h-3 mr-1" />
-                          {statusConfig.label}
-                        </Badge>
+                        <StatusBadge type="application" status={application.status} />
                       </div>
 
                       {/* Actions */}
@@ -605,10 +581,7 @@ export default function Applications() {
 
                 {selectedApplication.status !== 'pending' && (
                   <div className="flex items-center justify-center pt-4 border-t">
-                    <Badge className={`${getStatusConfig(selectedApplication.status).color} border-0`}>
-                      {React.createElement(getStatusConfig(selectedApplication.status).icon, { className: "w-3 h-3 mr-1" })}
-                      {getStatusConfig(selectedApplication.status).label}
-                    </Badge>
+                    <StatusBadge type="application" status={selectedApplication.status} className="text-base px-4 py-2" />
                   </div>
                 )}
               </div>
@@ -645,10 +618,7 @@ export default function Applications() {
               )}
 
               <div className="flex items-center justify-center pt-4">
-                <Badge className={`${getStatusConfig(selectedApplication.status).color} border-0 text-base px-4 py-2`}>
-                  {React.createElement(getStatusConfig(selectedApplication.status).icon, { className: "w-4 h-4 mr-2" })}
-                  {getStatusConfig(selectedApplication.status).label}
-                </Badge>
+                <StatusBadge type="application" status={selectedApplication.status} className="text-base px-4 py-2" />
               </div>
 
               {selectedApplication.status === 'rejected' && selectedApplication.rejection_reason && (

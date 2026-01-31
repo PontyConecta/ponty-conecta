@@ -42,6 +42,14 @@ import {
   X as XIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { deliverySchema, validate } from '../components/utils/validationSchemas';
+import { validateTransition } from '../components/utils/stateTransitions';
+import { toast } from 'sonner';
+import { formatDate } from '../components/utils/formatters';
+import { arrayToMap } from '../components/utils/entityHelpers';
+import StatusBadge from '../components/common/StatusBadge';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import SearchFilter from '../components/common/SearchFilter';
 
 export default function Deliveries() {
   const [user, setUser] = useState(null);
@@ -101,18 +109,13 @@ export default function Deliveries() {
     ]);
     
     setDeliveries(deliveriesData);
-    
-    const campaignsMap = {};
-    campaignsData.forEach(c => { campaignsMap[c.id] = c; });
-    setCampaigns(campaignsMap);
+    setCampaigns(arrayToMap(campaignsData));
 
     // Batch fetch creators for better performance
     const creatorIds = [...new Set(deliveriesData.map(d => d.creator_id))];
     if (creatorIds.length > 0) {
       const allCreators = await base44.entities.Creator.list();
-      const creatorsMap = {};
-      allCreators.filter(c => creatorIds.includes(c.id)).forEach(c => { creatorsMap[c.id] = c; });
-      setCreators(creatorsMap);
+      setCreators(arrayToMap(allCreators.filter(c => creatorIds.includes(c.id))));
     }
   };
 
@@ -132,18 +135,21 @@ export default function Deliveries() {
       brandIds.length > 0 ? base44.entities.Brand.list() : Promise.resolve([])
     ]);
     
-    const campaignsMap = {};
-    allCampaigns.filter(c => campaignIds.includes(c.id)).forEach(c => { campaignsMap[c.id] = c; });
-    setCampaigns(campaignsMap);
-    
-    const brandsMap = {};
-    allBrands.filter(b => brandIds.includes(b.id)).forEach(b => { brandsMap[b.id] = b; });
-    setBrands(brandsMap);
+    setCampaigns(arrayToMap(allCampaigns.filter(c => campaignIds.includes(c.id))));
+    setBrands(arrayToMap(allBrands.filter(b => brandIds.includes(b.id))));
   };
 
   // Brand actions
   const handleApprove = async () => {
     if (!selectedDelivery) return;
+
+    // Valida transição
+    const validation = validateTransition('delivery', selectedDelivery, 'approved');
+    if (!validation.valid) {
+      toast.error(validation.error || validation.errors?.[0]);
+      return;
+    }
+
     setProcessing(true);
     
     try {
@@ -175,7 +181,18 @@ export default function Deliveries() {
   };
 
   const handleContest = async () => {
-    if (!selectedDelivery || !contestReason) return;
+    if (!selectedDelivery || !contestReason) {
+      toast.error('Preencha o motivo da contestação');
+      return;
+    }
+
+    // Valida transição
+    const validation = validateTransition('delivery', { ...selectedDelivery, contest_reason: contestReason }, 'in_dispute');
+    if (!validation.valid) {
+      toast.error(validation.error || validation.errors?.[0]);
+      return;
+    }
+
     setProcessing(true);
     
     try {
@@ -224,22 +241,37 @@ export default function Deliveries() {
   const handleSubmitDelivery = async () => {
     if (!selectedDelivery) return;
     
-    if (proofUrls.length === 0) {
-      alert('É obrigatório anexar pelo menos uma prova da entrega (screenshot, foto, etc).');
+    const validContentUrls = contentUrls.filter(url => url.trim());
+    
+    // Valida dados
+    const deliveryData = {
+      proof_urls: proofUrls,
+      content_urls: validContentUrls,
+      proof_notes: proofNotes
+    };
+    
+    const validation = validate(deliverySchema, deliveryData);
+    if (!validation.success) {
+      const firstError = Object.values(validation.errors)[0];
+      toast.error(firstError);
+      return;
+    }
+
+    // Valida transição
+    const transitionValidation = validateTransition('delivery', selectedDelivery, 'submitted');
+    if (!transitionValidation.valid) {
+      toast.error(transitionValidation.error || transitionValidation.errors?.[0]);
       return;
     }
     
     setSubmitting(true);
     
     try {
-      const validContentUrls = contentUrls.filter(url => url.trim());
       
       await base44.entities.Delivery.update(selectedDelivery.id, {
         status: 'submitted',
         submitted_at: new Date().toISOString(),
-        proof_urls: proofUrls,
-        content_urls: validContentUrls,
-        proof_notes: proofNotes,
+        ...deliveryData,
         on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true
       });
 
@@ -266,18 +298,7 @@ export default function Deliveries() {
     setProofNotes('');
   };
 
-  const getStatusConfig = (status) => {
-    const configs = {
-      pending: { label: 'Aguardando', color: 'bg-slate-100 text-slate-700', icon: Clock },
-      submitted: { label: 'Enviada', color: 'bg-blue-100 text-blue-700', icon: Eye },
-      approved: { label: 'Aprovada', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
-      contested: { label: 'Contestada', color: 'bg-red-100 text-red-700', icon: AlertTriangle },
-      in_dispute: { label: 'Em Disputa', color: 'bg-orange-100 text-orange-700', icon: Flag },
-      resolved: { label: 'Resolvida', color: 'bg-violet-100 text-violet-700', icon: CheckCircle2 },
-      closed: { label: 'Encerrada', color: 'bg-slate-100 text-slate-700', icon: CheckCircle2 }
-    };
-    return configs[status] || configs.pending;
-  };
+
 
   const filteredDeliveries = deliveries.filter(d => {
     const creator = creators[d.creator_id];
@@ -296,11 +317,7 @@ export default function Deliveries() {
   });
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -319,15 +336,12 @@ export default function Deliveries() {
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={profileType === 'brand' ? "Buscar por criador ou campanha..." : "Buscar por campanha ou marca..."}
-                className="pl-10"
-              />
-            </div>
+            <SearchFilter
+              value={searchTerm}
+              onChange={setSearchTerm}
+              placeholder={profileType === 'brand' ? "Buscar por criador ou campanha..." : "Buscar por campanha ou marca..."}
+              className="flex-1"
+            />
             <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger className="w-40">
                 <SelectValue />
@@ -352,7 +366,6 @@ export default function Deliveries() {
             const creator = creators[delivery.creator_id];
             const campaign = campaigns[delivery.campaign_id];
             const brand = brands[delivery.brand_id];
-            const statusConfig = getStatusConfig(delivery.status);
             const isOverdue = delivery.deadline && new Date() > new Date(delivery.deadline) && delivery.status === 'pending';
 
             return (
@@ -403,7 +416,7 @@ export default function Deliveries() {
                               <div className="flex flex-wrap gap-3 mt-2 text-sm">
                                 <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : 'text-slate-500'}`}>
                                   <Calendar className="w-4 h-4" />
-                                  {delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}
+                                  {formatDate(delivery.deadline)}
                                   {isOverdue && <span className="font-medium">(Atrasado!)</span>}
                                 </span>
                               </div>
@@ -418,7 +431,7 @@ export default function Deliveries() {
                           <>
                             <div className="flex items-center gap-1 text-slate-600">
                               <Calendar className="w-4 h-4" />
-                              {delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}
+                              {formatDate(delivery.deadline)}
                             </div>
                             {delivery.proof_urls?.length > 0 && (
                               <div className="flex items-center gap-1 text-slate-600">
@@ -428,10 +441,7 @@ export default function Deliveries() {
                             )}
                           </>
                         )}
-                        <Badge className={`${statusConfig.color} border-0`}>
-                          <statusConfig.icon className="w-3 h-3 mr-1" />
-                          {statusConfig.label}
-                        </Badge>
+                        <StatusBadge type="delivery" status={delivery.status} />
                       </div>
 
                       {/* Actions */}
@@ -715,12 +725,9 @@ export default function Deliveries() {
 
               {/* Status Display */}
               {selectedDelivery.status !== 'submitted' && (
-                <div className="flex items-center justify-center pt-4 border-t">
-                  <Badge className={`${getStatusConfig(selectedDelivery.status).color} border-0 text-base px-4 py-2`}>
-                    {React.createElement(getStatusConfig(selectedDelivery.status).icon, { className: "w-4 h-4 mr-2" })}
-                    {getStatusConfig(selectedDelivery.status).label}
-                  </Badge>
-                </div>
+               <div className="flex items-center justify-center pt-4 border-t">
+                 <StatusBadge type="delivery" status={selectedDelivery.status} className="text-base px-4 py-2" />
+               </div>
               )}
             </div>
           </DialogContent>
