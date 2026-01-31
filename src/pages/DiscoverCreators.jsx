@@ -71,7 +71,8 @@ export default function DiscoverCreators() {
       
       // Filtrar criadores com informações básicas preenchidas
       const creatorsWithProfile = allCreators.filter(creator => {
-        return creator.bio && 
+        return creator.avatar_url &&
+               creator.bio && 
                creator.niche?.length > 0 && 
                creator.platforms?.length > 0 && 
                creator.location;

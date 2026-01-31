@@ -76,7 +76,8 @@ export default function DiscoverBrands() {
       
       // Filtrar marcas com informações básicas preenchidas
       const brandsWithProfile = allBrands.filter(brand => {
-        return brand.description && 
+        return brand.logo_url &&
+               brand.description && 
                brand.industry && 
                brand.contact_email;
       });
