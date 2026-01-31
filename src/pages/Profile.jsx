@@ -508,16 +508,16 @@ export default function Profile() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-                      <Checkbox
-                        id="accepts_barter"
-                        checked={formData.accepts_barter}
-                        onCheckedChange={(checked) => handleChange('accepts_barter', checked)}
-                      />
-                      <Label htmlFor="accepts_barter" className="cursor-pointer">
-                        Aceito permutas (produtos/serviços)
-                      </Label>
-                    </div>
+                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
+                       <Checkbox
+                         id="accepts_barter"
+                         checked={formData.accepts_barter}
+                         onCheckedChange={(checked) => handleChange('accepts_barter', checked)}
+                       />
+                       <Label htmlFor="accepts_barter" className="cursor-pointer" style={{ color: 'var(--text-primary)' }}>
+                         Aceito permutas (produtos/serviços)
+                       </Label>
+                     </div>
                   </>
                 )}
               </div>
