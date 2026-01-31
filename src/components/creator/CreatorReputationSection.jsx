@@ -51,7 +51,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                    strokeWidth="3"
                    strokeDasharray={`${(reputation?.total_score || 100) * 2.827} 282.7`}
                    style={{
-                     color: reputation?.total_score >= 75 ? '#10b981' : reputation?.total_score >= 60 ? '#f97316' : '#ef4444',
+                     color: 'var(--accent-primary)',
                      transition: 'color 0.3s'
                    }}
                  />
