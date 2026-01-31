@@ -225,6 +225,7 @@ export default function Profile() {
           <p className="text-slate-600 mt-1">Atualize suas informações</p>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeSelector />
           <Badge variant="outline" className="capitalize">
             {isBrand ? 'Marca' : 'Criador'}
           </Badge>
