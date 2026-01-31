@@ -196,15 +196,15 @@ export default function CreatorDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="hover:shadow-md transition-shadow" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <CardContent className="p-6">
                 <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
                   <stat.icon className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mb-1">
+                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-sm text-slate-500">{stat.label}</div>
+                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
               </CardContent>
             </Card>
           </motion.div>
