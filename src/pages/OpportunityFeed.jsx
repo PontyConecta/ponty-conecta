@@ -425,9 +425,9 @@ export default function OpportunityFeed() {
 
       {/* Campaign Details / Application Dialog */}
       <Dialog open={!!selectedCampaign} onOpenChange={() => { setSelectedCampaign(null); setViewingDetails(false); }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto pb-safe">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto pb-safe" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle style={{ color: 'var(--text-primary)' }}>
               {viewingDetails ? 'Detalhes da Campanha' : 'Candidatar-se à Campanha'}
             </DialogTitle>
           </DialogHeader>
@@ -613,21 +613,21 @@ export default function OpportunityFeed() {
 
                   {/* Application Form */}
                   <div>
-                    <Label>Sua Mensagem *</Label>
+                    <Label style={{ color: 'var(--text-primary)' }}>Sua Mensagem *</Label>
                     <Textarea
                       value={applicationMessage}
                       onChange={(e) => setApplicationMessage(e.target.value)}
                       placeholder="Conte por que você é ideal para esta campanha..."
                       className="mt-2 min-h-[120px]"
                     />
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
                       Dica: Mencione trabalhos anteriores relevantes e por que você se identifica com a marca.
                     </p>
                   </div>
 
                   {selectedCampaign.remuneration_type !== 'barter' && (
                     <div>
-                      <Label>Sua Proposta de Valor (R$)</Label>
+                      <Label style={{ color: 'var(--text-primary)' }}>Sua Proposta de Valor (R$)</Label>
                       <Input
                         type="number"
                         value={proposedRate}
@@ -635,7 +635,7 @@ export default function OpportunityFeed() {
                         placeholder={`Ex: ${selectedCampaign.budget_min || 500}`}
                         className="mt-2"
                       />
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
                         Orçamento da marca: R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
                       </p>
                     </div>
