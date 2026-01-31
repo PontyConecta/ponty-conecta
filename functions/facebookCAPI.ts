@@ -1,5 +1,4 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-import crypto from 'https://deno.land/std@0.208.0/node/crypto.ts';
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
@@ -15,18 +14,25 @@ Deno.serve(async (req) => {
     const pixelId = Deno.env.get('VITE_FACEBOOK_PIXEL_ID');
     const accessToken = Deno.env.get('META_API_TOKEN');
 
+    console.log('facebookCAPI called:', { event, pixelId: !!pixelId, accessToken: !!accessToken });
+
     if (!pixelId || !accessToken) {
-      console.error('Missing Facebook credentials:', { pixelId, accessToken: !!accessToken });
+      console.error('Missing Facebook credentials:', { pixelId: !!pixelId, accessToken: !!accessToken });
       return new Response(
         JSON.stringify({ error: 'Missing Facebook configuration' }), 
         { status: 500 }
       );
     }
 
-    // Hash do email (SHA256)
-    const hashedEmail = user_email
-      ? crypto.createHash('sha256').update(user_email.toLowerCase().trim()).digest('hex')
-      : null;
+    // Hash do email (SHA256) - usando Web Crypto API (async)
+    let hashedEmail = null;
+    if (user_email) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(user_email.toLowerCase().trim());
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      hashedEmail = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
     const eventPayload = {
       data: [
@@ -47,6 +53,8 @@ Deno.serve(async (req) => {
       ],
     };
 
+    console.log('Sending to Facebook:', { pixelId, event });
+
     const response = await fetch(
       `https://graph.facebook.com/v18.0/${pixelId}/events?access_token=${accessToken}`,
       {
@@ -63,7 +71,7 @@ Deno.serve(async (req) => {
       throw new Error(result.error?.message || 'Error sending Facebook event');
     }
 
-    console.log('Facebook CAPI event sent:', event);
+    console.log('Facebook CAPI event sent successfully:', event);
     return new Response(JSON.stringify({ success: true, result }), { status: 200 });
   } catch (error) {
     console.error('Facebook CAPI error:', error.message);

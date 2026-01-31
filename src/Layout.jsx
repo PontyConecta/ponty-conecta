@@ -83,9 +83,10 @@ function LayoutContent({ children, currentPageName }) {
                           {/* Facebook Pixel */}
                           <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
                           <script>{`
-                            fbq('init', '${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}');
-                            fbq('setTestEventCode', 'TEST9662');
-                            fbq('track', 'PageView');
+                            window.fbq = window.fbq || function() { (window.fbq.q = window.fbq.q || []).push(arguments); };
+                            window.fbq('init', '${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}');
+                            window.fbq('setTestEventCode', 'TEST9662');
+                            window.fbq('track', 'PageView');
                           `}</script>
                           <noscript>
                             <img 
