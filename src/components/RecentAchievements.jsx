@@ -9,17 +9,17 @@ export default function RecentAchievements({ achievements = [], limit = 6 }) {
 
   if (unlockedAchievements.length === 0) {
     return (
-      <Card>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-lg transition-colors" style={{ color: 'var(--text-primary)' }}>
             <Trophy className="w-5 h-5 text-amber-500" />
             Conquistas
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <Trophy className="w-12 h-12 text-slate-300 mx-auto mb-2" />
-            <p className="text-slate-500">Continue trabalhando para desbloquear conquistas</p>
+            <Trophy className="w-12 h-12 mx-auto mb-2" style={{ color: 'var(--border-color)' }} />
+            <p style={{ color: 'var(--text-secondary)' }}>Continue trabalhando para desbloquear conquistas</p>
           </div>
         </CardContent>
       </Card>
