@@ -233,7 +233,7 @@ export default function Profile() {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="bg-slate-100 w-full lg:w-auto flex overflow-x-auto">
+        <TabsList className="w-full lg:w-auto flex overflow-x-auto" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <TabsTrigger value="profile" className="flex-1 lg:flex-none">Perfil</TabsTrigger>
           {!isBrand && <TabsTrigger value="portfolio" className="flex-1 lg:flex-none">Portfólio</TabsTrigger>}
           <TabsTrigger value="contact" className="flex-1 lg:flex-none">Contato</TabsTrigger>
