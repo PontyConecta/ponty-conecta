@@ -49,11 +49,15 @@ export default function MissionTracker({ missions = [] }) {
               transition={{ delay: index * 0.1 }}
               className={`p-4 rounded-xl border transition-all ${
                 isCompleted 
-                  ? 'bg-emerald-50 border-emerald-200' 
+                  ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800' 
                   : isActive 
-                  ? 'bg-slate-50 border-slate-200' 
-                  : 'bg-slate-100 border-slate-300 opacity-60'
+                  ? 'border-opacity-50'
+                  : 'opacity-60'
               }`}
+              style={{
+                backgroundColor: isCompleted ? undefined : 'var(--bg-secondary)',
+                borderColor: isCompleted ? undefined : 'var(--border-color)'
+              }}
             >
               <div className="flex items-start gap-3 mb-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
