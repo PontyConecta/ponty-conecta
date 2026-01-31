@@ -63,7 +63,7 @@ export default function AdminMenu({ currentPageName }) {
         <Button 
           variant={isAdminPage ? "default" : "outline"}
           size="sm"
-          className={`gap-2 ${isAdminPage ? 'bg-red-600 hover:bg-red-700' : 'border-red-200 text-red-600 hover:bg-red-50'}`}
+          className={`gap-2 ${isAdminPage ? 'bg-indigo-600 hover:bg-indigo-700' : 'border-slate-200 text-slate-700 hover:bg-slate-100'}`}
         >
           <Shield className="w-4 h-4" />
           <span className="hidden sm:inline">Admin</span>
