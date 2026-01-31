@@ -23,13 +23,13 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
   return (
     <Card className="lg:col-span-2 overflow-hidden border-0 shadow-lg">
       <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="flex flex-col items-center justify-center py-4">
           {/* Pontuação Principal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center"
           >
             <div className="relative w-32 h-32 mb-4">
               <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
@@ -60,87 +60,16 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                 <div className="text-xs text-slate-500">/100</div>
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-slate-900 text-center">Sua Reputação</h3>
-            <p className="text-sm text-slate-600 mt-1">Pontuação Geral</p>
-          </motion.div>
-
-          {/* Entregas */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex flex-col justify-center"
-          >
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    </div>
-                    <span className="text-sm font-medium text-slate-700">Aprovadas</span>
-                  </div>
-                  <span className="text-2xl font-bold text-emerald-600">{approvedDeliveries}</span>
-                </div>
-                <Progress value={approvedDeliveries > 0 ? 80 : 0} className="h-1.5" />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <Clock className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <span className="text-sm font-medium text-slate-700">Submetidas</span>
-                  </div>
-                  <span className="text-2xl font-bold text-blue-600">{submittedDeliveries}</span>
-                </div>
-                <Progress value={submittedDeliveries > 0 ? 60 : 0} className="h-1.5" />
-              </div>
-
-              <div className="pt-2">
-                <p className="text-xs text-slate-500 mb-2">
-                  {reputation?.campaigns_completed || 0} campanhas concluídas
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Taxa de Entrega no Prazo */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-            className="flex flex-col justify-center"
-          >
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-violet-600" />
-                </div>
-                <span className="text-sm font-medium text-slate-700">Taxa no Prazo</span>
-              </div>
-
-              <div className="mb-4">
-                <div className="text-3xl font-bold text-violet-600 mb-2">{onTimeRate}%</div>
-                <Progress value={onTimeRate} className="h-2" />
-              </div>
-
-              <div className="text-xs text-slate-600 text-center">
-                {reputation?.on_time_deliveries || 0} de {reputation?.campaigns_completed || 0} no prazo
-              </div>
-            </div>
+            <h3 className="text-lg font-semibold text-slate-900">Sua Reputação</h3>
+            <p className="text-sm text-slate-600 mt-1 mb-6">Pontuação Geral</p>
 
             {reputation?.badges?.length > 0 && (
-              <div className="mt-4 pt-4 border-t">
-                <p className="text-xs text-slate-500 mb-2 font-medium">Badges</p>
-                <div className="flex flex-wrap gap-2">
-                  {reputation.badges.slice(0, 3).map((badge, i) => (
-                    <Badge key={i} variant="outline" className="bg-violet-50 border-violet-200 text-violet-700 text-xs">
-                      {badge}
-                    </Badge>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {reputation.badges.slice(0, 3).map((badge, i) => (
+                  <Badge key={i} variant="outline" className="bg-violet-50 border-violet-200 text-violet-700 text-xs">
+                    {badge}
+                  </Badge>
+                ))}
               </div>
             )}
           </motion.div>
