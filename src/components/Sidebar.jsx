@@ -54,7 +54,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
       <nav className="flex-1 px-3 py-6 space-y-6 overflow-y-auto">
         {navSections.map((section, sectionIndex) => (
           <div key={sectionIndex}>
-            <h3 className="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <h3 className="px-4 mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
               {section.title}
             </h3>
             <div className="space-y-1">
