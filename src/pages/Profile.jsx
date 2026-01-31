@@ -703,16 +703,16 @@ export default function Profile() {
               <CardContent>
                 {isSubscribed ? (
                   <div className="space-y-4">
-                    <div className="p-4 bg-emerald-50 rounded-xl">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-2">Ativa</Badge>
-                          <h4 className="font-semibold text-slate-900">Plano Pro</h4>
-                          <p className="text-sm text-slate-600">Acesso completo a todas as funcionalidades</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-slate-900">R$ 45</p>
-                          <p className="text-sm text-slate-500">/mês</p>
+                    <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                         <div className="flex items-center justify-between">
+                           <div>
+                             <Badge className="border-0 mb-2" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'rgb(5, 150, 105)' }}>Ativa</Badge>
+                             <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Plano Pro</h4>
+                             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Acesso completo a todas as funcionalidades</p>
+                           </div>
+                           <div className="text-right">
+                             <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ 45</p>
+                             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>/mês</p>
                         </div>
                       </div>
                     </div>
