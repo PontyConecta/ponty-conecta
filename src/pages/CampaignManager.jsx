@@ -179,22 +179,30 @@ export default function CampaignManager() {
       return;
     }
 
+    const campaignData = {
+      ...formData,
+      brand_id: brand.id,
+      budget_min: formData.budget_min ? parseFloat(formData.budget_min) : null,
+      budget_max: formData.budget_max ? parseFloat(formData.budget_max) : null,
+      barter_value: formData.barter_value ? parseFloat(formData.barter_value) : null,
+      slots_total: parseInt(formData.slots_total) || 1,
+      dos: formData.dos.filter(d => d.trim()),
+      donts: formData.donts.filter(d => d.trim()),
+      hashtags: formData.hashtags.filter(h => h.trim()),
+      mentions: formData.mentions.filter(m => m.trim()),
+      status: editingCampaign ? editingCampaign.status : 'draft'
+    };
+
+    // Valida dados
+    const validation = validate(campaignSchema, campaignData);
+    if (!validation.success) {
+      const firstError = Object.values(validation.errors)[0];
+      toast.error(firstError);
+      return;
+    }
+
     setSaving(true);
     try {
-      const campaignData = {
-        ...formData,
-        brand_id: brand.id,
-        budget_min: formData.budget_min ? parseFloat(formData.budget_min) : null,
-        budget_max: formData.budget_max ? parseFloat(formData.budget_max) : null,
-        barter_value: formData.barter_value ? parseFloat(formData.barter_value) : null,
-        slots_total: parseInt(formData.slots_total) || 1,
-        dos: formData.dos.filter(d => d.trim()),
-        donts: formData.donts.filter(d => d.trim()),
-        hashtags: formData.hashtags.filter(h => h.trim()),
-        mentions: formData.mentions.filter(m => m.trim()),
-        status: editingCampaign ? editingCampaign.status : 'draft'
-      };
-
       if (editingCampaign) {
         await base44.entities.Campaign.update(editingCampaign.id, campaignData);
         toast.success('Campanha atualizada com sucesso!');
@@ -280,6 +288,17 @@ export default function CampaignManager() {
       setShowPaywall(true);
       return;
     }
+
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (!campaign) return;
+
+    // Valida transição
+    const validation = validateTransition('campaign', campaign, newStatus);
+    if (!validation.valid) {
+      toast.error(validation.error || validation.errors?.[0]);
+      return;
+    }
+
     try {
       await base44.entities.Campaign.update(campaignId, { status: newStatus });
       toast.success('Status da campanha atualizado!');
