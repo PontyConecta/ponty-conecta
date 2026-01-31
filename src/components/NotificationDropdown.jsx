@@ -330,7 +330,7 @@ export default function NotificationDropdown() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative hover:bg-white/10 transition-all"
+          className="relative h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
         >
           <Bell className={`w-5 h-5 ${theme === 'light' ? 'text-slate-700' : 'text-white'}`} />
           {unreadCount > 0 && (
