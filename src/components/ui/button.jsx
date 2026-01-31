@@ -14,11 +14,11 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-input bg-transparent text-foreground shadow-sm hover:bg-[var(--accent-primary)]/10 hover:text-foreground transition-colors",
+          "border shadow-sm hover:bg-[var(--accent-primary)]/10 transition-colors",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "text-foreground hover:bg-[var(--accent-primary)]/10 transition-colors",
-        link: "text-foreground underline-offset-4 hover:underline hover:opacity-80 transition-opacity",
+        ghost: "hover:bg-[var(--accent-primary)]/10 transition-colors",
+        link: "underline-offset-4 hover:underline hover:opacity-80 transition-opacity",
       },
       size: {
         default: "h-9 px-4 py-2",
@@ -36,9 +36,11 @@ const buttonVariants = cva(
 
 const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "button"
+  const styles = variant === 'outline' || variant === 'ghost' || variant === 'link' ? { color: 'var(--text-primary)', borderColor: 'var(--border-color)' } : {}
   return (
     (<Comp
       className={cn(buttonVariants({ variant, size, className }))}
+      style={styles}
       ref={ref}
       {...props} />)
   );
