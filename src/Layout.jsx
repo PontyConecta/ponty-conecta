@@ -139,7 +139,7 @@ function LayoutContent({ children, currentPageName }) {
             <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <span className="text-white font-bold text-base lg:text-lg">P</span>
             </div>
-            <div className="flex flex-col hidden sm:flex">
+            <div className="hidden sm:flex flex-col">
               <span className="text-base lg:text-lg font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent leading-tight">Ponty</span>
               <span className="text-[10px] lg:text-xs font-medium text-slate-500 leading-tight">
                 {profileType === 'brand' ? 'Marcas' : 'Creators'}
