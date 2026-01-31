@@ -211,9 +211,6 @@ export default function CreatorDashboard() {
         ))}
       </div>
 
-      {/* Gráficos de Métricas */}
-      <CreatorMetricsChart deliveries={deliveries} />
-
       {/* Reputation Section */}
       <CreatorReputationSection reputation={reputation} deliveries={deliveries} />
 
