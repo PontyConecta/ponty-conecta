@@ -123,10 +123,18 @@ export default function OnboardingBrand() {
     } else {
       setSaving(true);
       try {
-        await base44.entities.Brand.update(brand.id, {
-          ...formData,
-          account_state: 'registered'
-        });
+        if (brand) {
+          await base44.entities.Brand.update(brand.id, {
+            ...formData,
+            account_state: 'registered'
+          });
+        } else {
+          await base44.entities.Brand.create({
+            user_id: user.id,
+            ...formData,
+            account_state: 'registered'
+          });
+        }
         
         // Celebração com confetti
         confetti({
@@ -136,10 +144,11 @@ export default function OnboardingBrand() {
         });
         
         setTimeout(() => {
-          window.location.href = createPageUrl('Subscription');
+          window.location.href = createPageUrl('BrandDashboard');
         }, 1500);
       } catch (error) {
         console.error('Error saving brand:', error);
+        alert('Erro ao salvar. Tente novamente.');
         setSaving(false);
       }
     }
