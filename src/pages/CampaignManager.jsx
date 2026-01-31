@@ -9,10 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatDate, formatCurrencyRange } from '@/components/utils/formatters';
-import StatusBadge from '@/components/common/StatusBadge';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
-import SearchFilter from '@/components/common/SearchFilter';
+import { formatDate, formatCurrencyRange } from '../components/utils/formatters';
+import { campaignSchema, validate } from '../components/utils/validationSchemas';
+import { validateTransition } from '../components/utils/stateTransitions';
+import StatusBadge from '../components/common/StatusBadge';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import SearchFilter from '../components/common/SearchFilter';
 import {
   Dialog,
   DialogContent,
