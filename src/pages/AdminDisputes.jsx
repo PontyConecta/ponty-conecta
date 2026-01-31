@@ -37,9 +37,11 @@ import { formatDate } from '../components/utils/formatters';
 import { arrayToMap } from '../components/utils/entityHelpers';
 import { disputeResolutionSchema, validate } from '../components/utils/validationSchemas';
 import { validateTransition } from '../components/utils/stateTransitions';
+import { usePagination } from '../components/hooks/usePagination';
 import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import DisputeStatsCards from '../components/disputes/DisputeStatsCards';
+import Pagination from '../components/common/Pagination';
 
 export default function AdminDisputes() {
   const [user, setUser] = useState(null);
@@ -54,6 +56,9 @@ export default function AdminDisputes() {
   const [processing, setProcessing] = useState(false);
   const [resolution, setResolution] = useState('');
   const [resolutionType, setResolutionType] = useState('');
+  
+  // Paginação
+  const pagination = usePagination(20);
 
   useEffect(() => {
     loadData();
@@ -217,7 +222,7 @@ export default function AdminDisputes() {
       {/* Disputes List */}
       {filteredDisputes.length > 0 ? (
         <div className="space-y-4">
-          {filteredDisputes.map((dispute, index) => {
+          {paginatedDisputes.map((dispute, index) => {
             const brand = brands[dispute.brand_id];
             const creator = creators[dispute.creator_id];
             const campaign = campaigns[dispute.campaign_id];
@@ -295,6 +300,23 @@ export default function AdminDisputes() {
               </motion.div>
             );
           })}
+          
+          {/* Paginação */}
+          {totalPages > 1 && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={totalPages}
+                totalItems={filteredDisputes.length}
+                pageSize={pagination.pageSize}
+                onPageChange={pagination.goToPage}
+                onPageSizeChange={(size) => {
+                  pagination.setPageSize(size);
+                  pagination.reset();
+                }}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <Card>

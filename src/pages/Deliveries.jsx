@@ -47,9 +47,11 @@ import { validateTransition } from '../components/utils/stateTransitions';
 import { toast } from 'sonner';
 import { formatDate } from '../components/utils/formatters';
 import { arrayToMap } from '../components/utils/entityHelpers';
+import { usePagination } from '../components/hooks/usePagination';
 import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
+import Pagination from '../components/common/Pagination';
 
 export default function Deliveries() {
   const [user, setUser] = useState(null);
@@ -71,6 +73,9 @@ export default function Deliveries() {
   const [contentUrls, setContentUrls] = useState(['']);
   const [proofNotes, setProofNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  
+  // Paginação
+  const pagination = usePagination(20);
 
   useEffect(() => {
     loadData();
@@ -316,6 +321,15 @@ export default function Deliveries() {
     return matchesSearch && matchesStatus;
   });
 
+  // Aplica paginação
+  const paginatedDeliveries = pagination.paginate(filteredDeliveries);
+  const totalPages = pagination.totalPages(filteredDeliveries.length);
+
+  // Reset pagination quando filtros mudam
+  useEffect(() => {
+    pagination.reset();
+  }, [searchTerm, filterStatus]);
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -362,7 +376,7 @@ export default function Deliveries() {
       {/* Deliveries List */}
       {filteredDeliveries.length > 0 ? (
         <div className="space-y-4">
-          {filteredDeliveries.map((delivery, index) => {
+          {paginatedDeliveries.map((delivery, index) => {
             const creator = creators[delivery.creator_id];
             const campaign = campaigns[delivery.campaign_id];
             const brand = brands[delivery.brand_id];
@@ -514,6 +528,23 @@ export default function Deliveries() {
               </motion.div>
             );
           })}
+          
+          {/* Paginação */}
+          {totalPages > 1 && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={totalPages}
+                totalItems={filteredDeliveries.length}
+                pageSize={pagination.pageSize}
+                onPageChange={pagination.goToPage}
+                onPageSizeChange={(size) => {
+                  pagination.setPageSize(size);
+                  pagination.reset();
+                }}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <Card>

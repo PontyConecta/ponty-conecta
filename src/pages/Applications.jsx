@@ -39,9 +39,11 @@ import { validateTransition } from '../components/utils/stateTransitions';
 import { toast } from 'sonner';
 import { arrayToMap } from '../components/utils/entityHelpers';
 import { formatDate } from '../components/utils/formatters';
+import { usePagination } from '../components/hooks/usePagination';
 import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
+import Pagination from '../components/common/Pagination';
 
 export default function Applications() {
   const [user, setUser] = useState(null);
@@ -59,6 +61,9 @@ export default function Applications() {
   const [processing, setProcessing] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [agreedRate, setAgreedRate] = useState('');
+  
+  // Paginação
+  const pagination = usePagination(20);
 
   useEffect(() => {
     loadData();
@@ -229,6 +234,15 @@ export default function Applications() {
     return matchesSearch && matchesStatus && (profileType === 'brand' ? matchesCampaign : true);
   });
 
+  // Aplica paginação
+  const paginatedApplications = pagination.paginate(filteredApplications);
+  const totalPages = pagination.totalPages(filteredApplications.length);
+
+  // Reset pagination quando filtros mudam
+  useEffect(() => {
+    pagination.reset();
+  }, [searchTerm, filterStatus, filterCampaign]);
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -291,7 +305,7 @@ export default function Applications() {
       {/* Applications List */}
       {filteredApplications.length > 0 ? (
         <div className="space-y-4">
-          {filteredApplications.map((application, index) => {
+          {paginatedApplications.map((application, index) => {
             const creator = creators[application.creator_id];
             const campaign = campaigns[application.campaign_id];
             const brand = brands[application.brand_id];
@@ -451,6 +465,23 @@ export default function Applications() {
               </motion.div>
             );
           })}
+          
+          {/* Paginação */}
+          {totalPages > 1 && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={totalPages}
+                totalItems={filteredApplications.length}
+                pageSize={pagination.pageSize}
+                onPageChange={pagination.goToPage}
+                onPageSizeChange={(size) => {
+                  pagination.setPageSize(size);
+                  pagination.reset();
+                }}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <Card>
