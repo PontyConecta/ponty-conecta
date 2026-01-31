@@ -84,7 +84,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
 
       {/* Premium CTA */}
       {!isSubscribed && (
-        <div className="p-4 border-t border-slate-200">
+        <div className="p-4 transition-colors" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
           <Link to={createPageUrl('Subscription')}>
             <div className="p-4 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white cursor-pointer hover:shadow-lg transition-shadow">
               <div className="flex items-center gap-2 mb-2">
