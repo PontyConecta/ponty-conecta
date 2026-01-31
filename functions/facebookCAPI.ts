@@ -28,6 +28,7 @@ Deno.serve(async (req) => {
             client_user_agent: user_agent,
             fbp: fbp || undefined,
             fbc: fbc || undefined,
+            client_ip_address: undefined,
           },
           custom_data: eventData,
         },
