@@ -33,11 +33,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { formatDate } from '@/components/utils/formatters';
-import { arrayToMap } from '@/components/utils/entityHelpers';
-import StatusBadge from '@/components/common/StatusBadge';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
-import DisputeStatsCards from '@/components/disputes/DisputeStatsCards';
+import { formatDate } from '../components/utils/formatters';
+import { arrayToMap } from '../components/utils/entityHelpers';
+import StatusBadge from '../components/common/StatusBadge';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import DisputeStatsCards from '../components/disputes/DisputeStatsCards';
 
 export default function AdminDisputes() {
   const [user, setUser] = useState(null);

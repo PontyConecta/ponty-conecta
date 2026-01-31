@@ -11,10 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from 'sonner';
-import { formatDateTime } from '@/components/utils/formatters';
-import { auditLogActionConfig } from '@/components/utils/statusConfigs';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
-import SearchFilter from '@/components/common/SearchFilter';
+import { formatDateTime } from '../components/utils/formatters';
+import { auditLogActionConfig } from '../components/utils/statusConfigs';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import SearchFilter from '../components/common/SearchFilter';
 
 export default function AdminAuditLogs() {
   const [loading, setLoading] = useState(true);

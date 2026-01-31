@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
-import { getStatusConfig } from '@/components/utils/statusConfigs';
+import { getStatusConfig } from '../utils/statusConfigs';
 
 export default function StatusBadge({ type, status, className = '' }) {
   const config = getStatusConfig(type, status);
