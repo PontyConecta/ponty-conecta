@@ -189,7 +189,7 @@ function LayoutContent({ children, currentPageName }) {
       --bg-primary: #1a1624;
       --bg-secondary: #2d1f3a;
       --text-primary: #f5f1f8;
-      --text-secondary: #d4cfe0;
+      --text-secondary: #a0a6ad;
       --text-input: #f5f1f8;
       --border-color: #5a4577;
       --accent-primary: #c84dd4;
