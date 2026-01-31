@@ -27,6 +27,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 export default function OnboardingBrand() {
   const [step, setStep] = useState(1);
@@ -121,7 +122,17 @@ export default function OnboardingBrand() {
           ...formData,
           account_state: 'registered'
         });
-        window.location.href = createPageUrl('Subscription');
+        
+        // Celebração com confetti
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+        
+        setTimeout(() => {
+          window.location.href = createPageUrl('Subscription');
+        }, 1500);
       } catch (error) {
         console.error('Error saving brand:', error);
         setSaving(false);
