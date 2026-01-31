@@ -71,8 +71,17 @@ export default function DiscoverBrands() {
         setIsSubscribed(creators[0].subscription_status === 'active');
       }
 
-      const brandsData = await base44.entities.Brand.filter({ subscription_status: 'active' }, '-created_date');
-      setBrands(brandsData);
+      // Buscar apenas marcas com perfil completo
+      const allBrands = await base44.entities.Brand.filter({ subscription_status: 'active' }, '-created_date');
+      
+      // Filtrar marcas com informações básicas preenchidas
+      const brandsWithProfile = allBrands.filter(brand => {
+        return brand.description && 
+               brand.industry && 
+               brand.contact_email;
+      });
+      
+      setBrands(brandsWithProfile);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

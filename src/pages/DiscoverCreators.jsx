@@ -66,8 +66,18 @@ export default function DiscoverCreators() {
         setIsSubscribed(brands[0].subscription_status === 'active');
       }
 
-      const creatorsData = await base44.entities.Creator.filter({ subscription_status: 'active' }, '-created_date');
-      setCreators(creatorsData);
+      // Buscar apenas criadores com perfil completo
+      const allCreators = await base44.entities.Creator.filter({ subscription_status: 'active' }, '-created_date');
+      
+      // Filtrar criadores com informações básicas preenchidas
+      const creatorsWithProfile = allCreators.filter(creator => {
+        return creator.bio && 
+               creator.niche?.length > 0 && 
+               creator.platforms?.length > 0 && 
+               creator.location;
+      });
+      
+      setCreators(creatorsWithProfile);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
