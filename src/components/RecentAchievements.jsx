@@ -37,9 +37,9 @@ export default function RecentAchievements({ achievements = [], limit = 6 }) {
   };
 
   return (
-    <Card>
+    <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between text-lg">
+        <CardTitle className="flex items-center justify-between text-lg transition-colors" style={{ color: 'var(--text-primary)' }}>
           <span className="flex items-center gap-2">
             <Trophy className="w-5 h-5 text-amber-500" />
             Conquistas Desbloqueadas
@@ -60,7 +60,7 @@ export default function RecentAchievements({ achievements = [], limit = 6 }) {
               <div className="w-full bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl p-3 mb-2 flex items-center justify-center h-20">
                 <Trophy className="w-8 h-8 text-white" />
               </div>
-              <h4 className="text-xs font-semibold text-slate-900 line-clamp-2">{achievement.title}</h4>
+              <h4 className="text-xs font-semibold line-clamp-2 transition-colors" style={{ color: 'var(--text-primary)' }}>{achievement.title}</h4>
               <Badge className={`${getRarityColor(achievement.rarity)} border-0 text-xs mt-1.5 capitalize`}>
                 {achievement.rarity}
               </Badge>
