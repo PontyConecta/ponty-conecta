@@ -49,14 +49,17 @@ function LayoutContent({ children, currentPageName }) {
     logout('/');
   };
 
-  // Redirect to login if not authenticated (except Home page)
-  if (!loading && !user && currentPageName !== 'Home') {
+  // Pages que não precisam de layout completo
+  const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
+  
+  // Redirect to login if not authenticated (except special pages)
+  if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
     window.location.href = '/';
     return null;
   }
 
-  // Home page for non-authenticated users
-  if (currentPageName === 'Home' && !user) {
+  // Pages without full layout (Home, SelectProfile, Onboarding)
+  if (noLayoutPages.includes(currentPageName)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
         <style>{`
@@ -72,6 +75,15 @@ function LayoutContent({ children, currentPageName }) {
         {children}
       </div>
     );
+  }
+
+  // Se usuário está autenticado mas não tem perfil completo, redireciona
+  if (!loading && user && profile && profile.account_state === 'exploring') {
+    const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
+    if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
+      window.location.href = createPageUrl(onboardingPage);
+      return null;
+    }
   }
 
   const brandNavItems = [
