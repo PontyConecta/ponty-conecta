@@ -53,6 +53,7 @@ export default function AdminUsers() {
   const [actionLoading, setActionLoading] = useState(null);
   const [switchRoleDialog, setSwitchRoleDialog] = useState(null);
   const [auditNote, setAuditNote] = useState('');
+  const [userFlags, setUserFlags] = useState({});
 
   useEffect(() => {
     loadUsers();
@@ -60,14 +61,24 @@ export default function AdminUsers() {
 
   const loadUsers = async () => {
     try {
-      const [usersData, brandsData, creatorsData] = await Promise.all([
+      const [usersData, brandsData, creatorsData, auditLogsData] = await Promise.all([
         base44.entities.User.list(),
         base44.entities.Brand.list(),
-        base44.entities.Creator.list()
+        base44.entities.Creator.list(),
+        base44.entities.AuditLog.list()
       ]);
       setUsers(usersData);
       setBrands(brandsData);
       setCreators(creatorsData);
+      
+      // Build a map of flagged users
+      const flags = {};
+      auditLogsData.forEach(log => {
+        if (log.action === 'user_flagged' && log.target_user_id) {
+          flags[log.target_user_id] = true;
+        }
+      });
+      setUserFlags(flags);
     } catch (error) {
       console.error('Error loading users:', error);
       toast.error('Erro ao carregar usuários');
@@ -317,9 +328,15 @@ export default function AdminUsers() {
                         <Shield className="w-4 h-4 mr-2" />
                         Forçar Assinatura Ativa
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleUserAction(user.id, 'flag_review')}>
-                        Marcar para Revisão
-                      </DropdownMenuItem>
+                      {userFlags[user.id] ? (
+                        <DropdownMenuItem onClick={() => handleUserAction(user.id, 'unflag_review')}>
+                          Desmarcar para Revisão
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem onClick={() => handleUserAction(user.id, 'flag_review')}>
+                          Marcar para Revisão
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
