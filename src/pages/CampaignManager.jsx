@@ -7,8 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDate, formatCurrencyRange } from '@/utils/formatters';
+import StatusBadge from '@/components/common/StatusBadge';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import SearchFilter from '@/components/common/SearchFilter';
 import {
   Dialog,
   DialogContent,
@@ -292,24 +296,7 @@ export default function CampaignManager() {
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusBadge = (status) => {
-    const styles = {
-      draft: { label: 'Rascunho', color: 'bg-slate-100 text-slate-700', icon: Edit },
-      under_review: { label: 'Em Análise', color: 'bg-yellow-100 text-yellow-700', icon: AlertTriangle },
-      active: { label: 'Ativa', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
-      paused: { label: 'Pausada', color: 'bg-orange-100 text-orange-700', icon: Pause },
-      applications_closed: { label: 'Inscrições Fechadas', color: 'bg-blue-100 text-blue-700', icon: XCircle },
-      completed: { label: 'Concluída', color: 'bg-violet-100 text-violet-700', icon: CheckCircle2 },
-      cancelled: { label: 'Cancelada', color: 'bg-red-100 text-red-700', icon: Ban }
-    };
-    const style = styles[status] || styles.draft;
-    return (
-      <Badge className={`${style.color} border-0`}>
-        <style.icon className="w-3 h-3 mr-1" />
-        {style.label}
-      </Badge>
-    );
-  };
+
 
   const getRemunerationIcon = (type) => {
     switch (type) {
@@ -320,11 +307,7 @@ export default function CampaignManager() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -356,15 +339,12 @@ export default function CampaignManager() {
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar campanhas..."
-                className="pl-10"
-              />
-            </div>
+            <SearchFilter
+              value={searchTerm}
+              onChange={setSearchTerm}
+              placeholder="Buscar campanhas..."
+              className="flex-1"
+            />
             <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger className="w-full sm:w-44">
                 <SelectValue />
@@ -411,7 +391,7 @@ export default function CampaignManager() {
                             <h3 className="text-lg font-semibold text-slate-900 truncate">
                               {campaign.title}
                             </h3>
-                            {getStatusBadge(campaign.status)}
+                            <StatusBadge type="campaign" status={campaign.status} />
                           </div>
                           
                           {/* Actions Dropdown */}
@@ -490,11 +470,11 @@ export default function CampaignManager() {
                           </span>
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {campaign.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '-'}
+                            {formatDate(campaign.deadline)}
                           </span>
                           <span className="flex items-center gap-1">
                             <RemunerationIcon className="w-4 h-4" />
-                            {campaign.remuneration_type === 'cash' && `R$ ${campaign.budget_min || 0} - ${campaign.budget_max || 0}`}
+                            {campaign.remuneration_type === 'cash' && formatCurrencyRange(campaign.budget_min, campaign.budget_max)}
                             {campaign.remuneration_type === 'barter' && 'Permuta'}
                             {campaign.remuneration_type === 'mixed' && 'Misto'}
                           </span>

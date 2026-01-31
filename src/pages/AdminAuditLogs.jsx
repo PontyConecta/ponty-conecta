@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Search, 
-  Loader2,
-  Shield,
-  Clock,
-  User,
-  FileText
-} from 'lucide-react';
+import { Shield, Clock, User, FileText } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -19,6 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from 'sonner';
+import { formatDateTime } from '@/utils/formatters';
+import { auditLogActionConfig } from '@/utils/statusConfigs';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import SearchFilter from '@/components/common/SearchFilter';
 
 export default function AdminAuditLogs() {
   const [loading, setLoading] = useState(true);
@@ -43,19 +39,11 @@ export default function AdminAuditLogs() {
   };
 
   const getActionBadge = (action) => {
-    const actionConfig = {
-      role_switch: { label: 'Troca de Perfil', className: 'bg-violet-100 text-violet-700' },
-      user_activated: { label: 'Usuário Ativado', className: 'bg-emerald-100 text-emerald-700' },
-      user_deactivated: { label: 'Usuário Desativado', className: 'bg-orange-100 text-orange-700' },
-      subscription_override: { label: 'Assinatura Alterada', className: 'bg-blue-100 text-blue-700' },
-      user_flagged: { label: 'Usuário Marcado', className: 'bg-yellow-100 text-yellow-700' },
-      data_export: { label: 'Exportação de Dados', className: 'bg-indigo-100 text-indigo-700' },
-      campaign_status_change: { label: 'Status de Campanha', className: 'bg-purple-100 text-purple-700' },
-      dispute_resolved: { label: 'Disputa Resolvida', className: 'bg-emerald-100 text-emerald-700' }
+    const config = auditLogActionConfig[action] || { 
+      label: action, 
+      color: 'bg-slate-100 text-slate-700' 
     };
-    
-    const config = actionConfig[action] || { label: action, className: 'bg-slate-100 text-slate-700' };
-    return <Badge className={`${config.className} border-0`}>{config.label}</Badge>;
+    return <Badge className={`${config.color} border-0`}>{config.label}</Badge>;
   };
 
   const filteredLogs = logs.filter(log => {
@@ -69,11 +57,7 @@ export default function AdminAuditLogs() {
   });
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -90,15 +74,12 @@ export default function AdminAuditLogs() {
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input
-                placeholder="Buscar por admin ou detalhes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+            <SearchFilter
+              value={searchTerm}
+              onChange={setSearchTerm}
+              placeholder="Buscar por admin ou detalhes..."
+              className="flex-1"
+            />
             <Select value={actionFilter} onValueChange={setActionFilter}>
               <SelectTrigger className="w-full sm:w-56">
                 <SelectValue placeholder="Tipo de Ação" />
@@ -130,11 +111,11 @@ export default function AdminAuditLogs() {
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
-                    {getActionBadge(log.action)}
-                    <div className="flex items-center gap-1 text-xs text-slate-500">
-                      <Clock className="w-3 h-3" />
-                      {new Date(log.timestamp).toLocaleString('pt-BR')}
-                    </div>
+                  {getActionBadge(log.action)}
+                  <div className="flex items-center gap-1 text-xs text-slate-500">
+                    <Clock className="w-3 h-3" />
+                    {formatDateTime(log.timestamp)}
+                  </div>
                   </div>
                   
                   <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">

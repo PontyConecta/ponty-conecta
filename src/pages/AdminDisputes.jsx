@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,13 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { 
-  Search,
   Shield,
   Loader2,
   AlertTriangle,
-  CheckCircle2,
-  XCircle,
-  Clock,
   Building2,
   User,
   FileText,
@@ -38,6 +33,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { formatDate } from '@/utils/formatters';
+import { arrayToMap } from '@/utils/entityHelpers';
+import StatusBadge from '@/components/common/StatusBadge';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import DisputeStatsCards from '@/components/disputes/DisputeStatsCards';
 
 export default function AdminDisputes() {
   const [user, setUser] = useState(null);
@@ -85,21 +85,10 @@ export default function AdminDisputes() {
         Promise.all(creatorIds.map(id => base44.entities.Creator.filter({ id })))
       ]);
 
-      const deliveriesMap = {};
-      deliveriesData.flat().forEach(d => { deliveriesMap[d.id] = d; });
-      setDeliveries(deliveriesMap);
-
-      const campaignsMap = {};
-      campaignsData.flat().forEach(c => { campaignsMap[c.id] = c; });
-      setCampaigns(campaignsMap);
-
-      const brandsMap = {};
-      brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
-      setBrands(brandsMap);
-
-      const creatorsMap = {};
-      creatorsData.flat().forEach(c => { creatorsMap[c.id] = c; });
-      setCreators(creatorsMap);
+      setDeliveries(arrayToMap(deliveriesData.flat()));
+      setCampaigns(arrayToMap(campaignsData.flat()));
+      setBrands(arrayToMap(brandsData.flat()));
+      setCreators(arrayToMap(creatorsData.flat()));
 
     } catch (error) {
       console.error('Error loading data:', error);
@@ -161,27 +150,14 @@ export default function AdminDisputes() {
     }
   };
 
-  const getStatusConfig = (status) => {
-    const configs = {
-      open: { label: 'Aberta', color: 'bg-red-100 text-red-700', icon: AlertTriangle },
-      under_review: { label: 'Em Análise', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-      resolved_brand_favor: { label: 'Favorável à Marca', color: 'bg-indigo-100 text-indigo-700', icon: Building2 },
-      resolved_creator_favor: { label: 'Favorável ao Criador', color: 'bg-orange-100 text-orange-700', icon: User },
-      closed: { label: 'Encerrada', color: 'bg-slate-100 text-slate-700', icon: CheckCircle2 }
-    };
-    return configs[status] || configs.open;
-  };
+
 
   const filteredDisputes = disputes.filter(d => {
     return filterStatus === 'all' || d.status === filterStatus;
   });
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -198,40 +174,7 @@ export default function AdminDisputes() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-red-600">
-              {disputes.filter(d => d.status === 'open').length}
-            </div>
-            <div className="text-sm text-slate-500">Abertas</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-yellow-600">
-              {disputes.filter(d => d.status === 'under_review').length}
-            </div>
-            <div className="text-sm text-slate-500">Em Análise</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-emerald-600">
-              {disputes.filter(d => d.status.includes('resolved')).length}
-            </div>
-            <div className="text-sm text-slate-500">Resolvidas</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-slate-600">
-              {disputes.length}
-            </div>
-            <div className="text-sm text-slate-500">Total</div>
-          </CardContent>
-        </Card>
-      </div>
+      <DisputeStatsCards disputes={disputes} />
 
       {/* Filter */}
       <Card>
@@ -258,7 +201,6 @@ export default function AdminDisputes() {
             const brand = brands[dispute.brand_id];
             const creator = creators[dispute.creator_id];
             const campaign = campaigns[dispute.campaign_id];
-            const statusConfig = getStatusConfig(dispute.status);
 
             return (
               <motion.div
@@ -299,12 +241,9 @@ export default function AdminDisputes() {
                       {/* Info */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         <span className="text-slate-500">
-                          {new Date(dispute.created_date).toLocaleDateString('pt-BR')}
+                          {formatDate(dispute.created_date)}
                         </span>
-                        <Badge className={`${statusConfig.color} border-0`}>
-                          <statusConfig.icon className="w-3 h-3 mr-1" />
-                          {statusConfig.label}
-                        </Badge>
+                        <StatusBadge type="dispute" status={dispute.status} />
                         <Badge variant="outline" className="capitalize">
                           {dispute.raised_by === 'brand' ? 'Pela Marca' : 'Pelo Criador'}
                         </Badge>
@@ -610,7 +549,7 @@ export default function AdminDisputes() {
                     <p className="text-slate-700 mb-2">{selectedDispute.resolution}</p>
                     <div className="flex items-center gap-4 text-sm text-slate-500">
                       <span>Por: {selectedDispute.resolved_by}</span>
-                      <span>Em: {selectedDispute.resolved_at ? new Date(selectedDispute.resolved_at).toLocaleDateString('pt-BR') : '-'}</span>
+                      <span>Em: {formatDate(selectedDispute.resolved_at)}</span>
                     </div>
                   </CardContent>
                 </Card>
