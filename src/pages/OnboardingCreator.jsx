@@ -85,6 +85,12 @@ export default function OnboardingCreator() {
       
       const creators = await base44.entities.Creator.filter({ user_id: userData.id });
       if (creators.length > 0) {
+        // Se já completou o onboarding, redireciona para o dashboard
+        if (creators[0].account_state === 'registered' || creators[0].subscription_status) {
+          window.location.href = createPageUrl('CreatorDashboard');
+          return;
+        }
+        
         setCreator(creators[0]);
         setFormData({
           display_name: creators[0].display_name || userData.full_name,

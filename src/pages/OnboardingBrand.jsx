@@ -71,6 +71,12 @@ export default function OnboardingBrand() {
       
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
+        // Se já completou o onboarding, redireciona para o dashboard
+        if (brands[0].account_state === 'registered' || brands[0].subscription_status) {
+          window.location.href = createPageUrl('BrandDashboard');
+          return;
+        }
+        
         setBrand(brands[0]);
         setFormData({
           company_name: brands[0].company_name || userData.full_name + "'s Company",
