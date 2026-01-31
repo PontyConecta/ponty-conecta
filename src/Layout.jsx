@@ -52,18 +52,18 @@ function LayoutContent({ children, currentPageName }) {
   };
 
   // Pages que não precisam de layout completo
-  const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
-  
-  // Redirect to login if not authenticated (except special pages)
-  if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
-    window.location.href = '/';
-    return null;
-  }
+        const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
 
-  // Pages without full layout (Home, SelectProfile, Onboarding)
-  if (noLayoutPages.includes(currentPageName)) {
-    return (
-      <div className="min-h-screen" data-theme={theme}>
+        // Redirect to login if not authenticated (except special pages)
+        if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
+          window.location.href = '/';
+          return null;
+        }
+
+        // Pages without full layout (Home, SelectProfile, Onboarding)
+        if (noLayoutPages.includes(currentPageName)) {
+          return (
+            <div className="min-h-screen">
                 <style>{`
                   [data-theme="light"] {
                     --bg-primary: #f8fafc;
