@@ -132,8 +132,8 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
             </div>
 
             {reputation?.badges?.length > 0 && (
-              <div className="mt-4 pt-4 border-t">
-                <p className="text-xs text-slate-500 mb-2 font-medium">Badges</p>
+              <div className="mt-4 pt-4 transition-colors" style={{ borderColor: 'var(--border-color)' }}>
+                <p className="text-xs mb-2 font-medium transition-colors" style={{ color: 'var(--text-secondary)' }}>Badges</p>
                 <div className="flex flex-wrap gap-2">
                   {reputation.badges.slice(0, 3).map((badge, i) => (
                     <Badge key={i} variant="outline" className="bg-violet-50 border-violet-200 text-violet-700 text-xs">
