@@ -52,9 +52,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 function LayoutContent({ children, currentPageName }) {
-    const { user, profile, profileType, loading, logout } = useAuth();
-    const { isSubscribed } = useSubscription();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+          const { user, profile, profileType, loading, logout } = useAuth();
+          const { isSubscribed } = useSubscription();
+        const [isMenuOpen, setIsMenuOpen] = useState(false);
+        const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
 
   const handleLogout = () => {
     logout('/');
