@@ -147,7 +147,8 @@ export default function AdminUsers() {
         activate: 'Usuário ativado',
         deactivate: 'Usuário desativado',
         override_subscription: 'Assinatura alterada',
-        flag_review: 'Usuário marcado para revisão'
+        flag_review: 'Usuário marcado para revisão',
+        unflag_review: 'Usuário desmarcado de revisão'
       };
       
       toast.success(actions[action] || 'Ação realizada');
