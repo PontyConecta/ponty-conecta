@@ -218,9 +218,9 @@ export default function CreatorDashboard() {
       <RecentAchievements achievements={achievements} limit={3} />
 
       {/* My Applications */}
-      <Card>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold">Minhas Candidaturas</CardTitle>
+          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Candidaturas</CardTitle>
           <Link to={createPageUrl('MyApplications')}>
             <Button variant="ghost" size="sm" className="text-orange-600">
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
@@ -233,11 +233,12 @@ export default function CreatorDashboard() {
               {applications.slice(0, 5).map((app) => (
                 <div
                   key={app.id}
-                  className="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors"
+                  style={{ backgroundColor: 'var(--bg-primary)' }}
                 >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-slate-900">Campanha #{app.campaign_id?.slice(-6)}</h4>
-                    <p className="text-sm text-slate-500 truncate">
+                    <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Campanha #{app.campaign_id?.slice(-6)}</h4>
+                    <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
                       {app.message?.slice(0, 50) || 'Sem mensagem'}...
                     </p>
                   </div>
@@ -247,8 +248,8 @@ export default function CreatorDashboard() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <Target className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500 mb-3">Você ainda não se candidatou a nenhuma campanha</p>
+              <Target className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border-color)' }} />
+              <p className="mb-3" style={{ color: 'var(--text-secondary)' }}>Você ainda não se candidatou a nenhuma campanha</p>
               {!isExploring && (
                 <Link to={createPageUrl('OpportunityFeed')}>
                   <Button variant="outline" size="sm">
