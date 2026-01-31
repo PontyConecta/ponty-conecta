@@ -196,6 +196,12 @@ export default function CreatorDashboard() {
         </Card>
       )}
 
+      {/* Missões e Conquistas */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <MissionTracker missions={missions} />
+        <RecentAchievements achievements={achievements} />
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
@@ -222,12 +228,6 @@ export default function CreatorDashboard() {
 
       {/* Gráficos de Métricas */}
       <CreatorMetricsChart deliveries={deliveries} />
-
-      {/* Missões e Conquistas */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <MissionTracker missions={missions} />
-        <RecentAchievements achievements={achievements} />
-      </div>
 
       {/* Profile Completion & Reputation */}
       <div className="grid lg:grid-cols-2 gap-6">

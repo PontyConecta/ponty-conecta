@@ -191,6 +191,12 @@ export default function BrandDashboard() {
         </Card>
       )}
 
+      {/* Missões e Conquistas */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <MissionTracker missions={missions} />
+        <RecentAchievements achievements={achievements} />
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
@@ -215,12 +221,6 @@ export default function BrandDashboard() {
 
       {/* Gráficos de Métricas */}
       <CampaignMetricsChart campaigns={campaigns} applications={applications} />
-
-      {/* Missões e Conquistas */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <MissionTracker missions={missions} />
-        <RecentAchievements achievements={achievements} />
-      </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Campaigns */}
