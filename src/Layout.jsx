@@ -179,6 +179,10 @@ function LayoutContent({ children, currentPageName }) {
 
           {/* Right Section */}
           <div className="flex items-center gap-2 lg:gap-3">
+            <div className="hidden sm:block">
+              <ThemeSelector />
+            </div>
+
             {!isSubscribed && (
               <Link to={createPageUrl('Subscription')}>
                 <Button size="sm" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/20 h-8 lg:h-9 text-xs lg:text-sm px-3 lg:px-4">
