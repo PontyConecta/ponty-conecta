@@ -339,16 +339,17 @@ export default function NotificationDropdown() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-96 max-h-96 overflow-y-auto">
-        <div className="p-4 border-b border-slate-200">
+      <DropdownMenuContent align="end" className="w-96 max-h-96 overflow-y-auto" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <div className="p-4" style={{ borderBottomColor: 'var(--border-color)', borderBottomWidth: '1px' }}>
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-slate-900">Notificações</h3>
+            <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Notificações</h3>
             {unreadCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={markAllAsRead}
-                className="text-xs text-blue-600 hover:text-blue-700"
+                className="text-xs"
+                style={{ color: 'var(--accent-primary)' }}
               >
                 Marcar tudo como lido
               </Button>
@@ -357,41 +358,40 @@ export default function NotificationDropdown() {
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-slate-500">
-            <div className="w-6 h-6 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin mx-auto"></div>
+          <div className="p-8 text-center" style={{ color: 'var(--text-secondary)' }}>
+            <div className="w-6 h-6 border-2 rounded-full animate-spin mx-auto" style={{ borderColor: 'var(--border-color)', borderTopColor: 'var(--accent-primary)' }}></div>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="p-8 text-center text-slate-500">
+          <div className="p-8 text-center" style={{ color: 'var(--text-secondary)' }}>
             <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">Nenhuma notificação no momento</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-200">
+          <div style={{ borderColor: 'var(--border-color)' }} className="divide-y">
             {notifications.map((notification) => {
               const Icon = notification.icon;
               return (
                 <Link
                   key={notification.id}
                   to={notification.actionUrl}
-                  className={`block p-4 hover:bg-slate-50 cursor-pointer transition-colors ${
-                    !notification.read ? 'bg-blue-50/50' : ''
-                  }`}
+                  className={`block p-4 hover:opacity-80 cursor-pointer transition-colors`}
+                  style={{ backgroundColor: !notification.read ? 'rgba(var(--accent-primary), 0.1)' : 'transparent' }}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex gap-3">
-                    <div className={`flex-shrink-0 w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center ${notification.color}`}>
+                    <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${notification.color}`} style={{ backgroundColor: 'rgba(var(--accent-primary), 0.1)' }}>
                       <Icon className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="font-medium text-slate-900 text-sm">
+                          <p className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>
                             {notification.title}
                             {!notification.read && (
-                              <span className="ml-2 w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+                              <span className="ml-2 w-2 h-2 rounded-full inline-block" style={{ backgroundColor: 'var(--accent-primary)' }}></span>
                             )}
                           </p>
-                          <p className="text-sm text-slate-600 mt-1">
+                          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
                             {notification.message}
                           </p>
                         </div>
@@ -401,12 +401,13 @@ export default function NotificationDropdown() {
                             e.stopPropagation();
                             dismissNotification(notification.id);
                           }}
-                          className="text-slate-400 hover:text-slate-600"
+                          className="hover:opacity-70 transition-opacity"
+                          style={{ color: 'var(--text-secondary)' }}
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                      <p className="text-xs text-slate-500 mt-2">
+                      <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
                         {new Date(notification.timestamp).toLocaleDateString('pt-BR', {
                           hour: '2-digit',
                           minute: '2-digit'

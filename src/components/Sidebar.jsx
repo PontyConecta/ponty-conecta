@@ -46,10 +46,10 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
               className={cn(
                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                  isActive 
-                   ? 'text-indigo-600 shadow-sm' 
+                   ? 'shadow-sm' 
                    : 'hover:opacity-70'
                )}
-               style={isActive ? { backgroundColor: 'rgba(79, 70, 229, 0.1)' } : { color: 'var(--text-secondary)' }}
+               style={isActive ? { backgroundColor: 'rgba(var(--accent-primary), 0.1)', color: 'var(--accent-primary)' } : { color: 'var(--text-secondary)' }}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />
               <span>{item.name}</span>
