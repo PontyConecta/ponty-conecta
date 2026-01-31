@@ -15,7 +15,7 @@ import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export default function NotificationDropdown() {
+export default function NotificationDropdown({ triggerClassName }) {
   const { user, profile, profileType } = useAuth();
   const { theme } = useTheme();
   const [notifications, setNotifications] = useState([]);
@@ -330,9 +330,9 @@ export default function NotificationDropdown() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
+          className={`relative h-8 w-8 lg:h-9 lg:w-9 transition-colors ${triggerClassName}`}
         >
-          <Bell className="w-5 h-5" />
+          <Bell className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
           {unreadCount > 0 && (
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white"></span>
           )}

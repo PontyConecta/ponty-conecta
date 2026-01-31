@@ -117,7 +117,7 @@ export default function MyApplications() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
       </div>
     );
   }
@@ -126,18 +126,18 @@ export default function MyApplications() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Minhas Candidaturas</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Minhas Candidaturas</h1>
+        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
           {filteredApplications.length} candidaturas encontradas
         </p>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--muted-foreground)' }} />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -176,7 +176,7 @@ export default function MyApplications() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="hover:shadow-md transition-shadow">
+                <Card className="hover:shadow-md transition-shadow" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
                   <CardContent className="p-6">
                     <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                       {/* Brand & Campaign */}
@@ -184,18 +184,18 @@ export default function MyApplications() {
                         {brand?.logo_url ? (
                           <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
                         ) : (
-                          <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center">
-                            <Building2 className="w-6 h-6 text-slate-400" />
+                          <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                            <Building2 className="w-6 h-6" style={{ color: 'var(--text-secondary)' }} />
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-900 truncate">
+                          <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                             {campaign?.title || 'Campanha'}
                           </h3>
-                          <p className="text-sm text-slate-500">
+                          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                             {brand?.company_name || 'Marca'}
                           </p>
-                          <div className="flex flex-wrap gap-3 mt-2 text-sm text-slate-500">
+                          <div className="flex flex-wrap gap-3 mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
                               {campaign?.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '-'}
@@ -212,7 +212,7 @@ export default function MyApplications() {
 
                       {/* Status & Date */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
-                        <span className="text-slate-500">
+                        <span style={{ color: 'var(--text-secondary)' }}>
                           {new Date(application.created_date).toLocaleDateString('pt-BR')}
                         </span>
                         <Badge className={`${statusConfig.color} border-0`}>
@@ -227,7 +227,7 @@ export default function MyApplications() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleWithdraw(application.id)}
-                          className="text-slate-600"
+                          style={{ color: 'var(--text-secondary)' }}
                         >
                           <XCircle className="w-4 h-4 mr-1" />
                           Cancelar
@@ -237,10 +237,10 @@ export default function MyApplications() {
 
                     {/* Message */}
                     {application.message && (
-                      <div className="mt-4 pt-4 border-t">
+                      <div className="mt-4 pt-4" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
                         <div className="flex items-start gap-2">
-                          <MessageSquare className="w-4 h-4 text-slate-400 mt-0.5" />
-                          <p className="text-sm text-slate-600 line-clamp-2">
+                          <MessageSquare className="w-4 h-4 mt-0.5" style={{ color: 'var(--muted-foreground)' }} />
+                          <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
                             {application.message}
                           </p>
                         </div>
@@ -271,13 +271,13 @@ export default function MyApplications() {
           })}
         </div>
       ) : (
-        <Card>
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-12 text-center">
-            <Target className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <Target className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--muted-foreground)' }} />
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma candidatura encontrada
             </h3>
-            <p className="text-slate-500">
+            <p style={{ color: 'var(--text-secondary)' }}>
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'Suas candidaturas aparecerão aqui'}

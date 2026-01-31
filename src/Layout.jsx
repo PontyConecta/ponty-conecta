@@ -98,7 +98,7 @@ function LayoutContent({ children, currentPageName }) {
                     --bg-primary: #17101e;
                     --bg-secondary: #2a1c38;
                     --text-primary: #f3eef8;
-                    --text-secondary: #b8a5c8;
+                    --text-secondary: #dcd8e0;
                     --border-color: #5a3a75;
                     --accent-primary: #d946ef;
                     --card-bg: #2a1c38;
@@ -118,14 +118,14 @@ function LayoutContent({ children, currentPageName }) {
             );
           }
 
-          // Se usuário está autenticado mas não tem perfil completo, redireciona
-          if (!loading && user && profile && profile.account_state === 'exploring') {
-            const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
-            if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
-              window.location.href = createPageUrl(onboardingPage);
-              return null;
-            }
+        // Se usuário está autenticado mas não tem perfil completo, redireciona
+        if (!loading && user && profile && profile.account_state === 'exploring') {
+          const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
+          if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
+            window.location.href = createPageUrl(onboardingPage);
+            return null;
           }
+        }
 
   const brandNavItems = [
     { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
@@ -181,7 +181,7 @@ function LayoutContent({ children, currentPageName }) {
       --text-primary: #f0f4f8;
       --text-secondary: #a0aac0;
       --text-input: #f0f4f8;
-      --border-color: #ffffff;
+      --border-color: #2a3a52;
       --accent-primary: #7c3aed;
       }
 
@@ -189,9 +189,9 @@ function LayoutContent({ children, currentPageName }) {
       --bg-primary: #1a1624;
       --bg-secondary: #2d1f3a;
       --text-primary: #f5f1f8;
-      --text-secondary: #b8a5c4;
+      --text-secondary: #dcd8e0;
       --text-input: #f5f1f8;
-      --border-color: #ffffff;
+      --border-color: #6b4a8a;
       --accent-primary: #d946ef;
       }
 
@@ -233,10 +233,10 @@ function LayoutContent({ children, currentPageName }) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
+                  className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-[var(--accent-primary)]/10 transition-colors"
                   title="Suporte via WhatsApp"
                 >
-                  <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" />
+                  <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: 'var(--text-primary)' }} />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
@@ -268,20 +268,20 @@ function LayoutContent({ children, currentPageName }) {
               </Link>
             )}
 
-            <NotificationDropdown />
+            <NotificationDropdown triggerClassName="hover:bg-[var(--accent-primary)]/10" />
 
-            {isAdmin && <AdminMenu currentPageName={currentPageName} />}
+            {isAdmin && <AdminMenu currentPageName={currentPageName} triggerClassName="hover:bg-[var(--accent-primary)]/10" />}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1 lg:p-1.5 rounded-lg hover:bg-white/10 transition-all">
+                <button className="flex items-center gap-2 p-1 lg:p-1.5 rounded-lg hover:bg-[var(--accent-primary)]/10 transition-colors">
                   <Avatar className="w-7 h-7 lg:w-8 lg:h-8">
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
                     <AvatarFallback className="bg-indigo-100 text-indigo-700 text-xs lg:text-sm font-medium">
                       {user?.full_name?.[0] || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <ChevronDown className="w-4 h-4 text-slate-400 hidden lg:block" />
+                  <ChevronDown className="w-4 h-4 hidden lg:block" style={{ color: 'var(--text-primary)' }} />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">

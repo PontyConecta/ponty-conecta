@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -87,18 +88,10 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-3 pr-8 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-3 pr-8 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors hover:bg-[var(--accent-primary)]",
       className
     )}
     style={{ color: 'var(--foreground)' }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
-      e.currentTarget.style.color = '#ffffff';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.backgroundColor = 'transparent';
-      e.currentTarget.style.color = 'var(--foreground)';
-    }}
     {...props}>
     <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
@@ -108,7 +101,6 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ))
-SelectItem.displayName = SelectPrimitive.Item.displayName
 SelectItem.displayName = SelectPrimitive.Item.displayName
 
 const SelectSeparator = React.forwardRef(({ className, ...props }, ref) => (
