@@ -35,6 +35,7 @@ export default function OnboardingBrand() {
   const [brand, setBrand] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [formData, setFormData] = useState({
     company_name: '',
     industry: '',
@@ -73,7 +74,7 @@ export default function OnboardingBrand() {
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
         // Se já completou o onboarding, redireciona para o dashboard
-        if (brands[0].account_state === 'registered' || brands[0].subscription_status) {
+        if (brands[0].account_state === 'registered') {
           window.location.href = createPageUrl('BrandDashboard');
           return;
         }
@@ -104,11 +105,15 @@ export default function OnboardingBrand() {
     const file = e.target.files[0];
     if (!file) return;
 
+    setUploadingLogo(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       handleChange('logo_url', file_url);
     } catch (error) {
       console.error('Error uploading logo:', error);
+      alert('Erro ao fazer upload da logo. Tente novamente.');
+    } finally {
+      setUploadingLogo(false);
     }
   };
 
@@ -191,26 +196,41 @@ export default function OnboardingBrand() {
             </div>
 
             <div>
-              <Label className="text-sm font-medium text-slate-700">Logo da Marca</Label>
-              <div className="mt-2 flex items-center gap-4">
-                {formData.logo_url ? (
-                  <img 
-                    src={formData.logo_url} 
-                    alt="Logo" 
-                    className="w-20 h-20 rounded-xl object-cover border-2 border-slate-200"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-xl bg-slate-100 flex items-center justify-center border-2 border-dashed border-slate-300">
-                    <Building2 className="w-8 h-8 text-slate-400" />
-                  </div>
-                )}
-                <label className="cursor-pointer">
-                  <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-                  <Button type="button" variant="outline" className="h-10">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Logo
-                  </Button>
-                </label>
+              <Label className="text-sm font-medium text-slate-700">Logo da Marca *</Label>
+              <div className="mt-3 flex items-center gap-4">
+                <div className="relative">
+                  {formData.logo_url ? (
+                    <img 
+                      src={formData.logo_url} 
+                      alt="Logo" 
+                      className="w-24 h-24 rounded-xl object-cover border-4 border-white shadow-lg"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center border-4 border-white shadow-lg">
+                      <Building2 className="w-10 h-10 text-indigo-400" />
+                    </div>
+                  )}
+                  <label className="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors shadow-lg">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handleLogoUpload}
+                      disabled={uploadingLogo}
+                    />
+                    {uploadingLogo ? (
+                      <Loader2 className="w-4 h-4 text-white animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4 text-white" />
+                    )}
+                  </label>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-slate-700">Adicione a logo da sua marca</p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Formatos aceitos: JPG, PNG. Tamanho recomendado: 400x400px
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -313,7 +333,7 @@ export default function OnboardingBrand() {
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.company_name && formData.industry;
+        return formData.company_name && formData.industry && formData.logo_url;
       case 2:
         return formData.description && formData.description.length >= 20;
       case 3:
