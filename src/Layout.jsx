@@ -189,10 +189,10 @@ function LayoutContent({ children, currentPageName }) {
       --bg-primary: #1a1624;
       --bg-secondary: #2d1f3a;
       --text-primary: #f5f1f8;
-      --text-secondary: #dcd8e0;
+      --text-secondary: #d4cfe0;
       --text-input: #f5f1f8;
-      --border-color: #6b4a8a;
-      --accent-primary: #d946ef;
+      --border-color: #5a4577;
+      --accent-primary: #c84dd4;
       }
 
         .safe-area-bottom {
