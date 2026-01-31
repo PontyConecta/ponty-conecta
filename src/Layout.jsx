@@ -49,15 +49,13 @@ function LayoutContent({ children, currentPageName }) {
     logout('/');
   };
 
-  // Public/Guest pages
-  const publicPages = ['Home', 'Onboarding', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator', 
-                       'ExploreCampaigns', 'ExploreCreators', 'ExploreBrands'];
-  const isPublicPage = publicPages.includes(currentPageName);
+  // Redirect to login if not authenticated (except Home page)
+  if (!loading && !user && currentPageName !== 'Home') {
+    window.location.href = '/';
+    return null;
+  }
 
-  // Guest experience pages (show limited nav)
-  const guestPages = ['ExploreCampaigns', 'ExploreCreators', 'ExploreBrands'];
-  const isGuestPage = guestPages.includes(currentPageName) && !user;
-
+  // Home page for non-authenticated users
   if (currentPageName === 'Home' && !user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
@@ -72,25 +70,6 @@ function LayoutContent({ children, currentPageName }) {
           }
         `}</style>
         {children}
-      </div>
-    );
-  }
-
-  if (isPublicPage && !user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
-        <style>{`
-          :root {
-            --primary: 79 70 229;
-            --primary-foreground: 255 255 255;
-            --accent: 249 115 22;
-          }
-          .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-          }
-        `}</style>
-        {children}
-        {isGuestPage && <BottomNav profileType={null} currentPageName={currentPageName} />}
       </div>
     );
   }

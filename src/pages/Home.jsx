@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { ArrowRight, Zap, Users, TrendingUp, Shield, Sparkles, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/components/contexts/AuthContext';
 
 /**
  * Home Page - Ponty Conecta
@@ -14,12 +15,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
+  const { user, profileType, loading } = useAuth();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Redirect authenticated users to their dashboard
+  React.useEffect(() => {
+    if (!loading && user && profileType) {
+      const dashboardPage = profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard';
+      navigate(createPageUrl(dashboardPage));
+    }
+  }, [user, profileType, loading, navigate]);
 
   return (
     <div className="min-h-screen bg-white">
