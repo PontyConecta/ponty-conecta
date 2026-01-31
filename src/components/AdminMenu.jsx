@@ -61,12 +61,11 @@ export default function AdminMenu({ currentPageName }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
-          size="sm"
-          className="gap-2 h-10 bg-white hover:bg-indigo-500 hover:text-white text-slate-900 border border-slate-200"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 lg:h-9 lg:w-9"
         >
-          <Shield className="w-4 h-4" />
-          <span className="hidden sm:inline text-sm">Admin</span>
-          <ChevronDown className="w-3 h-3" />
+          <Shield className="w-4 h-4 lg:w-5 lg:h-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
