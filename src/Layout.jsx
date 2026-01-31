@@ -84,6 +84,7 @@ function LayoutContent({ children, currentPageName }) {
                           <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
                           <script>{`
                             fbq('init', '${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}');
+                            fbq('setTestEventCode', 'TEST9662');
                             fbq('track', 'PageView');
                           `}</script>
                           <noscript>
