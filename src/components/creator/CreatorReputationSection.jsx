@@ -91,7 +91,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                     <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                       <Clock className="w-4 h-4 text-blue-600" />
                     </div>
-                    <span className="text-sm font-medium text-slate-700">Submetidas</span>
+                    <span className="text-sm font-medium transition-colors" style={{ color: 'var(--text-primary)' }}>Submetidas</span>
                   </div>
                   <span className="text-2xl font-bold text-blue-600">{submittedDeliveries}</span>
                 </div>
