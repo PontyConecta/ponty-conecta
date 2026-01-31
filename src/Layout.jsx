@@ -229,7 +229,7 @@ function LayoutContent({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 lg:h-9 lg:w-9"
+              className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all"
               onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
               title="Suporte via WhatsApp"
             >
@@ -242,7 +242,7 @@ function LayoutContent({ children, currentPageName }) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1 lg:p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                <button className="flex items-center gap-2 p-1 lg:p-1.5 rounded-lg hover:bg-white/10 transition-all">
                   <Avatar className="w-7 h-7 lg:w-8 lg:h-8">
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
                     <AvatarFallback className="bg-indigo-100 text-indigo-700 text-xs lg:text-sm font-medium">

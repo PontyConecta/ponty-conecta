@@ -24,7 +24,7 @@ export default function ThemeSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8 lg:h-9 lg:w-9">
+        <Button variant="ghost" size="icon" className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-white/10 transition-all">
           <CurrentIcon className="w-4 h-4 lg:w-5 lg:h-5" />
         </Button>
       </DropdownMenuTrigger>
