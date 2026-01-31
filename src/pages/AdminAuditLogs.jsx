@@ -81,7 +81,7 @@ export default function AdminAuditLogs() {
               className="flex-1"
             />
             <Select value={actionFilter} onValueChange={setActionFilter}>
-              <SelectTrigger className="w-full sm:w-56">
+              <SelectTrigger className="w-full sm:w-56 hover:bg-indigo-50">
                 <SelectValue placeholder="Tipo de Ação" />
               </SelectTrigger>
               <SelectContent>
