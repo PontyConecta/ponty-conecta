@@ -653,8 +653,8 @@ export default function Profile() {
                 </>
               ) : (
                 <>
-                  <div className="p-4 bg-amber-50 rounded-xl">
-                    <p className="text-sm text-amber-800">
+                  <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(180, 83, 9, 0.1)' }}>
+                   <p className="text-sm" style={{ color: 'rgba(180, 83, 9, 0.8)' }}>
                       <strong>Nota:</strong> Suas informações de contato serão visíveis apenas para assinantes ativos.
                     </p>
                   </div>
