@@ -49,7 +49,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
   const navSections = profileType === 'brand' ? brandNavSections : creatorNavSections;
 
   return (
-    <aside className="hidden lg:flex fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-slate-200 flex-col">
+    <aside className="hidden lg:flex fixed left-0 top-16 bottom-0 w-64 flex-col transition-colors" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
       {/* Navigation */}
       <nav className="flex-1 px-3 py-6 space-y-6 overflow-y-auto">
         {navSections.map((section, sectionIndex) => (
