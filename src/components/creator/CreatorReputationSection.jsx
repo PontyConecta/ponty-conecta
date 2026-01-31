@@ -43,15 +43,18 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                   className="text-slate-200"
                 />
                 <circle
-                  cx="50"
-                  cy="50"
-                  r="45"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeDasharray={`${(reputation?.total_score || 100) * 2.827} 282.7`}
-                  className={`text-${reputation?.total_score >= 75 ? 'emerald' : reputation?.total_score >= 60 ? 'orange' : 'red'}-500 transition-all`}
-                />
+                   cx="50"
+                   cy="50"
+                   r="45"
+                   fill="none"
+                   stroke="currentColor"
+                   strokeWidth="3"
+                   strokeDasharray={`${(reputation?.total_score || 100) * 2.827} 282.7`}
+                   style={{
+                     color: reputation?.total_score >= 75 ? '#10b981' : reputation?.total_score >= 60 ? '#f97316' : '#ef4444',
+                     transition: 'color 0.3s'
+                   }}
+                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <div className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>

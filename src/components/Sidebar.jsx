@@ -35,11 +35,16 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
 
   const creatorNavSections = [
     {
-      title: 'Navegação',
+      title: 'Principal',
       items: [
         { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
-        { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
         { name: 'Descobrir Marcas', page: 'DiscoverBrands', icon: Building2 },
+      ]
+    },
+    {
+      title: 'Gestão',
+      items: [
+        { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
         { name: 'Minhas Candidaturas', page: 'MyApplications', icon: FileText },
         { name: 'Minhas Entregas', page: 'MyDeliveries', icon: FileText },
       ]

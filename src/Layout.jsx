@@ -235,15 +235,16 @@ function LayoutContent({ children, currentPageName }) {
                   <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" />
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogTitle>Abrir WhatsApp?</AlertDialogTitle>
-                <AlertDialogDescription>
+              <AlertDialogContent style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                <AlertDialogTitle style={{ color: 'var(--text-primary)' }}>Abrir WhatsApp?</AlertDialogTitle>
+                <AlertDialogDescription style={{ color: 'var(--text-secondary)' }}>
                   Você será redirecionado para o WhatsApp. Deseja continuar?
                 </AlertDialogDescription>
                 <div className="flex gap-3 justify-end">
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogCancel style={{ color: 'var(--text-primary)' }}>Cancelar</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
                   >
                     Abrir WhatsApp
                   </AlertDialogAction>
