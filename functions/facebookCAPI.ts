@@ -12,11 +12,11 @@ Deno.serve(async (req) => {
     
     const { event, eventData = {}, fbp, fbc, user_agent, url, user_email } = body;
 
-    const pixelId = Deno.env.get('FACEBOOK_PIXEL_ID');
-    const accessToken = Deno.env.get('FACEBOOK_CAPI_ACCESS_TOKEN');
+    const pixelId = Deno.env.get('VITE_FACEBOOK_PIXEL_ID') || Deno.env.get('FACEBOOK_PIXEL_ID');
+    const accessToken = Deno.env.get('META_API_TOKEN');
 
     if (!pixelId || !accessToken) {
-      console.error('Missing Facebook credentials');
+      console.error('Missing Facebook credentials:', { pixelId, accessToken: !!accessToken });
       return new Response(
         JSON.stringify({ error: 'Missing Facebook configuration' }), 
         { status: 500 }
