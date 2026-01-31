@@ -1,41 +1,44 @@
 import React from 'react';
 import { useTheme } from '@/components/contexts/ThemeContext';
+import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Sun, Moon, Zap } from 'lucide-react';
 
 export default function ThemeSelector() {
   const { theme, changeTheme } = useTheme();
 
   const themes = [
-    { value: 'light', label: 'Light', icon: Sun },
-    { value: 'dark', label: 'Dark', icon: Moon },
-    { value: 'musk', label: 'Musk', icon: Zap },
+    { value: 'light', icon: Sun },
+    { value: 'dark', icon: Moon },
+    { value: 'musk', icon: Zap },
   ];
 
+  const currentThemeIcon = themes.find(t => t.value === theme)?.icon || Sun;
+  const CurrentIcon = currentThemeIcon;
+
   return (
-    <Select value={theme} onValueChange={changeTheme}>
-      <SelectTrigger className="w-36">
-        <SelectValue placeholder="Selecionar tema" />
-      </SelectTrigger>
-      <SelectContent>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8 lg:h-9 lg:w-9">
+          <CurrentIcon className="w-4 h-4 lg:w-5 lg:h-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
         {themes.map((t) => {
           const Icon = t.icon;
           return (
-            <SelectItem key={t.value} value={t.value}>
-              <div className="flex items-center gap-2">
-                <Icon className="w-4 h-4" />
-                {t.label}
-              </div>
-            </SelectItem>
+            <DropdownMenuItem key={t.value} onClick={() => changeTheme(t.value)}>
+              <Icon className="w-4 h-4 mr-2" />
+              <span className="capitalize">{t.value}</span>
+            </DropdownMenuItem>
           );
         })}
-      </SelectContent>
-    </Select>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
