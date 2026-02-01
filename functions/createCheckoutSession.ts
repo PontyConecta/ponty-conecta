@@ -30,12 +30,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Profile not found' }, { status: 404 });
     }
 
-    // Plan pricing
+    // Plan pricing - Stripe Price IDs
     const plans = {
-      brand_monthly: { price_id: null, amount: 4500 },
-      brand_annual: { price_id: null, amount: 45000 },
-      creator_monthly: { price_id: null, amount: 4500 },
-      creator_annual: { price_id: null, amount: 45000 }
+      brand_monthly: { price_id: 'price_1SvqKCCDiujo5J8Wtt4JwGUo' },
+      brand_annual: { price_id: 'price_1SvqLpCDiujo5J8WuCu14Gid' },
+      creator_monthly: { price_id: 'price_1SvqLeCDiujo5J8Wnr6lExMg' },
+      creator_annual: { price_id: 'price_1SvqLeCDiujo5J8W98kKlPzl' }
     };
 
     const planConfig = plans[plan_type];
@@ -74,17 +74,7 @@ Deno.serve(async (req) => {
       mode: 'subscription',
       line_items: [
         {
-          price_data: {
-            currency: 'brl',
-            product_data: {
-              name: `Ponty ${profile_type === 'brand' ? 'Marcas' : 'Criadores'} - ${plan_type.includes('annual') ? 'Anual' : 'Mensal'}`,
-              description: `Acesso completo à plataforma Ponty para ${profile_type === 'brand' ? 'marcas' : 'criadores'}`,
-            },
-            unit_amount: planConfig.amount,
-            recurring: {
-              interval: plan_type.includes('annual') ? 'year' : 'month',
-            },
-          },
+          price: planConfig.price_id,
           quantity: 1,
         },
       ],
