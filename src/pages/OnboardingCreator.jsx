@@ -100,7 +100,7 @@ export default function OnboardingCreator() {
           platforms: creators[0].platforms || [],
           profile_size: creators[0].profile_size || '',
           content_types: creators[0].content_types || [],
-          location: creators[0].location || '',
+          location: userData.location || '',
           portfolio_url: creators[0].portfolio_url || '',
           rate_cash_min: creators[0].rate_cash_min || '',
           rate_cash_max: creators[0].rate_cash_max || '',
@@ -162,12 +162,27 @@ export default function OnboardingCreator() {
     } else {
       setSaving(true);
       try {
-        await base44.entities.Creator.update(creator.id, {
-          ...formData,
+        // Salvar localização no perfil User
+        await base44.auth.updateMe({
+          location: formData.location
+        });
+
+        const creatorData = {
+          display_name: formData.display_name,
+          bio: formData.bio,
+          avatar_url: formData.avatar_url,
+          niche: formData.niche,
+          platforms: formData.platforms,
+          profile_size: formData.profile_size,
+          content_types: formData.content_types,
+          portfolio_url: formData.portfolio_url,
           rate_cash_min: formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null,
           rate_cash_max: formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null,
+          accepts_barter: formData.accepts_barter,
           account_state: 'registered'
-        });
+        };
+
+        await base44.entities.Creator.update(creator.id, creatorData);
         window.location.href = createPageUrl('Subscription');
       } catch (error) {
         console.error('Error saving creator:', error);

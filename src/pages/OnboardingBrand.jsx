@@ -86,7 +86,7 @@ export default function OnboardingBrand() {
           description: brands[0].description || '',
           website: brands[0].website || '',
           contact_email: brands[0].contact_email || userData.email,
-          contact_phone: brands[0].contact_phone || '',
+          contact_phone: userData.phone || '',
           logo_url: brands[0].logo_url || ''
         });
       }
@@ -123,16 +123,27 @@ export default function OnboardingBrand() {
     } else {
       setSaving(true);
       try {
+        // Salvar telefone no perfil User
+        await base44.auth.updateMe({
+          phone: formData.contact_phone
+        });
+
+        const brandData = {
+          company_name: formData.company_name,
+          industry: formData.industry,
+          description: formData.description,
+          website: formData.website,
+          contact_email: formData.contact_email,
+          logo_url: formData.logo_url,
+          account_state: 'registered'
+        };
+
         if (brand) {
-          await base44.entities.Brand.update(brand.id, {
-            ...formData,
-            account_state: 'registered'
-          });
+          await base44.entities.Brand.update(brand.id, brandData);
         } else {
           await base44.entities.Brand.create({
             user_id: user.id,
-            ...formData,
-            account_state: 'registered'
+            ...brandData
           });
         }
         
