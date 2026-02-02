@@ -230,7 +230,7 @@ export default function OnboardingCreator() {
 
             <div>
               <Label htmlFor="bio" className="text-sm font-medium text-slate-700">
-                Bio *
+                Bio * (mínimo 20 caracteres)
               </Label>
               <Textarea
                 id="bio"
@@ -239,6 +239,14 @@ export default function OnboardingCreator() {
                 placeholder="Conte um pouco sobre você, seu estilo de conteúdo e o que te diferencia..."
                 className="mt-2 min-h-[120px]"
               />
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs text-slate-500">
+                  Esta descrição será exibida para marcas
+                </p>
+                <p className={`text-xs font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-orange-500'}`}>
+                  {formData.bio.length}/20
+                </p>
+              </div>
             </div>
 
             <div>
@@ -313,6 +321,9 @@ export default function OnboardingCreator() {
               <Label htmlFor="profile_size" className="text-sm font-medium text-slate-700">
                 Tamanho do Perfil *
               </Label>
+              <p className="text-xs text-slate-500 mt-1 mb-2">
+                Baseado no total de seguidores em todas suas plataformas
+              </p>
               <Select value={formData.profile_size} onValueChange={(v) => handleChange('profile_size', v)}>
                 <SelectTrigger className="mt-2 h-12">
                   <SelectValue placeholder="Selecione seu alcance" />
@@ -320,9 +331,9 @@ export default function OnboardingCreator() {
                 <SelectContent>
                   {profileSizes.map((size) => (
                     <SelectItem key={size.value} value={size.value}>
-                      <div>
+                      <div className="flex flex-col">
                         <span className="font-medium">{size.label}</span>
-                        <span className="text-slate-500 ml-2 text-sm">- {size.description}</span>
+                        <span className="text-slate-500 text-xs">{size.description}</span>
                       </div>
                     </SelectItem>
                   ))}
@@ -483,7 +494,7 @@ export default function OnboardingCreator() {
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.display_name && formData.bio && formData.bio.length >= 20;
+        return formData.display_name && formData.display_name.trim().length >= 2 && formData.bio && formData.bio.length >= 20;
       case 2:
         return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
       case 3:
@@ -562,7 +573,8 @@ export default function OnboardingCreator() {
               <Button
                 onClick={handleNext}
                 disabled={!isStepValid() || saving}
-                className="bg-orange-500 hover:bg-orange-600 gap-2"
+                className="bg-orange-500 hover:bg-orange-600 gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={!isStepValid() ? 'Preencha todos os campos obrigatórios' : ''}
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

@@ -250,7 +250,7 @@ export default function OnboardingBrand() {
           <div className="space-y-6">
             <div>
               <Label htmlFor="description" className="text-sm font-medium text-slate-700">
-                Sobre a Marca *
+                Sobre a Marca * (mínimo 20 caracteres)
               </Label>
               <Textarea
                 id="description"
@@ -259,9 +259,14 @@ export default function OnboardingBrand() {
                 placeholder="Conte um pouco sobre sua marca, valores e o que vocês fazem..."
                 className="mt-2 min-h-[150px]"
               />
-              <p className="text-sm text-slate-500 mt-2">
-                Esta descrição será exibida para criadores quando visualizarem suas campanhas.
-              </p>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs text-slate-500">
+                  Esta descrição será exibida para criadores
+                </p>
+                <p className={`text-xs font-medium ${formData.description.length >= 20 ? 'text-emerald-600' : 'text-indigo-600'}`}>
+                  {formData.description.length}/20
+                </p>
+              </div>
             </div>
 
             <div>
@@ -342,11 +347,11 @@ export default function OnboardingBrand() {
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.company_name && formData.industry && formData.logo_url;
+        return formData.company_name && formData.company_name.trim().length >= 2 && formData.industry && formData.logo_url;
       case 2:
         return formData.description && formData.description.length >= 20;
       case 3:
-        return formData.contact_email;
+        return formData.contact_email && formData.contact_email.includes('@');
       default:
         return false;
     }
@@ -419,7 +424,8 @@ export default function OnboardingBrand() {
               <Button
                 onClick={handleNext}
                 disabled={!isStepValid() || saving}
-                className="bg-indigo-600 hover:bg-indigo-700 gap-2"
+                className="bg-indigo-600 hover:bg-indigo-700 gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={!isStepValid() ? 'Preencha todos os campos obrigatórios' : ''}
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
