@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/components/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,6 +34,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function OnboardingCreator() {
+  const { refreshProfile } = useAuth();
   const [step, setStep] = useState(1);
   const [user, setUser] = useState(null);
   const [creator, setCreator] = useState(null);
@@ -190,6 +192,10 @@ export default function OnboardingCreator() {
             ...creatorData
           });
         }
+        
+        // Atualizar o contexto de autenticação com o novo estado do perfil
+        await refreshProfile();
+        
         window.location.href = createPageUrl('Subscription');
       } catch (error) {
         console.error('Error saving creator:', error);
