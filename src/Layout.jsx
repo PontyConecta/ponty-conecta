@@ -214,7 +214,7 @@ function LayoutContent({ children, currentPageName }) {
       --bg-primary: #1a1624;
       --bg-secondary: #2d1f3a;
       --text-primary: #f5f1f8;
-      --text-secondary: #a0a6ad;
+      --text-secondary: #94a3b8;
       --text-input: #f5f1f8;
       --border-color: #5a4577;
       --accent-primary: #c84dd4;
@@ -251,17 +251,13 @@ function LayoutContent({ children, currentPageName }) {
             </div>
           </Link>
 
-          {/* Right Section */}
-          <div className="flex items-center gap-1 lg:gap-2">
+          {/* Right Section - Fixed Alignment */}
+          <div className="flex items-center gap-3 h-full">
+            {/* Support Button */}
             <AlertDialog open={isWhatsAppDialogOpen} onOpenChange={setIsWhatsAppDialogOpen}>
               <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 lg:h-9 lg:w-9 hover:bg-[var(--accent-primary)]/10 transition-colors"
-                  title="Suporte via WhatsApp"
-                >
-                  <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: 'var(--text-primary)' }} />
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-indigo-500/10">
+                  <HelpCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
@@ -283,70 +279,53 @@ function LayoutContent({ children, currentPageName }) {
 
             <ThemeSelector />
 
+            {/* Subscription Button - Perfectly Aligned */}
             {!isSubscribed && (
-              <Link to={createPageUrl('Subscription')}>
-                <Button size="sm" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/20 h-8 lg:h-9 text-xs lg:text-sm px-3 lg:px-4">
-                  <Crown className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
-                  <span className="hidden sm:inline">Assinar</span>
-                  <span className="sm:hidden">Pro</span>
-                </Button>
-              </Link>
+              <Button 
+                onClick={() => window.location.href = createPageUrl('Subscription')}
+                className="h-9 px-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg shadow-sm transition-all flex items-center gap-2"
+              >
+                <Crown className="w-4 h-4" />
+                <span className="hidden sm:inline">Assinar</span>
+              </Button>
             )}
 
-            <NotificationDropdown triggerClassName="hover:bg-[var(--accent-primary)]/10" />
+            {/* Notifications */}
+            <NotificationDropdown />
 
-            {isAdmin && <AdminMenu currentPageName={currentPageName} triggerClassName="hover:bg-[var(--accent-primary)]/10" />}
+            {isAdmin && <AdminMenu currentPageName={currentPageName} />}
 
+            {/* User Avatar & Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1 lg:p-1.5 rounded-lg hover:bg-[var(--accent-primary)]/10 transition-colors">
-                  <Avatar className="w-7 h-7 lg:w-8 lg:h-8">
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 overflow-hidden border-2 border-indigo-500/20 hover:border-indigo-500/50 transition-all">
+                  <Avatar className="h-full w-full">
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                    <AvatarFallback className="bg-indigo-100 text-indigo-700 text-xs lg:text-sm font-medium">
-                      {user?.full_name?.[0] || 'U'}
+                    <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold">
+                      {user?.email?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <ChevronDown className="w-4 h-4 hidden lg:block" style={{ color: 'var(--text-primary)' }} />
-                </button>
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-3 py-2.5">
-                  <p className="font-medium text-sm">{profile?.display_name || profile?.company_name || user?.full_name}</p>
-                  <p className="text-xs text-slate-500">{user?.email}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="outline" className="text-xs capitalize">
-                      {profileType === 'brand' ? 'Marca' : 'Criador'}
-                    </Badge>
-                    {isSubscribed && (
-                      <Badge className="text-xs bg-emerald-100 text-emerald-700 border-0">
-                        Pro
-                      </Badge>
-                    )}
-                  </div>
+              <DropdownMenuContent align="end" className="w-64 mt-2 shadow-xl border-slate-200 dark:border-slate-800" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                {/* User Info Section */}
+                <div className="flex flex-col px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                  <span className="font-bold truncate">{profile?.display_name || profile?.company_name || 'Usuário'}</span>
+                  <span className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user?.email}</span>
+                  <Badge variant="outline" className="mt-2 w-fit capitalize border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
+                    {profileType === 'brand' ? 'Marca' : 'Creator'}
+                  </Badge>
                 </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl('Profile')} className="cursor-pointer">
-                    <User className="w-4 h-4 mr-2" />
-                    Meu Perfil
-                  </Link>
+                {/* Menu Items */}
+                <DropdownMenuItem onClick={() => window.location.href = createPageUrl('Profile')} className="py-2.5 cursor-pointer hover:bg-indigo-500/10 focus:bg-indigo-500/10">
+                  <User className="mr-2 h-4 w-4" /> Meu Perfil
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl('Subscription')} className="cursor-pointer">
-                    <Crown className="w-4 h-4 mr-2" />
-                    {isSubscribed ? 'Gerenciar Assinatura' : 'Assinar Premium'}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl('Profile')} className="cursor-pointer">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Configurações
-                  </Link>
+                <DropdownMenuItem onClick={() => window.location.href = createPageUrl('Settings')} className="py-2.5 cursor-pointer hover:bg-indigo-500/10 focus:bg-indigo-500/10">
+                  <Settings className="mr-2 h-4 w-4" /> Configurações
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sair da Conta
+                <DropdownMenuItem onClick={handleLogout} className="py-2.5 cursor-pointer text-red-500 hover:bg-red-50 focus:bg-red-50">
+                  <LogOut className="mr-2 h-4 w-4" /> Sair da Conta
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
