@@ -29,34 +29,14 @@ export function AuthProvider({ children }) {
       try {
         const brandProfiles = await base44.entities.Brand.filter({ user_id: userData.id });
         if (brandProfiles.length > 0) {
-          let brandProfile = brandProfiles[0];
-
-          // Se tem company_name mas está como exploring, atualizar para registered
-          if (brandProfile.company_name && brandProfile.account_state === 'exploring') {
-            await base44.entities.Brand.update(brandProfile.id, {
-              account_state: 'registered'
-            });
-            brandProfile = { ...brandProfile, account_state: 'registered' };
-          }
-
-          setProfile(brandProfile);
+          setProfile(brandProfiles[0]);
           setProfileType('brand');
           return true;
         }
 
         const creatorProfiles = await base44.entities.Creator.filter({ user_id: userData.id });
         if (creatorProfiles.length > 0) {
-          let creatorProfile = creatorProfiles[0];
-
-          // Se tem display_name mas está como exploring, atualizar para registered
-          if (creatorProfile.display_name && creatorProfile.account_state === 'exploring') {
-            await base44.entities.Creator.update(creatorProfile.id, {
-              account_state: 'registered'
-            });
-            creatorProfile = { ...creatorProfile, account_state: 'registered' };
-          }
-
-          setProfile(creatorProfile);
+          setProfile(creatorProfiles[0]);
           setProfileType('creator');
           return true;
         }
