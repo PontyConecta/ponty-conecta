@@ -123,7 +123,7 @@ function LayoutContent({ children, currentPageName }) {
                     --bg-primary: #17101e;
                     --bg-secondary: #2a1c38;
                     --text-primary: #f3eef8;
-                    --text-secondary: #dcd8e0;
+                    --text-secondary: #94a3b8;
                     --border-color: #5a3a75;
                     --accent-primary: #d946ef;
                     --card-bg: #2a1c38;
@@ -283,7 +283,11 @@ function LayoutContent({ children, currentPageName }) {
             {!isSubscribed && (
               <Button 
                 onClick={() => window.location.href = createPageUrl('Subscription')}
-                className="h-9 px-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg shadow-sm transition-all flex items-center gap-2"
+                className="h-9 px-4 font-bold rounded-lg shadow-sm transition-all flex items-center gap-2"
+                style={{ 
+                  backgroundColor: 'rgb(249 115 22)',
+                  color: 'white'
+                }}
               >
                 <Crown className="w-4 h-4" />
                 <span className="hidden sm:inline">Assinar</span>
@@ -298,33 +302,33 @@ function LayoutContent({ children, currentPageName }) {
             {/* User Avatar & Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 overflow-hidden border-2 border-indigo-500/20 hover:border-indigo-500/50 transition-all">
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 overflow-hidden border-2 transition-all" style={{ borderColor: 'var(--border-color)' }}>
                   <Avatar className="h-full w-full">
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                    <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold">
+                    <AvatarFallback className="font-bold" style={{ backgroundColor: 'rgba(79, 70, 229, 0.1)', color: 'rgb(79, 70, 229)' }}>
                       {user?.email?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 mt-2 shadow-xl border-slate-200 dark:border-slate-800" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+              <DropdownMenuContent align="end" className="w-64 mt-2 shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
                 {/* User Info Section */}
-                <div className="flex flex-col px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex flex-col px-4 py-3 border-b" style={{ borderColor: 'var(--border-color)' }}>
                   <span className="font-bold truncate">{profile?.display_name || profile?.company_name || 'Usuário'}</span>
                   <span className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user?.email}</span>
-                  <Badge variant="outline" className="mt-2 w-fit capitalize border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
+                  <Badge variant="outline" className="mt-2 w-fit capitalize" style={{ borderColor: 'rgba(79, 70, 229, 0.3)', color: 'rgb(79, 70, 229)' }}>
                     {profileType === 'brand' ? 'Marca' : 'Creator'}
                   </Badge>
                 </div>
                 {/* Menu Items */}
-                <DropdownMenuItem onClick={() => window.location.href = createPageUrl('Profile')} className="py-2.5 cursor-pointer hover:bg-indigo-500/10 focus:bg-indigo-500/10">
+                <DropdownMenuItem onClick={() => window.location.href = createPageUrl('Profile')} className="py-2.5 cursor-pointer">
                   <User className="mr-2 h-4 w-4" /> Meu Perfil
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => window.location.href = createPageUrl('Settings')} className="py-2.5 cursor-pointer hover:bg-indigo-500/10 focus:bg-indigo-500/10">
+                <DropdownMenuItem onClick={() => window.location.href = createPageUrl('Settings')} className="py-2.5 cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" /> Configurações
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="py-2.5 cursor-pointer text-red-500 hover:bg-red-50 focus:bg-red-50">
+                <DropdownMenuItem onClick={handleLogout} className="py-2.5 cursor-pointer text-red-500">
                   <LogOut className="mr-2 h-4 w-4" /> Sair da Conta
                 </DropdownMenuItem>
               </DropdownMenuContent>
