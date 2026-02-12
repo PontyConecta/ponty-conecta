@@ -43,7 +43,7 @@ export default function BottomNav({ profileType, currentPageName }) {
       : guestNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-bottom transition-colors" style={{ backgroundColor: 'var(--bg-secondary)', borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
+    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden safe-area-bottom transition-colors" style={{ backgroundColor: 'var(--bg-secondary)', borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
       <div className="flex items-center justify-around px-2 h-16">
         {navItems.map((item) => {
           const isActive = currentPageName === item.page;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { trackPurchase } from '@/components/analytics/analyticsUtils';
@@ -28,21 +29,27 @@ export default function Subscription() {
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState('monthly');
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadUserData();
-    
-    // Check for success parameter in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('success') === 'true') {
-      // Track purchase event
-      trackPurchase({
-        value: selectedPlan === 'monthly' ? 45 : 450,
-        currency: 'BRL',
-        content_name: `Assinatura ${profileType === 'brand' ? 'Marca' : 'Criador'} ${selectedPlan === 'monthly' ? 'Mensal' : 'Anual'}`,
-      });
-    }
   }, []);
+
+  useEffect(() => {
+    // Check for success parameter in URL after profile is loaded
+    if (profile && profileType) {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('success') === 'true') {
+        const plan = urlParams.get('plan') || selectedPlan;
+        trackPurchase({
+          value: plan === 'monthly' ? 45 : 450,
+          currency: 'BRL',
+          content_name: `Assinatura ${profileType === 'brand' ? 'Marca' : 'Criador'} ${plan === 'monthly' ? 'Mensal' : 'Anual'}`,
+          subscription_status: profile.subscription_status
+        });
+      }
+    }
+  }, [profile, profileType]);
 
   const loadUserData = async () => {
     try {
@@ -69,7 +76,6 @@ export default function Subscription() {
   };
 
   const handleSubscribe = async () => {
-    // Check if running inside iframe (preview mode)
     if (window.self !== window.top) {
       alert('⚠️ O checkout do Stripe só funciona no aplicativo publicado.\n\nPor favor, publique seu app e acesse-o diretamente para realizar o pagamento.');
       return;
@@ -79,14 +85,12 @@ export default function Subscription() {
     try {
       const planType = `${profileType}_${selectedPlan}`;
       
-      // Create Stripe checkout session
       const response = await base44.functions.invoke('createCheckoutSession', {
         plan_type: planType,
         profile_type: profileType
       });
 
       if (response.data?.url) {
-        // Redirect to Stripe Checkout
         window.location.href = response.data.url;
       } else {
         throw new Error('Failed to create checkout session');
@@ -124,8 +128,7 @@ export default function Subscription() {
   }
 
   const isBrand = profileType === 'brand';
-  const isSubscribed = profile?.subscription_status === 'active' || profile?.account_state === 'active';
-  const accentColor = isBrand ? 'indigo' : 'orange';
+  const isSubscribed = profile?.subscription_status === 'premium' || profile?.subscription_status === 'explorer';
 
   const brandFeatures = [
     'Criação ilimitada de campanhas',
@@ -170,14 +173,16 @@ export default function Subscription() {
 
   // Already subscribed view
   if (isSubscribed) {
+    const planName = profile?.plan_level === 'premium' ? 'Premium' : 'Explorer';
+    
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center mb-8">
           <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${isBrand ? 'from-indigo-500 to-violet-500' : 'from-orange-500 to-amber-500'} mb-4 shadow-lg`}>
             <Crown className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Sua Assinatura</h1>
-          <p className="text-slate-600">Você tem acesso completo à plataforma</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Sua Assinatura</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Você tem acesso completo à plataforma</p>
         </div>
 
         <Card className="border-emerald-200 bg-emerald-50/50">
@@ -188,12 +193,12 @@ export default function Subscription() {
                   <CheckCircle2 className="w-3 h-3 mr-1" />
                   Ativa
                 </Badge>
-                <h3 className="text-xl font-semibold text-slate-900">Plano Pro</h3>
-                <p className="text-slate-600">Acesso ilimitado a todas as funcionalidades</p>
+                <h3 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Plano {planName}</h3>
+                <p style={{ color: 'var(--text-secondary)' }}>Acesso ilimitado a todas as funcionalidades</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-slate-900">R$ 45</p>
-                <p className="text-slate-500">/mês</p>
+                <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ 45</p>
+                <p style={{ color: 'var(--text-secondary)' }}>/mês</p>
               </div>
             </div>
           </CardContent>
@@ -208,7 +213,7 @@ export default function Subscription() {
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                  <span className="text-sm text-slate-700">{feature}</span>
+                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{feature}</span>
                 </div>
               ))}
             </div>
@@ -218,10 +223,10 @@ export default function Subscription() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <CreditCard className="w-8 h-8 text-slate-400" />
+              <CreditCard className="w-8 h-8" style={{ color: 'var(--text-secondary)' }} />
               <div className="flex-1">
-                <h4 className="font-medium text-slate-900">Gerenciar Assinatura</h4>
-                <p className="text-sm text-slate-500">Atualize forma de pagamento, cancele ou altere seu plano</p>
+                <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Gerenciar Assinatura</h4>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Atualize forma de pagamento, cancele ou altere seu plano</p>
               </div>
               <Button variant="outline" onClick={handleManageSubscription}>
                 <ExternalLink className="w-4 h-4 mr-2" />
@@ -237,24 +242,22 @@ export default function Subscription() {
   // Subscription selection view
   return (
     <div className="max-w-4xl mx-auto pb-8">
-      {/* Header */}
       <div className="text-center mb-8 lg:mb-12">
         <Badge className={`mb-4 ${isBrand ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'} border-0 px-4 py-1.5`}>
           {isBrand ? <Building2 className="w-4 h-4 mr-2" /> : <Star className="w-4 h-4 mr-2" />}
           {isBrand ? 'Plano para Marcas' : 'Plano para Criadores'}
         </Badge>
 
-        <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+        <h1 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
           Desbloqueie todo o potencial
         </h1>
-        <p className="text-lg text-slate-600 max-w-xl mx-auto">
+        <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
           {isBrand 
             ? 'Crie campanhas e conecte-se com os melhores criadores' 
             : 'Acesse oportunidades e trabalhe com grandes marcas'}
         </p>
       </div>
 
-      {/* Plans */}
       <div className="grid md:grid-cols-2 gap-4 lg:gap-6 mb-8 lg:mb-12">
         {plans.map((plan) => (
           <motion.div
@@ -281,8 +284,8 @@ export default function Subscription() {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-slate-900">{plan.name}</h3>
-                    <p className="text-sm text-slate-500">{plan.description}</p>
+                    <h3 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>{plan.name}</h3>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{plan.description}</p>
                   </div>
                   {plan.discount && (
                     <Badge className="bg-emerald-100 text-emerald-700 border-0">
@@ -291,8 +294,8 @@ export default function Subscription() {
                   )}
                 </div>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-bold text-slate-900">R$ {plan.price}</span>
-                  <span className="text-slate-500">{plan.period}</span>
+                  <span className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ {plan.price}</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>{plan.period}</span>
                 </div>
                 <div className={`
                   w-full h-1 rounded-full transition-colors
@@ -306,7 +309,6 @@ export default function Subscription() {
         ))}
       </div>
 
-      {/* Features */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -319,30 +321,28 @@ export default function Subscription() {
             {features.map((feature, index) => (
               <div key={index} className="flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <span className="text-slate-700">{feature}</span>
+                <span style={{ color: 'var(--text-primary)' }}>{feature}</span>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Trust Badges */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         {[
           { icon: Shield, label: 'Pagamento Seguro' },
           { icon: Zap, label: 'Acesso Imediato' },
           { icon: Users, label: 'Suporte Humano' }
         ].map((item, index) => (
-          <div key={index} className="flex flex-col items-center gap-2 text-center p-4 rounded-xl bg-slate-50">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-              <item.icon className="w-5 h-5 text-slate-600" />
+          <div key={index} className="flex flex-col items-center gap-2 text-center p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm" style={{ backgroundColor: 'var(--bg-primary)' }}>
+              <item.icon className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
             </div>
-            <span className="text-sm text-slate-600">{item.label}</span>
+            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
           </div>
         ))}
       </div>
 
-      {/* CTA */}
       <div className="flex flex-col items-center gap-4">
         <Button
           size="lg"
@@ -370,15 +370,16 @@ export default function Subscription() {
         <Button
           variant="ghost"
           size="lg"
-          onClick={() => window.location.href = createPageUrl(isBrand ? 'BrandDashboard' : 'CreatorDashboard')}
-          className="text-slate-600 hover:text-slate-900"
+          onClick={() => navigate(createPageUrl(isBrand ? 'BrandDashboard' : 'CreatorDashboard'))}
+          style={{ color: 'var(--text-secondary)' }}
+          className="hover:opacity-70"
         >
           Continuar explorando gratuitamente
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
 
-      <p className="text-center text-sm text-slate-500 mt-6">
+      <p className="text-center text-sm mt-6" style={{ color: 'var(--text-secondary)' }}>
         Ao assinar, você concorda com nossos Termos de Uso e Política de Privacidade.
         <br />Cancele a qualquer momento pelo portal de assinatura.
       </p>

@@ -8,12 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/contexts/AuthContext';
 
-/**
- * Home Page - Ponty Conecta
- * Design: Premium, Inovador, Confiável
- * Stack: React + Tailwind CSS + Shadcn UI
- */
-
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const { user, profileType, loading } = useAuth();
@@ -25,7 +19,6 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Redirect authenticated users to their dashboard
   React.useEffect(() => {
     if (!loading && user && profileType) {
       const dashboardPage = profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard';
@@ -33,12 +26,17 @@ export default function Home() {
     }
   }, [user, profileType, loading, navigate]);
 
+  const scrollToSection = () => {
+    const element = document.getElementById('por-que-ponty');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          {/* Logo - Top Left */}
           <div className="mb-6 lg:mb-12">
             <div className="flex items-center gap-2 lg:gap-3 group">
               <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
@@ -52,31 +50,25 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
-            {/* Hero Text */}
             <div className="flex flex-col gap-6 lg:gap-8">
-              {/* Badge - Hidden on mobile */}
               <div className="hidden lg:inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
                 <Zap className="w-4 h-4 animate-pulse" />
                 <span>Mediação Profissional de Última Geração</span>
               </div>
 
-              {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
                 A <span className="bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">Ponte Profissional</span> Entre Marcas e Criadores
               </h1>
 
-              {/* Subtitle */}
               <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-md">
                 Organize, execute e escale suas relações profissionais com regras automatizadas e entrega garantida.
               </p>
 
-              {/* Free Access Badge */}
               <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2.5 rounded-lg w-fit text-sm font-medium">
                 <CheckCircle className="w-4 h-4" />
                 <span>Explore gratuitamente • Sem cartão de crédito</span>
               </div>
 
-              {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   size="lg" 
@@ -97,9 +89,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero Visual with Benefits */}
             <div className="relative min-h-[500px] flex items-center justify-center">
-              {/* Gradient Background */}
               <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-orange-50 rounded-3xl overflow-hidden">
                 <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-400/30 to-indigo-500/20 rounded-full blur-3xl animate-pulse"
                   style={{
@@ -116,7 +106,6 @@ export default function Home() {
                 ></div>
               </div>
 
-              {/* Benefits Cards Centered */}
               <div className="relative z-10 grid grid-cols-2 gap-4 p-6">
                 {[
                   { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais' },
@@ -145,10 +134,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Section */}
       <section id="por-que-ponty" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
               Por que escolher Ponty
@@ -156,7 +143,6 @@ export default function Home() {
             <p className="text-lg text-gray-600">A solução certa para cada perfil</p>
           </div>
 
-          {/* Tabs */}
           <Tabs defaultValue="brands" className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-12">
               <TabsTrigger value="brands" className="text-base">
@@ -169,17 +155,13 @@ export default function Home() {
               </TabsTrigger>
             </TabsList>
 
-            {/* Brands Tab */}
             <TabsContent value="brands" className="mt-12">
               <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
-                  {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-purple-50"></div>
 
-                  {/* Floating shapes */}
                   <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-2xl"></div>
                   <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-purple-500/15 to-violet-400/15 rounded-full blur-2xl"></div>
 
-                  {/* Content */}
                   <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
                     <div className="space-y-8 max-w-md">
                       <div className="text-center">
@@ -234,17 +216,13 @@ export default function Home() {
                       </div>
                       </TabsContent>
 
-            {/* Creators Tab */}
             <TabsContent value="creators" className="mt-12">
               <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
-                  {/* Abstract gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50"></div>
 
-                  {/* Floating shapes */}
                   <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-full blur-2xl"></div>
                   <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-orange-500/15 to-yellow-400/15 rounded-full blur-2xl"></div>
 
-                  {/* Content */}
                   <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
                     <div className="space-y-8 max-w-md">
                       <div className="text-center">
@@ -302,10 +280,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 via-white to-orange-50 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
               Simples para ambos os lados
@@ -313,7 +289,6 @@ export default function Home() {
             <p className="text-lg text-gray-600">Processo transparente e estruturado do início ao fim</p>
           </div>
 
-          {/* Steps Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
             {[
               {
@@ -348,15 +323,9 @@ export default function Home() {
               </Card>
             ))}
           </div>
-
-          {/* Pattern Background */}
-          <div className="absolute bottom-0 right-0 w-96 h-96 opacity-20 -z-0">
-            <img src="/images/success-pattern.png" alt="Pattern" className="w-full h-full object-cover" />
-          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-600 to-orange-500">
         <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tight">
@@ -369,9 +338,7 @@ export default function Home() {
           <Button 
             size="lg" 
             className="bg-white text-purple-600 hover:bg-gray-100"
-            onClick={() => {
-              document.getElementById('por-que-ponty').scrollIntoView({ behavior: 'smooth' });
-            }}
+            onClick={scrollToSection}
           >
             Começar Agora
             <ArrowRight className="w-5 h-5 ml-2" />
@@ -379,7 +346,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-gray-900 text-white px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center gap-6">
@@ -405,7 +371,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* CSS for animations */}
         <style>{`
           @keyframes float {
             0%, 100% { transform: translateY(0px); }
