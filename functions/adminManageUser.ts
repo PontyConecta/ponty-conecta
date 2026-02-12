@@ -29,13 +29,11 @@ Deno.serve(async (req) => {
 
         if (brands.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brands[0].id, {
-            account_state: 'active',
-            subscription_status: 'active'
+            subscription_status: 'Premium'
           });
         } else if (creators.length > 0) {
           result = await base44.asServiceRole.entities.Creator.update(creators[0].id, {
-            account_state: 'active',
-            subscription_status: 'active'
+            subscription_status: 'Premium'
           });
         }
         auditAction = 'user_activated';
@@ -49,13 +47,11 @@ Deno.serve(async (req) => {
 
         if (brandsDe.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brandsDe[0].id, {
-            account_state: 'exploring',
-            subscription_status: 'none'
+            subscription_status: 'Guest'
           });
         } else if (creatorsDe.length > 0) {
           result = await base44.asServiceRole.entities.Creator.update(creatorsDe[0].id, {
-            account_state: 'exploring',
-            subscription_status: 'none'
+            subscription_status: 'Guest'
           });
         }
         auditAction = 'user_deactivated';
@@ -67,7 +63,7 @@ Deno.serve(async (req) => {
           base44.asServiceRole.entities.Creator.filter({ user_id: userId })
         ]);
 
-        const newStatus = data?.subscription_status || 'active';
+        const newStatus = data?.subscription_status || 'Premium';
 
         if (brandsSub.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brandsSub[0].id, {
@@ -81,39 +77,30 @@ Deno.serve(async (req) => {
         auditAction = 'subscription_override';
         break;
 
-      case 'flag_review':
-        const [brandsFlag, creatorsFlag] = await Promise.all([
+      case 'toggle_verified':
+        const [brandsVer, creatorsVer] = await Promise.all([
           base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
           base44.asServiceRole.entities.Creator.filter({ user_id: userId })
         ]);
 
-        if (brandsFlag.length > 0) {
-          result = await base44.asServiceRole.entities.Brand.update(brandsFlag[0].id, {
-            account_state: 'under_review'
+        if (brandsVer.length > 0) {
+          result = await base44.asServiceRole.entities.Brand.update(brandsVer[0].id, {
+            is_verified: !brandsVer[0].is_verified
           });
-        } else if (creatorsFlag.length > 0) {
-          result = await base44.asServiceRole.entities.Creator.update(creatorsFlag[0].id, {
-            account_state: 'under_review'
+          auditAction = brandsVer[0].is_verified ? 'user_unverified' : 'user_verified';
+        } else if (creatorsVer.length > 0) {
+          result = await base44.asServiceRole.entities.Creator.update(creatorsVer[0].id, {
+            is_verified: !creatorsVer[0].is_verified
           });
+          auditAction = creatorsVer[0].is_verified ? 'user_unverified' : 'user_verified';
         }
+        break;
+
+      case 'flag_review':
         auditAction = 'user_flagged';
         break;
 
       case 'unflag_review':
-        const [brandsFlagRm, creatorsFlagRm] = await Promise.all([
-          base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
-          base44.asServiceRole.entities.Creator.filter({ user_id: userId })
-        ]);
-
-        if (brandsFlagRm.length > 0) {
-          result = await base44.asServiceRole.entities.Brand.update(brandsFlagRm[0].id, {
-            account_state: 'active'
-          });
-        } else if (creatorsFlagRm.length > 0) {
-          result = await base44.asServiceRole.entities.Creator.update(creatorsFlagRm[0].id, {
-            account_state: 'active'
-          });
-        }
         auditAction = 'user_unflagged';
         break;
 
