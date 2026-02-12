@@ -39,7 +39,7 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ..
   const styles = variant === 'outline' || variant === 'ghost' || variant === 'link' ? { color: 'var(--text-primary)', borderColor: 'var(--border-color)' } : {}
   return (
     (<Comp
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, className }), 'select-none')}
       style={styles}
       ref={ref}
       {...props} />)

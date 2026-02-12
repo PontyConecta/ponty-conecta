@@ -3,6 +3,16 @@ css
 @tailwind components;
 @tailwind utilities;
 
+body {
+  overscroll-behavior: none;
+}
+
+.select-none {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
 /* Color Themes - CSS Variables */
 :root {
   --bg-primary: #f8fafc;

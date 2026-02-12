@@ -19,6 +19,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import ThemeSelector from "@/components/ThemeSelector";
 import { 
@@ -204,6 +215,16 @@ export default function Profile() {
 
   const handleLogout = () => {
     logout('/');
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      // Here you would call your delete account function
+      toast.error('Função de exclusão de conta será implementada em breve');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast.error('Erro ao excluir conta');
+    }
   };
 
   if (!profile) {
@@ -760,6 +781,35 @@ export default function Profile() {
                   <LogOut className="w-4 h-4 mr-2" />
                   Sair da Conta
                 </Button>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      className="w-full"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Excluir Conta
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle style={{ color: 'var(--text-primary)' }}>Tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription style={{ color: 'var(--text-secondary)' }}>
+                        Esta ação não pode ser desfeita. Sua conta e todos os dados associados serão permanentemente excluídos.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel style={{ color: 'var(--text-primary)' }}>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDeleteAccount}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        Excluir Permanentemente
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </CardContent>
             </Card>
           </div>

@@ -53,7 +53,7 @@ export default function BottomNav({ profileType, currentPageName }) {
               to={createPageUrl(item.page)}
               className={`
                 flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[64px]
-                transition-all active:scale-95
+                transition-all active:scale-95 select-none
                 ${isActive 
                   ? 'stroke-[2.5px]' 
                   : 'hover:opacity-70'}

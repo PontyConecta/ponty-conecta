@@ -73,6 +73,7 @@ export default function Deliveries() {
   const [contentUrls, setContentUrls] = useState(['']);
   const [proofNotes, setProofNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   
   // Paginação
   const pagination = usePagination(20);
@@ -81,7 +82,8 @@ export default function Deliveries() {
     loadData();
   }, []);
 
-  const loadData = async () => {
+  const loadData = async (isRefresh = false) => {
+    if (!isRefresh) setLoading(true);
     try {
       const userData = await base44.auth.me();
       setUser(userData);
@@ -104,8 +106,34 @@ export default function Deliveries() {
       console.error('Error loading data:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
+
+  const handleRefresh = async (e) => {
+    const startY = e.touches[0].clientY;
+    
+    const handleMove = (e) => {
+      const currentY = e.touches[0].clientY;
+      const pullDistance = currentY - startY;
+      
+      if (pullDistance > 100 && window.scrollY === 0 && !refreshing) {
+        setRefreshing(true);
+        loadData(true);
+        document.removeEventListener('touchmove', handleMove);
+      }
+    };
+    
+    document.addEventListener('touchmove', handleMove);
+    document.addEventListener('touchend', () => {
+      document.removeEventListener('touchmove', handleMove);
+    }, { once: true });
+  };
+
+  useEffect(() => {
+    document.addEventListener('touchstart', handleRefresh);
+    return () => document.removeEventListener('touchstart', handleRefresh);
+  }, [refreshing]);
 
   const loadBrandDeliveries = async (brand) => {
     const [deliveriesData, campaignsData] = await Promise.all([
@@ -336,6 +364,13 @@ export default function Deliveries() {
 
   return (
     <div className="space-y-6">
+      {/* Pull to Refresh Indicator */}
+      {refreshing && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-white px-4 py-2 rounded-full shadow-lg">
+          <Loader2 className="w-5 h-5 animate-spin text-indigo-600" />
+        </div>
+      )}
+      
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-slate-900">

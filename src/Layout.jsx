@@ -11,6 +11,7 @@ import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
 import AdminMenu from '@/components/AdminMenu';
 import ThemeSelector from '@/components/ThemeSelector';
+import BackButton from '@/components/BackButton';
 import { Toaster } from 'sonner';
 import { 
   LayoutDashboard, 
@@ -172,6 +173,9 @@ function LayoutContent({ children, currentPageName }) {
 
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
+  
+  // Pages that don't need back button
+  const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
 
   return (
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
@@ -238,8 +242,10 @@ function LayoutContent({ children, currentPageName }) {
       {/* Top Navigation */}
        <header className="fixed top-0 left-0 right-0 z-50 transition-colors border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
-          {/* Logo */}
-          <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
+          {/* Back Button + Logo */}
+          <div className="flex items-center gap-2">
+            {!noBackButtonPages.includes(currentPageName) && <BackButton />}
+            <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
             <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <span className="text-white font-bold text-base lg:text-lg">P</span>
             </div>
@@ -250,6 +256,7 @@ function LayoutContent({ children, currentPageName }) {
               </span>
             </div>
           </Link>
+          </div>
 
           {/* Right Section - Fixed Alignment */}
           <div className="flex items-center gap-3 h-full">
