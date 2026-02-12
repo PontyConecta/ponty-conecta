@@ -148,7 +148,8 @@ export default function AdminUsers() {
         deactivate: 'Usuário desativado',
         override_subscription: 'Assinatura alterada',
         flag_review: 'Usuário marcado para revisão',
-        unflag_review: 'Usuário desmarcado de revisão'
+        unflag_review: 'Usuário desmarcado de revisão',
+        toggle_verified: 'Status de verificação alterado'
       };
       
       toast.success(actions[action] || 'Ação realizada');
@@ -180,8 +181,8 @@ export default function AdminUsers() {
     const matchesRole = roleFilter === 'all' || role === roleFilter;
     
     const matchesStatus = statusFilter === 'all' || 
-      (statusFilter === 'active' && profile?.subscription_status === 'active') ||
-      (statusFilter === 'exploring' && profile?.account_state === 'exploring');
+      (statusFilter === 'active' && profile?.subscription_status === 'Premium') ||
+      (statusFilter === 'exploring' && profile?.account_state === 'Incomplete');
     
     return matchesSearch && matchesRole && matchesStatus;
   });
@@ -283,13 +284,22 @@ export default function AdminUsers() {
                         <Badge variant="outline" className="capitalize">
                           {role === 'brand' ? 'Marca' : 'Criador'}
                         </Badge>
-                        {isActive ? (
-                          <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                        {profile?.is_verified && (
+                          <Badge className="bg-blue-100 text-blue-700 border-0">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Ativo
+                            Verificado
+                          </Badge>
+                        )}
+                        {profile?.subscription_status === 'Premium' ? (
+                          <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                            Premium
+                          </Badge>
+                        ) : profile?.subscription_status === 'Explorer' ? (
+                          <Badge className="bg-amber-100 text-amber-700 border-0">
+                            Explorer
                           </Badge>
                         ) : (
-                          <Badge variant="outline">Explorando</Badge>
+                          <Badge variant="outline">Guest</Badge>
                         )}
                         <span className="text-xs text-slate-500">
                           Desde {new Date(user.created_date).toLocaleDateString('pt-BR')}
@@ -309,6 +319,20 @@ export default function AdminUsers() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuItem onClick={() => handleUserAction(user.id, 'toggle_verified')}>
+                        {profile?.is_verified ? (
+                          <>
+                            <XCircle className="w-4 h-4 mr-2" />
+                            Remover Verificação
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            Verificar Perfil
+                          </>
+                        )}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => handleSwitchRole(user.id, role)}>
                         <RefreshCw className="w-4 h-4 mr-2" />
                         Trocar Perfil ({role === 'brand' ? 'para Criador' : 'para Marca'})
@@ -325,9 +349,9 @@ export default function AdminUsers() {
                           Ativar Usuário
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={() => handleUserAction(user.id, 'override_subscription', { subscription_status: 'active' })}>
+                      <DropdownMenuItem onClick={() => handleUserAction(user.id, 'override_subscription', { subscription_status: 'Premium' })}>
                         <Shield className="w-4 h-4 mr-2" />
-                        Forçar Assinatura Ativa
+                        Forçar Assinatura Premium
                       </DropdownMenuItem>
                       {userFlags[user.id] ? (
                         <DropdownMenuItem onClick={() => handleUserAction(user.id, 'unflag_review')}>

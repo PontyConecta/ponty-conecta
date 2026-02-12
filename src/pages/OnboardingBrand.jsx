@@ -76,17 +76,17 @@ export default function OnboardingBrand() {
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
         const existingBrand = brands[0];
-        
+
         // Se já completou o onboarding, redireciona para o dashboard
-        if (existingBrand.account_state === 'registered') {
+        if (existingBrand.account_state === 'Ready') {
           window.location.href = createPageUrl('BrandDashboard');
           return;
         }
-        
-        // Se tem company_name mas não está registrado, atualiza o estado e redireciona
-        if (existingBrand.company_name && existingBrand.account_state !== 'registered') {
+
+        // Se tem company_name mas não está pronto, atualiza o estado e redireciona
+        if (existingBrand.company_name && existingBrand.account_state !== 'Ready') {
           await base44.entities.Brand.update(existingBrand.id, {
-            account_state: 'registered'
+            account_state: 'Ready'
           });
           await refreshProfile();
           window.location.href = createPageUrl('BrandDashboard');
@@ -149,7 +149,7 @@ export default function OnboardingBrand() {
           website: formData.website,
           contact_email: formData.contact_email,
           logo_url: formData.logo_url,
-          account_state: 'registered'
+          account_state: 'Ready'
         };
 
         if (brand) {

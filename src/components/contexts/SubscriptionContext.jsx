@@ -6,27 +6,32 @@ const SubscriptionContext = createContext(null);
 export function SubscriptionProvider({ children }) {
   const { profile } = useAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState('none');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('Guest');
+  const [planLevel, setPlanLevel] = useState(null);
 
   useEffect(() => {
     if (!profile) {
       setIsSubscribed(false);
-      setSubscriptionStatus('none');
+      setSubscriptionStatus('Guest');
+      setPlanLevel(null);
       return;
     }
 
-    const status = profile.subscription_status || 'none';
-    const isActive = status === 'active';
+    const status = profile.subscription_status || 'Guest';
+    const isPremium = status === 'Premium';
+    const currentPlanLevel = profile.plan_level || null;
     
     setSubscriptionStatus(status);
-    setIsSubscribed(isActive);
+    setIsSubscribed(isPremium);
+    setPlanLevel(currentPlanLevel);
   }, [profile]);
 
   const value = {
     isSubscribed,
     subscriptionStatus,
+    planLevel,
     canAccessFeature: (feature) => {
-      // For now, all features require subscription
+      // Premium users have full access
       return isSubscribed;
     }
   };

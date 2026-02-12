@@ -29,14 +29,38 @@ export function AuthProvider({ children }) {
       try {
         const brandProfiles = await base44.entities.Brand.filter({ user_id: userData.id });
         if (brandProfiles.length > 0) {
-          setProfile(brandProfiles[0]);
+          let brandProfile = brandProfiles[0];
+          
+          // Auto-update account_state if profile is complete but still marked as Incomplete
+          if (brandProfile.account_state === 'Incomplete' && brandProfile.company_name) {
+            try {
+              await base44.entities.Brand.update(brandProfile.id, { account_state: 'Ready' });
+              brandProfile = { ...brandProfile, account_state: 'Ready' };
+            } catch (updateError) {
+              console.error('Erro ao atualizar account_state:', updateError);
+            }
+          }
+          
+          setProfile(brandProfile);
           setProfileType('brand');
           return true;
         }
 
         const creatorProfiles = await base44.entities.Creator.filter({ user_id: userData.id });
         if (creatorProfiles.length > 0) {
-          setProfile(creatorProfiles[0]);
+          let creatorProfile = creatorProfiles[0];
+          
+          // Auto-update account_state if profile is complete but still marked as Incomplete
+          if (creatorProfile.account_state === 'Incomplete' && creatorProfile.display_name) {
+            try {
+              await base44.entities.Creator.update(creatorProfile.id, { account_state: 'Ready' });
+              creatorProfile = { ...creatorProfile, account_state: 'Ready' };
+            } catch (updateError) {
+              console.error('Erro ao atualizar account_state:', updateError);
+            }
+          }
+          
+          setProfile(creatorProfile);
           setProfileType('creator');
           return true;
         }

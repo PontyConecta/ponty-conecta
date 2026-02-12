@@ -143,7 +143,7 @@ function LayoutContent({ children, currentPageName }) {
           }
 
         // Se usuário está autenticado mas não tem perfil completo, redireciona
-        if (!loading && user && profile && profile.account_state === 'exploring') {
+        if (!loading && user && profile && profile.account_state === 'Incomplete') {
           const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
           if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
             window.location.href = createPageUrl(onboardingPage);
