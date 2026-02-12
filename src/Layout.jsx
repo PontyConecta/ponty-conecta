@@ -279,6 +279,11 @@ function LayoutContent({ children, currentPageName }) {
 
             <ThemeSelector />
 
+            {/* Notifications */}
+            <NotificationDropdown />
+
+            {isAdmin && <AdminMenu currentPageName={currentPageName} />}
+
             {/* Subscription Button - Perfectly Aligned */}
             {!isSubscribed && (
               <Button 
@@ -293,11 +298,6 @@ function LayoutContent({ children, currentPageName }) {
                 <span className="hidden sm:inline">Assinar</span>
               </Button>
             )}
-
-            {/* Notifications */}
-            <NotificationDropdown />
-
-            {isAdmin && <AdminMenu currentPageName={currentPageName} />}
 
             {/* User Avatar & Dropdown */}
             <DropdownMenu>
