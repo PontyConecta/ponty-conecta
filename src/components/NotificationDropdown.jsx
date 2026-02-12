@@ -330,7 +330,7 @@ export default function NotificationDropdown({ triggerClassName }) {
         <Button 
           variant="ghost" 
           size="icon" 
-          className={`relative h-8 w-8 lg:h-9 lg:w-9 transition-colors ${triggerClassName}`}
+          className="relative h-10 w-10 rounded-full hover:bg-indigo-500/10"
         >
           <Bell className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
           {unreadCount > 0 && (

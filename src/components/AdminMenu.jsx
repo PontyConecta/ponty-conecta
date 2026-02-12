@@ -63,9 +63,9 @@ export default function AdminMenu({ currentPageName, triggerClassName }) {
         <Button 
           variant="ghost"
           size="icon"
-          className={`h-8 w-8 lg:h-9 lg:w-9 transition-colors ${triggerClassName}`}
+          className="h-10 w-10 rounded-full hover:bg-indigo-500/10"
         >
-          <Shield className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: 'var(--text-primary)' }} />
+          <Shield className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
