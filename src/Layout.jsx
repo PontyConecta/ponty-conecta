@@ -217,7 +217,7 @@ function LayoutContent({ children, currentPageName }) {
       --text-secondary: #a0a6ad;
       --text-input: #f5f1f8;
       --border-color: #5a4577;
-      --accent-primary: #c84dd4;
+      --accent-primary: #7c3aed;
       }
 
         .safe-area-bottom {
@@ -238,6 +238,7 @@ function LayoutContent({ children, currentPageName }) {
       {/* Top Navigation */}
        <header className="fixed top-0 left-0 right-0 z-50 transition-colors border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
+          <div className="flex items-center gap-1 lg:gap-2">
           {/* Logo */}
           <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
             <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
@@ -250,6 +251,8 @@ function LayoutContent({ children, currentPageName }) {
               </span>
             </div>
           </Link>
+
+          </div>
 
           {/* Right Section */}
           <div className="flex items-center gap-1 lg:gap-2">
@@ -311,8 +314,8 @@ function LayoutContent({ children, currentPageName }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-3 py-2.5">
-                  <p className="font-medium text-sm">{profile?.display_name || profile?.company_name || user?.full_name}</p>
-                  <p className="text-xs text-slate-500">{user?.email}</p>
+                  <p className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>{profile?.display_name || profile?.company_name || user?.full_name}</p>
+                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{user?.email}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <Badge variant="outline" className="text-xs capitalize">
                       {profileType === 'brand' ? 'Marca' : 'Criador'}
