@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
@@ -10,6 +11,7 @@ export function AuthProvider({ children }) {
   const [profileType, setProfileType] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sessionCheckInterval, setSessionCheckInterval] = useState(null);
+  const [updating, setUpdating] = useState(false);
 
   // Verificar autenticação
   const checkAuth = async () => {
@@ -30,17 +32,17 @@ export function AuthProvider({ children }) {
         const brandProfiles = await base44.entities.Brand.filter({ user_id: userData.id });
         if (brandProfiles.length > 0) {
           let brandProfile = brandProfiles[0];
-          
-          // Auto-update account_state if profile is complete but still marked as Incomplete
-          if (brandProfile.account_state === 'Incomplete' && brandProfile.company_name) {
+
+          // Auto-update account_state if profile is complete but still marked as incomplete
+          if (brandProfile.account_state === 'incomplete' && brandProfile.company_name) {
             try {
-              await base44.entities.Brand.update(brandProfile.id, { account_state: 'Ready' });
-              brandProfile = { ...brandProfile, account_state: 'Ready' };
+              await base44.entities.Brand.update(brandProfile.id, { account_state: 'ready' });
+              brandProfile = { ...brandProfile, account_state: 'ready' };
             } catch (updateError) {
               console.error('Erro ao atualizar account_state:', updateError);
             }
           }
-          
+
           setProfile(brandProfile);
           setProfileType('brand');
           return true;
@@ -49,17 +51,17 @@ export function AuthProvider({ children }) {
         const creatorProfiles = await base44.entities.Creator.filter({ user_id: userData.id });
         if (creatorProfiles.length > 0) {
           let creatorProfile = creatorProfiles[0];
-          
-          // Auto-update account_state if profile is complete but still marked as Incomplete
-          if (creatorProfile.account_state === 'Incomplete' && creatorProfile.display_name) {
+
+          // Auto-update account_state if profile is complete but still marked as incomplete
+          if (creatorProfile.account_state === 'incomplete' && creatorProfile.display_name) {
             try {
-              await base44.entities.Creator.update(creatorProfile.id, { account_state: 'Ready' });
-              creatorProfile = { ...creatorProfile, account_state: 'Ready' };
+              await base44.entities.Creator.update(creatorProfile.id, { account_state: 'ready' });
+              creatorProfile = { ...creatorProfile, account_state: 'ready' };
             } catch (updateError) {
               console.error('Erro ao atualizar account_state:', updateError);
             }
           }
-          
+
           setProfile(creatorProfile);
           setProfileType('creator');
           return true;
@@ -127,6 +129,35 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Atualizar perfil com feedback (sem reload)
+  const updateProfile = async (updates) => {
+    if (!profile || !profileType) {
+      toast.error('Perfil não encontrado');
+      return false;
+    }
+
+    setUpdating(true);
+    try {
+      let updatedProfile;
+      if (profileType === 'brand') {
+        updatedProfile = await base44.entities.Brand.update(profile.id, updates);
+      } else if (profileType === 'creator') {
+        updatedProfile = await base44.entities.Creator.update(profile.id, updates);
+      }
+      
+      // Atualizar estado local instantaneamente
+      setProfile(updatedProfile);
+      toast.success('Perfil atualizado com sucesso!');
+      return true;
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      toast.error('Erro ao salvar alterações. Tente novamente.');
+      return false;
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   // Logout
   const logout = async (redirectUrl = '/') => {
     try {
@@ -148,8 +179,10 @@ export function AuthProvider({ children }) {
     profile,
     profileType,
     loading,
+    updating,
     checkAuth,
     refreshProfile,
+    updateProfile,
     logout,
     isAuthenticated: !!user,
   };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { trackPageView } from '@/components/analytics/analyticsUtils';
 import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
@@ -55,6 +55,7 @@ import { Badge } from "@/components/ui/badge";
 function LayoutContent({ children, currentPageName }) {
                 const { user, profile, profileType, loading, logout } = useAuth();
                 const { isSubscribed } = useSubscription();
+              const navigate = useNavigate();
               const [isMenuOpen, setIsMenuOpen] = useState(false);
               const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
 
@@ -72,7 +73,7 @@ function LayoutContent({ children, currentPageName }) {
 
         // Redirect to login if not authenticated (except special pages)
         if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
-          window.location.href = '/';
+          navigate(createPageUrl('Home'));
           return null;
         }
 
@@ -143,10 +144,10 @@ function LayoutContent({ children, currentPageName }) {
           }
 
         // Se usuário está autenticado mas não tem perfil completo, redireciona
-        if (!loading && user && profile && profile.account_state === 'Incomplete') {
+        if (!loading && user && profile && profile.account_state === 'incomplete') {
           const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
           if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
-            window.location.href = createPageUrl(onboardingPage);
+            navigate(createPageUrl(onboardingPage));
             return null;
           }
         }
