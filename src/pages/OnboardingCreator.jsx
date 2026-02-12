@@ -182,7 +182,14 @@ export default function OnboardingCreator() {
           account_state: 'registered'
         };
 
-        await base44.entities.Creator.update(creator.id, creatorData);
+        if (creator) {
+          await base44.entities.Creator.update(creator.id, creatorData);
+        } else {
+          await base44.entities.Creator.create({
+            user_id: user.id,
+            ...creatorData
+          });
+        }
         window.location.href = createPageUrl('Subscription');
       } catch (error) {
         console.error('Error saving creator:', error);
