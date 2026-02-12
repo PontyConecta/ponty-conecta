@@ -75,21 +75,33 @@ export default function OnboardingBrand() {
       
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
+        const existingBrand = brands[0];
+        
         // Se já completou o onboarding, redireciona para o dashboard
-        if (brands[0].account_state === 'registered') {
+        if (existingBrand.account_state === 'registered') {
           window.location.href = createPageUrl('BrandDashboard');
           return;
         }
         
-        setBrand(brands[0]);
+        // Se tem company_name mas não está registrado, atualiza o estado e redireciona
+        if (existingBrand.company_name && existingBrand.account_state !== 'registered') {
+          await base44.entities.Brand.update(existingBrand.id, {
+            account_state: 'registered'
+          });
+          await refreshProfile();
+          window.location.href = createPageUrl('BrandDashboard');
+          return;
+        }
+        
+        setBrand(existingBrand);
         setFormData({
-          company_name: brands[0].company_name || userData.full_name + "'s Company",
-          industry: brands[0].industry || '',
-          description: brands[0].description || '',
-          website: brands[0].website || '',
-          contact_email: brands[0].contact_email || userData.email,
+          company_name: existingBrand.company_name || userData.full_name + "'s Company",
+          industry: existingBrand.industry || '',
+          description: existingBrand.description || '',
+          website: existingBrand.website || '',
+          contact_email: existingBrand.contact_email || userData.email,
           contact_phone: userData.phone || '',
-          logo_url: brands[0].logo_url || ''
+          logo_url: existingBrand.logo_url || ''
         });
       }
     } catch (error) {
