@@ -97,18 +97,18 @@ async function handleCheckoutCompleted(base44, session) {
 
   // Determine plan level from plan type
   const planLevelMap = {
-    'brand_monthly': 'Premium',
-    'brand_annual': 'Premium',
-    'creator_monthly': 'Premium',
-    'creator_annual': 'Premium'
+    'brand_monthly': 'premium',
+    'brand_annual': 'premium',
+    'creator_monthly': 'premium',
+    'creator_annual': 'premium'
   };
-  const determinedPlanLevel = planLevelMap[planType] || 'Premium';
+  const determinedPlanLevel = planLevelMap[planType] || 'premium';
 
   // Create subscription record
   await base44.asServiceRole.entities.Subscription.create({
     user_id: userId,
     plan_type: planType,
-    status: 'Premium',
+    status: 'premium',
     start_date: new Date().toISOString().split('T')[0],
     amount: session.amount_total / 100, // Convert from cents
     currency: session.currency.toUpperCase(),
@@ -121,7 +121,7 @@ async function handleCheckoutCompleted(base44, session) {
   // Update profile with subscription status and plan level
   const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
   await base44.asServiceRole.entities[EntityType].update(profileId, {
-    subscription_status: 'Premium',
+    subscription_status: 'premium',
     plan_level: determinedPlanLevel,
     stripe_customer_id: session.customer
   });
@@ -155,13 +155,13 @@ async function handleSubscriptionUpdate(base44, subscription) {
 
   // Map Stripe status to our premium naming
   const statusMap = {
-    'active': 'Premium',
-    'past_due': 'Pending',
-    'canceled': 'Legacy',
-    'unpaid': 'Pending',
-    'trialing': 'Explorer'
+    'active': 'premium',
+    'past_due': 'pending',
+    'canceled': 'legacy',
+    'unpaid': 'pending',
+    'trialing': 'explorer'
   };
-  const mappedStatus = statusMap[subscription.status] || 'Guest';
+  const mappedStatus = statusMap[subscription.status] || 'starter';
 
   if (subscriptions.length > 0) {
     await base44.asServiceRole.entities.Subscription.update(subscriptions[0].id, {
@@ -173,7 +173,7 @@ async function handleSubscriptionUpdate(base44, subscription) {
 
   // Update profile status and plan level
   const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
-  const planLevel = subscription.status === 'active' ? 'Premium' : null;
+  const planLevel = subscription.status === 'active' ? 'premium' : null;
   
   await base44.asServiceRole.entities[EntityType].update(profile.id, {
     subscription_status: mappedStatus,
@@ -209,7 +209,7 @@ async function handleSubscriptionDeleted(base44, subscription) {
 
   if (subscriptions.length > 0) {
     await base44.asServiceRole.entities.Subscription.update(subscriptions[0].id, {
-      status: 'Legacy',
+      status: 'legacy',
       end_date: new Date().toISOString().split('T')[0]
     });
   }
@@ -217,7 +217,7 @@ async function handleSubscriptionDeleted(base44, subscription) {
   // Update profile - remove plan level on cancellation
   const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
   await base44.asServiceRole.entities[EntityType].update(profile.id, {
-    subscription_status: 'Legacy',
+    subscription_status: 'starter',
     plan_level: null
   });
 
@@ -259,7 +259,7 @@ async function handleInvoicePaymentFailed(base44, invoice) {
   if (profile) {
     const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
     await base44.asServiceRole.entities[EntityType].update(profile.id, {
-      subscription_status: 'Pending',
+      subscription_status: 'pending',
       plan_level: null
     });
     

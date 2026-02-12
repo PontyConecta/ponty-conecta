@@ -29,11 +29,11 @@ Deno.serve(async (req) => {
 
         if (brands.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brands[0].id, {
-            subscription_status: 'Premium'
+            subscription_status: 'premium'
           });
         } else if (creators.length > 0) {
           result = await base44.asServiceRole.entities.Creator.update(creators[0].id, {
-            subscription_status: 'Premium'
+            subscription_status: 'premium'
           });
         }
         auditAction = 'user_activated';
@@ -47,11 +47,11 @@ Deno.serve(async (req) => {
 
         if (brandsDe.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brandsDe[0].id, {
-            subscription_status: 'Guest'
+            subscription_status: 'starter'
           });
         } else if (creatorsDe.length > 0) {
           result = await base44.asServiceRole.entities.Creator.update(creatorsDe[0].id, {
-            subscription_status: 'Guest'
+            subscription_status: 'starter'
           });
         }
         auditAction = 'user_deactivated';
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
           base44.asServiceRole.entities.Creator.filter({ user_id: userId })
         ]);
 
-        const newStatus = data?.subscription_status || 'Premium';
+        const newStatus = data?.subscription_status || 'premium';
 
         if (brandsSub.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brandsSub[0].id, {

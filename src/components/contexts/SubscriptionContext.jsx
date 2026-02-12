@@ -12,13 +12,13 @@ export function SubscriptionProvider({ children }) {
   useEffect(() => {
     if (!profile) {
       setIsSubscribed(false);
-      setSubscriptionStatus('Guest');
+      setSubscriptionStatus('starter');
       setPlanLevel(null);
       return;
     }
 
-    const status = profile.subscription_status || 'Guest';
-    const isPremium = status === 'Premium';
+    const status = profile.subscription_status || 'starter';
+    const isPremium = status === 'premium' || status === 'explorer';
     const currentPlanLevel = profile.plan_level || null;
     
     setSubscriptionStatus(status);
