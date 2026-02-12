@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/components/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,6 +31,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
 export default function OnboardingBrand() {
+  const { refreshProfile } = useAuth();
   const [step, setStep] = useState(1);
   const [user, setUser] = useState(null);
   const [brand, setBrand] = useState(null);
@@ -146,6 +148,9 @@ export default function OnboardingBrand() {
             ...brandData
           });
         }
+        
+        // Atualizar o contexto de autenticação com o novo estado do perfil
+        await refreshProfile();
         
         // Celebração com confetti
         confetti({
