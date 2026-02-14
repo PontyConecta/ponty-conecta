@@ -72,7 +72,7 @@ export default function DiscoverBrands() {
       }
 
       // Buscar apenas marcas com perfil completo
-      const allBrands = await base44.entities.Brand.filter({ subscription_status: 'active' }, '-created_date');
+      const allBrands = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date');
       
       // Filtrar marcas com informações básicas preenchidas
       const brandsWithProfile = allBrands.filter(brand => {
