@@ -145,13 +145,13 @@ function LayoutContent({ children, currentPageName }) {
           }
 
         // Se usuário está autenticado mas não tem perfil completo, redireciona
-        if (!loading && user && profile && profile.account_state === 'incomplete') {
-          const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
-          if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
-            navigate(createPageUrl(onboardingPage));
-            return null;
-          }
-        }
+            if (!loading && user && profile && profile.account_state !== 'ready') {
+              const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
+              if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
+                navigate(createPageUrl(onboardingPage));
+                return null;
+              }
+            }
 
   const brandNavItems = [
     { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
