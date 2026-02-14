@@ -18,7 +18,7 @@ export default function DashboardMissions({ userId, profileType }) {
     if (!userId) return;
     const data = await base44.entities.Mission.filter({ 
       user_id: userId, 
-      profile_type, 
+      profile_type: profileType, 
       type: 'onboarding' 
     });
     setMissions(data.sort((a, b) => (a.order || 0) - (b.order || 0)));
