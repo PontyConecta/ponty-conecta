@@ -68,7 +68,7 @@ export default function DiscoverBrands() {
       const creators = await base44.entities.Creator.filter({ user_id: userData.id });
       if (creators.length > 0) {
         setCreator(creators[0]);
-        setIsSubscribed(creators[0].subscription_status === 'active');
+        setIsSubscribed(creators[0].subscription_status === 'premium' || creators[0].subscription_status === 'explorer' || creators[0].subscription_status === 'legacy');
       }
 
       // Buscar apenas marcas com perfil completo
