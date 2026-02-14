@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
@@ -10,36 +11,51 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { 
-  User, 
-  ArrowRight, 
-  ArrowLeft,
-  Upload,
-  Instagram,
-  Youtube,
-  MapPin,
-  Link as LinkIcon,
-  CheckCircle2,
-  Loader2,
-  Sparkles,
-  Plus,
-  X
+  User, ArrowRight, ArrowLeft, Upload, MapPin,
+  Link as LinkIcon, Loader2, Plus, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
+import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
+
+const STEPS = [
+  { number: 1, title: 'Identidade' },
+  { number: 2, title: 'Especialização' },
+  { number: 3, title: 'Social & Contato' },
+  { number: 4, title: 'Finalização' },
+];
+
+const NICHES = [
+  'Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde',
+  'Viagens', 'Gastronomia', 'Pets', 'Família', 'Educação', 'Finanças', 'Humor', 'Música', 'Arte'
+];
+
+const CONTENT_TYPES = [
+  'Fotos', 'Reels', 'Stories', 'Vídeos Longos', 'Lives', 'Podcasts', 'Blogs', 'Unboxing', 'Reviews'
+];
+
+const PROFILE_SIZES = [
+  { value: 'nano', label: 'Nano (1K - 10K)', desc: 'Comunidade íntima e engajada' },
+  { value: 'micro', label: 'Micro (10K - 50K)', desc: 'Influência de nicho' },
+  { value: 'mid', label: 'Mid (50K - 500K)', desc: 'Alcance moderado' },
+  { value: 'macro', label: 'Macro (500K - 1M)', desc: 'Grande alcance' },
+  { value: 'mega', label: 'Mega (1M+)', desc: 'Celebridade digital' },
+];
+
+const PLATFORM_OPTIONS = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads', 'Pinterest', 'Twitch'];
 
 export default function OnboardingCreator() {
   const { refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [user, setUser] = useState(null);
   const [creator, setCreator] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [newPlatform, setNewPlatform] = useState({ name: '', handle: '', followers: '' });
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
@@ -52,61 +68,42 @@ export default function OnboardingCreator() {
     portfolio_url: '',
     rate_cash_min: '',
     rate_cash_max: '',
-    accepts_barter: true
+    accepts_barter: true,
+    contact_email: '',
+    contact_whatsapp: '',
   });
 
-  const [newPlatform, setNewPlatform] = useState({ name: '', handle: '', followers: '' });
-
-  const niches = [
-    'Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde', 
-    'Viagens', 'Gastronomia', 'Pets', 'Família', 'Educação', 'Finanças', 'Humor', 'Música', 'Arte'
-  ];
-
-  const contentTypes = [
-    'Fotos', 'Reels', 'Stories', 'Vídeos Longos', 'Lives', 'Podcasts', 'Blogs', 'Unboxing', 'Reviews'
-  ];
-
-  const profileSizes = [
-    { value: 'nano', label: 'Nano (1K - 10K)', description: 'Comunidade íntima e engajada' },
-    { value: 'micro', label: 'Micro (10K - 50K)', description: 'Influência de nicho' },
-    { value: 'mid', label: 'Mid (50K - 500K)', description: 'Alcance moderado' },
-    { value: 'macro', label: 'Macro (500K - 1M)', description: 'Grande alcance' },
-    { value: 'mega', label: 'Mega (1M+)', description: 'Celebridade digital' }
-  ];
-
-  const platformOptions = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads', 'Pinterest', 'Twitch'];
-
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
     try {
       const userData = await base44.auth.me();
       setUser(userData);
-      
+
       const creators = await base44.entities.Creator.filter({ user_id: userData.id });
       if (creators.length > 0) {
-        // Se já completou o onboarding, redireciona para o dashboard
-        if (creators[0].account_state === 'registered' || creators[0].subscription_status) {
-          window.location.href = createPageUrl('CreatorDashboard');
+        const existing = creators[0];
+        if (existing.account_state === 'ready') {
+          navigate(createPageUrl('CreatorDashboard'));
           return;
         }
-        
-        setCreator(creators[0]);
+        setCreator(existing);
+        setStep(existing.onboarding_step || 1);
         setFormData({
-          display_name: creators[0].display_name || userData.full_name,
-          bio: creators[0].bio || '',
-          avatar_url: creators[0].avatar_url || '',
-          niche: creators[0].niche || [],
-          platforms: creators[0].platforms || [],
-          profile_size: creators[0].profile_size || '',
-          content_types: creators[0].content_types || [],
-          location: userData.location || '',
-          portfolio_url: creators[0].portfolio_url || '',
-          rate_cash_min: creators[0].rate_cash_min || '',
-          rate_cash_max: creators[0].rate_cash_max || '',
-          accepts_barter: creators[0].accepts_barter !== false
+          display_name: existing.display_name || userData.full_name || '',
+          bio: existing.bio || '',
+          avatar_url: existing.avatar_url || '',
+          niche: existing.niche || [],
+          platforms: existing.platforms || [],
+          profile_size: existing.profile_size || '',
+          content_types: existing.content_types || [],
+          location: existing.location || '',
+          portfolio_url: existing.portfolio_url || '',
+          rate_cash_min: existing.rate_cash_min || '',
+          rate_cash_max: existing.rate_cash_max || '',
+          accepts_barter: existing.accepts_barter !== false,
+          contact_email: existing.contact_email || userData.email || '',
+          contact_whatsapp: existing.contact_whatsapp || '',
         });
       }
     } catch (error) {
@@ -132,13 +129,8 @@ export default function OnboardingCreator() {
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      handleChange('avatar_url', file_url);
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-    }
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    handleChange('avatar_url', file_url);
   };
 
   const addPlatform = () => {
@@ -152,56 +144,56 @@ export default function OnboardingCreator() {
   };
 
   const removePlatform = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      platforms: prev.platforms.filter((_, i) => i !== index)
-    }));
+    setFormData(prev => ({ ...prev, platforms: prev.platforms.filter((_, i) => i !== index) }));
+  };
+
+  const saveStepData = async (nextStep) => {
+    setSaving(true);
+    const dataToSave = { onboarding_step: nextStep };
+
+    if (step === 1) {
+      dataToSave.display_name = formData.display_name;
+      dataToSave.bio = formData.bio;
+      dataToSave.avatar_url = formData.avatar_url;
+      dataToSave.location = formData.location;
+    } else if (step === 2) {
+      dataToSave.niche = formData.niche;
+      dataToSave.content_types = formData.content_types;
+      dataToSave.profile_size = formData.profile_size;
+    } else if (step === 3) {
+      dataToSave.platforms = formData.platforms;
+      dataToSave.portfolio_url = formData.portfolio_url;
+      dataToSave.contact_email = formData.contact_email;
+      dataToSave.contact_whatsapp = formData.contact_whatsapp;
+      dataToSave.rate_cash_min = formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null;
+      dataToSave.rate_cash_max = formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null;
+      dataToSave.accepts_barter = formData.accepts_barter;
+    }
+
+    if (creator) {
+      await base44.entities.Creator.update(creator.id, dataToSave);
+    } else {
+      const created = await base44.entities.Creator.create({ user_id: user.id, ...dataToSave });
+      setCreator(created);
+    }
+    setSaving(false);
   };
 
   const handleNext = async () => {
     if (step < 4) {
+      await saveStepData(step + 1);
       setStep(step + 1);
-    } else {
-      setSaving(true);
-      try {
-        // Salvar localização no perfil User
-        await base44.auth.updateMe({
-          location: formData.location
-        });
-
-        const creatorData = {
-          display_name: formData.display_name,
-          bio: formData.bio,
-          avatar_url: formData.avatar_url,
-          niche: formData.niche,
-          platforms: formData.platforms,
-          profile_size: formData.profile_size,
-          content_types: formData.content_types,
-          portfolio_url: formData.portfolio_url,
-          rate_cash_min: formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null,
-          rate_cash_max: formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null,
-          accepts_barter: formData.accepts_barter,
-          account_state: 'registered'
-        };
-
-        if (creator) {
-          await base44.entities.Creator.update(creator.id, creatorData);
-        } else {
-          await base44.entities.Creator.create({
-            user_id: user.id,
-            ...creatorData
-          });
-        }
-        
-        // Atualizar o contexto de autenticação com o novo estado do perfil
-        await refreshProfile();
-        
-        window.location.href = createPageUrl('Subscription');
-      } catch (error) {
-        console.error('Error saving creator:', error);
-        setSaving(false);
-      }
     }
+  };
+
+  const handleBack = () => { if (step > 1) setStep(step - 1); };
+
+  const handleFinalize = async () => {
+    setSaving(true);
+    await base44.entities.Creator.update(creator.id, { account_state: 'ready', onboarding_step: 4 });
+    await refreshProfile();
+    setSaving(false);
+    navigate(createPageUrl('CreatorDashboard'));
   };
 
   if (loading) {
@@ -212,413 +204,203 @@ export default function OnboardingCreator() {
     );
   }
 
-  const steps = [
-    { number: 1, title: 'Perfil' },
-    { number: 2, title: 'Nichos' },
-    { number: 3, title: 'Plataformas' },
-    { number: 4, title: 'Valores' }
-  ];
-
-  const renderStepContent = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                {formData.avatar_url ? (
-                  <img 
-                    src={formData.avatar_url} 
-                    alt="Avatar" 
-                    className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-                  />
-                ) : (
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center border-4 border-white shadow-lg">
-                    <User className="w-10 h-10 text-orange-400" />
-                  </div>
-                )}
-                <label className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-orange-600 transition-colors shadow-lg">
-                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                  <Upload className="w-4 h-4 text-white" />
-                </label>
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="display_name" className="text-sm font-medium text-slate-700">
-                  Nome Artístico *
-                </Label>
-                <Input
-                  id="display_name"
-                  value={formData.display_name}
-                  onChange={(e) => handleChange('display_name', e.target.value)}
-                  placeholder="Como você quer ser conhecido"
-                  className="mt-2 h-12"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="bio" className="text-sm font-medium text-slate-700">
-                Bio * (mínimo 20 caracteres)
-              </Label>
-              <Textarea
-                id="bio"
-                value={formData.bio}
-                onChange={(e) => handleChange('bio', e.target.value)}
-                placeholder="Conte um pouco sobre você, seu estilo de conteúdo e o que te diferencia..."
-                className="mt-2 min-h-[120px]"
-              />
-              <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-slate-500">
-                  Esta descrição será exibida para marcas
-                </p>
-                <p className={`text-xs font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-orange-500'}`}>
-                  {formData.bio.length}/20
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="location" className="text-sm font-medium text-slate-700">
-                Localização
-              </Label>
-              <div className="relative mt-2">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) => handleChange('location', e.target.value)}
-                  placeholder="Ex: São Paulo, SP"
-                  className="pl-11 h-12"
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label className="text-sm font-medium text-slate-700">Nichos de Conteúdo *</Label>
-              <p className="text-sm text-slate-500 mt-1 mb-3">Selecione até 5 nichos que definem seu conteúdo</p>
-              <div className="flex flex-wrap gap-2">
-                {niches.map((niche) => (
-                  <Badge
-                    key={niche}
-                    variant={formData.niche.includes(niche) ? "default" : "outline"}
-                    className={`cursor-pointer transition-all ${
-                      formData.niche.includes(niche)
-                        ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                        : 'hover:bg-orange-50 hover:border-orange-300'
-                    }`}
-                    onClick={() => {
-                      if (formData.niche.length < 5 || formData.niche.includes(niche)) {
-                        toggleArrayItem('niche', niche);
-                      }
-                    }}
-                  >
-                    {niche}
-                  </Badge>
-                ))}
-              </div>
-              <p className="text-xs text-slate-500 mt-2">{formData.niche.length}/5 selecionados</p>
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium text-slate-700">Tipos de Conteúdo *</Label>
-              <p className="text-sm text-slate-500 mt-1 mb-3">O que você produz?</p>
-              <div className="flex flex-wrap gap-2">
-                {contentTypes.map((type) => (
-                  <Badge
-                    key={type}
-                    variant={formData.content_types.includes(type) ? "default" : "outline"}
-                    className={`cursor-pointer transition-all ${
-                      formData.content_types.includes(type)
-                        ? 'bg-violet-500 hover:bg-violet-600 text-white'
-                        : 'hover:bg-violet-50 hover:border-violet-300'
-                    }`}
-                    onClick={() => toggleArrayItem('content_types', type)}
-                  >
-                    {type}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="profile_size" className="text-sm font-medium text-slate-700">
-                Tamanho do Perfil *
-              </Label>
-              <p className="text-xs text-slate-500 mt-1 mb-2">
-                Baseado no total de seguidores em todas suas plataformas
-              </p>
-              <Select value={formData.profile_size} onValueChange={(v) => handleChange('profile_size', v)}>
-                <SelectTrigger className="mt-2 h-12">
-                  <SelectValue placeholder="Selecione seu alcance" />
-                </SelectTrigger>
-                <SelectContent>
-                  {profileSizes.map((size) => (
-                    <SelectItem key={size.value} value={size.value}>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{size.label}</span>
-                        <span className="text-slate-500 text-xs">{size.description}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label className="text-sm font-medium text-slate-700">Suas Plataformas *</Label>
-              <p className="text-sm text-slate-500 mt-1 mb-4">Adicione suas redes sociais com número de seguidores</p>
-              
-              {formData.platforms.length > 0 && (
-                <div className="space-y-2 mb-4">
-                  {formData.platforms.map((platform, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                      <div className="flex-1">
-                        <span className="font-medium text-slate-900">{platform.name}</span>
-                        <span className="text-slate-500 ml-2">@{platform.handle}</span>
-                      </div>
-                      <Badge variant="outline">{platform.followers?.toLocaleString()} seguidores</Badge>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removePlatform(index)}
-                        className="h-8 w-8 text-slate-400 hover:text-red-500"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="grid grid-cols-3 gap-2">
-                <Select value={newPlatform.name} onValueChange={(v) => setNewPlatform(p => ({ ...p, name: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Plataforma" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {platformOptions.map((opt) => (
-                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  value={newPlatform.handle}
-                  onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value }))}
-                  placeholder="@usuario"
-                />
-                <Input
-                  type="number"
-                  value={newPlatform.followers}
-                  onChange={(e) => setNewPlatform(p => ({ ...p, followers: e.target.value }))}
-                  placeholder="Seguidores"
-                />
-              </div>
-              <Button
-                variant="outline"
-                onClick={addPlatform}
-                disabled={!newPlatform.name || !newPlatform.handle}
-                className="w-full mt-2"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar Plataforma
-              </Button>
-            </div>
-
-            <div>
-              <Label htmlFor="portfolio_url" className="text-sm font-medium text-slate-700">
-                Link do Portfólio / Media Kit
-              </Label>
-              <div className="relative mt-2">
-                <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  id="portfolio_url"
-                  value={formData.portfolio_url}
-                  onChange={(e) => handleChange('portfolio_url', e.target.value)}
-                  placeholder="https://seumediakit.com"
-                  className="pl-11 h-12"
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label className="text-sm font-medium text-slate-700">Faixa de Valores (R$)</Label>
-              <p className="text-sm text-slate-500 mt-1 mb-3">Quanto você cobra por trabalho? (opcional)</p>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-xs text-slate-500">Mínimo</Label>
-                  <Input
-                    type="number"
-                    value={formData.rate_cash_min}
-                    onChange={(e) => handleChange('rate_cash_min', e.target.value)}
-                    placeholder="500"
-                    className="mt-1 h-12"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-slate-500">Máximo</Label>
-                  <Input
-                    type="number"
-                    value={formData.rate_cash_max}
-                    onChange={(e) => handleChange('rate_cash_max', e.target.value)}
-                    placeholder="5000"
-                    className="mt-1 h-12"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-              <Checkbox
-                id="accepts_barter"
-                checked={formData.accepts_barter}
-                onCheckedChange={(checked) => handleChange('accepts_barter', checked)}
-              />
-              <div className="flex-1">
-                <Label htmlFor="accepts_barter" className="text-sm font-medium cursor-pointer">
-                  Aceito permutas (produtos/serviços)
-                </Label>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Marcas poderão oferecer produtos ao invés de pagamento em dinheiro
-                </p>
-              </div>
-            </div>
-
-            <Card className="bg-emerald-50 border-emerald-200">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-emerald-900">Perfil quase pronto!</p>
-                    <p className="text-sm text-emerald-700 mt-1">
-                      Após concluir, você será direcionado para escolher seu plano e começar a ver oportunidades.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   const isStepValid = () => {
     switch (step) {
-      case 1:
-        return formData.display_name && formData.display_name.trim().length >= 2 && formData.bio && formData.bio.length >= 20;
-      case 2:
-        return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
-      case 3:
-        return formData.platforms.length > 0;
-      case 4:
-        return true; // Values are optional
-      default:
-        return false;
+      case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20;
+      case 2: return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
+      case 3: return formData.platforms.length > 0;
+      case 4: return true;
+      default: return false;
     }
   };
 
   return (
-    <div className="min-h-screen py-8 px-4">
+    <div className="min-h-screen py-8 px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Configure seu Perfil</h1>
-          <p className="text-slate-600">Complete seu perfil para acessar oportunidades</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Configure seu Perfil</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Complete seu perfil para acessar oportunidades</p>
         </div>
 
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {steps.map((s, index) => (
-            <React.Fragment key={s.number}>
-              <div className="flex items-center gap-2">
-                <div className={`
-                  w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
-                  ${step >= s.number 
-                    ? 'bg-orange-500 text-white' 
-                    : 'bg-slate-200 text-slate-500'}
-                `}>
-                  {step > s.number ? <CheckCircle2 className="w-5 h-5" /> : s.number}
-                </div>
-                <span className={`hidden sm:block text-sm ${step >= s.number ? 'text-slate-900' : 'text-slate-500'}`}>
-                  {s.title}
-                </span>
-              </div>
-              {index < steps.length - 1 && (
-                <div className={`w-6 h-0.5 ${step > s.number ? 'bg-orange-500' : 'bg-slate-200'}`} />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+        <OnboardingProgress steps={STEPS} currentStep={step} accentColor="orange" />
 
-        {/* Form Card */}
-        <Card className="shadow-xl border-0 mb-24">
+        <Card className="shadow-xl border-0 mb-24" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <CardContent className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                {renderStepContent()}
+              <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                
+                {step === 1 && (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-6">
+                      <div className="relative">
+                        {formData.avatar_url ? (
+                          <img src={formData.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
+                        ) : (
+                          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center border-4 border-white shadow-lg">
+                            <User className="w-10 h-10 text-orange-400" />
+                          </div>
+                        )}
+                        <label className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-orange-600 transition-colors shadow-lg">
+                          <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                          <Upload className="w-4 h-4 text-white" />
+                        </label>
+                      </div>
+                      <div className="flex-1">
+                        <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nome Artístico *</Label>
+                        <Input value={formData.display_name} onChange={(e) => handleChange('display_name', e.target.value)} placeholder="Como você quer ser conhecido" className="mt-2 h-12" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Bio * (mínimo 20 caracteres)</Label>
+                      <Textarea value={formData.bio} onChange={(e) => handleChange('bio', e.target.value)} placeholder="Conte sobre você, seu estilo de conteúdo..." className="mt-2 min-h-[120px]" />
+                      <p className={`text-xs mt-1 font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-orange-500'}`}>
+                        {formData.bio.length}/20
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Localização</Label>
+                      <div className="relative mt-2">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.location} onChange={(e) => handleChange('location', e.target.value)} placeholder="Ex: São Paulo, SP" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {step === 2 && (
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nichos de Conteúdo *</Label>
+                      <p className="text-sm mt-1 mb-3" style={{ color: 'var(--text-secondary)' }}>Selecione até 5 nichos</p>
+                      <div className="flex flex-wrap gap-2">
+                        {NICHES.map(niche => (
+                          <Badge key={niche} variant={formData.niche.includes(niche) ? "default" : "outline"}
+                            className={`cursor-pointer transition-all ${formData.niche.includes(niche) ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'hover:bg-orange-50 hover:border-orange-300'}`}
+                            onClick={() => { if (formData.niche.length < 5 || formData.niche.includes(niche)) toggleArrayItem('niche', niche); }}>
+                            {niche}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>{formData.niche.length}/5 selecionados</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tipos de Conteúdo *</Label>
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {CONTENT_TYPES.map(type => (
+                          <Badge key={type} variant={formData.content_types.includes(type) ? "default" : "outline"}
+                            className={`cursor-pointer transition-all ${formData.content_types.includes(type) ? 'bg-violet-500 hover:bg-violet-600 text-white' : 'hover:bg-violet-50 hover:border-violet-300'}`}
+                            onClick={() => toggleArrayItem('content_types', type)}>
+                            {type}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tamanho do Perfil *</Label>
+                      <Select value={formData.profile_size} onValueChange={(v) => handleChange('profile_size', v)}>
+                        <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione seu alcance" /></SelectTrigger>
+                        <SelectContent>
+                          {PROFILE_SIZES.map(s => (
+                            <SelectItem key={s.value} value={s.value}>
+                              <span className="font-medium">{s.label}</span>
+                              <span className="text-xs ml-2" style={{ color: 'var(--text-secondary)' }}>{s.desc}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+
+                {step === 3 && (
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Suas Plataformas *</Label>
+                      <p className="text-sm mt-1 mb-4" style={{ color: 'var(--text-secondary)' }}>Adicione suas redes sociais</p>
+                      {formData.platforms.length > 0 && (
+                        <div className="space-y-2 mb-4">
+                          {formData.platforms.map((p, i) => (
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                              <div className="flex-1">
+                                <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{p.name}</span>
+                                <span className="ml-2" style={{ color: 'var(--text-secondary)' }}>@{p.handle}</span>
+                              </div>
+                              <Badge variant="outline">{p.followers?.toLocaleString()} seguidores</Badge>
+                              <Button variant="ghost" size="icon" onClick={() => removePlatform(i)} className="h-8 w-8 text-red-400 hover:text-red-500">
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="grid grid-cols-3 gap-2">
+                        <Select value={newPlatform.name} onValueChange={(v) => setNewPlatform(p => ({ ...p, name: v }))}>
+                          <SelectTrigger><SelectValue placeholder="Plataforma" /></SelectTrigger>
+                          <SelectContent>{PLATFORM_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                        </Select>
+                        <Input value={newPlatform.handle} onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value }))} placeholder="@usuario" />
+                        <Input type="number" value={newPlatform.followers} onChange={(e) => setNewPlatform(p => ({ ...p, followers: e.target.value }))} placeholder="Seguidores" />
+                      </div>
+                      <Button variant="outline" onClick={addPlatform} disabled={!newPlatform.name || !newPlatform.handle} className="w-full mt-2">
+                        <Plus className="w-4 h-4 mr-2" /> Adicionar Plataforma
+                      </Button>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Portfólio / Media Kit</Label>
+                      <div className="relative mt-2">
+                        <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.portfolio_url} onChange={(e) => handleChange('portfolio_url', e.target.value)} placeholder="https://seumediakit.com" className="pl-11 h-12" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Faixa de Valores (R$)</Label>
+                      <div className="grid grid-cols-2 gap-4 mt-2">
+                        <div>
+                          <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Mínimo</Label>
+                          <Input type="number" value={formData.rate_cash_min} onChange={(e) => handleChange('rate_cash_min', e.target.value)} placeholder="500" className="mt-1 h-12" />
+                        </div>
+                        <div>
+                          <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Máximo</Label>
+                          <Input type="number" value={formData.rate_cash_max} onChange={(e) => handleChange('rate_cash_max', e.target.value)} placeholder="5000" className="mt-1 h-12" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                      <Checkbox id="accepts_barter" checked={formData.accepts_barter} onCheckedChange={(c) => handleChange('accepts_barter', c)} />
+                      <div className="flex-1">
+                        <Label htmlFor="accepts_barter" className="text-sm font-medium cursor-pointer" style={{ color: 'var(--text-primary)' }}>Aceito permutas (produtos/serviços)</Label>
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>Marcas poderão oferecer produtos ao invés de pagamento</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {step === 4 && (
+                  <OnboardingSuccess profileType="creator" onContinue={handleFinalize} />
+                )}
               </motion.div>
             </AnimatePresence>
 
-            {/* Navigation */}
-            <div className="flex items-center justify-between mt-8 pt-6 border-t">
-              <Button
-                variant="ghost"
-                onClick={() => setStep(step - 1)}
-                disabled={step === 1}
-                className="gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Voltar
-              </Button>
-              <Button
-                onClick={handleNext}
-                disabled={!isStepValid() || saving}
-                className="bg-orange-500 hover:bg-orange-600 gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                title={!isStepValid() ? 'Preencha todos os campos obrigatórios' : ''}
-              >
-                {saving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : step === 4 ? (
-                  <>
-                    Continuar
-                    <Sparkles className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Próximo
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-            </div>
+            {step < 4 && (
+              <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
+                  <ArrowLeft className="w-4 h-4" /> Voltar
+                </Button>
+                <Button onClick={handleNext} disabled={!isStepValid() || saving} className="bg-orange-500 hover:bg-orange-600 gap-2 disabled:opacity-50">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                    <>Próximo <ArrowRight className="w-4 h-4" /></>
+                  )}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

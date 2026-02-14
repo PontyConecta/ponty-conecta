@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
@@ -7,31 +8,58 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { 
-  Building2, 
-  ArrowRight, 
-  ArrowLeft,
-  Upload,
-  Globe,
-  Mail,
-  Phone,
-  CheckCircle2,
-  Loader2,
-  Sparkles
+  Building2, ArrowRight, ArrowLeft, Upload, Globe, Mail, Phone,
+  Loader2, Sparkles, Instagram, Linkedin
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
+import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
+import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
+
+const STEPS = [
+  { number: 1, title: 'Identidade' },
+  { number: 2, title: 'Especialização' },
+  { number: 3, title: 'Social & Contato' },
+  { number: 4, title: 'Finalização' },
+];
+
+const INDUSTRIES = [
+  { value: 'fashion', label: 'Moda & Vestuário' },
+  { value: 'beauty', label: 'Beleza & Cosméticos' },
+  { value: 'tech', label: 'Tecnologia' },
+  { value: 'food_beverage', label: 'Alimentos & Bebidas' },
+  { value: 'health_wellness', label: 'Saúde & Bem-estar' },
+  { value: 'travel', label: 'Viagens & Turismo' },
+  { value: 'entertainment', label: 'Entretenimento' },
+  { value: 'sports', label: 'Esportes & Fitness' },
+  { value: 'finance', label: 'Finanças' },
+  { value: 'education', label: 'Educação' },
+  { value: 'retail', label: 'Varejo' },
+  { value: 'automotive', label: 'Automotivo' },
+  { value: 'other', label: 'Outros' }
+];
+
+const COMPANY_SIZES = [
+  { value: '1-10', label: '1-10 funcionários' },
+  { value: '11-50', label: '11-50 funcionários' },
+  { value: '51-200', label: '51-200 funcionários' },
+  { value: '201-500', label: '201-500 funcionários' },
+  { value: '500+', label: '500+ funcionários' },
+];
+
+const BUDGETS = [
+  { value: 'Under R$1k', label: 'Menos de R$1.000' },
+  { value: 'R$1k-R$5k', label: 'R$1.000 - R$5.000' },
+  { value: 'R$5k-R$20k', label: 'R$5.000 - R$20.000' },
+  { value: 'R$20k+', label: 'Acima de R$20.000' },
+];
 
 export default function OnboardingBrand() {
   const { refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [user, setUser] = useState(null);
   const [brand, setBrand] = useState(null);
@@ -41,28 +69,17 @@ export default function OnboardingBrand() {
   const [formData, setFormData] = useState({
     company_name: '',
     industry: '',
+    company_size: '',
+    marketing_budget: '',
     description: '',
+    target_audience: '',
     website: '',
     contact_email: '',
     contact_phone: '',
-    logo_url: ''
+    social_instagram: '',
+    social_linkedin: '',
+    logo_url: '',
   });
-
-  const industries = [
-    { value: 'fashion', label: 'Moda & Vestuário' },
-    { value: 'beauty', label: 'Beleza & Cosméticos' },
-    { value: 'tech', label: 'Tecnologia' },
-    { value: 'food_beverage', label: 'Alimentos & Bebidas' },
-    { value: 'health_wellness', label: 'Saúde & Bem-estar' },
-    { value: 'travel', label: 'Viagens & Turismo' },
-    { value: 'entertainment', label: 'Entretenimento' },
-    { value: 'sports', label: 'Esportes & Fitness' },
-    { value: 'finance', label: 'Finanças' },
-    { value: 'education', label: 'Educação' },
-    { value: 'retail', label: 'Varejo' },
-    { value: 'automotive', label: 'Automotivo' },
-    { value: 'other', label: 'Outros' }
-  ];
 
   useEffect(() => {
     loadData();
@@ -72,36 +89,31 @@ export default function OnboardingBrand() {
     try {
       const userData = await base44.auth.me();
       setUser(userData);
-      
+
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
-        const existingBrand = brands[0];
+        const existing = brands[0];
 
-        // Se já completou o onboarding, redireciona para o dashboard
-        if (existingBrand.account_state === 'Ready') {
-          window.location.href = createPageUrl('BrandDashboard');
+        if (existing.account_state === 'ready') {
+          navigate(createPageUrl('BrandDashboard'));
           return;
         }
 
-        // Se tem company_name mas não está pronto, atualiza o estado e redireciona
-        if (existingBrand.company_name && existingBrand.account_state !== 'Ready') {
-          await base44.entities.Brand.update(existingBrand.id, {
-            account_state: 'Ready'
-          });
-          await refreshProfile();
-          window.location.href = createPageUrl('BrandDashboard');
-          return;
-        }
-        
-        setBrand(existingBrand);
+        setBrand(existing);
+        setStep(existing.onboarding_step || 1);
         setFormData({
-          company_name: existingBrand.company_name || userData.full_name + "'s Company",
-          industry: existingBrand.industry || '',
-          description: existingBrand.description || '',
-          website: existingBrand.website || '',
-          contact_email: existingBrand.contact_email || userData.email,
-          contact_phone: userData.phone || '',
-          logo_url: existingBrand.logo_url || ''
+          company_name: existing.company_name || '',
+          industry: existing.industry || '',
+          company_size: existing.company_size || '',
+          marketing_budget: existing.marketing_budget || '',
+          description: existing.description || '',
+          target_audience: existing.target_audience || '',
+          website: existing.website || '',
+          contact_email: existing.contact_email || userData.email,
+          contact_phone: existing.contact_phone || '',
+          social_instagram: existing.social_instagram || '',
+          social_linkedin: existing.social_linkedin || '',
+          logo_url: existing.logo_url || '',
         });
       }
     } catch (error) {
@@ -118,68 +130,64 @@ export default function OnboardingBrand() {
   const handleLogoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setUploadingLogo(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      handleChange('logo_url', file_url);
-    } catch (error) {
-      console.error('Error uploading logo:', error);
-      alert('Erro ao fazer upload da logo. Tente novamente.');
-    } finally {
-      setUploadingLogo(false);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    handleChange('logo_url', file_url);
+    setUploadingLogo(false);
+  };
+
+  // Save current step data incrementally
+  const saveStepData = async (nextStep) => {
+    setSaving(true);
+    const dataToSave = { onboarding_step: nextStep };
+
+    if (step === 1) {
+      dataToSave.company_name = formData.company_name;
+      dataToSave.logo_url = formData.logo_url;
+    } else if (step === 2) {
+      dataToSave.industry = formData.industry;
+      dataToSave.company_size = formData.company_size;
+      dataToSave.marketing_budget = formData.marketing_budget;
+      dataToSave.description = formData.description;
+      dataToSave.target_audience = formData.target_audience;
+    } else if (step === 3) {
+      dataToSave.website = formData.website;
+      dataToSave.contact_email = formData.contact_email;
+      dataToSave.contact_phone = formData.contact_phone;
+      dataToSave.social_instagram = formData.social_instagram;
+      dataToSave.social_linkedin = formData.social_linkedin;
     }
+
+    if (brand) {
+      await base44.entities.Brand.update(brand.id, dataToSave);
+    } else {
+      const created = await base44.entities.Brand.create({
+        user_id: user.id,
+        ...dataToSave,
+      });
+      setBrand(created);
+    }
+    setSaving(false);
   };
 
   const handleNext = async () => {
-    if (step < 3) {
+    if (step < 4) {
+      await saveStepData(step + 1);
       setStep(step + 1);
-    } else {
-      setSaving(true);
-      try {
-        // Salvar telefone no perfil User
-        await base44.auth.updateMe({
-          phone: formData.contact_phone
-        });
-
-        const brandData = {
-          company_name: formData.company_name,
-          industry: formData.industry,
-          description: formData.description,
-          website: formData.website,
-          contact_email: formData.contact_email,
-          logo_url: formData.logo_url,
-          account_state: 'Ready'
-        };
-
-        if (brand) {
-          await base44.entities.Brand.update(brand.id, brandData);
-        } else {
-          await base44.entities.Brand.create({
-            user_id: user.id,
-            ...brandData
-          });
-        }
-        
-        // Atualizar o contexto de autenticação com o novo estado do perfil
-        await refreshProfile();
-        
-        // Celebração com confetti
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-        
-        setTimeout(() => {
-          window.location.href = createPageUrl('BrandDashboard');
-        }, 1500);
-      } catch (error) {
-        console.error('Error saving brand:', error);
-        alert('Erro ao salvar. Tente novamente.');
-        setSaving(false);
-      }
     }
+  };
+
+  const handleBack = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  // Final step: mark as ready
+  const handleFinalize = async () => {
+    setSaving(true);
+    await base44.entities.Brand.update(brand.id, { account_state: 'ready', onboarding_step: 4 });
+    await refreshProfile();
+    setSaving(false);
+    navigate(createPageUrl('BrandDashboard'));
   };
 
   if (loading) {
@@ -190,203 +198,18 @@ export default function OnboardingBrand() {
     );
   }
 
-  const steps = [
-    { number: 1, title: 'Dados Básicos' },
-    { number: 2, title: 'Sobre a Marca' },
-    { number: 3, title: 'Contato' }
-  ];
-
-  const renderStepContent = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="company_name" className="text-sm font-medium text-slate-700">
-                Nome da Empresa *
-              </Label>
-              <Input
-                id="company_name"
-                value={formData.company_name}
-                onChange={(e) => handleChange('company_name', e.target.value)}
-                placeholder="Ex: Minha Empresa LTDA"
-                className="mt-2 h-12"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="industry" className="text-sm font-medium text-slate-700">
-                Segmento *
-              </Label>
-              <Select value={formData.industry} onValueChange={(v) => handleChange('industry', v)}>
-                <SelectTrigger className="mt-2 h-12">
-                  <SelectValue placeholder="Selecione o segmento" />
-                </SelectTrigger>
-                <SelectContent>
-                  {industries.map((ind) => (
-                    <SelectItem key={ind.value} value={ind.value}>
-                      {ind.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium text-slate-700">Logo da Marca *</Label>
-              <div className="mt-3 flex items-center gap-4">
-                <div className="relative">
-                  {formData.logo_url ? (
-                    <img 
-                      src={formData.logo_url} 
-                      alt="Logo" 
-                      className="w-24 h-24 rounded-xl object-cover border-4 border-white shadow-lg"
-                    />
-                  ) : (
-                    <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center border-4 border-white shadow-lg">
-                      <Building2 className="w-10 h-10 text-indigo-400" />
-                    </div>
-                  )}
-                  <label className="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors shadow-lg">
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleLogoUpload}
-                      disabled={uploadingLogo}
-                    />
-                    {uploadingLogo ? (
-                      <Loader2 className="w-4 h-4 text-white animate-spin" />
-                    ) : (
-                      <Upload className="w-4 h-4 text-white" />
-                    )}
-                  </label>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-slate-700">Adicione a logo da sua marca</p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Formatos aceitos: JPG, PNG. Tamanho recomendado: 400x400px
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="description" className="text-sm font-medium text-slate-700">
-                Sobre a Marca * (mínimo 20 caracteres)
-              </Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Conte um pouco sobre sua marca, valores e o que vocês fazem..."
-                className="mt-2 min-h-[150px]"
-              />
-              <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-slate-500">
-                  Esta descrição será exibida para criadores
-                </p>
-                <p className={`text-xs font-medium ${formData.description.length >= 20 ? 'text-emerald-600' : 'text-indigo-600'}`}>
-                  {formData.description.length}/20
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="website" className="text-sm font-medium text-slate-700">
-                Website
-              </Label>
-              <div className="relative mt-2">
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  id="website"
-                  value={formData.website}
-                  onChange={(e) => handleChange('website', e.target.value)}
-                  placeholder="https://suamarca.com.br"
-                  className="pl-11 h-12"
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="contact_email" className="text-sm font-medium text-slate-700">
-                Email de Contato *
-              </Label>
-              <div className="relative mt-2">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  id="contact_email"
-                  type="email"
-                  value={formData.contact_email}
-                  onChange={(e) => handleChange('contact_email', e.target.value)}
-                  placeholder="contato@suamarca.com.br"
-                  className="pl-11 h-12"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="contact_phone" className="text-sm font-medium text-slate-700">
-                Telefone
-              </Label>
-              <div className="relative mt-2">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  id="contact_phone"
-                  value={formData.contact_phone}
-                  onChange={(e) => handleChange('contact_phone', e.target.value)}
-                  placeholder="(11) 99999-9999"
-                  className="pl-11 h-12"
-                />
-              </div>
-            </div>
-
-            <Card className="bg-emerald-50 border-emerald-200">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-emerald-900">Quase lá!</p>
-                    <p className="text-sm text-emerald-700 mt-1">
-                      Após concluir, você será direcionado para escolher seu plano de assinatura e começar a criar campanhas.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   const isStepValid = () => {
     switch (step) {
-      case 1:
-        return formData.company_name && formData.company_name.trim().length >= 2 && formData.industry && formData.logo_url;
-      case 2:
-        return formData.description && formData.description.length >= 20;
-      case 3:
-        return formData.contact_email && formData.contact_email.includes('@');
-      default:
-        return false;
+      case 1: return formData.company_name?.trim().length >= 2;
+      case 2: return formData.industry && formData.description?.length >= 20;
+      case 3: return formData.contact_email?.includes('@');
+      case 4: return true;
+      default: return false;
     }
   };
 
   return (
-    <div className="min-h-screen py-8 px-4">
+    <div className="min-h-screen py-8 px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -395,36 +218,13 @@ export default function OnboardingBrand() {
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Configure sua Marca</h1>
-          <p className="text-slate-600">Complete seu perfil para começar a criar campanhas</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Configure sua Marca</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Complete seu perfil para começar a criar campanhas</p>
         </div>
 
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {steps.map((s, index) => (
-            <React.Fragment key={s.number}>
-              <div className="flex items-center gap-2">
-                <div className={`
-                  w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
-                  ${step >= s.number 
-                    ? 'bg-indigo-600 text-white' 
-                    : 'bg-slate-200 text-slate-500'}
-                `}>
-                  {step > s.number ? <CheckCircle2 className="w-5 h-5" /> : s.number}
-                </div>
-                <span className={`hidden sm:block text-sm ${step >= s.number ? 'text-slate-900' : 'text-slate-500'}`}>
-                  {s.title}
-                </span>
-              </div>
-              {index < steps.length - 1 && (
-                <div className={`w-8 h-0.5 ${step > s.number ? 'bg-indigo-600' : 'bg-slate-200'}`} />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+        <OnboardingProgress steps={STEPS} currentStep={step} accentColor="indigo" />
 
-        {/* Form Card */}
-        <Card className="shadow-xl border-0 mb-24">
+        <Card className="shadow-xl border-0 mb-24" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <CardContent className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
               <motion.div
@@ -434,42 +234,136 @@ export default function OnboardingBrand() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                {renderStepContent()}
+                {step === 1 && (
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nome da Empresa *</Label>
+                      <Input value={formData.company_name} onChange={(e) => handleChange('company_name', e.target.value)} placeholder="Ex: Minha Empresa LTDA" className="mt-2 h-12" />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Logo da Marca</Label>
+                      <div className="mt-3 flex items-center gap-4">
+                        <div className="relative">
+                          {formData.logo_url ? (
+                            <img src={formData.logo_url} alt="Logo" className="w-24 h-24 rounded-xl object-cover border-4 border-white shadow-lg" />
+                          ) : (
+                            <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center border-4 border-white shadow-lg">
+                              <Building2 className="w-10 h-10 text-indigo-400" />
+                            </div>
+                          )}
+                          <label className="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors shadow-lg">
+                            <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={uploadingLogo} />
+                            {uploadingLogo ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Upload className="w-4 h-4 text-white" />}
+                          </label>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Adicione a logo da sua marca</p>
+                          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>JPG, PNG. Recomendado: 400x400px</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {step === 2 && (
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Segmento *</Label>
+                      <Select value={formData.industry} onValueChange={(v) => handleChange('industry', v)}>
+                        <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione o segmento" /></SelectTrigger>
+                        <SelectContent>{INDUSTRIES.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tamanho da Empresa</Label>
+                      <Select value={formData.company_size} onValueChange={(v) => handleChange('company_size', v)}>
+                        <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>{COMPANY_SIZES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Orçamento Mensal de Marketing</Label>
+                      <Select value={formData.marketing_budget} onValueChange={(v) => handleChange('marketing_budget', v)}>
+                        <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>{BUDGETS.map(b => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Sobre a Marca * (mínimo 20 caracteres)</Label>
+                      <Textarea value={formData.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Conte sobre sua marca, valores e o que vocês fazem..." className="mt-2 min-h-[120px]" />
+                      <p className={`text-xs mt-1 font-medium ${formData.description.length >= 20 ? 'text-emerald-600' : 'text-indigo-600'}`}>
+                        {formData.description.length}/20
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Público-Alvo</Label>
+                      <Input value={formData.target_audience} onChange={(e) => handleChange('target_audience', e.target.value)} placeholder="Ex: Mulheres 25-35, classe A/B" className="mt-2 h-12" />
+                    </div>
+                  </div>
+                )}
+
+                {step === 3 && (
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email de Contato *</Label>
+                      <div className="relative mt-2">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="contato@suamarca.com.br" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone</Label>
+                      <div className="relative mt-2">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} placeholder="(11) 99999-9999" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Website</Label>
+                      <div className="relative mt-2">
+                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.website} onChange={(e) => handleChange('website', e.target.value)} placeholder="https://suamarca.com.br" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Instagram</Label>
+                      <div className="relative mt-2">
+                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.social_instagram} onChange={(e) => handleChange('social_instagram', e.target.value)} placeholder="@suamarca" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>LinkedIn</Label>
+                      <div className="relative mt-2">
+                        <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.social_linkedin} onChange={(e) => handleChange('social_linkedin', e.target.value)} placeholder="linkedin.com/company/suamarca" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {step === 4 && (
+                  <OnboardingSuccess profileType="brand" onContinue={handleFinalize} />
+                )}
               </motion.div>
             </AnimatePresence>
 
-            {/* Navigation */}
-            <div className="flex items-center justify-between mt-8 pt-6 border-t">
-              <Button
-                variant="ghost"
-                onClick={() => setStep(step - 1)}
-                disabled={step === 1}
-                className="gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Voltar
-              </Button>
-              <Button
-                onClick={handleNext}
-                disabled={!isStepValid() || saving}
-                className="bg-indigo-600 hover:bg-indigo-700 gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                title={!isStepValid() ? 'Preencha todos os campos obrigatórios' : ''}
-              >
-                {saving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : step === 3 ? (
-                  <>
-                    Continuar
-                    <Sparkles className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Próximo
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-            </div>
+            {step < 4 && (
+              <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
+                  <ArrowLeft className="w-4 h-4" /> Voltar
+                </Button>
+                <Button
+                  onClick={handleNext}
+                  disabled={!isStepValid() || saving}
+                  className="bg-indigo-600 hover:bg-indigo-700 gap-2 disabled:opacity-50"
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                    <>Próximo <ArrowRight className="w-4 h-4" /></>
+                  )}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
