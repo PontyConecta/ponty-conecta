@@ -50,49 +50,49 @@ export default function PaywallModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
         <DialogHeader className="text-center pb-4">
           <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-orange-500/30">
             <Lock className="w-8 h-8 text-white" />
           </div>
-          <DialogTitle className="text-2xl">{title}</DialogTitle>
-          <DialogDescription className="text-base">
+          <DialogTitle className="text-2xl" style={{ color: 'var(--text-primary)' }}>{title}</DialogTitle>
+          <DialogDescription className="text-base" style={{ color: 'var(--text-secondary)' }}>
             {description}
           </DialogDescription>
         </DialogHeader>
 
         {feature && (
-          <div className="p-4 bg-slate-50 rounded-xl mb-4">
+          <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-orange-500" />
-              <span className="font-medium text-slate-900">{feature}</span>
+              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{feature}</span>
             </div>
           </div>
         )}
 
         <div className="space-y-3 mb-6">
-          <p className="text-sm font-medium text-slate-700">Com a assinatura você tem:</p>
+          <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Com a assinatura você tem:</p>
           <div className="grid grid-cols-1 gap-2">
             {features.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span className="text-sm text-slate-600">{item}</span>
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{item}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl mb-4">
+        <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
           <div className="flex items-center justify-between">
             <div>
               <Badge className="bg-orange-100 text-orange-700 border-0 mb-1">
                 Oferta Especial
               </Badge>
-              <p className="text-sm text-slate-600">Apenas</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Apenas</p>
             </div>
             <div className="text-right">
-              <span className="text-3xl font-bold text-slate-900">R$ 45</span>
-              <span className="text-slate-500">/mês</span>
+              <span className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ 45</span>
+              <span style={{ color: 'var(--text-secondary)' }}>/mês</span>
             </div>
           </div>
         </div>
@@ -106,12 +106,12 @@ export default function PaywallModal({
             {isAuthenticated ? 'Assinar Agora' : 'Criar Conta e Assinar'}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-          <Button variant="ghost" onClick={onClose} className="text-slate-500">
+          <Button variant="ghost" onClick={onClose}>
             Continuar explorando
           </Button>
         </div>
 
-        <div className="flex items-center justify-center gap-4 pt-4 border-t text-xs text-slate-500">
+        <div className="flex items-center justify-center gap-4 pt-4 border-t text-xs" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
           <span className="flex items-center gap-1">
             <Shield className="w-3 h-3" />
             Pagamento seguro
