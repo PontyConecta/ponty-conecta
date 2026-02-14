@@ -29,11 +29,13 @@ Deno.serve(async (req) => {
 
         if (brands.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brands[0].id, {
-            subscription_status: 'premium'
+            subscription_status: 'premium',
+            plan_level: 'premium'
           });
         } else if (creators.length > 0) {
           result = await base44.asServiceRole.entities.Creator.update(creators[0].id, {
-            subscription_status: 'premium'
+            subscription_status: 'premium',
+            plan_level: 'premium'
           });
         }
         auditAction = 'user_activated';
@@ -47,11 +49,13 @@ Deno.serve(async (req) => {
 
         if (brandsDe.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brandsDe[0].id, {
-            subscription_status: 'starter'
+            subscription_status: 'starter',
+            plan_level: null
           });
         } else if (creatorsDe.length > 0) {
           result = await base44.asServiceRole.entities.Creator.update(creatorsDe[0].id, {
-            subscription_status: 'starter'
+            subscription_status: 'starter',
+            plan_level: null
           });
         }
         auditAction = 'user_deactivated';
@@ -64,14 +68,17 @@ Deno.serve(async (req) => {
         ]);
 
         const newStatus = data?.subscription_status || 'premium';
+        const newPlanLevel = (newStatus === 'premium' || newStatus === 'explorer' || newStatus === 'legacy') ? 'premium' : null;
 
         if (brandsSub.length > 0) {
           result = await base44.asServiceRole.entities.Brand.update(brandsSub[0].id, {
-            subscription_status: newStatus
+            subscription_status: newStatus,
+            plan_level: newPlanLevel
           });
         } else if (creatorsSub.length > 0) {
           result = await base44.asServiceRole.entities.Creator.update(creatorsSub[0].id, {
-            subscription_status: newStatus
+            subscription_status: newStatus,
+            plan_level: newPlanLevel
           });
         }
         auditAction = 'subscription_override';

@@ -64,6 +64,24 @@ export default function SelectProfile() {
   const selectProfile = async (type) => {
     setSelecting(true);
     try {
+      // Double-check no existing profile exists (prevent duplicates)
+      const [existingBrands, existingCreators] = await Promise.all([
+        base44.entities.Brand.filter({ user_id: user.id }),
+        base44.entities.Creator.filter({ user_id: user.id })
+      ]);
+
+      if (existingBrands.length > 0 || existingCreators.length > 0) {
+        // Profile already exists, redirect instead of creating duplicate
+        if (existingBrands.length > 0) {
+          const dest = existingBrands[0].account_state === 'ready' ? 'BrandDashboard' : 'OnboardingBrand';
+          navigate(createPageUrl(dest));
+        } else {
+          const dest = existingCreators[0].account_state === 'ready' ? 'CreatorDashboard' : 'OnboardingCreator';
+          navigate(createPageUrl(dest));
+        }
+        return;
+      }
+
       if (type === 'brand') {
         await base44.entities.Brand.create({
           user_id: user.id,
