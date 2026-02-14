@@ -214,7 +214,7 @@ export default function CreatorDashboard() {
             <div className="text-center py-8">
               <Target className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border-color)' }} />
               <p className="mb-3" style={{ color: 'var(--text-secondary)' }}>Você ainda não se candidatou a nenhuma campanha</p>
-              {!isExploring && (
+              {isSubscribed && (
                 <Link to={createPageUrl('OpportunityFeed')}>
                   <Button variant="outline" size="sm">
                     <Sparkles className="w-4 h-4 mr-2" />
