@@ -181,10 +181,15 @@ export default function OnboardingBrand() {
     if (step > 1) setStep(step - 1);
   };
 
-  // Final step: mark as ready
+  // Final step: mark as ready and create onboarding missions
   const handleFinalize = async () => {
     setSaving(true);
     await base44.entities.Brand.update(brand.id, { account_state: 'ready', onboarding_step: 4 });
+    // Create onboarding missions in background
+    base44.functions.invoke('createOnboardingMissions', {
+      profile_type: 'brand',
+      profile_id: brand.id
+    }).catch(err => console.error('Mission creation error:', err));
     await refreshProfile();
     setSaving(false);
     navigate(createPageUrl('BrandDashboard'));

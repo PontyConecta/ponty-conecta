@@ -23,6 +23,9 @@ import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
+import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
+import QuickActions from '@/components/dashboard/QuickActions';
+import DashboardMissions from '@/components/dashboard/DashboardMissions';
 
 
 export default function BrandDashboard() {
@@ -116,42 +119,38 @@ export default function BrandDashboard() {
     return <Badge className={`${style.color} border-0`}>{style.label}</Badge>;
   };
 
-  const isExploring = !brand?.subscription_status || brand.subscription_status === 'none';
+  const isSubscribed = brand?.subscription_status === 'premium' || brand?.subscription_status === 'explorer' || brand?.subscription_status === 'legacy';
+  const isNewUser = campaigns.length === 0 && applications.length === 0;
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-            Bem-vindo, {brand?.company_name?.split(' ')[0]} 👋
-          </h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
-            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
-          </p>
-          <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-            {isExploring 
-              ? 'Você está no modo exploração. Assine para criar campanhas.'
-              : 'Gerencie suas campanhas e conexões'}
-          </p>
+    <div className="space-y-6">
+      {/* Welcome Banner for new users */}
+      {isNewUser ? (
+        <WelcomeBanner 
+          profileType="brand" 
+          name={brand?.company_name?.split(' ')[0] || 'Marca'} 
+          isSubscribed={isSubscribed} 
+        />
+      ) : (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+              Olá, {brand?.company_name?.split(' ')[0]} 👋
+            </h1>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
+            </p>
+          </div>
+          <Link to={createPageUrl(isSubscribed ? 'CampaignManager' : 'Subscription')}>
+            <Button className={isSubscribed ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gradient-to-r from-orange-500 to-amber-500'}>
+              {isSubscribed ? <><Plus className="w-4 h-4 mr-2" />Nova Campanha</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
+            </Button>
+          </Link>
         </div>
-        
-        {isExploring ? (
-          <Link to={createPageUrl('Subscription')}>
-            <Button className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/20">
-              <Crown className="w-4 h-4 mr-2" />
-              Assinar Agora
-            </Button>
-          </Link>
-        ) : (
-          <Link to={createPageUrl('CampaignManager')}>
-            <Button className="bg-indigo-600 hover:bg-indigo-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Nova Campanha
-            </Button>
-          </Link>
-        )}
-      </div>
+      )}
+
+      {/* Quick Actions */}
+      <QuickActions profileType="brand" isSubscribed={isSubscribed} />
 
       {/* Profile Incomplete Alert */}
       {!profileValidation.isComplete && (
@@ -161,29 +160,8 @@ export default function BrandDashboard() {
         />
       )}
 
-      {/* Exploring Mode Alert */}
-      {isExploring && profileValidation.isComplete && (
-        <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
-                <Crown className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-slate-900">Modo Exploração</h3>
-                <p className="text-sm text-slate-600">
-                  Você pode navegar pela plataforma, mas precisa assinar para criar campanhas e contratar criadores.
-                </p>
-              </div>
-              <Link to={createPageUrl('Subscription')}>
-                <Button variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
-                  Ver Planos
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Onboarding Missions */}
+      <DashboardMissions userId={user?.id} profileType="brand" />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

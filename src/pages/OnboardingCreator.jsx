@@ -191,6 +191,11 @@ export default function OnboardingCreator() {
   const handleFinalize = async () => {
     setSaving(true);
     await base44.entities.Creator.update(creator.id, { account_state: 'ready', onboarding_step: 4 });
+    // Create onboarding missions in background
+    base44.functions.invoke('createOnboardingMissions', {
+      profile_type: 'creator',
+      profile_id: creator.id
+    }).catch(err => console.error('Mission creation error:', err));
     await refreshProfile();
     setSaving(false);
     navigate(createPageUrl('CreatorDashboard'));

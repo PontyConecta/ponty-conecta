@@ -26,6 +26,9 @@ import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateCreatorProfile } from '@/components/utils/profileValidation';
 import CreatorMetricsChart from '@/components/charts/CreatorMetricsChart';
 import CreatorReputationSection from '@/components/creator/CreatorReputationSection';
+import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
+import QuickActions from '@/components/dashboard/QuickActions';
+import DashboardMissions from '@/components/dashboard/DashboardMissions';
 
 export default function CreatorDashboard() {
   const [user, setUser] = useState(null);
@@ -95,7 +98,8 @@ export default function CreatorDashboard() {
     }
   ];
 
-  const isExploring = creator?.subscription_status !== 'active';
+  const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'explorer' || creator?.subscription_status === 'legacy';
+  const isNewUser = applications.length === 0 && deliveries.length === 0;
 
   const getStatusBadge = (status) => {
     const styles = {
@@ -110,39 +114,34 @@ export default function CreatorDashboard() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-            Bem-vindo, {creator?.display_name?.split(' ')[0]} ✨
-          </h1>
-          <p className="mt-1 transition-colors" style={{ color: 'var(--text-secondary)' }}>
-            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
-          </p>
-          <p className="text-sm mt-0.5 transition-colors" style={{ color: 'var(--text-secondary)' }}>
-            {isExploring 
-              ? 'Você está no modo exploração. Assine para se candidatar.'
-              : 'Confira novas oportunidades e suas entregas'}
-          </p>
+    <div className="space-y-6">
+      {/* Welcome Banner for new users */}
+      {isNewUser ? (
+        <WelcomeBanner 
+          profileType="creator" 
+          name={creator?.display_name?.split(' ')[0] || 'Criador'} 
+          isSubscribed={isSubscribed} 
+        />
+      ) : (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+              Olá, {creator?.display_name?.split(' ')[0]} ✨
+            </h1>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
+            </p>
+          </div>
+          <Link to={createPageUrl(isSubscribed ? 'OpportunityFeed' : 'Subscription')}>
+            <Button className={isSubscribed ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gradient-to-r from-orange-500 to-amber-500'}>
+              {isSubscribed ? <><Sparkles className="w-4 h-4 mr-2" />Oportunidades</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
+            </Button>
+          </Link>
         </div>
-        
-        {isExploring ? (
-          <Link to={createPageUrl('Subscription')}>
-            <Button className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-500/20">
-              <Crown className="w-4 h-4 mr-2" />
-              Assinar Agora
-            </Button>
-          </Link>
-        ) : (
-          <Link to={createPageUrl('OpportunityFeed')}>
-            <Button className="bg-orange-500 hover:bg-orange-600">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Ver Oportunidades
-            </Button>
-          </Link>
-        )}
-      </div>
+      )}
+
+      {/* Quick Actions */}
+      <QuickActions profileType="creator" isSubscribed={isSubscribed} />
 
       {/* Profile Incomplete Alert */}
       {!profileValidation.isComplete && (
@@ -152,29 +151,8 @@ export default function CreatorDashboard() {
         />
       )}
 
-      {/* Exploring Mode Alert */}
-      {isExploring && profileValidation.isComplete && (
-        <Card className="border-orange-200 transition-colors" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
-                <Crown className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Modo Exploração</h3>
-                <p className="text-sm transition-colors" style={{ color: 'var(--text-secondary)' }}>
-                  Você pode ver oportunidades, mas precisa assinar para se candidatar e executar trabalhos.
-                </p>
-              </div>
-              <Link to={createPageUrl('Subscription')}>
-                <Button variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
-                  Ver Planos
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Onboarding Missions */}
+      <DashboardMissions userId={user?.id} profileType="creator" />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
