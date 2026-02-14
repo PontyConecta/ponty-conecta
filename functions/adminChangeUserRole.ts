@@ -40,20 +40,30 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.Creator.delete(existingCreator.id);
     }
 
-    // Create new profile with incomplete state
+    // Preserve subscription data from old profile if available
+    const oldProfile = existingBrand || existingCreator;
+    const preservedSubscription = {
+      subscription_status: oldProfile?.subscription_status || 'starter',
+      plan_level: oldProfile?.plan_level || null,
+      stripe_customer_id: oldProfile?.stripe_customer_id || null
+    };
+
+    // Create new profile with incomplete state but preserved subscription
     if (new_role === 'brand') {
       await base44.asServiceRole.entities.Brand.create({
         user_id,
         company_name: 'Nova Marca',
         account_state: 'incomplete',
-        subscription_status: 'starter'
+        onboarding_step: 1,
+        ...preservedSubscription
       });
     } else {
       await base44.asServiceRole.entities.Creator.create({
         user_id,
         display_name: 'Novo Criador',
         account_state: 'incomplete',
-        subscription_status: 'starter'
+        onboarding_step: 1,
+        ...preservedSubscription
       });
     }
 

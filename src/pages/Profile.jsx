@@ -201,10 +201,17 @@ export default function Profile() {
         rate_cash_max: formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null
       } : formData;
 
-      const EntityModel = profileType === 'brand' ? base44.entities.Brand : base44.entities.Creator;
-      await EntityModel.update(profile.id, updates);
-      await refreshProfile();
-      toast.success('Perfil atualizado com sucesso!');
+      const response = await base44.functions.invoke('updateProfile', {
+        profile_type: profileType,
+        updates
+      });
+
+      if (response.data?.success) {
+        await refreshProfile();
+        toast.success('Perfil atualizado com sucesso!');
+      } else {
+        toast.error(response.data?.error || 'Erro ao salvar perfil.');
+      }
     } catch (error) {
       console.error('Error saving profile:', error);
       toast.error('Erro ao salvar perfil. Tente novamente.');
