@@ -19,6 +19,7 @@ import {
 import { motion } from 'framer-motion';
 
 export default function SelectProfile() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selecting, setSelecting] = useState(false);
@@ -38,18 +39,19 @@ export default function SelectProfile() {
       const userData = await base44.auth.me();
       setUser(userData);
 
-      // Check if user already has a profile
       const [brands, creators] = await Promise.all([
         base44.entities.Brand.filter({ user_id: userData.id }),
         base44.entities.Creator.filter({ user_id: userData.id })
       ]);
 
       if (brands.length > 0) {
-        window.location.href = createPageUrl('BrandDashboard');
+        const dest = brands[0].account_state === 'ready' ? 'BrandDashboard' : 'OnboardingBrand';
+        navigate(createPageUrl(dest));
         return;
       }
       if (creators.length > 0) {
-        window.location.href = createPageUrl('CreatorDashboard');
+        const dest = creators[0].account_state === 'ready' ? 'CreatorDashboard' : 'OnboardingCreator';
+        navigate(createPageUrl(dest));
         return;
       }
     } catch (error) {
@@ -65,17 +67,18 @@ export default function SelectProfile() {
       if (type === 'brand') {
         await base44.entities.Brand.create({
           user_id: user.id,
-          company_name: user.full_name + "'s Company",
-          account_state: 'exploring'
+          account_state: 'incomplete',
+          onboarding_step: 1
         });
-        window.location.href = createPageUrl('OnboardingBrand');
+        navigate(createPageUrl('OnboardingBrand'));
       } else {
         await base44.entities.Creator.create({
           user_id: user.id,
           display_name: user.full_name,
-          account_state: 'exploring'
+          account_state: 'incomplete',
+          onboarding_step: 1
         });
-        window.location.href = createPageUrl('OnboardingCreator');
+        navigate(createPageUrl('OnboardingCreator'));
       }
     } catch (error) {
       console.error('Error creating profile:', error);

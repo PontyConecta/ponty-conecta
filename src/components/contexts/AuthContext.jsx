@@ -33,15 +33,7 @@ export function AuthProvider({ children }) {
         if (brandProfiles.length > 0) {
           let brandProfile = brandProfiles[0];
 
-          // Auto-update account_state if profile is complete but still marked as incomplete
-          if (brandProfile.account_state === 'incomplete' && brandProfile.company_name) {
-            try {
-              await base44.entities.Brand.update(brandProfile.id, { account_state: 'ready' });
-              brandProfile = { ...brandProfile, account_state: 'ready' };
-            } catch (updateError) {
-              console.error('Erro ao atualizar account_state:', updateError);
-            }
-          }
+          // Keep incomplete state - onboarding flow handles the transition to 'ready'
 
           setProfile(brandProfile);
           setProfileType('brand');
@@ -52,15 +44,7 @@ export function AuthProvider({ children }) {
         if (creatorProfiles.length > 0) {
           let creatorProfile = creatorProfiles[0];
 
-          // Auto-update account_state if profile is complete but still marked as incomplete
-          if (creatorProfile.account_state === 'incomplete' && creatorProfile.display_name) {
-            try {
-              await base44.entities.Creator.update(creatorProfile.id, { account_state: 'ready' });
-              creatorProfile = { ...creatorProfile, account_state: 'ready' };
-            } catch (updateError) {
-              console.error('Erro ao atualizar account_state:', updateError);
-            }
-          }
+          // Keep incomplete state - onboarding flow handles the transition to 'ready'
 
           setProfile(creatorProfile);
           setProfileType('creator');
