@@ -161,19 +161,29 @@ async function handleSubscriptionUpdate(base44, subscription) {
     'unpaid': 'pending',
     'trialing': 'explorer'
   };
-  const mappedStatus = statusMap[subscription.status] || 'starter';
+  let mappedStatus = statusMap[subscription.status] || 'starter';
+
+  // If active but cancel_at_period_end is true, mark as legacy (still has access until period ends)
+  if (subscription.status === 'active' && subscription.cancel_at_period_end) {
+    mappedStatus = 'legacy';
+  }
 
   if (subscriptions.length > 0) {
     await base44.asServiceRole.entities.Subscription.update(subscriptions[0].id, {
       status: mappedStatus,
       next_billing_date: new Date(subscription.current_period_end * 1000).toISOString(),
-      last_billing_date: new Date(subscription.current_period_start * 1000).toISOString()
+      last_billing_date: new Date(subscription.current_period_start * 1000).toISOString(),
+      auto_renew: !subscription.cancel_at_period_end,
+      end_date: subscription.cancel_at_period_end 
+        ? new Date(subscription.current_period_end * 1000).toISOString().split('T')[0] 
+        : null
     });
   }
 
   // Update profile status and plan level
   const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
-  const planLevel = subscription.status === 'active' ? 'premium' : null;
+  // Keep plan_level active for premium and legacy (still has access until period ends)
+  const planLevel = (mappedStatus === 'premium' || mappedStatus === 'legacy' || mappedStatus === 'explorer') ? 'premium' : null;
   
   await base44.asServiceRole.entities[EntityType].update(profile.id, {
     subscription_status: mappedStatus,

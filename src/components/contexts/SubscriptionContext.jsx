@@ -18,7 +18,8 @@ export function SubscriptionProvider({ children }) {
     }
 
     const status = profile.subscription_status || 'starter';
-    const isPremium = status === 'premium' || status === 'explorer';
+    // legacy users still have access until their period ends
+    const isPremium = status === 'premium' || status === 'explorer' || status === 'legacy';
     const currentPlanLevel = profile.plan_level || null;
     
     setSubscriptionStatus(status);
@@ -31,8 +32,8 @@ export function SubscriptionProvider({ children }) {
     subscriptionStatus,
     planLevel,
     canAccessFeature: (feature) => {
-      // Premium users have full access
-      return isSubscribed;
+      // Premium/legacy/explorer users have full access based on plan_level from database
+      return isSubscribed && !!planLevel;
     }
   };
 
