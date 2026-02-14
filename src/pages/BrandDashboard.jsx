@@ -220,7 +220,7 @@ export default function BrandDashboard() {
               <div className="text-center py-8">
                   <Megaphone className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
                   <p style={{ color: 'var(--text-secondary)' }}>Nenhuma campanha criada</p>
-                {!isExploring && (
+                {isSubscribed && (
                   <Link to={createPageUrl('CampaignManager')}>
                     <Button variant="outline" size="sm" className="mt-3">
                       <Plus className="w-4 h-4 mr-2" />
