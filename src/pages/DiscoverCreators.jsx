@@ -67,7 +67,7 @@ export default function DiscoverCreators() {
       }
 
       // Buscar apenas criadores com perfil completo
-      const allCreators = await base44.entities.Creator.filter({ subscription_status: 'active' }, '-created_date');
+      const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date');
       
       // Filtrar criadores com informações básicas preenchidas
       const creatorsWithProfile = allCreators.filter(creator => {
