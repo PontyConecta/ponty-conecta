@@ -34,17 +34,12 @@ function LayoutContent({ children, currentPageName }) {
                 const { user, profile, profileType, loading, logout } = useAuth();
                 const { isSubscribed } = useSubscription();
               const navigate = useNavigate();
-              const [isMenuOpen, setIsMenuOpen] = useState(false);
               const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
 
               // Rastrear página visualizada
               useEffect(() => {
                 trackPageView(currentPageName);
               }, [currentPageName]);
-
-  const handleLogout = () => {
-    logout('/');
-  };
 
   // Pages que não precisam de layout completo
         const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
@@ -129,24 +124,6 @@ function LayoutContent({ children, currentPageName }) {
                 return null;
               }
             }
-
-  const brandNavItems = [
-    { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
-    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
-    { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
-    { name: 'Candidaturas', page: 'Applications', icon: Users },
-    { name: 'Entregas', page: 'Deliveries', icon: FileText },
-  ];
-
-  const creatorNavItems = [
-    { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
-    { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
-    { name: 'Marcas', page: 'DiscoverBrands', icon: Building2 },
-    { name: 'Candidaturas', page: 'Applications', icon: FileText },
-    { name: 'Entregas', page: 'Deliveries', icon: FileText },
-  ];
-
-  const navItems = profileType === 'brand' ? brandNavItems : creatorNavItems;
 
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
