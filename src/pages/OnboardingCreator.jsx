@@ -24,8 +24,9 @@ import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 const STEPS = [
   { number: 1, title: 'Identidade' },
   { number: 2, title: 'Especialização' },
-  { number: 3, title: 'Social & Contato' },
-  { number: 4, title: 'Finalização' },
+  { number: 3, title: 'Redes Sociais' },
+  { number: 4, title: 'Contato & Valores' },
+  { number: 5, title: 'Finalização' },
 ];
 
 const NICHES = [
@@ -163,6 +164,7 @@ export default function OnboardingCreator() {
     } else if (step === 3) {
       dataToSave.platforms = formData.platforms;
       dataToSave.portfolio_url = formData.portfolio_url;
+    } else if (step === 4) {
       dataToSave.contact_email = formData.contact_email;
       dataToSave.contact_whatsapp = formData.contact_whatsapp;
       dataToSave.rate_cash_min = formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null;
@@ -180,7 +182,7 @@ export default function OnboardingCreator() {
   };
 
   const handleNext = async () => {
-    if (step < 4) {
+    if (step < 5) {
       await saveStepData(step + 1);
       setStep(step + 1);
     }
@@ -190,7 +192,7 @@ export default function OnboardingCreator() {
 
   const handleFinalize = async () => {
     setSaving(true);
-    await base44.entities.Creator.update(creator.id, { account_state: 'ready', onboarding_step: 4 });
+    await base44.entities.Creator.update(creator.id, { account_state: 'ready', onboarding_step: 5 });
     // Create onboarding missions in background
     base44.functions.invoke('createOnboardingMissions', {
       profile_type: 'creator',
@@ -214,7 +216,8 @@ export default function OnboardingCreator() {
       case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20;
       case 2: return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
       case 3: return formData.platforms.length > 0;
-      case 4: return true;
+      case 4: return formData.contact_email?.includes('@');
+      case 5: return true;
       default: return false;
     }
   };
@@ -363,10 +366,25 @@ export default function OnboardingCreator() {
                         <Input value={formData.portfolio_url} onChange={(e) => handleChange('portfolio_url', e.target.value)} placeholder="https://seumediakit.com" className="pl-11 h-12" />
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {step === 4 && (
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email de Contato *</Label>
+                      <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="seu@email.com" className="mt-2 h-12" />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>WhatsApp</Label>
+                      <Input value={formData.contact_whatsapp} onChange={(e) => handleChange('contact_whatsapp', e.target.value)} placeholder="(11) 99999-9999" className="mt-2 h-12" />
+                    </div>
 
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Faixa de Valores (R$)</Label>
-                      <div className="grid grid-cols-2 gap-4 mt-2">
+                      <p className="text-xs mt-1 mb-2" style={{ color: 'var(--text-secondary)' }}>Quanto você cobra por publicação/campanha</p>
+                      <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Mínimo</Label>
                           <Input type="number" value={formData.rate_cash_min} onChange={(e) => handleChange('rate_cash_min', e.target.value)} placeholder="500" className="mt-1 h-12" />
@@ -388,13 +406,13 @@ export default function OnboardingCreator() {
                   </div>
                 )}
 
-                {step === 4 && (
+                {step === 5 && (
                   <OnboardingSuccess profileType="creator" onContinue={handleFinalize} />
                 )}
               </motion.div>
             </AnimatePresence>
 
-            {step < 4 && (
+            {step < 5 && (
               <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
                 <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
                   <ArrowLeft className="w-4 h-4" /> Voltar
