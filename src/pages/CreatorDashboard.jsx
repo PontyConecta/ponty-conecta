@@ -98,7 +98,7 @@ export default function CreatorDashboard() {
     }
   ];
 
-  const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'explorer' || creator?.subscription_status === 'legacy';
+  const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'legacy';
   const isNewUser = applications.length === 0 && deliveries.length === 0;
 
   const getStatusBadge = (status) => {

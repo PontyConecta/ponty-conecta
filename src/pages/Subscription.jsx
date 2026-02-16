@@ -128,7 +128,7 @@ export default function Subscription() {
   }
 
   const isBrand = profileType === 'brand';
-  const isSubscribed = profile?.subscription_status === 'premium' || profile?.subscription_status === 'explorer';
+  const isSubscribed = profile?.subscription_status === 'premium' || profile?.subscription_status === 'legacy';
 
   const brandFeatures = [
     'Criação ilimitada de campanhas',
@@ -173,7 +173,7 @@ export default function Subscription() {
 
   // Already subscribed view
   if (isSubscribed) {
-    const planName = profile?.plan_level === 'premium' ? 'Premium' : 'Explorer';
+    const planName = 'Premium';
     
     return (
       <div className="max-w-2xl mx-auto space-y-6">

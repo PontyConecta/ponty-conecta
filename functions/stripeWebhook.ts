@@ -153,13 +153,13 @@ async function handleSubscriptionUpdate(base44, subscription) {
     stripe_subscription_id: subscription.id 
   });
 
-  // Map Stripe status to our premium naming
+  // Map Stripe status to our 4-tier system: starter, premium, pending, legacy
   const statusMap = {
     'active': 'premium',
     'past_due': 'pending',
     'canceled': 'legacy',
     'unpaid': 'pending',
-    'trialing': 'explorer'
+    'trialing': 'premium'
   };
   let mappedStatus = statusMap[subscription.status] || 'starter';
 
@@ -183,7 +183,7 @@ async function handleSubscriptionUpdate(base44, subscription) {
   // Update profile status and plan level
   const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
   // Keep plan_level active for premium and legacy (still has access until period ends)
-  const planLevel = (mappedStatus === 'premium' || mappedStatus === 'legacy' || mappedStatus === 'explorer') ? 'premium' : null;
+  const planLevel = (mappedStatus === 'premium' || mappedStatus === 'legacy') ? 'premium' : null;
   
   await base44.asServiceRole.entities[EntityType].update(profile.id, {
     subscription_status: mappedStatus,

@@ -18,8 +18,8 @@ export function SubscriptionProvider({ children }) {
     }
 
     const status = profile.subscription_status || 'starter';
-    // legacy users still have access until their period ends
-    const isPremium = status === 'premium' || status === 'explorer' || status === 'legacy';
+    // premium and legacy users have full access (legacy = cancelled but still within billing period)
+    const isPremium = status === 'premium' || status === 'legacy';
     const currentPlanLevel = profile.plan_level || null;
     
     setSubscriptionStatus(status);
@@ -32,7 +32,7 @@ export function SubscriptionProvider({ children }) {
     subscriptionStatus,
     planLevel,
     canAccessFeature: (feature) => {
-      // Premium/legacy/explorer users have full access based on plan_level from database
+      // Premium/legacy users have full access based on plan_level from database
       return isSubscribed && !!planLevel;
     }
   };
