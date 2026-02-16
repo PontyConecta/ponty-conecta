@@ -37,6 +37,7 @@ import {
 import { motion } from 'framer-motion';
 import { validateTransition } from '../components/utils/stateTransitions';
 import { toast } from 'sonner';
+import confetti from 'canvas-confetti';
 import { arrayToMap } from '../components/utils/entityHelpers';
 import { formatDate } from '../components/utils/formatters';
 import { usePagination } from '../components/hooks/usePagination';
@@ -169,6 +170,10 @@ export default function Applications() {
         status: 'pending',
         deadline: campaign.deadline
       });
+
+      // Confetti celebration on match!
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      toast.success('Match! Candidatura aceita com sucesso 🎉');
 
       await loadData();
       setSelectedApplication(null);

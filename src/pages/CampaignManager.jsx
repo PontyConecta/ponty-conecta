@@ -4,66 +4,24 @@ import { useAuth } from '@/components/contexts/AuthContext';
 import { useSubscription } from '@/components/contexts/SubscriptionContext';
 import { toast } from '@/components/utils/toast';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { formatDate, formatCurrencyRange } from '../components/utils/formatters';
-import { campaignSchema, validate } from '../components/utils/validationSchemas';
 import { validateTransition } from '../components/utils/stateTransitions';
 import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import PaywallModal from '@/components/PaywallModal';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import { 
-  Plus, 
-  Search,
-  Megaphone,
-  Calendar,
-  DollarSign,
-  Users,
-  Edit,
-  Eye,
-  Pause,
-  Play,
-  Loader2,
-  Gift,
-  Package,
-  Target,
-  MapPin,
-  MoreVertical,
-  XCircle,
-  CheckCircle2,
-  AlertTriangle,
-  Hash,
-  AtSign,
-  ListChecks,
-  Ban,
-  Upload
+  Plus, Megaphone, Calendar, DollarSign, Users, Edit, Pause, Play,
+  Gift, Package, Target, MoreVertical, XCircle, CheckCircle2, Ban
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CampaignCreateMultiStep from '@/components/campaign/CampaignCreateMultiStep';
