@@ -30,9 +30,9 @@ export default function BottomNav({ profileType, currentPageName }) {
 
   const guestNavItems = [
     { name: 'Início', page: 'Home', icon: LayoutDashboard },
-    { name: 'Campanhas', page: 'ExploreCampaigns', icon: Sparkles },
-    { name: 'Criadores', page: 'ExploreCreators', icon: Search },
-    { name: 'Marcas', page: 'ExploreBrands', icon: Building2 },
+    { name: 'Campanhas', page: 'OpportunityFeed', icon: Sparkles },
+    { name: 'Criadores', page: 'DiscoverCreators', icon: Search },
+    { name: 'Marcas', page: 'DiscoverBrands', icon: Building2 },
   ];
 
   const navItems = profileType === 'brand' 

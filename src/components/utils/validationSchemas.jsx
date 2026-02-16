@@ -7,7 +7,7 @@ import { z } from 'zod';
 export const campaignSchema = z.object({
   title: z.string().min(3, 'Título deve ter no mínimo 3 caracteres').max(100, 'Título muito longo'),
   description: z.string().min(10, 'Descrição deve ter no mínimo 10 caracteres').max(2000, 'Descrição muito longa'),
-  requirements: z.string().min(10, 'Requisitos devem ter no mínimo 10 caracteres'),
+  requirements: z.string().optional().nullable(),
   platforms: z.array(z.string()).min(1, 'Selecione pelo menos uma plataforma'),
   content_type: z.array(z.string()).optional(),
   niche_required: z.array(z.string()).optional(),
@@ -19,7 +19,7 @@ export const campaignSchema = z.object({
   budget_min: z.number().min(0, 'Valor mínimo inválido').optional().nullable(),
   budget_max: z.number().min(0, 'Valor máximo inválido').optional().nullable(),
   slots_total: z.number().min(1, 'Deve ter pelo menos 1 vaga').max(100, 'Máximo de 100 vagas'),
-  proof_requirements: z.string().min(10, 'Especifique como provar a entrega'),
+  proof_requirements: z.string().optional().nullable(),
 }).refine((data) => {
   // Se for cash ou mixed, deve ter budget
   if (data.remuneration_type === 'cash' || data.remuneration_type === 'mixed') {
