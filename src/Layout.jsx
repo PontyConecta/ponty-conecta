@@ -13,33 +13,11 @@ import AdminMenu from '@/components/AdminMenu';
 import BackButton from '@/components/BackButton';
 import { Toaster } from 'sonner';
 import { 
-  LayoutDashboard, 
-  Megaphone, 
-  Users, 
-  FileText, 
-  Settings, 
-  LogOut,
-  Menu,
-  X,
-  Crown,
-  Sparkles,
-  Bell,
-  ChevronDown,
-  Search,
-  Building2,
-  User,
-  HelpCircle,
-  BarChart3,
-  Zap
-} from 'lucide-react';
+        Crown,
+        HelpCircle
+      } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// dropdown-menu no longer needed in layout
 import {
   AlertDialog,
   AlertDialogAction,
