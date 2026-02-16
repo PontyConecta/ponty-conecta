@@ -11,7 +11,9 @@ import {
   Search,
   Sparkles,
   Building2,
-  Crown
+  Crown,
+  Settings,
+  User
 } from 'lucide-react';
 
 export default function Sidebar({ profileType, currentPageName, isSubscribed }) {
@@ -21,6 +23,9 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Candidaturas', page: 'Applications', icon: Users },
     { name: 'Entregas', page: 'Deliveries', icon: FileText },
+    { type: 'divider' },
+    { name: 'Meu Perfil', page: 'Profile', icon: User },
+    { name: 'Configurações', page: 'Settings', icon: Settings },
   ];
 
   const creatorNavItems = [
@@ -29,6 +34,9 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
     { name: 'Oportunidades', page: 'OpportunityFeed', icon: Sparkles },
     { name: 'Minhas Candidaturas', page: 'MyApplications', icon: FileText },
     { name: 'Minhas Entregas', page: 'MyDeliveries', icon: FileText },
+    { type: 'divider' },
+    { name: 'Meu Perfil', page: 'Profile', icon: User },
+    { name: 'Configurações', page: 'Settings', icon: Settings },
   ];
 
   const navItems = profileType === 'brand' ? brandNavItems : creatorNavItems;
@@ -37,7 +45,10 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
     <aside className="hidden lg:flex fixed left-0 top-16 bottom-0 w-64 flex-col transition-colors" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
       {/* Navigation */}
       <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
+        {navItems.map((item, index) => {
+          if (item.type === 'divider') {
+            return <div key={`divider-${index}`} className="my-3 border-t" style={{ borderColor: 'var(--border-color)' }} />;
+          }
           const isActive = currentPageName === item.page;
           return (
             <Link

@@ -4,11 +4,10 @@ import { createPageUrl } from '@/utils';
 import { 
   LayoutDashboard, 
   Megaphone, 
-  Users, 
   FileText, 
   Sparkles,
   Search,
-  User,
+  Settings,
   Building2
 } from 'lucide-react';
 
@@ -18,7 +17,7 @@ export default function BottomNav({ profileType, currentPageName }) {
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
     { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
-    { name: 'Perfil', page: 'Profile', icon: Building2 },
+    { name: 'Config', page: 'Settings', icon: Settings },
   ];
 
   const creatorNavItems = [
@@ -26,7 +25,7 @@ export default function BottomNav({ profileType, currentPageName }) {
     { name: 'Vagas', page: 'OpportunityFeed', icon: Sparkles },
     { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
     { name: 'Entregas', page: 'MyDeliveries', icon: FileText },
-    { name: 'Perfil', page: 'Profile', icon: User },
+    { name: 'Config', page: 'Settings', icon: Settings },
   ];
 
   const guestNavItems = [
