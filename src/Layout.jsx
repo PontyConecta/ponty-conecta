@@ -17,7 +17,6 @@ import {
         HelpCircle
       } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-// dropdown-menu no longer needed in layout
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +27,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 
 function LayoutContent({ children, currentPageName }) {
                 const { user, profile, profileType, loading, logout } = useAuth();
