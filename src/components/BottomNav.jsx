@@ -31,7 +31,7 @@ export default function BottomNav({ profileType, currentPageName }) {
   const guestNavItems = [
     { name: 'Início', page: 'Home', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'ExploreCampaigns', icon: Sparkles },
-    { name: 'Criadores', page: 'ExploreCreators', icon: Users },
+    { name: 'Criadores', page: 'ExploreCreators', icon: Search },
     { name: 'Marcas', page: 'ExploreBrands', icon: Building2 },
   ];
 
