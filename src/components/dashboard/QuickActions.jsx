@@ -16,7 +16,7 @@ const brandActions = [
 ];
 
 const creatorActions = [
-  { label: 'Oportunidades', icon: Sparkles, page: 'OpportunityFeed', color: 'bg-orange-500' },
+  { label: 'Campanhas', icon: Megaphone, page: 'OpportunityFeed', color: 'bg-orange-500' },
   { label: 'Descobrir Marcas', icon: Building2, page: 'DiscoverBrands', color: 'bg-violet-500' },
   { label: 'Candidaturas', icon: FileText, page: 'Applications', color: 'bg-amber-500' },
   { label: 'Meu Perfil', icon: UserCircle, page: 'Profile', color: 'bg-emerald-500' },

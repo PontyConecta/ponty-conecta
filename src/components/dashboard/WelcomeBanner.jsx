@@ -30,7 +30,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
               <p className="text-white/80 mb-4 max-w-lg">
                 {isBrand
                   ? 'Sua marca está configurada. Comece criando sua primeira campanha para encontrar criadores perfeitos.'
-                  : 'Seu perfil está pronto. Explore oportunidades e candidate-se para trabalhar com grandes marcas.'
+                  : 'Seu perfil está pronto. Explore campanhas e candidate-se para trabalhar com grandes marcas.'
                 }
               </p>
               
@@ -39,7 +39,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
                   <Link to={createPageUrl(isBrand ? 'CampaignManager' : 'OpportunityFeed')}>
                     <Button className="bg-white text-slate-900 hover:bg-white/90 shadow-lg">
                       <Sparkles className="w-4 h-4 mr-2" />
-                      {isBrand ? 'Criar Campanha' : 'Ver Oportunidades'}
+                      {isBrand ? 'Criar Campanha' : 'Ver Campanhas'}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>

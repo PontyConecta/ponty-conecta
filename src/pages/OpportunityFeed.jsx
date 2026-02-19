@@ -247,7 +247,7 @@ export default function OpportunityFeed() {
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
             <Sparkles className="w-7 h-7 lg:w-8 lg:h-8" style={{ color: 'var(--accent-primary)' }} />
-            Oportunidades
+            Campanhas
           </h1>
           <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
             {filteredCampaigns.length} campanhas disponíveis
@@ -274,7 +274,7 @@ export default function OpportunityFeed() {
               <div className="flex-1">
                 <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Modo Exploração</h3>
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  Você pode ver as oportunidades, mas precisa assinar para se candidatar.
+                  Você pode ver as campanhas, mas precisa assinar para se candidatar.
                 </p>
               </div>
               <Button 
@@ -447,7 +447,7 @@ export default function OpportunityFeed() {
           <CardContent className="p-12 text-center">
             <Sparkles className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
             <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-              Nenhuma oportunidade encontrada
+              Nenhuma campanha encontrada
             </h3>
             <p style={{ color: 'var(--text-secondary)' }}>
               {searchTerm || filterPlatform !== 'all' || filterRemuneration !== 'all'

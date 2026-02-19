@@ -134,7 +134,7 @@ export default function CreatorDashboard() {
           </div>
           <Link to={createPageUrl(isSubscribed ? 'OpportunityFeed' : 'Subscription')}>
             <Button className={isSubscribed ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gradient-to-r from-orange-500 to-amber-500'}>
-              {isSubscribed ? <><Sparkles className="w-4 h-4 mr-2" />Oportunidades</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
+              {isSubscribed ? <><Megaphone className="w-4 h-4 mr-2" />Campanhas</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
             </Button>
           </Link>
         </div>
@@ -218,7 +218,7 @@ export default function CreatorDashboard() {
                 <Link to={createPageUrl('OpportunityFeed')}>
                   <Button variant="outline" size="sm">
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Explorar Oportunidades
+                    Explorar Campanhas
                   </Button>
                 </Link>
               )}

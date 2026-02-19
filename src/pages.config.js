@@ -70,9 +70,9 @@ import OnboardingCreator from './pages/OnboardingCreator';
 import OpportunityFeed from './pages/OpportunityFeed';
 import Profile from './pages/Profile';
 import SelectProfile from './pages/SelectProfile';
+import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import SubscriptionPage from './pages/SubscriptionPage';
-import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -100,9 +100,9 @@ export const PAGES = {
     "OpportunityFeed": OpportunityFeed,
     "Profile": Profile,
     "SelectProfile": SelectProfile,
+    "Settings": Settings,
     "Subscription": Subscription,
     "SubscriptionPage": SubscriptionPage,
-    "Settings": Settings,
 }
 
 export const pagesConfig = {

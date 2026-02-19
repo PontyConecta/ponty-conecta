@@ -22,7 +22,7 @@ export default function BottomNav({ profileType, currentPageName }) {
 
   const creatorNavItems = [
     { name: 'Início', page: 'CreatorDashboard', icon: LayoutDashboard },
-    { name: 'Vagas', page: 'OpportunityFeed', icon: Sparkles },
+    { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone },
     { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
     { name: 'Entregas', page: 'MyDeliveries', icon: FileText },
     { name: 'Config', page: 'Settings', icon: Settings },
