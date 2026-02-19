@@ -3,7 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, Circle, Flame, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { CheckCircle2, Circle, Flame, Loader2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function DashboardMissions({ userId, profileType }) {
@@ -63,33 +66,45 @@ export default function DashboardMissions({ userId, profileType }) {
       <CardContent className="space-y-2 pt-0">
         {missions.map((mission, index) => {
           const isCompleted = mission.status === 'completed';
+          const Wrapper = mission.target_action_url && !isCompleted ? Link : 'div';
+          const wrapperProps = mission.target_action_url && !isCompleted 
+            ? { to: createPageUrl(mission.target_action_url) } 
+            : {};
+
           return (
             <motion.div
               key={mission.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              className={`flex items-center gap-3 p-3 rounded-lg transition-all ${isCompleted ? 'opacity-60' : ''}`}
-              style={{ backgroundColor: isCompleted ? 'transparent' : 'var(--bg-primary)' }}
             >
-              {isCompleted ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-              ) : (
-                <Circle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--border-color)' }} />
-              )}
-              <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium ${isCompleted ? 'line-through' : ''}`} style={{ color: 'var(--text-primary)' }}>
-                  {mission.title}
-                </p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                  {mission.description}
-                </p>
-              </div>
-              {mission.reward_points > 0 && (
-                <Badge className={`text-xs flex-shrink-0 ${isCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'} border-0`}>
-                  +{mission.reward_points}pts
-                </Badge>
-              )}
+              <Wrapper
+                {...wrapperProps}
+                className={`flex items-center gap-3 p-3 rounded-lg transition-all ${isCompleted ? 'opacity-60' : 'cursor-pointer hover:opacity-80'}`}
+                style={{ backgroundColor: isCompleted ? 'transparent' : 'var(--bg-primary)' }}
+              >
+                {isCompleted ? (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                ) : (
+                  <Circle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--border-color)' }} />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium ${isCompleted ? 'line-through' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                    {mission.title}
+                  </p>
+                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                    {mission.description}
+                  </p>
+                </div>
+                {!isCompleted && mission.target_action_url && (
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--accent-primary)' }} />
+                )}
+                {mission.reward_points > 0 && (
+                  <Badge className={`text-xs flex-shrink-0 ${isCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'} border-0`}>
+                    +{mission.reward_points}pts
+                  </Badge>
+                )}
+              </Wrapper>
             </motion.div>
           );
         })}
