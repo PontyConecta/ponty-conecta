@@ -32,10 +32,10 @@ Deno.serve(async (req) => {
 
     // Plan pricing - Stripe Price IDs
     const plans = {
-      creator_monthly: { price_id: 'price_1T0mKj5mO0MOlPiwygqDD9Ik' },
-      creator_annual: { price_id: 'price_1T0mL35mO0MOlPiwL0KgYmF0' },
-      brand_monthly: { price_id: 'price_1T0mLs5mO0MOlPiwAPa2REpZ' },
-      brand_annual: { price_id: 'price_1T0mM45mO0MOlPiw24tnfQAG' }
+      creator_monthly: { price_id: 'price_1T2eqHClKKJL3yH7ahYUD7DO' },
+      creator_annual: { price_id: 'price_1T2etyClKKJL3yH772SRUgHK' },
+      brand_monthly: { price_id: 'price_1T2evuClKKJL3yH71JXx0PN3' },
+      brand_annual: { price_id: 'price_1T2evuClKKJL3yH7ndV4xoB0' }
     };
 
     const planConfig = plans[plan_type];
