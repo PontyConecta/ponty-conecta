@@ -128,7 +128,7 @@ export default function Subscription() {
   }
 
   const isBrand = profileType === 'brand';
-  const isSubscribed = profile?.subscription_status === 'premium' || profile?.subscription_status === 'legacy';
+  const isSubscribed = profile?.subscription_status === 'premium' || profile?.subscription_status === 'legacy' || (profile?.subscription_status === 'trial' && profile?.trial_end_date && new Date(profile.trial_end_date) > new Date());
 
   const brandFeatures = [
     'Criação ilimitada de campanhas',

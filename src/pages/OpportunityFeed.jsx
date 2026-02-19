@@ -78,7 +78,7 @@ export default function OpportunityFeed() {
       const creators = await base44.entities.Creator.filter({ user_id: userData.id });
       if (creators.length > 0) {
         setCreator(creators[0]);
-        setIsSubscribed(creators[0].subscription_status === 'premium' || creators[0].subscription_status === 'legacy');
+        setIsSubscribed(creators[0].subscription_status === 'premium' || creators[0].subscription_status === 'legacy' || (creators[0].subscription_status === 'trial' && creators[0].trial_end_date && new Date(creators[0].trial_end_date) > new Date()));
         
         // Validar completude do perfil
         const validation = validateCreatorProfile(creators[0]);

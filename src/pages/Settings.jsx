@@ -50,7 +50,8 @@ export default function Settings() {
     starter: 'Gratuito',
     premium: 'Premium',
     pending: 'Pendente',
-    legacy: 'Legado'
+    legacy: 'Legado',
+    trial: 'Teste Grátis'
   };
 
   return (

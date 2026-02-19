@@ -146,7 +146,7 @@ export default function CampaignManager() {
         </div>
         
         <Button 
-          className="bg-indigo-600 hover:bg-indigo-700"
+          className="bg-[#9038fa] hover:bg-[#7a2de0]"
           onClick={() => { 
             if (!profileValidation.isComplete) {
               toast.error('Complete seu perfil antes de criar campanhas');
@@ -347,18 +347,18 @@ export default function CampaignManager() {
             </p>
             {!searchTerm && filterStatus === 'all' && (
               <Button 
-                onClick={() => {
-                  if (!profileValidation.isComplete) {
-                    toast.error('Complete seu perfil antes de criar campanhas');
-                    return;
-                  }
-                  if (!isSubscribed) {
-                    setShowPaywall(true);
-                  } else {
-                    setIsCreateOpen(true);
-                  }
-                }} 
-                className="bg-indigo-600 hover:bg-indigo-700"
+              onClick={() => {
+                if (!profileValidation.isComplete) {
+                  toast.error('Complete seu perfil antes de criar campanhas');
+                  return;
+                }
+                if (!isSubscribed) {
+                  setShowPaywall(true);
+                } else {
+                  setIsCreateOpen(true);
+                }
+              }} 
+              className="bg-[#9038fa] hover:bg-[#7a2de0]"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Campanha
