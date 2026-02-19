@@ -100,7 +100,8 @@ export default function PaywallModal({
         <div className="flex flex-col gap-3">
           <Button
             onClick={handleAction}
-            className="w-full bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff] h-12 text-base"
+            className="w-full h-12 text-base text-white"
+            style={{ backgroundColor: '#9038fa' }}
           >
             <Crown className="w-5 h-5 mr-2" />
             {isAuthenticated ? 'Assinar Agora' : 'Criar Conta e Assinar'}

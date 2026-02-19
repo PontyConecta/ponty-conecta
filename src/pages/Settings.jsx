@@ -118,7 +118,8 @@ export default function Settings() {
             </Button>
           ) : (
             <Button 
-              className="w-full bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff]"
+              className="w-full text-white"
+              style={{ backgroundColor: '#9038fa' }}
               onClick={() => navigate(createPageUrl('Subscription'))}
             >
               <Crown className="w-4 h-4 mr-2" />

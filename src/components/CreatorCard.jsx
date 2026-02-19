@@ -41,7 +41,7 @@ export default function CreatorCard({
 
   if (compact) {
     return (
-      <Card className="hover:shadow-lg hover:border-purple-200 transition-all cursor-pointer group border-slate-200" onClick={onViewProfile}>
+      <Card className="hover:shadow-lg transition-all cursor-pointer group" style={{ borderColor: 'var(--border-color)' }} onClick={onViewProfile}>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12">
@@ -52,14 +52,14 @@ export default function CreatorCard({
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-slate-900 truncate group-hover:text-[#9038fa] transition-colors">
+                <h4 className="font-semibold truncate transition-colors" style={{ color: 'var(--text-primary)' }}>
                   {creator.display_name}
                 </h4>
                 {creator.verified && (
                   <CheckCircle2 className="w-4 h-4 text-blue-500 flex-shrink-0" />
                 )}
               </div>
-              <div className="flex items-center gap-2 text-sm text-slate-500">
+              <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                 <Users className="w-3 h-3" />
                 <span>{formatFollowers(getTotalFollowers())}</span>
                 {creator.profile_size && (
@@ -79,9 +79,9 @@ export default function CreatorCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-2xl hover:border-purple-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
+    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02]" style={{ borderColor: 'var(--border-color)' }}>
       {/* Cover Image */}
-      <div className="h-24 bg-gradient-to-br from-[#b77aff] via-[#a055ff] to-[#9038fa] relative">
+      <div className="h-24 relative" style={{ backgroundColor: '#9038fa' }}>
         {creator.cover_image_url && (
           <img 
             src={creator.cover_image_url} 
@@ -100,9 +100,9 @@ export default function CreatorCard({
       <CardContent className="pt-0 -mt-10 relative">
         {/* Avatar */}
         <div className="flex justify-between items-end mb-4">
-          <Avatar className="w-20 h-20 border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all">
+          <Avatar className="w-20 h-20 border-4 shadow-xl transition-all" style={{ borderColor: 'var(--bg-secondary)' }}>
             <AvatarImage src={creator.avatar_url} />
-            <AvatarFallback className="bg-gradient-to-br from-[#b77aff] via-[#a055ff] to-[#9038fa] text-white text-2xl">
+            <AvatarFallback className="text-white text-2xl" style={{ backgroundColor: '#9038fa' }}>
               {creator.display_name?.[0]}
             </AvatarFallback>
           </Avatar>
@@ -117,14 +117,14 @@ export default function CreatorCard({
         <div className="space-y-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg text-slate-900 group-hover:text-[#9038fa] transition-colors">
+              <h3 className="font-semibold text-lg transition-colors" style={{ color: 'var(--text-primary)' }}>
                 {creator.display_name}
               </h3>
               {creator.verified && (
                 <CheckCircle2 className="w-5 h-5 text-blue-500" />
               )}
             </div>
-            <div className="flex flex-wrap gap-2 text-sm text-slate-500">
+            <div className="flex flex-wrap gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
               {creator.location && (
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
@@ -146,14 +146,14 @@ export default function CreatorCard({
           </div>
 
           {creator.bio && (
-            <p className="text-sm text-slate-600 line-clamp-2">
+            <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
               {isSubscribed ? creator.bio : creator.bio.slice(0, 50) + '...'}
             </p>
           )}
 
           {/* Stats */}
           <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-1 text-slate-600">
+            <div className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
               <Users className="w-4 h-4" />
               <span className="font-medium">{formatFollowers(getTotalFollowers())}</span>
             </div>
@@ -186,7 +186,7 @@ export default function CreatorCard({
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
+              className="flex-1 transition-all"
               onClick={onViewProfile}
             >
               <Eye className="w-4 h-4 mr-1" />
@@ -195,7 +195,8 @@ export default function CreatorCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff] text-white shadow-lg hover:shadow-xl transition-all"
+                className="flex-1 text-white shadow-lg hover:shadow-xl transition-all"
+                style={{ backgroundColor: '#9038fa' }}
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />

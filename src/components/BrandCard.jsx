@@ -37,26 +37,26 @@ export default function BrandCard({
 
   if (compact) {
     return (
-      <Card className="hover:shadow-lg hover:border-purple-200 transition-all cursor-pointer group border-slate-200" onClick={onViewProfile}>
+      <Card className="hover:shadow-lg transition-all cursor-pointer group" style={{ borderColor: 'var(--border-color)' }} onClick={onViewProfile}>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             {brand.logo_url ? (
               <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
             ) : (
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #9038fa, #b77aff)' }}>
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#9038fa' }}>
                 <Building2 className="w-6 h-6 text-white" />
               </div>
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-slate-900 truncate group-hover:text-[#9038fa] transition-colors">
+                <h4 className="font-semibold truncate transition-colors" style={{ color: 'var(--text-primary)' }}>
                   {brand.company_name}
                 </h4>
                 {brand.verified && (
                   <CheckCircle2 className="w-4 h-4 text-blue-500 flex-shrink-0" />
                 )}
               </div>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {industryLabels[brand.industry] || brand.industry}
               </p>
             </div>
@@ -70,9 +70,9 @@ export default function BrandCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-2xl hover:border-purple-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
+    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02]" style={{ borderColor: 'var(--border-color)' }}>
       {/* Cover Image */}
-      <div className="h-24 bg-gradient-to-br from-[#9038fa] via-[#a055ff] to-[#b77aff] relative">
+      <div className="h-24 relative" style={{ backgroundColor: '#9038fa' }}>
         {brand.cover_image_url && (
           <img 
             src={brand.cover_image_url} 
@@ -89,10 +89,11 @@ export default function BrandCard({
             <img 
               src={brand.logo_url} 
               alt={brand.company_name} 
-              className="w-20 h-20 rounded-xl border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all object-cover bg-white"
+              className="w-20 h-20 rounded-xl border-4 shadow-xl transition-all object-cover" 
+              style={{ borderColor: 'var(--bg-secondary)', backgroundColor: 'var(--bg-secondary)' }}
             />
           ) : (
-            <div className="w-20 h-20 rounded-xl border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all bg-gradient-to-br from-[#9038fa] via-[#a055ff] to-[#b77aff] flex items-center justify-center">
+            <div className="w-20 h-20 rounded-xl border-4 shadow-xl transition-all flex items-center justify-center" style={{ borderColor: 'var(--bg-secondary)', backgroundColor: '#9038fa' }}>
               <Building2 className="w-10 h-10 text-white" />
             </div>
           )}
@@ -107,7 +108,7 @@ export default function BrandCard({
         <div className="space-y-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg text-slate-900 group-hover:text-[#9038fa] transition-colors">
+              <h3 className="font-semibold text-lg transition-colors" style={{ color: 'var(--text-primary)' }}>
                 {brand.company_name}
               </h3>
               {brand.verified && (
@@ -140,7 +141,7 @@ export default function BrandCard({
           </div>
 
           {brand.description && (
-            <p className="text-sm text-slate-600 line-clamp-2">
+            <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
               {isSubscribed ? brand.description : brand.description.slice(0, 50) + '...'}
             </p>
           )}
@@ -160,7 +161,7 @@ export default function BrandCard({
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
+              className="flex-1 transition-all"
               onClick={onViewProfile}
             >
               <Eye className="w-4 h-4 mr-1" />
@@ -169,7 +170,8 @@ export default function BrandCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff] text-white shadow-lg hover:shadow-xl transition-all"
+                className="flex-1 text-white shadow-lg hover:shadow-xl transition-all"
+                style={{ backgroundColor: '#9038fa' }}
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />

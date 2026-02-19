@@ -17,7 +17,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
       transition={{ duration: 0.5 }}
     >
       <Card className="overflow-hidden border-0 shadow-xl">
-        <div className="bg-gradient-to-r from-[#9038fa] via-[#a055ff] to-[#b77aff] p-6 lg:p-8">
+        <div className="p-6 lg:p-8" style={{ backgroundColor: '#9038fa' }}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <Badge className="bg-white/20 text-white border-0 mb-3">
@@ -37,7 +37,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
               <div className="flex flex-wrap gap-3">
                 {isSubscribed ? (
                   <Link to={createPageUrl(isBrand ? 'CampaignManager' : 'OpportunityFeed')}>
-                    <Button className="bg-white text-slate-900 hover:bg-white/90 shadow-lg">
+                    <Button className="bg-white text-[#9038fa] hover:bg-white/90 shadow-lg">
                       <Sparkles className="w-4 h-4 mr-2" />
                       {isBrand ? 'Criar Campanha' : 'Ver Campanhas'}
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -45,7 +45,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
                   </Link>
                 ) : (
                   <Link to={createPageUrl('Subscription')}>
-                    <Button className="bg-white text-slate-900 hover:bg-white/90 shadow-lg">
+                    <Button className="bg-white text-[#9038fa] hover:bg-white/90 shadow-lg">
                       <Sparkles className="w-4 h-4 mr-2" />
                       Desbloquear Acesso Completo
                       <ArrowRight className="w-4 h-4 ml-2" />

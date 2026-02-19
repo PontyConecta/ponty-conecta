@@ -73,7 +73,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
       {!isSubscribed && (
         <div className="p-4 transition-colors" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
           <Link to={createPageUrl('Subscription')}>
-            <div className="p-4 rounded-xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] text-white cursor-pointer hover:shadow-lg transition-shadow">
+            <div className="p-4 rounded-xl text-white cursor-pointer hover:shadow-lg transition-shadow" style={{ backgroundColor: '#9038fa' }}>
               <div className="flex items-center gap-2 mb-2">
                 <Crown className="w-5 h-5" />
                 <span className="font-semibold text-sm">Plano Pro</span>

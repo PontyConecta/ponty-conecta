@@ -348,11 +348,8 @@ export default function Subscription() {
           size="lg"
           onClick={handleSubscribe}
           disabled={subscribing}
-          className={`
-            w-full sm:w-auto px-12 h-14 text-lg
-            bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff]
-            shadow-xl
-          `}
+          className="w-full sm:w-auto px-12 h-14 text-lg shadow-xl text-white"
+          style={{ backgroundColor: '#9038fa' }}
         >
           {subscribing ? (
             <Loader2 className="w-5 h-5 animate-spin" />

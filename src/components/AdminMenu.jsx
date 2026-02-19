@@ -73,7 +73,7 @@ export default function AdminMenu({ currentPageName, triggerClassName }) {
           <div key={`admin-cat-${idx}`}>
             {idx > 0 && <DropdownMenuSeparator />}
             <div className="px-2 py-1.5">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                 {category.label}
               </p>
             </div>
