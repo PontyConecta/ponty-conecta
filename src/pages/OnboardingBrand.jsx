@@ -198,7 +198,7 @@ export default function OnboardingBrand() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#9038fa]" />
       </div>
     );
   }
@@ -219,7 +219,7 @@ export default function OnboardingBrand() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20">
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
@@ -252,11 +252,11 @@ export default function OnboardingBrand() {
                           {formData.logo_url ? (
                             <img src={formData.logo_url} alt="Logo" className="w-24 h-24 rounded-xl object-cover border-4 border-white shadow-lg" />
                           ) : (
-                            <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center border-4 border-white shadow-lg">
-                              <Building2 className="w-10 h-10 text-indigo-400" />
+                            <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-[#9038fa]/10 to-[#b77aff]/10 flex items-center justify-center border-4 border-white shadow-lg">
+                              <Building2 className="w-10 h-10 text-[#9038fa]/60" />
                             </div>
                           )}
-                          <label className="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors shadow-lg">
+                          <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#9038fa] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#7a2de0] transition-colors shadow-lg">
                             <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={uploadingLogo} />
                             {uploadingLogo ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Upload className="w-4 h-4 text-white" />}
                           </label>
@@ -296,7 +296,7 @@ export default function OnboardingBrand() {
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Sobre a Marca * (mínimo 20 caracteres)</Label>
                       <Textarea value={formData.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Conte sobre sua marca, valores e o que vocês fazem..." className="mt-2 min-h-[120px]" />
-                      <p className={`text-xs mt-1 font-medium ${formData.description.length >= 20 ? 'text-emerald-600' : 'text-indigo-600'}`}>
+                      <p className={`text-xs mt-1 font-medium ${formData.description.length >= 20 ? 'text-emerald-600' : 'text-[#9038fa]'}`}>
                         {formData.description.length}/20
                       </p>
                     </div>
@@ -361,7 +361,7 @@ export default function OnboardingBrand() {
                 <Button
                   onClick={handleNext}
                   disabled={!isStepValid() || saving}
-                  className="bg-indigo-600 hover:bg-indigo-700 gap-2 disabled:opacity-50"
+                  className="bg-[#9038fa] hover:bg-[#7a2de0] gap-2 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                     <>Próximo <ArrowRight className="w-4 h-4" /></>

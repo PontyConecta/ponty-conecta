@@ -107,7 +107,7 @@ export default function SelectProfile() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#9038fa]" />
       </div>
     );
   }
@@ -118,8 +118,8 @@ export default function SelectProfile() {
       icon: Building2,
       title: 'Sou uma Marca',
       subtitle: 'Quero contratar criadores',
-      color: 'from-indigo-500 to-violet-600',
-      shadowColor: 'shadow-indigo-500/25',
+      color: 'from-[#9038fa] to-[#b77aff]',
+      shadowColor: 'shadow-purple-500/25',
       features: [
         'Crie campanhas estruturadas',
         'Selecione criadores ideais',
@@ -132,8 +132,8 @@ export default function SelectProfile() {
       icon: Sparkles,
       title: 'Sou Criador',
       subtitle: 'Quero trabalhar com marcas',
-      color: 'from-orange-500 to-amber-500',
-      shadowColor: 'shadow-orange-500/25',
+      color: 'from-[#b77aff] to-[#9038fa]',
+      shadowColor: 'shadow-purple-500/25',
       features: [
         'Acesse oportunidades filtradas',
         'Candidate-se a campanhas',
@@ -148,7 +148,7 @@ export default function SelectProfile() {
       {/* Header */}
       <div className="text-center mb-12">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20">
             <span className="text-white font-bold text-xl">P</span>
           </div>
           <span className="text-2xl font-semibold text-slate-900">Ponty</span>
@@ -224,9 +224,9 @@ export default function SelectProfile() {
       <div className="max-w-2xl mx-auto mt-12 text-center">
         <p className="text-slate-500 text-sm">
           Ao continuar, você concorda com nossos{' '}
-          <a href="#" className="text-indigo-600 hover:underline">Termos de Uso</a>
+          <a href="#" className="text-[#9038fa] hover:underline">Termos de Uso</a>
           {' '}e{' '}
-          <a href="#" className="text-indigo-600 hover:underline">Política de Privacidade</a>.
+          <a href="#" className="text-[#9038fa] hover:underline">Política de Privacidade</a>.
         </p>
       </div>
     </div>
