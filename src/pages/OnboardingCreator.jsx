@@ -227,7 +227,7 @@ export default function OnboardingCreator() {
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#9038fa' }}>
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
@@ -249,7 +249,7 @@ export default function OnboardingCreator() {
                         {formData.avatar_url ? (
                           <img src={formData.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
                         ) : (
-                          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#9038fa]/10 to-[#b77aff]/10 flex items-center justify-center border-4 border-white shadow-lg">
+                          <div className="w-24 h-24 rounded-full flex items-center justify-center border-4 shadow-lg" style={{ backgroundColor: 'rgba(144,56,250,0.1)', borderColor: 'var(--bg-secondary)' }}>
                             <User className="w-10 h-10 text-[#9038fa]/60" />
                           </div>
                         )}
