@@ -39,11 +39,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-6 lg:mb-12">
             <div className="flex items-center gap-2 lg:gap-3 group">
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-xl lg:text-2xl">P</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent leading-tight">Ponty</span>
+                <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent leading-tight">Ponty</span>
                 <span className="text-xs lg:text-sm font-medium text-gray-500 leading-tight">Conecta</span>
               </div>
             </div>
@@ -51,13 +51,13 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
             <div className="flex flex-col gap-6 lg:gap-8">
-              <div className="hidden lg:inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
+              <div className="hidden lg:inline-flex items-center gap-2 bg-[#9038fa]/10 text-[#9038fa] px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
                 <Zap className="w-4 h-4 animate-pulse" />
                 <span>Mediação Profissional de Última Geração</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
-                A <span className="bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">Ponte Profissional</span> Entre Marcas e Criadores
+                A <span className="bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent">Ponte Profissional</span> Entre Marcas e Criadores
               </h1>
 
               <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-md">
@@ -72,7 +72,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   size="lg" 
-                  className="bg-purple-600 text-white hover:bg-purple-700 w-full sm:w-auto sm:bg-white sm:text-purple-600 sm:border-2 sm:border-purple-600 sm:hover:bg-purple-50"
+                  className="bg-[#9038fa] text-white hover:bg-[#7a2de0] w-full sm:w-auto sm:bg-white sm:text-[#9038fa] sm:border-2 sm:border-[#9038fa] sm:hover:bg-[#9038fa]/5"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                 >
                   Sou uma Marca
@@ -80,7 +80,7 @@ export default function Home() {
                 </Button>
                 <Button 
                   size="lg" 
-                  className="bg-orange-500 text-white hover:bg-orange-600 w-full sm:w-auto sm:bg-white sm:text-orange-500 sm:border-2 sm:border-orange-500 sm:hover:bg-orange-50"
+                  className="bg-[#b77aff] text-white hover:bg-[#a055ff] w-full sm:w-auto sm:bg-white sm:text-[#b77aff] sm:border-2 sm:border-[#b77aff] sm:hover:bg-[#b77aff]/5"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                 >
                   Sou Criador
@@ -90,14 +90,14 @@ export default function Home() {
             </div>
 
             <div className="relative min-h-[500px] flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-orange-50 rounded-3xl overflow-hidden">
-                <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-400/30 to-indigo-500/20 rounded-full blur-3xl animate-pulse"
+              <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/10 via-purple-50 to-[#b77aff]/10 rounded-3xl overflow-hidden">
+                <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-[#9038fa]/30 to-[#b77aff]/20 rounded-full blur-3xl animate-pulse"
                   style={{
                     transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.2}px)`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 ></div>
-                <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-orange-400/30 to-amber-500/20 rounded-full blur-3xl animate-pulse"
+                <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-[#b77aff]/30 to-[#9038fa]/20 rounded-full blur-3xl animate-pulse"
                   style={{
                     transform: `translate(-${scrollY * 0.15}px, -${scrollY * 0.1}px)`,
                     transition: 'transform 0.1s ease-out',
@@ -157,16 +157,16 @@ export default function Home() {
 
             <TabsContent value="brands" className="mt-12">
               <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-indigo-50 to-purple-50"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/10 via-purple-50 to-[#b77aff]/10"></div>
 
-                  <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-2xl"></div>
-                  <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-purple-500/15 to-violet-400/15 rounded-full blur-2xl"></div>
+                  <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-[#9038fa]/20 to-[#b77aff]/20 rounded-full blur-2xl"></div>
+                  <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-[#9038fa]/15 to-[#b77aff]/15 rounded-full blur-2xl"></div>
 
                   <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
                     <div className="space-y-8 max-w-md">
                       <div className="text-center">
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
-                          <Shield className="w-10 h-10 text-purple-600" />
+                          <Shield className="w-10 h-10 text-[#9038fa]" />
                         </div>
                         <h3 className="text-2xl font-black leading-tight mb-2">
                           Ferramentas profissionais para marcas
@@ -192,8 +192,8 @@ export default function Home() {
                           }
                         ].map((feature, idx) => (
                           <div key={idx} className="flex gap-3 bg-white/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                              <feature.icon className="w-5 h-5 text-purple-600" />
+                            <div className="flex-shrink-0 w-10 h-10 bg-[#9038fa]/10 rounded-lg flex items-center justify-center">
+                             <feature.icon className="w-5 h-5 text-[#9038fa]" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-gray-900">{feature.title}</h4>
@@ -205,7 +205,7 @@ export default function Home() {
 
                       <Button 
                         size="lg" 
-                        className="bg-purple-600 hover:bg-purple-700 text-white w-full"
+                        className="bg-[#9038fa] hover:bg-[#7a2de0] text-white w-full"
                         onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                       >
                         Começar como Marca
@@ -218,16 +218,16 @@ export default function Home() {
 
             <TabsContent value="creators" className="mt-12">
               <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
-                  <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#b77aff]/10 via-purple-50 to-[#9038fa]/10"></div>
 
-                  <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-full blur-2xl"></div>
-                  <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-orange-500/15 to-yellow-400/15 rounded-full blur-2xl"></div>
+                  <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-[#b77aff]/20 to-[#9038fa]/20 rounded-full blur-2xl"></div>
+                  <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-[#b77aff]/15 to-[#9038fa]/15 rounded-full blur-2xl"></div>
 
                   <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
                     <div className="space-y-8 max-w-md">
                       <div className="text-center">
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
-                          <Sparkles className="w-10 h-10 text-orange-500" />
+                          <Sparkles className="w-10 h-10 text-[#b77aff]" />
                         </div>
                         <h3 className="text-2xl font-black leading-tight mb-2">
                           Oportunidades profissionais para criadores
@@ -253,8 +253,8 @@ export default function Home() {
                           }
                         ].map((feature, idx) => (
                           <div key={idx} className="flex gap-3 bg-white/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                              <feature.icon className="w-5 h-5 text-orange-500" />
+                            <div className="flex-shrink-0 w-10 h-10 bg-[#b77aff]/10 rounded-lg flex items-center justify-center">
+                              <feature.icon className="w-5 h-5 text-[#b77aff]" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-gray-900">{feature.title}</h4>
@@ -266,7 +266,7 @@ export default function Home() {
 
                       <Button 
                         size="lg" 
-                        className="bg-orange-500 hover:bg-orange-600 text-white w-full"
+                        className="bg-[#b77aff] hover:bg-[#a055ff] text-white w-full"
                         onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                       >
                         Começar como Criador
@@ -280,7 +280,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 via-white to-orange-50 relative overflow-hidden">
+      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/5 via-white to-[#b77aff]/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
@@ -314,7 +314,7 @@ export default function Home() {
             ].map((step, idx) => (
               <Card key={idx} className="bg-white hover:shadow-lg transition-all hover:-translate-y-2">
                 <CardContent className="pt-8">
-                  <div className="text-5xl font-black bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent mb-4">
+                  <div className="text-5xl font-black bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent mb-4">
                     {step.number}
                   </div>
                   <h3 className="text-xl font-bold mb-3">{step.title}</h3>
@@ -326,7 +326,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-600 to-orange-500">
+      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
         <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tight">
             Pronto para começar?
@@ -337,7 +337,7 @@ export default function Home() {
 
           <Button 
             size="lg" 
-            className="bg-white text-purple-600 hover:bg-gray-100"
+            className="bg-white text-[#9038fa] hover:bg-gray-100"
             onClick={scrollToSection}
           >
             Começar Agora

@@ -122,7 +122,7 @@ export default function Subscription() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#9038fa]" />
       </div>
     );
   }
@@ -178,7 +178,7 @@ export default function Subscription() {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center mb-8">
-          <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${isBrand ? 'from-indigo-500 to-violet-500' : 'from-orange-500 to-amber-500'} mb-4 shadow-lg`}>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] mb-4 shadow-lg">
             <Crown className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Sua Assinatura</h1>
@@ -243,7 +243,7 @@ export default function Subscription() {
   return (
     <div className="max-w-4xl mx-auto pb-8">
       <div className="text-center mb-8 lg:mb-12">
-        <Badge className={`mb-4 ${isBrand ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'} border-0 px-4 py-1.5`}>
+        <Badge className="mb-4 bg-purple-100 text-purple-700 border-0 px-4 py-1.5">
           {isBrand ? <Building2 className="w-4 h-4 mr-2" /> : <Star className="w-4 h-4 mr-2" />}
           {isBrand ? 'Plano para Marcas' : 'Plano para Criadores'}
         </Badge>
@@ -271,13 +271,13 @@ export default function Subscription() {
               className={`
                 relative cursor-pointer transition-all h-full
                 ${selectedPlan === plan.id 
-                  ? `border-2 ${isBrand ? 'border-indigo-500' : 'border-orange-500'} shadow-lg` 
+                  ? `border-2 border-[#9038fa] shadow-lg` 
                   : 'border-2 border-transparent hover:border-slate-200'}
               `}
               onClick={() => setSelectedPlan(plan.id)}
             >
               {plan.badge && (
-                <div className={`absolute -top-3 left-1/2 -translate-x-1/2 ${isBrand ? 'bg-indigo-600' : 'bg-orange-500'} text-white text-xs font-medium px-3 py-1 rounded-full`}>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#9038fa] text-white text-xs font-medium px-3 py-1 rounded-full">
                   {plan.badge}
                 </div>
               )}
@@ -300,7 +300,7 @@ export default function Subscription() {
                 <div className={`
                   w-full h-1 rounded-full transition-colors
                   ${selectedPlan === plan.id 
-                    ? (isBrand ? 'bg-indigo-500' : 'bg-orange-500')
+                    ? 'bg-[#9038fa]'
                     : 'bg-slate-200'}
                 `} />
               </CardContent>
@@ -312,7 +312,7 @@ export default function Subscription() {
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Crown className={`w-5 h-5 ${isBrand ? 'text-indigo-600' : 'text-orange-500'}`} />
+            <Crown className="w-5 h-5 text-[#9038fa]" />
             O que está incluso
           </CardTitle>
         </CardHeader>
@@ -350,9 +350,7 @@ export default function Subscription() {
           disabled={subscribing}
           className={`
             w-full sm:w-auto px-12 h-14 text-lg
-            ${isBrand 
-              ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700' 
-              : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600'}
+            bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff]
             shadow-xl
           `}
         >
