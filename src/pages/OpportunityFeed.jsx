@@ -33,7 +33,6 @@ import {
   Package,
   MapPin,
   Building2,
-  Sparkles,
   Send,
   Crown,
   CheckCircle2,
@@ -246,7 +245,7 @@ export default function OpportunityFeed() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Sparkles className="w-7 h-7 lg:w-8 lg:h-8" style={{ color: 'var(--accent-primary)' }} />
+            <Megaphone className="w-7 h-7 lg:w-8 lg:h-8" style={{ color: 'var(--accent-primary)' }} />
             Campanhas
           </h1>
           <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
@@ -445,7 +444,7 @@ export default function OpportunityFeed() {
       ) : (
         <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-12 text-center">
-            <Sparkles className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
+            <Megaphone className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
             <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma campanha encontrada
             </h3>
