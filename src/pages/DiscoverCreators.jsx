@@ -109,7 +109,7 @@ export default function DiscoverCreators() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
       </div>
     );
   }
@@ -129,8 +129,8 @@ export default function DiscoverCreators() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Descobrir Criadores</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Descobrir Criadores</h1>
+        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
           {filteredCreators.length} criadores encontrados
         </p>
       </div>
@@ -180,7 +180,7 @@ export default function DiscoverCreators() {
 
       {/* Creators Grid */}
       {filteredCreators.length > 0 ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-5">
           {filteredCreators.map((creator, index) => (
             <motion.div
               key={creator.id}
@@ -222,14 +222,14 @@ export default function DiscoverCreators() {
             <div className="space-y-6 py-4">
               {/* Cover & Avatar */}
               <div className="relative">
-                <div className="h-32 rounded-xl bg-gradient-to-r from-orange-400 to-amber-400 overflow-hidden">
+                <div className="h-32 rounded-xl bg-gradient-to-br from-[#b77aff] via-[#a055ff] to-[#9038fa] overflow-hidden">
                   {selectedCreator.cover_image_url && (
                     <img src={selectedCreator.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
                 </div>
                 <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-white shadow-lg">
                   <AvatarImage src={selectedCreator.avatar_url} />
-                  <AvatarFallback className="bg-orange-100 text-orange-700 text-2xl">
+                  <AvatarFallback className="bg-[#9038fa]/10 text-[#9038fa] text-2xl">
                     {selectedCreator.display_name?.[0]}
                   </AvatarFallback>
                 </Avatar>
@@ -337,22 +337,22 @@ export default function DiscoverCreators() {
 
                 {/* Contact - Only for Subscribers */}
                 {isSubscribed ? (
-                  <div className="p-4 bg-indigo-50 rounded-xl space-y-3">
-                    <h4 className="font-medium text-indigo-900">Contato</h4>
+                  <div className="p-4 bg-purple-50 rounded-xl space-y-3">
+                    <h4 className="font-medium text-purple-900">Contato</h4>
                     {selectedCreator.contact_email && (
-                      <a href={`mailto:${selectedCreator.contact_email}`} className="flex items-center gap-2 text-indigo-700 hover:underline">
+                      <a href={`mailto:${selectedCreator.contact_email}`} className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Mail className="w-4 h-4" />
                         {selectedCreator.contact_email}
                       </a>
                     )}
                     {selectedCreator.contact_whatsapp && (
-                      <a href={`https://wa.me/${selectedCreator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-indigo-700 hover:underline">
+                      <a href={`https://wa.me/${selectedCreator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Phone className="w-4 h-4" />
                         {selectedCreator.contact_whatsapp}
                       </a>
                     )}
                     {selectedCreator.portfolio_url && (
-                      <a href={selectedCreator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-indigo-700 hover:underline">
+                      <a href={selectedCreator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <ExternalLink className="w-4 h-4" />
                         Ver Media Kit
                       </a>
@@ -361,7 +361,7 @@ export default function DiscoverCreators() {
                 ) : (
                   <div className="p-4 bg-slate-100 rounded-xl text-center">
                     <p className="text-slate-600 mb-3">Assine para ver informações de contato</p>
-                    <Button onClick={() => setShowPaywall(true)} className="bg-indigo-600 hover:bg-indigo-700">
+                    <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Desbloquear Contato
                     </Button>
                   </div>

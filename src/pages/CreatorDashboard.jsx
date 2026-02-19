@@ -115,7 +115,7 @@ export default function CreatorDashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       {/* Welcome Banner for new users */}
       {isNewUser ? (
         <WelcomeBanner 
@@ -156,7 +156,7 @@ export default function CreatorDashboard() {
       <DashboardMissions userId={user?.id} profileType="creator" />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3 lg:gap-4">
         {stats.map((stat, index) => (
           <motion.div
             key={index}
@@ -165,14 +165,14 @@ export default function CreatorDashboard() {
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
             <Card className="hover:shadow-md transition-shadow" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <CardContent className="p-6">
-                <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
-                  <stat.icon className="w-5 h-5 text-white" />
+              <CardContent className="p-4 lg:p-6">
+                <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl ${stat.color} flex items-center justify-center mb-3`}>
+                  <stat.icon className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                 </div>
-                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
+                <div className="text-2xl lg:text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
+                <div className="text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
               </CardContent>
             </Card>
           </motion.div>

@@ -128,7 +128,7 @@ export default function DiscoverBrands() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
       </div>
     );
   }
@@ -137,8 +137,8 @@ export default function DiscoverBrands() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Descobrir Marcas</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Descobrir Marcas</h1>
+        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
           {filteredBrands.length} marcas encontradas
         </p>
       </div>
@@ -173,7 +173,7 @@ export default function DiscoverBrands() {
 
       {/* Brands Grid */}
       {filteredBrands.length > 0 ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-5">
           {filteredBrands.map((brand, index) => (
             <motion.div
               key={brand.id}
@@ -215,7 +215,7 @@ export default function DiscoverBrands() {
             <div className="space-y-6 py-4">
               {/* Cover & Logo */}
               <div className="relative">
-                <div className="h-32 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 overflow-hidden">
+                <div className="h-32 rounded-xl bg-gradient-to-br from-[#9038fa] via-[#a055ff] to-[#b77aff] overflow-hidden">
                   {selectedBrand.cover_image_url && (
                     <img src={selectedBrand.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -224,8 +224,8 @@ export default function DiscoverBrands() {
                   {selectedBrand.logo_url ? (
                     <img src={selectedBrand.logo_url} alt={selectedBrand.company_name} className="w-24 h-24 rounded-xl border-4 border-white shadow-lg object-cover bg-white" />
                   ) : (
-                    <div className="w-24 h-24 rounded-xl border-4 border-white shadow-lg bg-indigo-100 flex items-center justify-center">
-                      <Building2 className="w-12 h-12 text-indigo-600" />
+                    <div className="w-24 h-24 rounded-xl border-4 border-white shadow-lg bg-[#9038fa]/10 flex items-center justify-center">
+                      <Building2 className="w-12 h-12 text-[#9038fa]" />
                     </div>
                   )}
                 </div>
@@ -285,34 +285,34 @@ export default function DiscoverBrands() {
 
                 {/* Contact - Only for Subscribers */}
                 {isSubscribed ? (
-                  <div className="p-4 bg-indigo-50 rounded-xl space-y-3">
-                    <h4 className="font-medium text-indigo-900">Contato</h4>
+                  <div className="p-4 bg-purple-50 rounded-xl space-y-3">
+                    <h4 className="font-medium text-purple-900">Contato</h4>
                     {selectedBrand.contact_email && (
-                      <a href={`mailto:${selectedBrand.contact_email}`} className="flex items-center gap-2 text-indigo-700 hover:underline">
+                      <a href={`mailto:${selectedBrand.contact_email}`} className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Mail className="w-4 h-4" />
                         {selectedBrand.contact_email}
                       </a>
                     )}
                     {selectedBrand.contact_phone && (
-                      <p className="flex items-center gap-2 text-indigo-700">
+                      <p className="flex items-center gap-2 text-[#9038fa]">
                         <Phone className="w-4 h-4" />
                         {selectedBrand.contact_phone}
                       </p>
                     )}
                     {selectedBrand.website && (
-                      <a href={selectedBrand.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-indigo-700 hover:underline">
+                      <a href={selectedBrand.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Globe className="w-4 h-4" />
                         Website
                       </a>
                     )}
                     {selectedBrand.social_instagram && (
-                      <a href={`https://instagram.com/${selectedBrand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-indigo-700 hover:underline">
+                      <a href={`https://instagram.com/${selectedBrand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Instagram className="w-4 h-4" />
                         {selectedBrand.social_instagram}
                       </a>
                     )}
                     {selectedBrand.social_linkedin && (
-                      <a href={selectedBrand.social_linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-indigo-700 hover:underline">
+                      <a href={selectedBrand.social_linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Linkedin className="w-4 h-4" />
                         LinkedIn
                       </a>
@@ -321,7 +321,7 @@ export default function DiscoverBrands() {
                 ) : (
                   <div className="p-4 bg-slate-100 rounded-xl text-center">
                     <p className="text-slate-600 mb-3">Assine para ver informações de contato</p>
-                    <Button onClick={() => setShowPaywall(true)} className="bg-indigo-600 hover:bg-indigo-700">
+                    <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Desbloquear Contato
                     </Button>
                   </div>

@@ -89,42 +89,31 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative min-h-[500px] flex items-center justify-center">
+            <div className="relative hidden lg:flex min-h-[420px] items-center justify-center">
               <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/8 via-[#b77aff]/5 to-[#9038fa]/8 rounded-3xl overflow-hidden">
-                <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-[#9038fa]/25 to-[#b77aff]/15 rounded-full blur-3xl animate-pulse"
-                  style={{
-                    transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.2}px)`,
-                    transition: 'transform 0.1s ease-out'
-                  }}
-                ></div>
-                <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-[#b77aff]/25 to-[#9038fa]/15 rounded-full blur-3xl animate-pulse"
-                  style={{
-                    transform: `translate(-${scrollY * 0.15}px, -${scrollY * 0.1}px)`,
-                    transition: 'transform 0.1s ease-out',
-                    animationDelay: '1s'
-                  }}
-                ></div>
+                <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-[#9038fa]/20 to-[#b77aff]/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-[#b77aff]/20 to-[#9038fa]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
               </div>
 
-              <div className="relative z-10 grid grid-cols-2 gap-4 p-6">
+              <div className="relative z-10 grid grid-cols-2 gap-3 p-6 w-full max-w-lg">
                 {[
-                  { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais', accent: '#9038fa' },
-                  { icon: '📊', title: 'Gestão Descomplicada', description: 'Organize campanhas de forma simples', accent: '#6366f1' },
-                  { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência e segurança em cada projeto', accent: '#10b981' },
-                  { icon: '📈', title: 'Crescimento Sustentável', description: 'Construa reputação e explore oportunidades', accent: '#b77aff' }
+                  { icon: '🤝', title: 'Conexões Estratégicas', description: 'Parcerias ideais' },
+                  { icon: '📊', title: 'Gestão Simples', description: 'Campanhas organizadas' },
+                  { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência total' },
+                  { icon: '📈', title: 'Crescimento', description: 'Reputação sólida' }
                 ].map((benefit, idx) => (
                   <Card
                     key={idx}
-                    className="bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border-0"
+                    className="bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all border-0"
                     style={{
-                      animation: `float 3s ease-in-out infinite`,
-                      animationDelay: `${idx * 0.3}s`
+                      animation: `float 4s ease-in-out infinite`,
+                      animationDelay: `${idx * 0.4}s`
                     }}
                   >
-                    <CardContent className="pt-6 text-center">
-                      <div className="text-3xl mb-3">{benefit.icon}</div>
-                      <h4 className="font-bold text-sm mb-2 text-gray-900">{benefit.title}</h4>
-                      <p className="text-xs text-gray-500">{benefit.description}</p>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl mb-2">{benefit.icon}</div>
+                      <h4 className="font-bold text-xs mb-1 text-gray-900">{benefit.title}</h4>
+                      <p className="text-[11px] text-gray-500 leading-tight">{benefit.description}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -134,7 +123,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="por-que-ponty" className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="por-que-ponty" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
@@ -155,45 +144,33 @@ export default function Home() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="brands" className="mt-12">
-              <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
+            <TabsContent value="brands" className="mt-8">
+              <div className="relative rounded-3xl overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/10 via-purple-50 to-[#b77aff]/10"></div>
 
                   <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-[#9038fa]/20 to-[#b77aff]/20 rounded-full blur-2xl"></div>
                   <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-[#9038fa]/15 to-[#b77aff]/15 rounded-full blur-2xl"></div>
 
-                  <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
-                    <div className="space-y-8 max-w-md">
+                  <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
+                    <div className="space-y-6 max-w-md w-full">
                       <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
-                          <Shield className="w-10 h-10 text-[#9038fa]" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-3">
+                          <Shield className="w-8 h-8 text-[#9038fa]" />
                         </div>
-                        <h3 className="text-2xl font-black leading-tight mb-2">
+                        <h3 className="text-xl sm:text-2xl font-black leading-tight mb-2">
                           Ferramentas profissionais para marcas
                         </h3>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {[
-                          {
-                            icon: Users,
-                            title: 'Criadores Verificados',
-                            description: 'Perfis com histórico comprovado'
-                          },
-                          {
-                            icon: TrendingUp,
-                            title: 'Campanhas Estruturadas',
-                            description: 'Requisitos claros desde o início'
-                          },
-                          {
-                            icon: Shield,
-                            title: 'Gestão Simplificada',
-                            description: 'Acompanhe entregas em um só lugar'
-                          }
+                          { icon: Users, title: 'Criadores Verificados', description: 'Perfis com histórico comprovado' },
+                          { icon: TrendingUp, title: 'Campanhas Estruturadas', description: 'Requisitos claros desde o início' },
+                          { icon: Shield, title: 'Gestão Simplificada', description: 'Acompanhe entregas em um só lugar' }
                         ].map((feature, idx) => (
                           <div key={idx} className="flex gap-3 bg-white/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-10 h-10 bg-[#9038fa]/10 rounded-lg flex items-center justify-center">
-                             <feature.icon className="w-5 h-5 text-[#9038fa]" />
+                            <div className="flex-shrink-0 w-9 h-9 bg-[#9038fa]/10 rounded-lg flex items-center justify-center">
+                             <feature.icon className="w-4 h-4 text-[#9038fa]" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-gray-900">{feature.title}</h4>
@@ -211,50 +188,38 @@ export default function Home() {
                         Começar como Marca
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
-                      </div>
-                      </div>
-                      </div>
-                      </TabsContent>
+                    </div>
+                  </div>
+                </div>
+            </TabsContent>
 
-            <TabsContent value="creators" className="mt-12">
-              <div className="relative h-[600px] rounded-3xl overflow-hidden lg:h-auto">
+            <TabsContent value="creators" className="mt-8">
+              <div className="relative rounded-3xl overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#b77aff]/10 via-purple-50 to-[#9038fa]/10"></div>
 
                   <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-[#b77aff]/20 to-[#9038fa]/20 rounded-full blur-2xl"></div>
                   <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-[#b77aff]/15 to-[#9038fa]/15 rounded-full blur-2xl"></div>
 
-                  <div className="relative h-full flex items-center justify-center p-10 lg:p-16">
-                    <div className="space-y-8 max-w-md">
+                  <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
+                    <div className="space-y-6 max-w-md w-full">
                       <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
-                          <Sparkles className="w-10 h-10 text-[#b77aff]" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-3">
+                          <Sparkles className="w-8 h-8 text-[#b77aff]" />
                         </div>
-                        <h3 className="text-2xl font-black leading-tight mb-2">
+                        <h3 className="text-xl sm:text-2xl font-black leading-tight mb-2">
                           Oportunidades profissionais para criadores
                         </h3>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {[
-                          {
-                            icon: Sparkles,
-                            title: 'Campanhas Profissionais',
-                            description: 'Briefings detalhados e objetivos'
-                          },
-                          {
-                            icon: CheckCircle,
-                            title: 'Requisitos Claros',
-                            description: 'Saiba o que entregar e quando'
-                          },
-                          {
-                            icon: TrendingUp,
-                            title: 'Reputação Verificada',
-                            description: 'Construa histórico profissional'
-                          }
+                          { icon: Sparkles, title: 'Campanhas Profissionais', description: 'Briefings detalhados e objetivos' },
+                          { icon: CheckCircle, title: 'Requisitos Claros', description: 'Saiba o que entregar e quando' },
+                          { icon: TrendingUp, title: 'Reputação Verificada', description: 'Construa histórico profissional' }
                         ].map((feature, idx) => (
                           <div key={idx} className="flex gap-3 bg-white/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-10 h-10 bg-[#b77aff]/10 rounded-lg flex items-center justify-center">
-                              <feature.icon className="w-5 h-5 text-[#b77aff]" />
+                            <div className="flex-shrink-0 w-9 h-9 bg-[#b77aff]/10 rounded-lg flex items-center justify-center">
+                              <feature.icon className="w-4 h-4 text-[#b77aff]" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-gray-900">{feature.title}</h4>
@@ -280,7 +245,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/4 via-white to-[#b77aff]/4 relative overflow-hidden">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/4 via-white to-[#b77aff]/4 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
@@ -326,7 +291,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
         <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tight">
             Pronto para começar?
@@ -374,7 +339,7 @@ export default function Home() {
         <style>{`
           @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-10px); }
           }
         `}</style>
     </div>
