@@ -38,25 +38,47 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Profile not found' }, { status: 404 });
     }
 
-    // Create Stripe customer
-    const customer = await stripe.customers.create({
-      email: user.email,
-      name: user.full_name || user.email,
-      metadata: {
-        base44_user_id: user.id,
-        base44_profile_type: profile_type,
-        base44_app_id: Deno.env.get('BASE44_APP_ID')
+    // Reuse existing Stripe customer or create new one
+    let customerId = profile.stripe_customer_id;
+    
+    if (customerId) {
+      try {
+        const existing = await stripe.customers.retrieve(customerId);
+        if (existing.deleted) {
+          console.log('Customer was deleted, creating new one');
+          customerId = null;
+        } else {
+          console.log('Reusing existing customer:', customerId);
+        }
+      } catch (e) {
+        console.log('Customer ID invalid, creating new one:', e.message);
+        customerId = null;
       }
-    });
-    console.log('Customer created:', customer.id);
+    }
 
-    // Save customer ID (fire and forget)
-    base44.entities[entityName].update(profile.id, { stripe_customer_id: customer.id }).catch(() => {});
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        name: user.full_name || user.email,
+        metadata: {
+          base44_user_id: user.id,
+          base44_profile_id: profile.id,
+          base44_profile_type: profile_type,
+          base44_app_id: Deno.env.get('BASE44_APP_ID')
+        }
+      });
+      customerId = customer.id;
+      console.log('Created new customer:', customerId);
+
+      // Save customer ID BEFORE creating checkout session (await to ensure it's saved)
+      await base44.entities[entityName].update(profile.id, { stripe_customer_id: customerId });
+      console.log('Customer ID saved to profile');
+    }
 
     // Create checkout session
     const origin = req.headers.get('origin') || 'https://pontyconecta.com.br';
     const session = await stripe.checkout.sessions.create({
-      customer: customer.id,
+      customer: customerId,
       mode: 'subscription',
       allow_promotion_codes: true,
       line_items: [{ price: priceId, quantity: 1 }],
