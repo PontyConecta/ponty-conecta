@@ -15,24 +15,26 @@ body {
 
 /* Color Themes - CSS Variables */
 :root {
-  --bg-primary: #f8fafc;
+  --bg-primary: #f6f6f6;
   --bg-secondary: #ffffff;
   --text-primary: #0f172a;
   --text-secondary: #64748b;
   --border-color: #e2e8f0;
-  --accent-primary: #4f46e5;
+  --accent-primary: #9038fa;
+  --accent-light: #b77aff;
   --foreground: #0f172a;
   --muted-foreground: #64748b;
   --input: #e2e8f0;
 }
 
 [data-theme="light"] {
-  --bg-primary: #f8fafc;
+  --bg-primary: #f6f6f6;
   --bg-secondary: #ffffff;
   --text-primary: #0f172a;
   --text-secondary: #64748b;
   --border-color: #e2e8f0;
-  --accent-primary: #4f46e5;
+  --accent-primary: #9038fa;
+  --accent-light: #b77aff;
   --foreground: #0f172a;
   --muted-foreground: #64748b;
   --input: #e2e8f0;
@@ -44,7 +46,8 @@ body {
   --text-primary: #f0f4f8;
   --text-secondary: #a0aac0;
   --border-color: #4a5f7f;
-  --accent-primary: #7c3aed;
+  --accent-primary: #b77aff;
+  --accent-light: #9038fa;
   --foreground: #f0f4f8;
   --muted-foreground: #a0aac0;
   --input: #4a5f7f;
@@ -56,7 +59,8 @@ body {
   --text-primary: #f5f1f8;
   --text-secondary: #c0b9d0;
   --border-color: #6b4a8a;
-  --accent-primary: #d946ef;
+  --accent-primary: #b77aff;
+  --accent-light: #9038fa;
   --foreground: #f5f1f8;
   --muted-foreground: #c0b9d0;
   --input: #6b4a8a;

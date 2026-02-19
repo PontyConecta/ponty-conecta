@@ -72,12 +72,13 @@ function LayoutContent({ children, currentPageName }) {
 
                           <style>{`
                   [data-theme="light"] {
-                    --bg-primary: #f8fafc;
+                    --bg-primary: #f6f6f6;
                     --bg-secondary: #ffffff;
                     --text-primary: #0f172a;
                     --text-secondary: #64748b;
                     --border-color: #ffffff;
-                    --accent-primary: #4f46e5;
+                    --accent-primary: #9038fa;
+                    --accent-light: #b77aff;
                   }
 
                   [data-theme="dark"] {
@@ -86,7 +87,8 @@ function LayoutContent({ children, currentPageName }) {
                     --text-primary: #e8ecf1;
                     --text-secondary: #9ba8b8;
                     --border-color: #2a3a52;
-                    --accent-primary: #7c3aed;
+                    --accent-primary: #b77aff;
+                    --accent-light: #9038fa;
                     --card-bg: #1a2332;
                   }
 
@@ -96,14 +98,15 @@ function LayoutContent({ children, currentPageName }) {
                     --text-primary: #f3eef8;
                     --text-secondary: #94a3b8;
                     --border-color: #5a3a75;
-                    --accent-primary: #d946ef;
+                    --accent-primary: #b77aff;
+                    --accent-light: #9038fa;
                     --card-bg: #2a1c38;
                   }
 
                   :root {
-                    --primary: 79 70 229;
-                    --primary-foreground: 255 255 255;
-                    --accent: 249 115 22;
+                  --primary: 144 56 250;
+                  --primary-foreground: 255 255 255;
+                  --accent: 183 122 255;
                   }
                   .safe-area-bottom {
                     padding-bottom: env(safe-area-inset-bottom);
@@ -134,26 +137,28 @@ function LayoutContent({ children, currentPageName }) {
       <Toaster position="top-right" richColors closeButton />
       <style>{`
       :root {
-      --primary: 79 70 229;
+      --primary: 144 56 250;
       --primary-foreground: 255 255 255;
-      --accent: 249 115 22;
-      --bg-primary: #f8fafc;
+      --accent: 183 122 255;
+      --bg-primary: #f6f6f6;
       --bg-secondary: #ffffff;
       --text-primary: #0f172a;
       --text-secondary: #64748b;
       --text-input: #0f172a;
       --border-color: #e2e8f0;
-      --accent-primary: #4f46e5;
+      --accent-primary: #9038fa;
+      --accent-light: #b77aff;
       }
 
       [data-theme="light"] {
-      --bg-primary: #f8fafc;
+      --bg-primary: #f6f6f6;
       --bg-secondary: #ffffff;
       --text-primary: #0f172a;
       --text-secondary: #64748b;
       --text-input: #0f172a;
       --border-color: #e2e8f0;
-      --accent-primary: #4f46e5;
+      --accent-primary: #9038fa;
+      --accent-light: #b77aff;
       }
 
       [data-theme="dark"] {
@@ -163,7 +168,8 @@ function LayoutContent({ children, currentPageName }) {
       --text-secondary: #8a96aa;
       --text-input: #f0f4f8;
       --border-color: #2a3a52;
-      --accent-primary: #7c3aed;
+      --accent-primary: #b77aff;
+      --accent-light: #9038fa;
       }
 
       [data-theme="musk"] {
@@ -173,7 +179,8 @@ function LayoutContent({ children, currentPageName }) {
       --text-secondary: #94a3b8;
       --text-input: #f5f1f8;
       --border-color: #5a4577;
-      --accent-primary: #c84dd4;
+      --accent-primary: #b77aff;
+      --accent-light: #9038fa;
       }
 
         .safe-area-bottom {
@@ -198,11 +205,11 @@ function LayoutContent({ children, currentPageName }) {
           <div className="flex items-center gap-2">
             {!noBackButtonPages.includes(currentPageName) && <BackButton />}
             <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
               <span className="text-white font-bold text-base lg:text-lg">P</span>
             </div>
             <div className="hidden sm:flex flex-col">
-              <span className="text-base lg:text-lg font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent leading-tight">Ponty</span>
+              <span className="text-base lg:text-lg font-bold bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent leading-tight">Ponty</span>
               <span className="text-[10px] lg:text-xs font-medium text-slate-500 leading-tight">
                 {profileType === 'brand' ? 'Marcas' : 'Creators'}
               </span>
@@ -215,7 +222,7 @@ function LayoutContent({ children, currentPageName }) {
             {/* Support Button */}
             <AlertDialog open={isWhatsAppDialogOpen} onOpenChange={setIsWhatsAppDialogOpen}>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-indigo-500/10">
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-purple-500/10">
                   <HelpCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
                 </Button>
               </AlertDialogTrigger>
@@ -247,7 +254,7 @@ function LayoutContent({ children, currentPageName }) {
                     onClick={() => window.location.href = createPageUrl('Subscription')}
                     className="h-9 px-4 font-bold rounded-lg shadow-sm transition-all flex items-center gap-2"
                     style={{ 
-                      backgroundColor: 'rgb(249 115 22)',
+                      backgroundColor: '#9038fa',
                       color: 'white'
                     }}
                   >
@@ -260,7 +267,7 @@ function LayoutContent({ children, currentPageName }) {
                 <div className="relative h-10 w-10 rounded-full overflow-hidden border-2" style={{ borderColor: 'var(--border-color)' }}>
                   <Avatar className="h-full w-full">
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                    <AvatarFallback className="font-bold" style={{ backgroundColor: 'rgba(79, 70, 229, 0.1)', color: 'rgb(79, 70, 229)' }}>
+                    <AvatarFallback className="font-bold" style={{ backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' }}>
                       {user?.email?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
