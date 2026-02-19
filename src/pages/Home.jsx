@@ -324,7 +324,7 @@ export default function Home() {
                 Instagram
               </a>
               <span className="text-gray-700">•</span>
-              <a href="https://wa.me/5555619985914?text=Olá%2C%20entrei%20em%20contato%20por%20meio%20da%20página%2C%20gostaria%20de%20mais%20informações." target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition text-sm font-medium">
+              <a href="https://wa.me/55619985914?text=Olá%2C%20entrei%20em%20contato%20por%20meio%20da%20página%2C%20gostaria%20de%20mais%20informações." target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition text-sm font-medium">
                 Contato Suporte
               </a>
             </div>
