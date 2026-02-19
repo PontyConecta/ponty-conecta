@@ -17,7 +17,9 @@ export default function OnboardingProgress({ steps, currentStep, accentColor = '
             <div className={`
               w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
               ${currentStep >= s.number ? `${colors.active} text-white` : 'bg-slate-200 text-slate-500'}
-            `}>
+            `}
+            style={currentStep >= s.number ? {} : { backgroundColor: 'var(--border-color)' }}
+            >
               {currentStep > s.number ? <CheckCircle2 className="w-5 h-5" /> : s.number}
             </div>
             <span className={`hidden sm:block text-sm ${currentStep >= s.number ? 'font-medium' : ''}`}
@@ -26,7 +28,7 @@ export default function OnboardingProgress({ steps, currentStep, accentColor = '
             </span>
           </div>
           {index < steps.length - 1 && (
-            <div className={`w-8 h-0.5 ${currentStep > s.number ? colors.line : 'bg-slate-200'}`} />
+            <div className="w-8 h-0.5" style={{ backgroundColor: currentStep > s.number ? '#9038fa' : 'var(--border-color)' }} />
           )}
         </React.Fragment>
       ))}
