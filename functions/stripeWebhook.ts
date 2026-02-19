@@ -1,12 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import Stripe from 'npm:stripe@17.5.0';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
-  apiVersion: '2024-12-18.acacia',
-});
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
 Deno.serve(async (req) => {
-  // Set base44 auth from request headers before any Stripe operations
   const base44 = createClientFromRequest(req);
   
   const signature = req.headers.get('stripe-signature');
@@ -19,141 +16,166 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.text();
-    
-    // Verify webhook signature (async version for Deno)
-    const event = await stripe.webhooks.constructEventAsync(
-      body,
-      signature,
-      webhookSecret
-    );
+    const event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
 
     console.log('Webhook event received:', event.type);
 
-    // Handle different event types
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object;
-        await handleCheckoutCompleted(base44, session);
+        await handleCheckoutCompleted(base44, event.data.object);
         break;
       }
-
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
-        const subscription = event.data.object;
-        await handleSubscriptionUpdate(base44, subscription);
+        await handleSubscriptionUpdate(base44, event.data.object);
         break;
       }
-
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object;
-        await handleSubscriptionDeleted(base44, subscription);
+        await handleSubscriptionDeleted(base44, event.data.object);
         break;
       }
-
       case 'invoice.paid': {
-        const invoice = event.data.object;
-        await handleInvoicePaid(base44, invoice);
+        await handleInvoicePaid(base44, event.data.object);
         break;
       }
-
       case 'invoice.payment_failed': {
-        const invoice = event.data.object;
-        await handleInvoicePaymentFailed(base44, invoice);
+        await handleInvoicePaymentFailed(base44, event.data.object);
         break;
       }
-
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
 
     return Response.json({ received: true });
-
   } catch (error) {
-    console.error('Webhook error:', error);
-    return Response.json({ 
-      error: 'Webhook processing failed', 
-      details: error.message 
-    }, { status: 400 });
+    console.error('Webhook error:', error.message);
+    return Response.json({ error: 'Webhook processing failed', details: error.message }, { status: 400 });
   }
 });
+
+// Helper: find profile by stripe_customer_id OR by metadata
+async function findProfile(base44, customerId, metadata) {
+  // Try metadata first (most reliable)
+  if (metadata?.base44_profile_id && metadata?.base44_profile_type) {
+    const entityName = metadata.base44_profile_type === 'brand' ? 'Brand' : 'Creator';
+    try {
+      const profiles = await base44.asServiceRole.entities[entityName].filter({ id: metadata.base44_profile_id });
+      if (profiles.length > 0) {
+        console.log(`Found profile via metadata: ${entityName} ${profiles[0].id}`);
+        return { profile: profiles[0], profileType: metadata.base44_profile_type, entityName };
+      }
+    } catch (e) {
+      console.log('Metadata lookup failed:', e.message);
+    }
+  }
+
+  // Try by user_id from metadata
+  if (metadata?.base44_user_id) {
+    const [brands, creators] = await Promise.all([
+      base44.asServiceRole.entities.Brand.filter({ user_id: metadata.base44_user_id }),
+      base44.asServiceRole.entities.Creator.filter({ user_id: metadata.base44_user_id })
+    ]);
+    if (brands.length > 0) {
+      console.log(`Found brand via user_id: ${brands[0].id}`);
+      return { profile: brands[0], profileType: 'brand', entityName: 'Brand' };
+    }
+    if (creators.length > 0) {
+      console.log(`Found creator via user_id: ${creators[0].id}`);
+      return { profile: creators[0], profileType: 'creator', entityName: 'Creator' };
+    }
+  }
+
+  // Fallback: search by stripe_customer_id
+  if (customerId) {
+    const [brands, creators] = await Promise.all([
+      base44.asServiceRole.entities.Brand.filter({ stripe_customer_id: customerId }),
+      base44.asServiceRole.entities.Creator.filter({ stripe_customer_id: customerId })
+    ]);
+    if (brands.length > 0) {
+      console.log(`Found brand via customer_id: ${brands[0].id}`);
+      return { profile: brands[0], profileType: 'brand', entityName: 'Brand' };
+    }
+    if (creators.length > 0) {
+      console.log(`Found creator via customer_id: ${creators[0].id}`);
+      return { profile: creators[0], profileType: 'creator', entityName: 'Creator' };
+    }
+  }
+
+  console.error('Profile not found. customerId:', customerId, 'metadata:', JSON.stringify(metadata));
+  return null;
+}
 
 async function handleCheckoutCompleted(base44, session) {
   console.log('Checkout completed:', session.id);
   
-  const metadata = session.metadata;
-  const profileId = metadata.base44_profile_id;
-  const profileType = metadata.base44_profile_type;
-  const planType = metadata.base44_plan_type;
+  const metadata = session.metadata || {};
   const userId = metadata.base44_user_id;
+  const planType = metadata.base44_plan_type;
 
-  if (!profileId || !profileType || !userId) {
-    console.error('Missing metadata in checkout session');
+  const result = await findProfile(base44, session.customer, metadata);
+  if (!result) {
+    console.error('Cannot activate subscription - profile not found');
     return;
   }
 
-  // Get the subscription
-  const subscriptionId = session.subscription;
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const { profile, profileType, entityName } = result;
 
-  // Determine plan level from plan type
-  const planLevelMap = {
-    'brand_monthly': 'premium',
-    'brand_annual': 'premium',
-    'creator_monthly': 'premium',
-    'creator_annual': 'premium'
-  };
-  const determinedPlanLevel = planLevelMap[planType] || 'premium';
+  // Get the subscription from Stripe
+  const subscriptionId = session.subscription;
+  let nextBillingDate = null;
+  if (subscriptionId) {
+    try {
+      const sub = await stripe.subscriptions.retrieve(subscriptionId);
+      nextBillingDate = new Date(sub.current_period_end * 1000).toISOString();
+    } catch (e) {
+      console.log('Could not retrieve subscription:', e.message);
+    }
+  }
 
   // Create subscription record
-  await base44.asServiceRole.entities.Subscription.create({
-    user_id: userId,
-    plan_type: planType,
-    status: 'premium',
-    start_date: new Date().toISOString().split('T')[0],
-    amount: session.amount_total / 100, // Convert from cents
-    currency: session.currency.toUpperCase(),
-    stripe_subscription_id: subscriptionId,
-    stripe_customer_id: session.customer,
-    next_billing_date: new Date(subscription.current_period_end * 1000).toISOString(),
-    plan_name: `Ponty ${profileType === 'brand' ? 'Marcas' : 'Criadores'}`
-  });
+  try {
+    await base44.asServiceRole.entities.Subscription.create({
+      user_id: userId || profile.user_id,
+      plan_type: planType || `${profileType}_monthly`,
+      status: 'premium',
+      start_date: new Date().toISOString().split('T')[0],
+      amount: session.amount_total ? session.amount_total / 100 : 45,
+      currency: (session.currency || 'brl').toUpperCase(),
+      stripe_subscription_id: subscriptionId,
+      stripe_customer_id: session.customer,
+      next_billing_date: nextBillingDate,
+      plan_name: `Ponty ${profileType === 'brand' ? 'Marcas' : 'Criadores'}`
+    });
+    console.log('Subscription record created');
+  } catch (e) {
+    console.error('Failed to create subscription record:', e.message);
+  }
 
-  // Update profile with subscription status and plan level
-  const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
-  await base44.asServiceRole.entities[EntityType].update(profileId, {
+  // Update profile with premium status
+  await base44.asServiceRole.entities[entityName].update(profile.id, {
     subscription_status: 'premium',
-    plan_level: determinedPlanLevel,
+    plan_level: 'premium',
     stripe_customer_id: session.customer
   });
 
-  console.log(`Subscription activated for ${profileType} ${profileId}`);
+  console.log(`Subscription activated for ${profileType} ${profile.id}`);
 }
 
 async function handleSubscriptionUpdate(base44, subscription) {
-  console.log('Subscription updated:', subscription.id);
+  console.log('Subscription updated:', subscription.id, 'status:', subscription.status);
 
-  const customerId = subscription.customer;
+  // Get metadata from subscription
+  const metadata = subscription.metadata || {};
+  const result = await findProfile(base44, subscription.customer, metadata);
   
-  // Find profile by customer ID
-  const [brands, creators] = await Promise.all([
-    base44.asServiceRole.entities.Brand.filter({ stripe_customer_id: customerId }),
-    base44.asServiceRole.entities.Creator.filter({ stripe_customer_id: customerId })
-  ]);
-
-  const profile = brands[0] || creators[0];
-  const profileType = brands[0] ? 'brand' : 'creator';
-
-  if (!profile) {
-    console.error('Profile not found for customer:', customerId);
+  if (!result) {
+    console.error('Profile not found for subscription update');
     return;
   }
 
-  // Update subscription record
-  const subscriptions = await base44.asServiceRole.entities.Subscription.filter({ 
-    stripe_subscription_id: subscription.id 
-  });
+  const { profile, profileType, entityName } = result;
 
-  // Map Stripe status to our 4-tier system: starter, premium, pending, legacy
+  // Map Stripe status to our system
   const statusMap = {
     'active': 'premium',
     'past_due': 'pending',
@@ -163,13 +185,18 @@ async function handleSubscriptionUpdate(base44, subscription) {
   };
   let mappedStatus = statusMap[subscription.status] || 'starter';
 
-  // If active but cancel_at_period_end is true, mark as legacy (still has access until period ends)
+  // Active but cancelling = legacy (still has access)
   if (subscription.status === 'active' && subscription.cancel_at_period_end) {
     mappedStatus = 'legacy';
   }
 
-  if (subscriptions.length > 0) {
-    await base44.asServiceRole.entities.Subscription.update(subscriptions[0].id, {
+  // Update subscription record
+  const subs = await base44.asServiceRole.entities.Subscription.filter({ 
+    stripe_subscription_id: subscription.id 
+  });
+
+  if (subs.length > 0) {
+    await base44.asServiceRole.entities.Subscription.update(subs[0].id, {
       status: mappedStatus,
       next_billing_date: new Date(subscription.current_period_end * 1000).toISOString(),
       last_billing_date: new Date(subscription.current_period_start * 1000).toISOString(),
@@ -180,53 +207,43 @@ async function handleSubscriptionUpdate(base44, subscription) {
     });
   }
 
-  // Update profile status and plan level
-  const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
-  // Keep plan_level active for premium and legacy (still has access until period ends)
+  // Update profile
   const planLevel = (mappedStatus === 'premium' || mappedStatus === 'legacy') ? 'premium' : null;
-  
-  await base44.asServiceRole.entities[EntityType].update(profile.id, {
+  await base44.asServiceRole.entities[entityName].update(profile.id, {
     subscription_status: mappedStatus,
     plan_level: planLevel
   });
 
-  console.log(`Subscription updated for ${profileType} ${profile.id}`);
+  console.log(`Subscription updated for ${profileType} ${profile.id} -> ${mappedStatus}`);
 }
 
 async function handleSubscriptionDeleted(base44, subscription) {
   console.log('Subscription deleted:', subscription.id);
 
-  const customerId = subscription.customer;
+  const metadata = subscription.metadata || {};
+  const result = await findProfile(base44, subscription.customer, metadata);
   
-  // Find profile by customer ID
-  const [brands, creators] = await Promise.all([
-    base44.asServiceRole.entities.Brand.filter({ stripe_customer_id: customerId }),
-    base44.asServiceRole.entities.Creator.filter({ stripe_customer_id: customerId })
-  ]);
-
-  const profile = brands[0] || creators[0];
-  const profileType = brands[0] ? 'brand' : 'creator';
-
-  if (!profile) {
-    console.error('Profile not found for customer:', customerId);
+  if (!result) {
+    console.error('Profile not found for subscription deletion');
     return;
   }
 
+  const { profile, profileType, entityName } = result;
+
   // Update subscription record
-  const subscriptions = await base44.asServiceRole.entities.Subscription.filter({ 
+  const subs = await base44.asServiceRole.entities.Subscription.filter({ 
     stripe_subscription_id: subscription.id 
   });
 
-  if (subscriptions.length > 0) {
-    await base44.asServiceRole.entities.Subscription.update(subscriptions[0].id, {
-      status: 'legacy',
+  if (subs.length > 0) {
+    await base44.asServiceRole.entities.Subscription.update(subs[0].id, {
+      status: 'starter',
       end_date: new Date().toISOString().split('T')[0]
     });
   }
 
-  // Update profile - remove plan level on cancellation
-  const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
-  await base44.asServiceRole.entities[EntityType].update(profile.id, {
+  // Update profile - downgrade to starter
+  await base44.asServiceRole.entities[entityName].update(profile.id, {
     subscription_status: 'starter',
     plan_level: null
   });
@@ -240,12 +257,28 @@ async function handleInvoicePaid(base44, invoice) {
   const subscriptionId = invoice.subscription;
   if (!subscriptionId) return;
 
-  const subscriptions = await base44.asServiceRole.entities.Subscription.filter({ 
+  // Also update the profile to premium (in case it was pending)
+  const metadata = invoice.subscription_details?.metadata || {};
+  const result = await findProfile(base44, invoice.customer, metadata);
+  
+  if (result) {
+    const { profile, entityName } = result;
+    if (profile.subscription_status !== 'premium') {
+      await base44.asServiceRole.entities[entityName].update(profile.id, {
+        subscription_status: 'premium',
+        plan_level: 'premium'
+      });
+      console.log('Profile updated to premium via invoice.paid');
+    }
+  }
+
+  const subs = await base44.asServiceRole.entities.Subscription.filter({ 
     stripe_subscription_id: subscriptionId 
   });
 
-  if (subscriptions.length > 0) {
-    await base44.asServiceRole.entities.Subscription.update(subscriptions[0].id, {
+  if (subs.length > 0) {
+    await base44.asServiceRole.entities.Subscription.update(subs[0].id, {
+      status: 'premium',
       last_billing_date: new Date(invoice.period_start * 1000).toISOString(),
       next_billing_date: new Date(invoice.period_end * 1000).toISOString()
     });
@@ -255,24 +288,15 @@ async function handleInvoicePaid(base44, invoice) {
 async function handleInvoicePaymentFailed(base44, invoice) {
   console.error('Invoice payment failed:', invoice.id);
 
-  const customerId = invoice.customer;
-  
-  // Find profile and notify
-  const [brands, creators] = await Promise.all([
-    base44.asServiceRole.entities.Brand.filter({ stripe_customer_id: customerId }),
-    base44.asServiceRole.entities.Creator.filter({ stripe_customer_id: customerId })
-  ]);
+  const metadata = invoice.subscription_details?.metadata || {};
+  const result = await findProfile(base44, invoice.customer, metadata);
 
-  const profile = brands[0] || creators[0];
-  const profileType = brands[0] ? 'brand' : 'creator';
-
-  if (profile) {
-    const EntityType = profileType === 'brand' ? 'Brand' : 'Creator';
-    await base44.asServiceRole.entities[EntityType].update(profile.id, {
+  if (result) {
+    const { profile, profileType, entityName } = result;
+    await base44.asServiceRole.entities[entityName].update(profile.id, {
       subscription_status: 'pending',
       plan_level: null
     });
-    
     console.log(`Payment failed for ${profileType} ${profile.id}`);
   }
 }
