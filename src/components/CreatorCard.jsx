@@ -35,24 +35,24 @@ export default function CreatorCard({
     nano: 'bg-slate-100 text-slate-700',
     micro: 'bg-blue-100 text-blue-700',
     mid: 'bg-violet-100 text-violet-700',
-    macro: 'bg-orange-100 text-orange-700',
+    macro: 'bg-purple-100 text-purple-700',
     mega: 'bg-rose-100 text-rose-700'
   };
 
   if (compact) {
     return (
-      <Card className="hover:shadow-lg hover:border-orange-200 transition-all cursor-pointer group border-slate-200" onClick={onViewProfile}>
+      <Card className="hover:shadow-lg hover:border-purple-200 transition-all cursor-pointer group border-slate-200" onClick={onViewProfile}>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12">
               <AvatarImage src={creator.avatar_url} />
-              <AvatarFallback className="bg-orange-100 text-orange-700">
+              <AvatarFallback className="bg-[#9038fa]/10 text-[#9038fa]">
                 {creator.display_name?.[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                <h4 className="font-semibold text-slate-900 truncate group-hover:text-[#9038fa] transition-colors">
                   {creator.display_name}
                 </h4>
                 {creator.verified && (
@@ -79,9 +79,9 @@ export default function CreatorCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-2xl hover:border-orange-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
+    <Card className="overflow-hidden hover:shadow-2xl hover:border-purple-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
       {/* Cover Image */}
-      <div className="h-24 bg-gradient-to-r from-orange-500 to-amber-500 relative">
+      <div className="h-24 bg-gradient-to-r from-[#9038fa] to-[#b77aff] relative">
         {creator.cover_image_url && (
           <img 
             src={creator.cover_image_url} 
@@ -90,7 +90,7 @@ export default function CreatorCard({
           />
         )}
         {creator.featured && (
-          <Badge className="absolute top-2 right-2 bg-amber-500 text-white border-0">
+          <Badge className="absolute top-2 right-2 bg-[#9038fa] text-white border-0">
             <Star className="w-3 h-3 mr-1" />
             Destaque
           </Badge>
@@ -100,9 +100,9 @@ export default function CreatorCard({
       <CardContent className="pt-0 -mt-10 relative">
         {/* Avatar */}
         <div className="flex justify-between items-end mb-4">
-          <Avatar className="w-20 h-20 border-4 border-white shadow-xl ring-2 ring-orange-100 group-hover:ring-orange-200 transition-all">
+          <Avatar className="w-20 h-20 border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all">
             <AvatarImage src={creator.avatar_url} />
-            <AvatarFallback className="bg-gradient-to-br from-orange-500 to-amber-500 text-white text-2xl">
+            <AvatarFallback className="bg-gradient-to-br from-[#9038fa] to-[#b77aff] text-white text-2xl">
               {creator.display_name?.[0]}
             </AvatarFallback>
           </Avatar>
@@ -117,7 +117,7 @@ export default function CreatorCard({
         <div className="space-y-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg text-slate-900 group-hover:text-indigo-600 transition-colors">
+              <h3 className="font-semibold text-lg text-slate-900 group-hover:text-[#9038fa] transition-colors">
                 {creator.display_name}
               </h3>
               {creator.verified && (
@@ -195,7 +195,7 @@ export default function CreatorCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg hover:shadow-xl transition-all"
+                className="flex-1 bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff] text-white shadow-lg hover:shadow-xl transition-all"
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />
@@ -205,7 +205,7 @@ export default function CreatorCard({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="flex-1 border-orange-200 text-orange-600 bg-orange-50 cursor-not-allowed"
+                className="flex-1 border-purple-200 text-[#9038fa] bg-purple-50 cursor-not-allowed"
                 disabled
               >
                 <Lock className="w-4 h-4 mr-1" />

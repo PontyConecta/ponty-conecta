@@ -3,8 +3,9 @@ import { CheckCircle2 } from 'lucide-react';
 
 export default function OnboardingProgress({ steps, currentStep, accentColor = 'indigo' }) {
   const colorMap = {
-    indigo: { active: 'bg-indigo-600', line: 'bg-indigo-600' },
-    orange: { active: 'bg-orange-500', line: 'bg-orange-500' },
+    indigo: { active: 'bg-[#9038fa]', line: 'bg-[#9038fa]' },
+    orange: { active: 'bg-[#b77aff]', line: 'bg-[#b77aff]' },
+    purple: { active: 'bg-[#9038fa]', line: 'bg-[#9038fa]' },
   };
   const colors = colorMap[accentColor] || colorMap.indigo;
 
