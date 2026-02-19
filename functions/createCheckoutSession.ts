@@ -44,39 +44,24 @@ Deno.serve(async (req) => {
       apiVersion: '2024-12-18.acacia',
     });
 
-    // Get or create Stripe customer
-    let customerId = profile.stripe_customer_id;
-    
-    if (customerId) {
-      try {
-        const existing = await stripe.customers.retrieve(customerId);
-        if (existing.deleted) {
-          customerId = null;
-        }
-      } catch (e) {
-        console.log('Customer invalid, will create new:', e.message);
-        customerId = null;
+    // Always create a fresh Stripe customer to avoid stale IDs
+    const customer = await stripe.customers.create({
+      email: user.email,
+      name: user.full_name,
+      metadata: {
+        base44_user_id: user.id,
+        base44_profile_type: profile_type,
+        base44_app_id: Deno.env.get('BASE44_APP_ID')
       }
-    }
-    
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: user.full_name,
-        metadata: {
-          base44_user_id: user.id,
-          base44_profile_type: profile_type,
-          base44_app_id: Deno.env.get('BASE44_APP_ID')
-        }
-      });
-      customerId = customer.id;
+    });
+    const customerId = customer.id;
+    console.log('Created Stripe customer:', customerId);
 
-      // Save customer ID to profile (don't await - fire and forget)
-      const entityName = profile_type === 'brand' ? 'Brand' : 'Creator';
-      base44.entities[entityName].update(profile.id, { stripe_customer_id: customerId }).catch(e => 
-        console.error('Failed to save customer ID:', e.message)
-      );
-    }
+    // Save customer ID to profile
+    const entityName = profile_type === 'brand' ? 'Brand' : 'Creator';
+    base44.entities[entityName].update(profile.id, { stripe_customer_id: customerId }).catch(e => 
+      console.error('Failed to save customer ID:', e.message)
+    );
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
