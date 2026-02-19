@@ -235,7 +235,7 @@ function LayoutContent({ children, currentPageName }) {
                   <AlertDialogCancel style={{ color: 'var(--text-primary)' }}>Cancelar</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
                   >
                     Abrir WhatsApp
                   </AlertDialogAction>
@@ -284,8 +284,8 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-8 min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-6 min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
           {children}
         </div>
       </main>
