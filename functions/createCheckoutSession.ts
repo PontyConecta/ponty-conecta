@@ -90,6 +90,15 @@ Deno.serve(async (req) => {
         base44_profile_type: profile_type,
         base44_plan_type: plan_type,
         base44_app_id: Deno.env.get('BASE44_APP_ID')
+      },
+      subscription_data: {
+        metadata: {
+          base44_user_id: user.id,
+          base44_profile_id: profile.id,
+          base44_profile_type: profile_type,
+          base44_plan_type: plan_type,
+          base44_app_id: Deno.env.get('BASE44_APP_ID')
+        }
       }
     });
 
