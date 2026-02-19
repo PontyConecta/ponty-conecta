@@ -263,15 +263,15 @@ function LayoutContent({ children, currentPageName }) {
                   </Button>
                 )}
 
-                {/* User Avatar - Non-clickable */}
-                <div className="relative h-10 w-10 rounded-full overflow-hidden border-2" style={{ borderColor: 'var(--border-color)' }}>
-                  <Avatar className="h-full w-full">
-                    <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                    <AvatarFallback className="font-bold" style={{ backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' }}>
-                      {user?.email?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
+                {/* User Avatar - Links to Settings */}
+                <Link to={createPageUrl('Settings')} className="relative h-10 w-10 rounded-full overflow-hidden border-2 hover:opacity-80 transition-opacity" style={{ borderColor: 'var(--border-color)' }}>
+                      <Avatar className="h-full w-full">
+                        <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
+                        <AvatarFallback className="font-bold" style={{ backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' }}>
+                          {user?.email?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
           </div>
         </div>
       </header>

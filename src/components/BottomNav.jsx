@@ -7,7 +7,6 @@ import {
   FileText, 
   Sparkles,
   Search,
-  Settings,
   Building2
 } from 'lucide-react';
 
@@ -17,7 +16,6 @@ export default function BottomNav({ profileType, currentPageName }) {
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
     { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
-    { name: 'Config', page: 'Settings', icon: Settings },
   ];
 
   const creatorNavItems = [
@@ -25,7 +23,6 @@ export default function BottomNav({ profileType, currentPageName }) {
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone },
     { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
     { name: 'Entregas', page: 'MyDeliveries', icon: FileText },
-    { name: 'Config', page: 'Settings', icon: Settings },
   ];
 
   const guestNavItems = [
