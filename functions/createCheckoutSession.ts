@@ -82,6 +82,7 @@ Deno.serve(async (req) => {
       customer: customerId,
       payment_method_types: ['card'],
       mode: 'subscription',
+      allow_promotion_codes: true,
       line_items: [
         {
           price: planConfig.price_id,
