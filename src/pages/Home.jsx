@@ -90,14 +90,14 @@ export default function Home() {
             </div>
 
             <div className="relative min-h-[500px] flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/10 via-purple-50 to-[#b77aff]/10 rounded-3xl overflow-hidden">
-                <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-[#9038fa]/30 to-[#b77aff]/20 rounded-full blur-3xl animate-pulse"
+              <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/8 via-[#b77aff]/5 to-[#9038fa]/8 rounded-3xl overflow-hidden">
+                <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-[#9038fa]/25 to-[#b77aff]/15 rounded-full blur-3xl animate-pulse"
                   style={{
                     transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.2}px)`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 ></div>
-                <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-[#b77aff]/30 to-[#9038fa]/20 rounded-full blur-3xl animate-pulse"
+                <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-[#b77aff]/25 to-[#9038fa]/15 rounded-full blur-3xl animate-pulse"
                   style={{
                     transform: `translate(-${scrollY * 0.15}px, -${scrollY * 0.1}px)`,
                     transition: 'transform 0.1s ease-out',
@@ -108,14 +108,14 @@ export default function Home() {
 
               <div className="relative z-10 grid grid-cols-2 gap-4 p-6">
                 {[
-                  { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais' },
-                  { icon: '📊', title: 'Gestão Descomplicada', description: 'Organize campanhas de forma simples' },
-                  { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência e segurança em cada projeto' },
-                  { icon: '📈', title: 'Crescimento Sustentável', description: 'Construa reputação e explore oportunidades' }
+                  { icon: '🤝', title: 'Conexões Estratégicas', description: 'Conectamos você às parcerias ideais', accent: '#9038fa' },
+                  { icon: '📊', title: 'Gestão Descomplicada', description: 'Organize campanhas de forma simples', accent: '#6366f1' },
+                  { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência e segurança em cada projeto', accent: '#10b981' },
+                  { icon: '📈', title: 'Crescimento Sustentável', description: 'Construa reputação e explore oportunidades', accent: '#b77aff' }
                 ].map((benefit, idx) => (
                   <Card
                     key={idx}
-                    className="bg-white shadow-lg hover:shadow-xl transition-shadow"
+                    className="bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border-0"
                     style={{
                       animation: `float 3s ease-in-out infinite`,
                       animationDelay: `${idx * 0.3}s`
@@ -123,8 +123,8 @@ export default function Home() {
                   >
                     <CardContent className="pt-6 text-center">
                       <div className="text-3xl mb-3">{benefit.icon}</div>
-                      <h4 className="font-bold text-sm mb-2">{benefit.title}</h4>
-                      <p className="text-xs text-gray-600">{benefit.description}</p>
+                      <h4 className="font-bold text-sm mb-2 text-gray-900">{benefit.title}</h4>
+                      <p className="text-xs text-gray-500">{benefit.description}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -280,7 +280,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/5 via-white to-[#b77aff]/5 relative overflow-hidden">
+      <section className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/4 via-white to-[#b77aff]/4 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">

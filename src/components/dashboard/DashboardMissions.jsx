@@ -46,7 +46,7 @@ export default function DashboardMissions({ userId, profileType }) {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Flame className="w-5 h-5 text-orange-500" />
+            <Flame className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
             Primeiros Passos
           </CardTitle>
           <Badge variant="outline" className="font-medium">

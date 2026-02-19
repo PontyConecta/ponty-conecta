@@ -81,7 +81,7 @@ export default function CreatorCard({
   return (
     <Card className="overflow-hidden hover:shadow-2xl hover:border-purple-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
       {/* Cover Image */}
-      <div className="h-24 bg-gradient-to-r from-[#9038fa] to-[#b77aff] relative">
+      <div className="h-24 bg-gradient-to-br from-[#b77aff] via-[#a055ff] to-[#9038fa] relative">
         {creator.cover_image_url && (
           <img 
             src={creator.cover_image_url} 
@@ -102,7 +102,7 @@ export default function CreatorCard({
         <div className="flex justify-between items-end mb-4">
           <Avatar className="w-20 h-20 border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all">
             <AvatarImage src={creator.avatar_url} />
-            <AvatarFallback className="bg-gradient-to-br from-[#9038fa] to-[#b77aff] text-white text-2xl">
+            <AvatarFallback className="bg-gradient-to-br from-[#b77aff] via-[#a055ff] to-[#9038fa] text-white text-2xl">
               {creator.display_name?.[0]}
             </AvatarFallback>
           </Avatar>

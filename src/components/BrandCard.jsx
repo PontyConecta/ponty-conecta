@@ -43,8 +43,8 @@ export default function BrandCard({
             {brand.logo_url ? (
               <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
             ) : (
-              <div className="w-12 h-12 rounded-lg bg-[#9038fa]/10 flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-[#9038fa]" />
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #9038fa, #b77aff)' }}>
+                <Building2 className="w-6 h-6 text-white" />
               </div>
             )}
             <div className="flex-1 min-w-0">
@@ -72,7 +72,7 @@ export default function BrandCard({
   return (
     <Card className="overflow-hidden hover:shadow-2xl hover:border-purple-300 transition-all duration-300 group border-slate-200 hover:scale-[1.02]">
       {/* Cover Image */}
-      <div className="h-24 bg-gradient-to-r from-[#9038fa] to-[#b77aff] relative">
+      <div className="h-24 bg-gradient-to-br from-[#9038fa] via-[#a055ff] to-[#b77aff] relative">
         {brand.cover_image_url && (
           <img 
             src={brand.cover_image_url} 
@@ -92,7 +92,7 @@ export default function BrandCard({
               className="w-20 h-20 rounded-xl border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all object-cover bg-white"
             />
           ) : (
-            <div className="w-20 h-20 rounded-xl border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center">
+            <div className="w-20 h-20 rounded-xl border-4 border-white shadow-xl ring-2 ring-purple-100 group-hover:ring-purple-200 transition-all bg-gradient-to-br from-[#9038fa] via-[#a055ff] to-[#b77aff] flex items-center justify-center">
               <Building2 className="w-10 h-10 text-white" />
             </div>
           )}
