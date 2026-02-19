@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Sparkles, 
+  Megaphone,
   FileText, 
   TrendingUp,
   ArrowRight,

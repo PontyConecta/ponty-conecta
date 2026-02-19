@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
-  Megaphone, Search, Users, FileText, Sparkles, Building2, 
+  Megaphone, Search, Users, FileText, Building2, 
   Crown, UserCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
