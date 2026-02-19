@@ -16,7 +16,7 @@ export default function OnboardingProgress({ steps, currentStep, accentColor = '
           <div className="flex items-center gap-2">
             <div className={`
               w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
-              ${currentStep >= s.number ? `${colors.active} text-white` : 'bg-slate-200 text-slate-500'}
+              ${currentStep >= s.number ? `${colors.active} text-white` : ''}
             `}
             style={currentStep >= s.number ? {} : { backgroundColor: 'var(--border-color)' }}
             >
