@@ -33,6 +33,7 @@ import {
   Package,
   MapPin,
   Building2,
+  Megaphone,
   Send,
   Crown,
   CheckCircle2,
