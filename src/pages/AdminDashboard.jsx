@@ -202,8 +202,8 @@ export default function AdminDashboard() {
               <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Assinantes Ativos</p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Assinantes Ativos</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.activeSubscribers || 0}
                     </p>
                   </CardContent>
@@ -211,8 +211,8 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Novos Usuários</p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Novos Usuários</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.newUsers || 0}
                     </p>
                   </CardContent>
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Churn Rate</p>
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Churn Rate</p>
                     <p className="text-2xl font-bold text-red-600">
                       {analytics.churnRate || 0}%
                     </p>
@@ -234,8 +234,8 @@ export default function AdminDashboard() {
               <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Total de Usuários</p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Total de Usuários</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.totalUsers || 0}
                     </p>
                   </CardContent>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Marcas</p>
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Marcas</p>
                     <p className="text-2xl font-bold text-blue-600">
                       {analytics.totalBrands || 0}
                     </p>
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Criadores</p>
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Criadores</p>
                     <p className="text-2xl font-bold text-purple-600">
                       {analytics.totalCreators || 0}
                     </p>
@@ -285,8 +285,8 @@ export default function AdminDashboard() {
               <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Campanhas Ativas</p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Campanhas Ativas</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.activeCampaigns || 0}
                     </p>
                   </CardContent>
@@ -294,8 +294,8 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Aplicações</p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Aplicações</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.totalApplications || 0}
                     </p>
                   </CardContent>
@@ -303,7 +303,7 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Taxa de Conversão</p>
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Taxa de Conversão</p>
                     <p className="text-2xl font-bold text-green-600">
                       {analytics.conversionRate || 0}%
                     </p>
@@ -336,8 +336,8 @@ export default function AdminDashboard() {
               <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Entregas Completas</p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Entregas Completas</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {analytics.completedDeliveries || 0}
                     </p>
                   </CardContent>
@@ -345,7 +345,7 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Disputas Pendentes</p>
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Disputas Pendentes</p>
                     <p className="text-2xl font-bold text-orange-600">
                       {analytics.pendingDisputes || 0}
                     </p>
@@ -354,8 +354,8 @@ export default function AdminDashboard() {
 
                 <Card>
                   <CardContent className="pt-6">
-                    <p className="text-sm text-slate-600 mb-2">Valor Total Transacionado</p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Valor Total Transacionado</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       R$ {analytics.totalTransactionValue?.toLocaleString('pt-BR') || '0'}
                     </p>
                   </CardContent>

@@ -269,10 +269,10 @@ export default function Applications() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
           {profileType === 'brand' ? 'Candidaturas' : 'Minhas Candidaturas'}
         </h1>
-        <p className="text-slate-600 mt-1">
+        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
           {filteredApplications.length} candidaturas encontradas
         </p>
       </div>
@@ -348,10 +348,10 @@ export default function Applications() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-slate-900 truncate">
+                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                 {creator?.display_name || 'Criador'}
                               </h3>
-                              <p className="text-sm text-slate-500 truncate">
+                              <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
                                 Campanha: {campaign?.title || '-'}
                               </p>
                               <div className="flex flex-wrap gap-2 mt-1">
@@ -371,13 +371,13 @@ export default function Applications() {
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-slate-900 truncate">
+                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                 {campaign?.title || 'Campanha'}
                               </h3>
-                              <p className="text-sm text-slate-500">
+                              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                                 {brand?.company_name || 'Marca'}
                               </p>
-                              <div className="flex flex-wrap gap-3 mt-2 text-sm text-slate-500">
+                              <div className="flex flex-wrap gap-3 mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                                 <span className="flex items-center gap-1">
                                  <Calendar className="w-4 h-4" />
                                  {formatDate(campaign?.deadline)}
@@ -507,10 +507,10 @@ export default function Applications() {
             ) : (
               <Target className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             )}
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma candidatura encontrada
             </h3>
-            <p className="text-slate-500">
+            <p style={{ color: 'var(--text-secondary)' }}>
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : profileType === 'brand'

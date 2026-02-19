@@ -367,16 +367,16 @@ export default function Deliveries() {
       {/* Pull to Refresh Indicator */}
       {refreshing && (
         <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-white px-4 py-2 rounded-full shadow-lg">
-          <Loader2 className="w-5 h-5 animate-spin text-indigo-600" />
+          <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--accent-primary)' }} />
         </div>
       )}
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
           {profileType === 'brand' ? 'Entregas' : 'Minhas Entregas'}
         </h1>
-        <p className="text-slate-600 mt-1">
+        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
           {filteredDeliveries.length} entregas encontradas
         </p>
       </div>
@@ -438,10 +438,10 @@ export default function Deliveries() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-slate-900 truncate">
+                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                 {creator?.display_name || 'Criador'}
                               </h3>
-                              <p className="text-sm text-slate-500 truncate">
+                              <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
                                 {campaign?.title || '-'}
                               </p>
                             </div>
@@ -456,10 +456,10 @@ export default function Deliveries() {
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-slate-900 truncate">
+                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                 {campaign?.title || 'Campanha'}
                               </h3>
-                              <p className="text-sm text-slate-500">
+                              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                                 {brand?.company_name || 'Marca'}
                               </p>
                               <div className="flex flex-wrap gap-3 mt-2 text-sm">
@@ -589,10 +589,10 @@ export default function Deliveries() {
             ) : (
               <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             )}
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma entrega encontrada
             </h3>
-            <p className="text-slate-500">
+            <p style={{ color: 'var(--text-secondary)' }}>
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : profileType === 'brand'
