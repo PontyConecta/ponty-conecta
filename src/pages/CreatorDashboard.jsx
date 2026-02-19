@@ -123,7 +123,7 @@ export default function CreatorDashboard() {
     }
   ];
 
-  const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'legacy';
+  const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'legacy' || (creator?.subscription_status === 'trial' && creator?.trial_end_date && new Date(creator.trial_end_date) > new Date());
   const isNewUser = applications.length === 0 && deliveries.length === 0;
 
   const getStatusBadge = (status) => {

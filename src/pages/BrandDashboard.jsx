@@ -125,7 +125,7 @@ export default function BrandDashboard() {
     return <Badge className={`${style.color} border-0`}>{style.label}</Badge>;
   };
 
-  const isSubscribed = brand?.subscription_status === 'premium' || brand?.subscription_status === 'legacy';
+  const isSubscribed = brand?.subscription_status === 'premium' || brand?.subscription_status === 'legacy' || (brand?.subscription_status === 'trial' && brand?.trial_end_date && new Date(brand.trial_end_date) > new Date());
   const isNewUser = campaigns.length === 0 && applications.length === 0;
 
   return (
