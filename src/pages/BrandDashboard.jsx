@@ -37,6 +37,7 @@ export default function BrandDashboard() {
 
   const [loading, setLoading] = useState(true);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
+  const [campaignsMap, setCampaignsMap] = useState({});
 
   useEffect(() => {
     loadData();
@@ -64,6 +65,11 @@ export default function BrandDashboard() {
         setCampaigns(campaignsData);
         setApplications(applicationsData);
         setDeliveries(deliveriesData);
+
+        // Build campaigns map for deliveries
+        const cMap = {};
+        campaignsData.forEach(c => { cMap[c.id] = c; });
+        setCampaignsMap(cMap);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -302,7 +308,9 @@ export default function BrandDashboard() {
                     style={{ backgroundColor: 'var(--bg-secondary)' }}
                     >
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Entrega #{delivery.id.slice(-6)}</h4>
+                      <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                        {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
+                      </h4>
                       <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                         {delivery.submitted_at 
                           ? `Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`

@@ -39,6 +39,9 @@ export default function CreatorDashboard() {
   const [reputation, setReputation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
+  const [campaignsMap, setCampaignsMap] = useState({});
+  const [brandsMap, setBrandsMap] = useState({});
+  const [appCampaignsMap, setAppCampaignsMap] = useState({});
 
   useEffect(() => {
     loadData();
@@ -65,6 +68,27 @@ export default function CreatorDashboard() {
         
         setApplications(applicationsData);
         setDeliveries(deliveriesData);
+
+        // Load campaigns and brands for deliveries
+        const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id).filter(Boolean))];
+        const brandIds = [...new Set(deliveriesData.map(d => d.brand_id).filter(Boolean))];
+        const [campaignsData, brandsData] = await Promise.all([
+          Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))),
+          Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id })))
+        ]);
+        const cMap = {};
+        campaignsData.flat().forEach(c => { cMap[c.id] = c; });
+        setCampaignsMap(cMap);
+        const bMap = {};
+        brandsData.flat().forEach(b => { bMap[b.id] = b; });
+        setBrandsMap(bMap);
+
+        // Load campaigns for applications
+        const appCampaignIds = [...new Set(applicationsData.map(a => a.campaign_id).filter(Boolean))];
+        const appCampaignsData = await Promise.all(appCampaignIds.map(id => base44.entities.Campaign.filter({ id })));
+        const acMap = {};
+        appCampaignsData.flat().forEach(c => { acMap[c.id] = c; });
+        setAppCampaignsMap(acMap);
         if (reputationData.length > 0) {
           setReputation(reputationData[0]);
         }
@@ -202,9 +226,11 @@ export default function CreatorDashboard() {
                   style={{ backgroundColor: 'var(--bg-primary)' }}
                 >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Campanha #{app.campaign_id?.slice(-6)}</h4>
+                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                      {appCampaignsMap[app.campaign_id]?.title || `Campanha #${app.campaign_id?.slice(-6)}`}
+                    </h4>
                     <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
-                      {app.message?.slice(0, 50) || 'Sem mensagem'}...
+                      {app.message?.slice(0, 50) || 'Sem mensagem'}
                     </p>
                   </div>
                   {getStatusBadge(app.status)}
@@ -257,11 +283,14 @@ export default function CreatorDashboard() {
                     style={{ backgroundColor: 'var(--bg-primary)' }}
                   >
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Entrega #{delivery.id.slice(-6)}</h4>
+                      <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                        {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
+                      </h4>
                       <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {brandsMap[delivery.brand_id]?.company_name || ''}
                         {delivery.submitted_at 
-                          ? `Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
-                          : `Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
+                          ? ` · Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
+                          : ` · Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
                         }
                       </p>
                     </div>
