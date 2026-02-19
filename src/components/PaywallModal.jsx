@@ -52,7 +52,7 @@ export default function PaywallModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
         <DialogHeader className="text-center pb-4">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-orange-500/30">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
             <Lock className="w-8 h-8 text-white" />
           </div>
           <DialogTitle className="text-2xl" style={{ color: 'var(--text-primary)' }}>{title}</DialogTitle>
@@ -64,7 +64,7 @@ export default function PaywallModal({
         {feature && (
           <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
             <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-orange-500" />
+              <Sparkles className="w-5 h-5 text-[#9038fa]" />
               <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{feature}</span>
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function PaywallModal({
         <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
           <div className="flex items-center justify-between">
             <div>
-              <Badge className="bg-orange-100 text-orange-700 border-0 mb-1">
+              <Badge className="bg-purple-100 text-purple-700 border-0 mb-1">
                 Oferta Especial
               </Badge>
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Apenas</p>
@@ -100,7 +100,7 @@ export default function PaywallModal({
         <div className="flex flex-col gap-3">
           <Button
             onClick={handleAction}
-            className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 h-12 text-base"
+            className="w-full bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff] h-12 text-base"
           >
             <Crown className="w-5 h-5 mr-2" />
             {isAuthenticated ? 'Assinar Agora' : 'Criar Conta e Assinar'}

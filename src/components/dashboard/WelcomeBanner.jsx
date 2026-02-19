@@ -17,7 +17,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
       transition={{ duration: 0.5 }}
     >
       <Card className="overflow-hidden border-0 shadow-xl">
-        <div className={`bg-gradient-to-r ${isBrand ? 'from-indigo-600 via-violet-600 to-purple-600' : 'from-orange-500 via-amber-500 to-yellow-500'} p-6 lg:p-8`}>
+        <div className="bg-gradient-to-r from-[#9038fa] via-[#a055ff] to-[#b77aff] p-6 lg:p-8">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <Badge className="bg-white/20 text-white border-0 mb-3">

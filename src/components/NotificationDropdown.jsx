@@ -330,11 +330,11 @@ export default function NotificationDropdown({ triggerClassName }) {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative h-10 w-10 rounded-full hover:bg-indigo-500/10"
+          className="relative h-10 w-10 rounded-full hover:bg-purple-500/10"
         >
           <Bell className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white"></span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#9038fa] rounded-full ring-2 ring-white"></span>
           )}
         </Button>
       </DropdownMenuTrigger>

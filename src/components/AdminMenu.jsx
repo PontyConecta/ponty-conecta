@@ -63,7 +63,7 @@ export default function AdminMenu({ currentPageName, triggerClassName }) {
         <Button 
           variant="ghost"
           size="icon"
-          className="h-10 w-10 rounded-full hover:bg-indigo-500/10"
+          className="h-10 w-10 rounded-full hover:bg-purple-500/10"
         >
           <Shield className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
         </Button>

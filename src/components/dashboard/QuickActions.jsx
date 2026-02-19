@@ -9,16 +9,16 @@ import {
 import { motion } from 'framer-motion';
 
 const brandActions = [
-  { label: 'Nova Campanha', icon: Megaphone, page: 'CampaignManager', color: 'bg-indigo-500', requiresSub: true },
-  { label: 'Descobrir Criadores', icon: Search, page: 'DiscoverCreators', color: 'bg-violet-500' },
-  { label: 'Candidaturas', icon: Users, page: 'Applications', color: 'bg-amber-500' },
+  { label: 'Nova Campanha', icon: Megaphone, page: 'CampaignManager', color: 'bg-[#9038fa]', requiresSub: true },
+  { label: 'Descobrir Criadores', icon: Search, page: 'DiscoverCreators', color: 'bg-[#b77aff]' },
+  { label: 'Candidaturas', icon: Users, page: 'Applications', color: 'bg-[#7a2de0]' },
   { label: 'Entregas', icon: FileText, page: 'Deliveries', color: 'bg-emerald-500' },
 ];
 
 const creatorActions = [
-  { label: 'Campanhas', icon: Megaphone, page: 'OpportunityFeed', color: 'bg-orange-500' },
-  { label: 'Descobrir Marcas', icon: Building2, page: 'DiscoverBrands', color: 'bg-violet-500' },
-  { label: 'Candidaturas', icon: FileText, page: 'Applications', color: 'bg-amber-500' },
+  { label: 'Campanhas', icon: Megaphone, page: 'OpportunityFeed', color: 'bg-[#9038fa]' },
+  { label: 'Descobrir Marcas', icon: Building2, page: 'DiscoverBrands', color: 'bg-[#b77aff]' },
+  { label: 'Candidaturas', icon: FileText, page: 'Applications', color: 'bg-[#7a2de0]' },
   { label: 'Meu Perfil', icon: UserCircle, page: 'Profile', color: 'bg-emerald-500' },
 ];
 
@@ -45,7 +45,7 @@ export default function QuickActions({ profileType, isSubscribed }) {
                   <div className={`w-12 h-12 rounded-xl ${action.color} flex items-center justify-center relative`}>
                     <action.icon className="w-6 h-6 text-white" />
                     {needsSub && (
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center">
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#9038fa] rounded-full flex items-center justify-center">
                         <Crown className="w-3 h-3 text-white" />
                       </div>
                     )}
