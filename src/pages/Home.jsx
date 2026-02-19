@@ -35,9 +35,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="relative px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-white overflow-hidden">
+      <section className="relative px-4 sm:px-6 lg:px-8 pt-8 pb-4 sm:py-12 lg:py-16 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6 lg:mb-12">
+          <div className="mb-4 lg:mb-10">
             <div className="flex items-center gap-2 lg:gap-3 group">
               <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-xl lg:text-2xl">P</span>
@@ -49,18 +49,18 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
-            <div className="flex flex-col gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-8 lg:mb-16">
+            <div className="flex flex-col gap-4 sm:gap-5 lg:gap-7">
               <div className="hidden lg:inline-flex items-center gap-2 bg-[#9038fa]/10 text-[#9038fa] px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
                 <Zap className="w-4 h-4 animate-pulse" />
                 <span>Mediação Profissional de Última Geração</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight tracking-tight">
                 A <span className="bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent">Ponte Profissional</span> Entre Marcas e Criadores
               </h1>
 
-              <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-md">
+              <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-md">
                 Organize, execute e escale suas relações profissionais com regras automatizadas e entrega garantida.
               </p>
 
@@ -69,10 +69,10 @@ export default function Home() {
                 <span>Explore gratuitamente • Sem cartão de crédito</span>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   size="lg" 
-                  className="bg-[#9038fa] text-white hover:bg-[#7a2de0] w-full sm:w-auto shadow-lg shadow-[#9038fa]/25"
+                  className="bg-[#9038fa] text-white hover:bg-[#7a2de0] w-full sm:w-auto shadow-lg shadow-[#9038fa]/25 h-11 sm:h-12"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                 >
                   Sou uma Marca
@@ -80,7 +80,7 @@ export default function Home() {
                 </Button>
                 <Button 
                   size="lg" 
-                  className="w-full sm:w-auto border-2 border-[#9038fa] text-[#9038fa] bg-white hover:bg-[#9038fa]/5"
+                  className="w-full sm:w-auto border-2 border-[#9038fa] text-[#9038fa] bg-white hover:bg-[#9038fa]/5 h-11 sm:h-12"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                 >
                   Sou Criador
@@ -123,17 +123,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="por-que-ponty" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="por-que-ponty" className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-3 tracking-tight">
               Por que escolher Ponty
             </h2>
             <p className="text-lg text-gray-600">A solução certa para cada perfil</p>
           </div>
 
           <Tabs defaultValue="brands" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-12">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-6 sm:mb-10">
               <TabsTrigger value="brands" className="text-base">
                 <span className="mr-2">🏢</span>
                 Para Marcas
@@ -245,16 +245,16 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/4 via-white to-[#b77aff]/4 relative overflow-hidden">
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/4 via-white to-[#b77aff]/4 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-3 tracking-tight">
               Simples para ambos os lados
             </h2>
-            <p className="text-lg text-gray-600">Processo transparente e estruturado do início ao fim</p>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600">Processo transparente e estruturado do início ao fim</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 relative z-10">
             {[
               {
                 number: '01',
@@ -277,13 +277,13 @@ export default function Home() {
                 description: 'Relacionamentos bem-sucedidos geram histórico e abrem portas para novas oportunidades'
               }
             ].map((step, idx) => (
-              <Card key={idx} className="bg-white hover:shadow-lg transition-all hover:-translate-y-2">
-                <CardContent className="pt-8">
-                  <div className="text-5xl font-black bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent mb-4">
+              <Card key={idx} className="bg-white hover:shadow-lg transition-all hover:-translate-y-1">
+                <CardContent className="p-4 sm:pt-6 lg:pt-8">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent mb-2 sm:mb-4">
                     {step.number}
                   </div>
-                  <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
+                  <h3 className="text-sm sm:text-base lg:text-xl font-bold mb-1.5 sm:mb-3">{step.title}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{step.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -291,12 +291,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
         <div className="max-w-3xl mx-auto text-center text-white">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-4 tracking-tight">
             Pronto para começar?
           </h2>
-          <p className="text-lg sm:text-xl mb-12 opacity-95">
+          <p className="text-sm sm:text-lg mb-8 opacity-95">
             Junte-se a centenas de marcas e criadores que já estão transformando suas relações profissionais
           </p>
 

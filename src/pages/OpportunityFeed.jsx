@@ -345,83 +345,76 @@ export default function OpportunityFeed() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="h-full hover:shadow-xl transition-all duration-300 group cursor-pointer" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} onClick={() => openCampaignDetails(campaign)}>
+                <Card className="hover:shadow-lg transition-all duration-300 group cursor-pointer overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} onClick={() => openCampaignDetails(campaign)}>
                   {/* Cover */}
                   {campaign.cover_image_url && (
-                    <div className="h-32 overflow-hidden">
+                    <div className="h-36 overflow-hidden">
                       <img src={campaign.cover_image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                     </div>
                   )}
                   
-                  <CardContent className="p-3 sm:p-4 lg:p-5 flex flex-col h-full">
+                  <CardContent className="p-4">
                     {/* Brand Info */}
-                    <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center gap-2.5 mb-3">
                       {brand?.logo_url ? (
-                        <img src={brand.logo_url} alt={brand.company_name} className="w-10 h-10 rounded-lg object-cover" />
+                        <img src={brand.logo_url} alt={brand.company_name} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                          <Building2 className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                          <Building2 className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                         </div>
                       )}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{brand?.company_name || 'Marca'}</h4>
-                        {brand?.verified && (
-                          <Badge variant="outline" className="text-xs" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent-primary)' }}>
-                            Verificada
-                          </Badge>
-                        )}
-                      </div>
+                      <h4 className="font-medium text-sm truncate" style={{ color: 'var(--text-primary)' }}>{brand?.company_name || 'Marca'}</h4>
                     </div>
 
                     {/* Campaign Title & Description */}
-                    <h3 className="text-base lg:text-lg font-semibold mb-1.5 line-clamp-2 transition-colors" style={{ color: 'var(--text-primary)' }}>
+                    <h3 className="text-base font-semibold mb-1 line-clamp-2" style={{ color: 'var(--text-primary)' }}>
                       {campaign.title}
                     </h3>
-                    <p className="text-sm line-clamp-2 mb-4 flex-1" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-xs line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>
                       {campaign.description}
                     </p>
 
                     {/* Platforms */}
-                    <div className="flex flex-wrap gap-1 mb-4">
+                    <div className="flex flex-wrap gap-1 mb-3">
                       {campaign.platforms?.slice(0, 3).map((p) => (
-                        <Badge key={p} variant="outline" className="text-xs">
+                        <Badge key={p} variant="outline" className="text-[10px] px-1.5 py-0">
                           {p}
                         </Badge>
                       ))}
                       {campaign.platforms?.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                           +{campaign.platforms.length - 3}
                         </Badge>
                       )}
                     </div>
 
                     {/* Meta Info */}
-                    <div className="flex flex-wrap gap-3 text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-3.5 h-3.5" />
                         {campaign.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '-'}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
+                        <Users className="w-3.5 h-3.5" />
                         {campaign.slots_filled || 0}/{campaign.slots_total || 1}
                       </span>
                       {campaign.location && (
                         <span className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
+                          <MapPin className="w-3.5 h-3.5" />
                           {campaign.location}
                         </span>
                       )}
                     </div>
 
                     {/* Remuneration & Action */}
-                    <div className="flex items-center justify-between pt-4" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
-                      <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium ${remuneration.color}`}>
-                        <remuneration.icon className="w-4 h-4" />
+                    <div className="flex items-center justify-between pt-3" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
+                      <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${remuneration.color}`}>
+                        <remuneration.icon className="w-3.5 h-3.5" />
                         {remuneration.label}
                       </div>
                       
                       {applied ? (
-                        <Badge className="bg-emerald-100 text-emerald-700 border-0 shadow-sm">
+                        <Badge className="bg-emerald-100 text-emerald-700 border-0 text-xs">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Candidatado
                         </Badge>
@@ -429,9 +422,9 @@ export default function OpportunityFeed() {
                         <Button
                           size="sm"
                           onClick={(e) => { e.stopPropagation(); openCampaignDetails(campaign); }}
-                          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm hover:shadow-md transition-all"
+                          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white text-xs h-8 px-3"
                         >
-                          <Eye className="w-4 h-4 mr-1" />
+                          <Eye className="w-3.5 h-3.5 mr-1" />
                           Ver
                         </Button>
                       )}
