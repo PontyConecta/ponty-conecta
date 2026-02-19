@@ -46,6 +46,16 @@ Deno.serve(async (req) => {
     // Get or create Stripe customer
     let customerId = profile.stripe_customer_id;
     
+    // Verify existing customer is valid, otherwise create new one
+    if (customerId) {
+      try {
+        await stripe.customers.retrieve(customerId);
+      } catch (e) {
+        console.log('Existing customer ID invalid, creating new one:', e.message);
+        customerId = null;
+      }
+    }
+    
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email,
