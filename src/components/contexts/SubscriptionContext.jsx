@@ -18,8 +18,15 @@ export function SubscriptionProvider({ children }) {
     }
 
     const status = profile.subscription_status || 'starter';
-    // premium and legacy users have full access (legacy = cancelled but still within billing period)
-    const isPremium = status === 'premium' || status === 'legacy';
+    // premium, legacy and active trial users have full access
+    let isPremium = status === 'premium' || status === 'legacy';
+    
+    // Check trial: must have trial status AND valid trial_end_date
+    if (status === 'trial' && profile.trial_end_date) {
+      const trialEnd = new Date(profile.trial_end_date);
+      isPremium = trialEnd > new Date();
+    }
+
     const currentPlanLevel = profile.plan_level || null;
     
     setSubscriptionStatus(status);

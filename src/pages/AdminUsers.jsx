@@ -15,8 +15,11 @@ import {
   CheckCircle2,
   XCircle,
   Shield,
-  RefreshCw
+  RefreshCw,
+  Gift,
+  Calendar
 } from 'lucide-react';
+import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,6 +57,8 @@ export default function AdminUsers() {
   const [switchRoleDialog, setSwitchRoleDialog] = useState(null);
   const [auditNote, setAuditNote] = useState('');
   const [userFlags, setUserFlags] = useState({});
+  const [trialDialog, setTrialDialog] = useState(null);
+  const [trialDays, setTrialDays] = useState(7);
 
   useEffect(() => {
     loadUsers();
@@ -290,16 +295,21 @@ export default function AdminUsers() {
                             Verificado
                           </Badge>
                         )}
-                        {profile?.subscription_status === 'Premium' ? (
+                        {profile?.subscription_status === 'premium' ? (
                           <Badge className="bg-emerald-100 text-emerald-700 border-0">
                             Premium
                           </Badge>
-                        ) : profile?.subscription_status === 'Explorer' ? (
+                        ) : profile?.subscription_status === 'trial' ? (
+                          <Badge className="bg-blue-100 text-blue-700 border-0">
+                            <Gift className="w-3 h-3 mr-1" />
+                            Trial {profile.trial_end_date ? `até ${new Date(profile.trial_end_date).toLocaleDateString('pt-BR')}` : ''}
+                          </Badge>
+                        ) : profile?.subscription_status === 'legacy' ? (
                           <Badge className="bg-amber-100 text-amber-700 border-0">
-                            Explorer
+                            Legacy
                           </Badge>
                         ) : (
-                          <Badge variant="outline">Guest</Badge>
+                          <Badge variant="outline">Starter</Badge>
                         )}
                         <span className="text-xs text-slate-500">
                           Desde {new Date(user.created_date).toLocaleDateString('pt-BR')}
@@ -353,6 +363,10 @@ export default function AdminUsers() {
                         <Shield className="w-4 h-4 mr-2" />
                         Forçar Assinatura Premium
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTrialDialog({ userId: user.id, userName: user.full_name || user.email })}>
+                        <Gift className="w-4 h-4 mr-2" />
+                        Conceder Teste Grátis
+                      </DropdownMenuItem>
                       {userFlags[user.id] ? (
                         <DropdownMenuItem onClick={() => handleUserAction(user.id, 'unflag_review')}>
                           Desmarcar para Revisão
@@ -370,6 +384,72 @@ export default function AdminUsers() {
           );
         })}
       </div>
+
+      {/* Trial Dialog */}
+      <Dialog open={!!trialDialog} onOpenChange={(open) => !open && setTrialDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Conceder Período de Teste Grátis</DialogTitle>
+            <DialogDescription>
+              Usuário: <strong>{trialDialog?.userName}</strong>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Duração do teste (dias)</Label>
+              <Select value={String(trialDays)} onValueChange={(v) => setTrialDays(Number(v))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="3">3 dias</SelectItem>
+                  <SelectItem value="7">7 dias</SelectItem>
+                  <SelectItem value="14">14 dias</SelectItem>
+                  <SelectItem value="30">30 dias</SelectItem>
+                  <SelectItem value="60">60 dias</SelectItem>
+                  <SelectItem value="90">90 dias</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-700">
+                <Calendar className="w-4 h-4 inline mr-1" />
+                O trial expira em: <strong>{new Date(Date.now() + trialDays * 86400000).toLocaleDateString('pt-BR')}</strong>
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTrialDialog(null)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={async () => {
+                setActionLoading(trialDialog.userId);
+                try {
+                  await base44.functions.invoke('adminGrantTrial', { 
+                    userId: trialDialog.userId, 
+                    trialDays 
+                  });
+                  toast.success(`Teste grátis de ${trialDays} dias concedido!`);
+                  await loadUsers();
+                  setTrialDialog(null);
+                  setTrialDays(7);
+                } catch (error) {
+                  console.error('Error granting trial:', error);
+                  toast.error('Erro ao conceder teste grátis');
+                } finally {
+                  setActionLoading(null);
+                }
+              }} 
+              disabled={actionLoading}
+              className="bg-[#9038fa] hover:bg-[#7a2de0]"
+            >
+              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Gift className="w-4 h-4 mr-2" />}
+              Conceder Trial
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Switch Role Dialog */}
       <Dialog open={!!switchRoleDialog} onOpenChange={(open) => !open && setSwitchRoleDialog(null)}>
