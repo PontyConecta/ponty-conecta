@@ -238,7 +238,7 @@ export default function OpportunityFeed() {
       {/* Pull to Refresh Indicator */}
       {refreshing && (
         <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-white px-4 py-2 rounded-full shadow-lg">
-          <Loader2 className="w-5 h-5 animate-spin text-indigo-600" />
+          <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--accent-primary)' }} />
         </div>
       )}
       
@@ -268,8 +268,8 @@ export default function OpportunityFeed() {
         <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
-                <Crown className="w-6 h-6 text-orange-600" />
+              <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+                <Crown className="w-6 h-6 text-[#9038fa]" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Modo Exploração</h3>
@@ -278,7 +278,7 @@ export default function OpportunityFeed() {
                 </p>
               </div>
               <Button 
-                className="bg-orange-500 hover:bg-orange-600"
+                className="bg-[#9038fa] hover:bg-[#7a2de0]"
                 onClick={() => setShowPaywall(true)}
               >
                 Assinar
@@ -429,7 +429,7 @@ export default function OpportunityFeed() {
                         <Button
                           size="sm"
                           onClick={(e) => { e.stopPropagation(); openCampaignDetails(campaign); }}
-                          className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm hover:shadow-md transition-all"
+                          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm hover:shadow-md transition-all"
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           Ver
@@ -628,7 +628,7 @@ export default function OpportunityFeed() {
                       Fechar
                     </Button>
                     {!hasApplied(selectedCampaign.id) && (
-                      <Button onClick={startApplication} className="flex-1 bg-orange-500 hover:bg-orange-600">
+                      <Button onClick={startApplication} className="flex-1 bg-[#9038fa] hover:bg-[#7a2de0]">
                         <Send className="w-4 h-4 mr-2" />
                         Candidatar-se
                       </Button>
@@ -684,7 +684,7 @@ export default function OpportunityFeed() {
                     <Button
                       onClick={handleApply}
                       disabled={applying || !applicationMessage}
-                      className="bg-orange-500 hover:bg-orange-600"
+                      className="bg-[#9038fa] hover:bg-[#7a2de0]"
                     >
                       {applying ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

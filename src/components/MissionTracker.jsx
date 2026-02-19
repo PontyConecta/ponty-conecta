@@ -11,7 +11,7 @@ export default function MissionTracker({ missions = [] }) {
       <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <CardHeader>
           <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Flame className="w-5 h-5 text-orange-500" />
+            <Flame className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
             Missões
           </CardTitle>
         </CardHeader>
@@ -28,7 +28,7 @@ export default function MissionTracker({ missions = [] }) {
     <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
       <CardHeader>
         <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-          <Flame className="w-5 h-5 text-orange-500" />
+          <Flame className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
           Missões ({missions.filter(m => m.status === 'active').length} ativas)
         </CardTitle>
       </CardHeader>
@@ -63,12 +63,12 @@ export default function MissionTracker({ missions = [] }) {
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                   isCompleted 
                     ? 'bg-emerald-100' 
-                    : 'bg-orange-100'
+                    : 'bg-purple-100'
                 }`}>
                   {isCompleted ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                   ) : isActive ? (
-                    <Unlock className="w-5 h-5 text-orange-600" />
+                    <Unlock className="w-5 h-5 text-[#9038fa]" />
                   ) : (
                     <Lock className="w-5 h-5 text-slate-400" />
                   )}

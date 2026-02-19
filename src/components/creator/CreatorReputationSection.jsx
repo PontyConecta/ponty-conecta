@@ -16,7 +16,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
   const scoreColor = (score) => {
     if (score >= 90) return 'from-emerald-500 to-teal-500';
     if (score >= 75) return 'from-blue-500 to-indigo-500';
-    if (score >= 60) return 'from-orange-500 to-amber-500';
+    if (score >= 60) return 'from-[#b77aff] to-[#9038fa]';
     return 'from-red-500 to-rose-500';
   };
 

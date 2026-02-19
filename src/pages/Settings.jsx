@@ -65,7 +65,7 @@ export default function Settings() {
           <div className="flex items-center gap-4">
             <Avatar className="w-16 h-16">
               <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-              <AvatarFallback className="text-lg font-bold" style={{ backgroundColor: 'rgba(79, 70, 229, 0.1)', color: 'rgb(79, 70, 229)' }}>
+              <AvatarFallback className="text-lg font-bold" style={{ backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' }}>
                 {user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -74,7 +74,7 @@ export default function Settings() {
                 {profile?.display_name || profile?.company_name || user?.full_name || 'Usuário'}
               </h3>
               <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>{user?.email}</p>
-              <Badge variant="outline" className="mt-1 capitalize" style={{ borderColor: 'rgba(79, 70, 229, 0.3)', color: 'rgb(79, 70, 229)' }}>
+              <Badge variant="outline" className="mt-1 capitalize" style={{ borderColor: 'rgba(144, 56, 250, 0.3)', color: '#9038fa' }}>
                 {profileType === 'brand' ? 'Marca' : 'Creator'}
               </Badge>
             </div>
@@ -90,7 +90,7 @@ export default function Settings() {
       <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Crown className="w-5 h-5 text-orange-500" />
+            <Crown className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
             Assinatura
           </CardTitle>
         </CardHeader>
@@ -117,7 +117,7 @@ export default function Settings() {
             </Button>
           ) : (
             <Button 
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
+              className="w-full bg-gradient-to-r from-[#9038fa] to-[#b77aff] hover:from-[#7a2de0] hover:to-[#a055ff]"
               onClick={() => navigate(createPageUrl('Subscription'))}
             >
               <Crown className="w-4 h-4 mr-2" />
@@ -145,12 +145,12 @@ export default function Settings() {
                   key={t.value}
                   onClick={() => changeTheme(t.value)}
                   className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                    isActive ? 'border-indigo-500 shadow-md' : 'border-transparent'
+                    isActive ? 'border-[#9038fa] shadow-md' : 'border-transparent'
                   }`}
-                  style={{ backgroundColor: isActive ? 'rgba(79, 70, 229, 0.1)' : 'var(--bg-primary)' }}
+                  style={{ backgroundColor: isActive ? 'rgba(144, 56, 250, 0.1)' : 'var(--bg-primary)' }}
                 >
-                  <Icon className="w-6 h-6" style={{ color: isActive ? 'rgb(79, 70, 229)' : 'var(--text-secondary)' }} />
-                  <span className="text-sm font-medium" style={{ color: isActive ? 'rgb(79, 70, 229)' : 'var(--text-secondary)' }}>
+                  <Icon className="w-6 h-6" style={{ color: isActive ? '#9038fa' : 'var(--text-secondary)' }} />
+                  <span className="text-sm font-medium" style={{ color: isActive ? '#9038fa' : 'var(--text-secondary)' }}>
                     {t.label}
                   </span>
                 </button>

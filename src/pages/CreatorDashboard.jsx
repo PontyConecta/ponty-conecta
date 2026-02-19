@@ -89,13 +89,13 @@ export default function CreatorDashboard() {
       label: 'Candidaturas Ativas', 
       value: applications.filter(a => a.status === 'pending' || a.status === 'accepted').length,
       icon: Target,
-      color: 'bg-orange-500'
+      color: 'bg-[#9038fa]'
     },
     { 
       label: 'Trabalhos em Andamento', 
       value: deliveries.filter(d => d.status === 'pending' || d.status === 'submitted').length,
       icon: FileText,
-      color: 'bg-violet-500'
+      color: 'bg-[#b77aff]'
     }
   ];
 
@@ -134,7 +134,7 @@ export default function CreatorDashboard() {
             </p>
           </div>
           <Link to={createPageUrl(isSubscribed ? 'OpportunityFeed' : 'Subscription')}>
-            <Button className={isSubscribed ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gradient-to-r from-orange-500 to-amber-500'}>
+            <Button className={isSubscribed ? 'bg-[#9038fa] hover:bg-[#7a2de0]' : 'bg-gradient-to-r from-[#9038fa] to-[#b77aff]'}>
               {isSubscribed ? <><Megaphone className="w-4 h-4 mr-2" />Campanhas</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
             </Button>
           </Link>

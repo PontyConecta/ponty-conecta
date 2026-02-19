@@ -72,7 +72,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   size="lg" 
-                  className="bg-[#9038fa] text-white hover:bg-[#7a2de0] w-full sm:w-auto sm:bg-white sm:text-[#9038fa] sm:border-2 sm:border-[#9038fa] sm:hover:bg-[#9038fa]/5"
+                  className="bg-[#9038fa] text-white hover:bg-[#7a2de0] w-full sm:w-auto shadow-lg shadow-[#9038fa]/25"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                 >
                   Sou uma Marca
@@ -80,7 +80,7 @@ export default function Home() {
                 </Button>
                 <Button 
                   size="lg" 
-                  className="bg-[#b77aff] text-white hover:bg-[#a055ff] w-full sm:w-auto sm:bg-white sm:text-[#b77aff] sm:border-2 sm:border-[#b77aff] sm:hover:bg-[#b77aff]/5"
+                  className="w-full sm:w-auto border-2 border-[#9038fa] text-[#9038fa] bg-white hover:bg-[#9038fa]/5"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                 >
                   Sou Criador

@@ -237,7 +237,7 @@ export default function Profile() {
   if (!profile) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
       </div>
     );
   }
@@ -281,7 +281,7 @@ export default function Profile() {
               {/* Cover & Avatar/Logo */}
               <div className="relative">
                 {/* Cover Image */}
-                <div className="h-32 lg:h-40 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 relative overflow-hidden">
+                <div className="h-32 lg:h-40 rounded-xl bg-gradient-to-r from-[#9038fa] to-[#b77aff] relative overflow-hidden">
                   {formData.cover_image_url && (
                     <img src={formData.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -298,19 +298,19 @@ export default function Profile() {
                       formData.logo_url ? (
                         <img src={formData.logo_url} alt="Logo" className="w-20 h-20 lg:w-24 lg:h-24 rounded-xl object-cover border-4 border-white shadow-lg bg-white" />
                       ) : (
-                        <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-xl bg-indigo-100 flex items-center justify-center border-4 border-white shadow-lg">
-                          <Building2 className="w-10 h-10 text-indigo-600" />
+                        <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-xl bg-[#9038fa]/10 flex items-center justify-center border-4 border-white shadow-lg">
+                          <Building2 className="w-10 h-10 text-[#9038fa]" />
                         </div>
                       )
                     ) : (
                       <Avatar className="w-20 h-20 lg:w-24 lg:h-24 border-4 border-white shadow-lg">
                         <AvatarImage src={formData.avatar_url} />
-                        <AvatarFallback className="bg-orange-100 text-orange-700 text-2xl">
+                        <AvatarFallback className="bg-[#9038fa]/10 text-[#9038fa] text-2xl">
                           {formData.display_name?.[0] || 'C'}
                         </AvatarFallback>
                       </Avatar>
                     )}
-                    <label className="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors shadow-lg">
+                    <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#9038fa] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#7a2de0] transition-colors shadow-lg">
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, isBrand ? 'logo_url' : 'avatar_url')} />
                       <Upload className="w-4 h-4 text-white" />
                     </label>
@@ -428,7 +428,7 @@ export default function Profile() {
                           <Badge
                             key={niche}
                             variant={formData.niche?.includes(niche) ? "default" : "outline"}
-                            className={`cursor-pointer ${formData.niche?.includes(niche) ? 'bg-orange-500' : ''}`}
+                            className={`cursor-pointer ${formData.niche?.includes(niche) ? 'bg-[#9038fa]' : ''}`}
                             onClick={() => toggleArrayItem('niche', niche)}
                           >
                             {niche}
@@ -444,7 +444,7 @@ export default function Profile() {
                           <Badge
                             key={type}
                             variant={formData.content_types?.includes(type) ? "default" : "outline"}
-                            className={`cursor-pointer ${formData.content_types?.includes(type) ? 'bg-violet-600' : ''}`}
+                            className={`cursor-pointer ${formData.content_types?.includes(type) ? 'bg-[#b77aff]' : ''}`}
                             onClick={() => toggleArrayItem('content_types', type)}
                           >
                             {type}
@@ -591,7 +591,7 @@ export default function Profile() {
                       </div>
                     ))}
                     
-                    <label className="aspect-square rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center cursor-pointer hover:border-orange-400 transition-colors">
+                    <label className="aspect-square rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center cursor-pointer hover:border-[#9038fa] transition-colors">
                       <input type="file" accept="image/*" className="hidden" onChange={handlePortfolioImageUpload} />
                       <Plus className="w-8 h-8 text-slate-400 mb-2" />
                       <span className="text-sm text-slate-500">Adicionar</span>
@@ -753,7 +753,7 @@ export default function Profile() {
                        <CreditCard className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-secondary)' }} />
                        <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Sem assinatura ativa</h4>
                        <p className="mb-4 text-sm" style={{ color: 'var(--text-secondary)' }}>Assine para acessar todas as funcionalidades</p>
-                    <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-indigo-600 hover:bg-indigo-700">
+                    <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Ver Planos
                     </Button>
                   </div>
@@ -828,7 +828,7 @@ export default function Profile() {
         <Button 
           onClick={handleSave} 
           disabled={saving} 
-          className="w-full lg:w-auto bg-indigo-600 hover:bg-indigo-700 h-12 shadow-lg"
+          className="w-full lg:w-auto bg-[#9038fa] hover:bg-[#7a2de0] h-12 shadow-lg"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
           Salvar Alterações

@@ -75,7 +75,7 @@ export default function BrandDashboard() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
       </div>
     );
   }
@@ -85,13 +85,13 @@ export default function BrandDashboard() {
       label: 'Campanhas Ativas', 
       value: campaigns.filter(c => c.status === 'active').length,
       icon: Megaphone,
-      color: 'bg-indigo-500'
+      color: 'bg-[#9038fa]'
     },
     { 
       label: 'Candidaturas Pendentes', 
       value: applications.length,
       icon: Users,
-      color: 'bg-amber-500'
+      color: 'bg-[#b77aff]'
     },
     { 
       label: 'Entregas Aguardando', 
@@ -103,7 +103,7 @@ export default function BrandDashboard() {
       label: 'Total Concluídas', 
       value: deliveries.filter(d => d.status === 'approved').length,
       icon: TrendingUp,
-      color: 'bg-violet-500'
+      color: 'bg-[#7a2de0]'
     }
   ];
 
@@ -112,7 +112,7 @@ export default function BrandDashboard() {
       draft: { label: 'Rascunho', color: 'bg-slate-100 text-slate-700' },
       under_review: { label: 'Em Análise', color: 'bg-yellow-100 text-yellow-700' },
       active: { label: 'Ativa', color: 'bg-emerald-100 text-emerald-700' },
-      paused: { label: 'Pausada', color: 'bg-orange-100 text-orange-700' },
+      paused: { label: 'Pausada', color: 'bg-purple-100 text-purple-700' },
       closed: { label: 'Encerrada', color: 'bg-slate-100 text-slate-700' }
     };
     const style = styles[status] || styles.draft;
@@ -142,7 +142,7 @@ export default function BrandDashboard() {
             </p>
           </div>
           <Link to={createPageUrl(isSubscribed ? 'CampaignManager' : 'Subscription')}>
-            <Button className={isSubscribed ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gradient-to-r from-orange-500 to-amber-500'}>
+            <Button className={isSubscribed ? 'bg-[#9038fa] hover:bg-[#7a2de0]' : 'bg-gradient-to-r from-[#9038fa] to-[#b77aff]'}>
               {isSubscribed ? <><Plus className="w-4 h-4 mr-2" />Nova Campanha</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
             </Button>
           </Link>
