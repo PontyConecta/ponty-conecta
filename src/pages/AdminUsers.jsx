@@ -4,29 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
-  Search, 
-  Filter, 
-  Download, 
-  Loader2,
-  Building2,
-  Star,
-  MoreVertical,
-  CheckCircle2,
-  XCircle,
-  Shield,
-  RefreshCw,
-  Gift,
-  Calendar
+  Search, Download, Loader2, Building2, Star, Shield, 
+  CheckCircle2, Crown, Gift, Calendar, Users, Eye, RefreshCw
 } from 'lucide-react';
-import { Label } from "@/components/ui/label";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -35,15 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from 'sonner';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+import UserManageDialog from '../components/admin/UserManageDialog';
 
 export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
@@ -53,12 +27,7 @@ export default function AdminUsers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [actionLoading, setActionLoading] = useState(null);
-  const [switchRoleDialog, setSwitchRoleDialog] = useState(null);
-  const [auditNote, setAuditNote] = useState('');
-  const [userFlags, setUserFlags] = useState({});
-  const [trialDialog, setTrialDialog] = useState(null);
-  const [trialDays, setTrialDays] = useState(7);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     loadUsers();
@@ -66,24 +35,14 @@ export default function AdminUsers() {
 
   const loadUsers = async () => {
     try {
-      const [usersData, brandsData, creatorsData, auditLogsData] = await Promise.all([
+      const [usersData, brandsData, creatorsData] = await Promise.all([
         base44.entities.User.list(),
         base44.entities.Brand.list(),
-        base44.entities.Creator.list(),
-        base44.entities.AuditLog.list()
+        base44.entities.Creator.list()
       ]);
       setUsers(usersData);
       setBrands(brandsData);
       setCreators(creatorsData);
-      
-      // Build a map of flagged users
-      const flags = {};
-      auditLogsData.forEach(log => {
-        if (log.action === 'user_flagged' && log.target_user_id) {
-          flags[log.target_user_id] = true;
-        }
-      });
-      setUserFlags(flags);
     } catch (error) {
       console.error('Error loading users:', error);
       toast.error('Erro ao carregar usuários');
@@ -96,7 +55,6 @@ export default function AdminUsers() {
     try {
       toast.info('Exportando dados...');
       const response = await base44.functions.invoke('adminExportData', { exportType: 'users' });
-      
       const blob = new Blob([response.data], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -106,64 +64,10 @@ export default function AdminUsers() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-      
       toast.success('Dados exportados com sucesso');
     } catch (error) {
       console.error('Export error:', error);
       toast.error('Erro ao exportar dados');
-    }
-  };
-
-  const handleSwitchRole = async (userId, currentRole) => {
-    setSwitchRoleDialog({ userId, currentRole });
-  };
-
-  const confirmSwitchRole = async () => {
-    if (!switchRoleDialog) return;
-    
-    const { userId, currentRole } = switchRoleDialog;
-    const newRole = currentRole === 'brand' ? 'creator' : 'brand';
-    
-    setActionLoading(userId);
-    try {
-      await base44.functions.invoke('adminSwitchRole', { 
-        userId, 
-        newRole,
-        auditNote 
-      });
-      toast.success(`Perfil alterado de ${currentRole} para ${newRole}`);
-      await loadUsers();
-      setSwitchRoleDialog(null);
-      setAuditNote('');
-    } catch (error) {
-      console.error('Error switching role:', error);
-      toast.error('Erro ao alterar perfil');
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
-  const handleUserAction = async (userId, action, data = {}) => {
-    setActionLoading(userId);
-    try {
-      await base44.functions.invoke('adminManageUser', { userId, action, data });
-      
-      const actions = {
-        activate: 'Usuário ativado',
-        deactivate: 'Usuário desativado',
-        override_subscription: 'Assinatura alterada',
-        flag_review: 'Usuário marcado para revisão',
-        unflag_review: 'Usuário desmarcado de revisão',
-        toggle_verified: 'Status de verificação alterado'
-      };
-      
-      toast.success(actions[action] || 'Ação realizada');
-      await loadUsers();
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Erro ao realizar ação');
-    } finally {
-      setActionLoading(null);
     }
   };
 
@@ -172,30 +76,45 @@ export default function AdminUsers() {
     const creator = creators.find(c => c.user_id === userId);
     return {
       profile: brand || creator,
-      role: brand ? 'brand' : creator ? 'creator' : 'unknown'
+      type: brand ? 'brand' : creator ? 'creator' : 'unknown'
     };
   };
 
   const filteredUsers = users.filter(user => {
-    const { profile, role } = getUserProfile(user.id);
+    const { profile, type } = getUserProfile(user.id);
     
     const matchesSearch = 
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      profile?.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      profile?.display_name?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesRole = roleFilter === 'all' || role === roleFilter;
+    const matchesRole = roleFilter === 'all' || type === roleFilter;
     
-    const matchesStatus = statusFilter === 'all' || 
-      (statusFilter === 'active' && profile?.subscription_status === 'Premium') ||
-      (statusFilter === 'exploring' && profile?.account_state === 'Incomplete');
+    let matchesStatus = true;
+    if (statusFilter === 'premium') matchesStatus = profile?.subscription_status === 'premium';
+    else if (statusFilter === 'starter') matchesStatus = profile?.subscription_status === 'starter';
+    else if (statusFilter === 'trial') matchesStatus = profile?.subscription_status === 'trial';
+    else if (statusFilter === 'legacy') matchesStatus = profile?.subscription_status === 'legacy';
+    else if (statusFilter === 'verified') matchesStatus = profile?.is_verified === true;
+    else if (statusFilter === 'incomplete') matchesStatus = profile?.account_state === 'incomplete';
+    else if (statusFilter === 'ready') matchesStatus = profile?.account_state === 'ready';
     
     return matchesSearch && matchesRole && matchesStatus;
   });
 
+  // Stats
+  const totalBrands = brands.length;
+  const totalCreators = creators.length;
+  const totalPremium = [...brands, ...creators].filter(p => p.subscription_status === 'premium').length;
+  const totalVerified = [...brands, ...creators].filter(p => p.is_verified).length;
+
+  const selectedUserProfile = selectedUser ? getUserProfile(selectedUser.id) : null;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#9038fa' }} />
       </div>
     );
   }
@@ -203,28 +122,95 @@ export default function AdminUsers() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Gerenciamento de Usuários</h1>
-          <p className="text-slate-600 mt-1">{filteredUsers.length} usuários encontrados</p>
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+            Gerenciamento de Usuários
+          </h1>
+          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+            {filteredUsers.length} de {users.length} usuários
+          </p>
         </div>
-        <Button onClick={handleExport} variant="outline">
-          <Download className="w-4 h-4 mr-2" />
-          Exportar CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={loadUsers} variant="outline" size="sm">
+            <RefreshCw className="w-4 h-4 mr-1" />
+            Atualizar
+          </Button>
+          <Button onClick={handleExport} variant="outline" size="sm">
+            <Download className="w-4 h-4 mr-1" />
+            Exportar
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-indigo-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalBrands}</p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Marcas</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                <Star className="w-5 h-5 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalCreators}</p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Criadores</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalPremium}</p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Premium</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalVerified}</p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Verificados</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
               <Input
-                placeholder="Buscar por email ou nome..."
+                placeholder="Buscar por email, nome ou empresa..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
+                style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
               />
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
@@ -235,262 +221,137 @@ export default function AdminUsers() {
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="brand">Marcas</SelectItem>
                 <SelectItem value="creator">Criadores</SelectItem>
+                <SelectItem value="unknown">Sem Perfil</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-44">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="active">Ativos</SelectItem>
-                <SelectItem value="exploring">Explorando</SelectItem>
+                <SelectItem value="all">Todos os Status</SelectItem>
+                <SelectItem value="premium">Premium</SelectItem>
+                <SelectItem value="starter">Starter</SelectItem>
+                <SelectItem value="trial">Trial</SelectItem>
+                <SelectItem value="legacy">Legacy</SelectItem>
+                <SelectItem value="verified">Verificados</SelectItem>
+                <SelectItem value="ready">Conta Pronta</SelectItem>
+                <SelectItem value="incomplete">Conta Incompleta</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Users Table */}
-      <div className="space-y-3">
+      {/* Users List */}
+      <div className="space-y-2">
         {filteredUsers.map((user) => {
-          const { profile, role } = getUserProfile(user.id);
-          const isActive = profile?.subscription_status === 'active';
+          const { profile, type } = getUserProfile(user.id);
           
           return (
-            <Card key={user.id} className="hover:shadow-md transition-shadow">
+            <Card 
+              key={user.id} 
+              className="hover:shadow-md transition-all cursor-pointer"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
+              onClick={() => setSelectedUser(user)}
+            >
               <CardContent className="p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      role === 'brand' ? 'bg-indigo-100' : 'bg-orange-100'
-                    }`}>
-                      {role === 'brand' ? (
-                        <Building2 className="w-6 h-6 text-indigo-600" />
-                      ) : (
-                        <Star className="w-6 h-6 text-orange-600" />
+                <div className="flex items-center gap-4">
+                  {/* Avatar */}
+                  <Avatar className="w-12 h-12 flex-shrink-0">
+                    <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
+                    <AvatarFallback className={type === 'brand' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}>
+                      {type === 'brand' ? <Building2 className="w-5 h-5" /> : <Star className="w-5 h-5" />}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                        {type === 'brand' ? profile?.company_name : profile?.display_name || user.full_name || 'Sem nome'}
+                      </h3>
+                      {user.role === 'admin' && (
+                        <Badge className="bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0">
+                          <Shield className="w-2.5 h-2.5 mr-0.5" /> Admin
+                        </Badge>
                       )}
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-slate-900 truncate">
-                          {user.full_name || 'Sem nome'}
-                        </h3>
-                        {user.role === 'admin' && (
-                          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-                            <Shield className="w-3 h-3 mr-1" />
-                            Admin
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-slate-600 truncate">{user.email}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="outline" className="capitalize">
-                          {role === 'brand' ? 'Marca' : 'Criador'}
+                    <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
+                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
+                        {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
+                      </Badge>
+                      {profile?.is_verified && (
+                        <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
+                          <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> Verificado
                         </Badge>
-                        {profile?.is_verified && (
-                          <Badge className="bg-blue-100 text-blue-700 border-0">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Verificado
-                          </Badge>
-                        )}
-                        {profile?.subscription_status === 'premium' ? (
-                          <Badge className="bg-emerald-100 text-emerald-700 border-0">
-                            Premium
-                          </Badge>
-                        ) : profile?.subscription_status === 'trial' ? (
-                          <Badge className="bg-blue-100 text-blue-700 border-0">
-                            <Gift className="w-3 h-3 mr-1" />
-                            Trial {profile.trial_end_date ? `até ${new Date(profile.trial_end_date).toLocaleDateString('pt-BR')}` : ''}
-                          </Badge>
-                        ) : profile?.subscription_status === 'legacy' ? (
-                          <Badge className="bg-amber-100 text-amber-700 border-0">
-                            Legacy
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline">Starter</Badge>
-                        )}
-                        <span className="text-xs text-slate-500">
-                          Desde {new Date(user.created_date).toLocaleDateString('pt-BR')}
-                        </span>
-                      </div>
+                      )}
+                      {profile?.subscription_status === 'premium' && (
+                        <Badge className="bg-emerald-100 text-emerald-700 border-0 text-[10px] px-1.5 py-0">
+                          <Crown className="w-2.5 h-2.5 mr-0.5" /> Premium
+                        </Badge>
+                      )}
+                      {profile?.subscription_status === 'trial' && (
+                        <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
+                          <Gift className="w-2.5 h-2.5 mr-0.5" /> Trial
+                        </Badge>
+                      )}
+                      {profile?.subscription_status === 'legacy' && (
+                        <Badge className="bg-amber-100 text-amber-700 border-0 text-[10px] px-1.5 py-0">Legacy</Badge>
+                      )}
+                      {profile?.subscription_status === 'starter' && (
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>Starter</Badge>
+                      )}
+                      {profile?.account_state === 'incomplete' && (
+                        <Badge className="bg-yellow-100 text-yellow-700 border-0 text-[10px] px-1.5 py-0">Incompleta</Badge>
+                      )}
+                      <span className="text-[10px] hidden sm:inline" style={{ color: 'var(--text-secondary)' }}>
+                        {new Date(user.created_date).toLocaleDateString('pt-BR')}
+                      </span>
                     </div>
                   </div>
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" disabled={actionLoading === user.id}>
-                        {actionLoading === user.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <MoreVertical className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuItem onClick={() => handleUserAction(user.id, 'toggle_verified')}>
-                        {profile?.is_verified ? (
-                          <>
-                            <XCircle className="w-4 h-4 mr-2" />
-                            Remover Verificação
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle2 className="w-4 h-4 mr-2" />
-                            Verificar Perfil
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleSwitchRole(user.id, role)}>
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Trocar Perfil ({role === 'brand' ? 'para Criador' : 'para Marca'})
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      {isActive ? (
-                        <DropdownMenuItem onClick={() => handleUserAction(user.id, 'deactivate')}>
-                          <XCircle className="w-4 h-4 mr-2" />
-                          Desativar Usuário
-                        </DropdownMenuItem>
-                      ) : (
-                        <DropdownMenuItem onClick={() => handleUserAction(user.id, 'activate')}>
-                          <CheckCircle2 className="w-4 h-4 mr-2" />
-                          Ativar Usuário
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem onClick={() => handleUserAction(user.id, 'override_subscription', { subscription_status: 'Premium' })}>
-                        <Shield className="w-4 h-4 mr-2" />
-                        Forçar Assinatura Premium
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setTrialDialog({ userId: user.id, userName: user.full_name || user.email })}>
-                        <Gift className="w-4 h-4 mr-2" />
-                        Conceder Teste Grátis
-                      </DropdownMenuItem>
-                      {userFlags[user.id] ? (
-                        <DropdownMenuItem onClick={() => handleUserAction(user.id, 'unflag_review')}>
-                          Desmarcar para Revisão
-                        </DropdownMenuItem>
-                      ) : (
-                        <DropdownMenuItem onClick={() => handleUserAction(user.id, 'flag_review')}>
-                          Marcar para Revisão
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {/* Action Button */}
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-shrink-0"
+                    onClick={(e) => { e.stopPropagation(); setSelectedUser(user); }}
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    <span className="hidden sm:inline">Gerenciar</span>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           );
         })}
+
+        {filteredUsers.length === 0 && (
+          <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <CardContent className="p-12 text-center">
+              <Users className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border-color)' }} />
+              <p style={{ color: 'var(--text-secondary)' }}>Nenhum usuário encontrado</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      {/* Trial Dialog */}
-      <Dialog open={!!trialDialog} onOpenChange={(open) => !open && setTrialDialog(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Conceder Período de Teste Grátis</DialogTitle>
-            <DialogDescription>
-              Usuário: <strong>{trialDialog?.userName}</strong>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <Label className="text-sm font-medium mb-2 block">Duração do teste (dias)</Label>
-              <Select value={String(trialDays)} onValueChange={(v) => setTrialDays(Number(v))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="3">3 dias</SelectItem>
-                  <SelectItem value="7">7 dias</SelectItem>
-                  <SelectItem value="14">14 dias</SelectItem>
-                  <SelectItem value="30">30 dias</SelectItem>
-                  <SelectItem value="60">60 dias</SelectItem>
-                  <SelectItem value="90">90 dias</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <Calendar className="w-4 h-4 inline mr-1" />
-                O trial expira em: <strong>{new Date(Date.now() + trialDays * 86400000).toLocaleDateString('pt-BR')}</strong>
-              </p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setTrialDialog(null)}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={async () => {
-                setActionLoading(trialDialog.userId);
-                try {
-                  await base44.functions.invoke('adminGrantTrial', { 
-                    userId: trialDialog.userId, 
-                    trialDays 
-                  });
-                  toast.success(`Teste grátis de ${trialDays} dias concedido!`);
-                  await loadUsers();
-                  setTrialDialog(null);
-                  setTrialDays(7);
-                } catch (error) {
-                  console.error('Error granting trial:', error);
-                  toast.error('Erro ao conceder teste grátis');
-                } finally {
-                  setActionLoading(null);
-                }
-              }} 
-              disabled={actionLoading}
-              className="bg-[#9038fa] hover:bg-[#7a2de0]"
-            >
-              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Gift className="w-4 h-4 mr-2" />}
-              Conceder Trial
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Switch Role Dialog */}
-      <Dialog open={!!switchRoleDialog} onOpenChange={(open) => !open && setSwitchRoleDialog(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmar Troca de Perfil</DialogTitle>
-            <DialogDescription>
-              Esta ação irá deletar o perfil atual e criar um novo perfil. O histórico será perdido.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="text-sm text-slate-600">
-              <strong>De:</strong> {switchRoleDialog?.currentRole === 'brand' ? 'Marca' : 'Criador'}
-              <br />
-              <strong>Para:</strong> {switchRoleDialog?.currentRole === 'brand' ? 'Criador' : 'Marca'}
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Nota de Auditoria (opcional)
-              </label>
-              <Textarea
-                placeholder="Por que esta troca está sendo feita?"
-                value={auditNote}
-                onChange={(e) => setAuditNote(e.target.value)}
-                rows={3}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSwitchRoleDialog(null)}>
-              Cancelar
-            </Button>
-            <Button onClick={confirmSwitchRole} disabled={actionLoading}>
-              {actionLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : null}
-              Confirmar Troca
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Manage Dialog */}
+      {selectedUser && selectedUserProfile && (
+        <UserManageDialog
+          open={!!selectedUser}
+          onOpenChange={(open) => !open && setSelectedUser(null)}
+          user={selectedUser}
+          profile={selectedUserProfile.profile}
+          profileType={selectedUserProfile.type}
+          onActionComplete={() => {
+            loadUsers();
+            setSelectedUser(null);
+          }}
+        />
+      )}
     </div>
   );
 }
