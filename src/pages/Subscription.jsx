@@ -178,7 +178,7 @@ export default function Subscription() {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg" style={{ backgroundColor: '#9038fa' }}>
             <Crown className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Sua Assinatura</h1>

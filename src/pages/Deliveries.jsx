@@ -366,7 +366,7 @@ export default function Deliveries() {
     <div className="space-y-6">
       {/* Pull to Refresh Indicator */}
       {refreshing && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-white px-4 py-2 rounded-full shadow-lg">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--accent-primary)' }} />
         </div>
       )}

@@ -281,7 +281,7 @@ export default function Profile() {
               {/* Cover & Avatar/Logo */}
               <div className="relative">
                 {/* Cover Image */}
-                <div className="h-32 lg:h-40 rounded-xl bg-gradient-to-r from-[#9038fa] to-[#b77aff] relative overflow-hidden">
+                <div className="h-32 lg:h-40 rounded-xl relative overflow-hidden" style={{ backgroundColor: '#9038fa' }}>
                   {formData.cover_image_url && (
                     <img src={formData.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -400,7 +400,7 @@ export default function Profile() {
                       <div>
                         <Label>Localização</Label>
                         <div className="relative mt-2">
-                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                           <Input
                             value={formData.location}
                             onChange={(e) => handleChange('location', e.target.value)}
@@ -564,7 +564,7 @@ export default function Profile() {
                 <div>
                   <Label>Link do Media Kit / Portfólio</Label>
                   <div className="relative mt-2">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                     <Input
                       value={formData.portfolio_url}
                       onChange={(e) => handleChange('portfolio_url', e.target.value)}
@@ -576,7 +576,7 @@ export default function Profile() {
 
                 <div>
                   <Label>Imagens do Portfólio</Label>
-                  <p className="text-sm text-slate-500 mt-1 mb-3">Adicione exemplos do seu trabalho</p>
+                  <p className="text-sm mt-1 mb-3" style={{ color: 'var(--text-secondary)' }}>Adicione exemplos do seu trabalho</p>
                   
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {formData.portfolio_images?.map((url, index) => (
@@ -591,10 +591,10 @@ export default function Profile() {
                       </div>
                     ))}
                     
-                    <label className="aspect-square rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center cursor-pointer hover:border-[#9038fa] transition-colors">
+                    <label className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:border-[#9038fa] transition-colors" style={{ borderColor: 'var(--border-color)' }}>
                       <input type="file" accept="image/*" className="hidden" onChange={handlePortfolioImageUpload} />
-                      <Plus className="w-8 h-8 text-slate-400 mb-2" />
-                      <span className="text-sm text-slate-500">Adicionar</span>
+                      <Plus className="w-8 h-8 mb-2" style={{ color: 'var(--text-secondary)' }} />
+                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Adicionar</span>
                     </label>
                   </div>
                 </div>
@@ -615,7 +615,7 @@ export default function Profile() {
                   <div>
                     <Label>Website</Label>
                     <div className="relative mt-2">
-                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                       <Input
                         value={formData.website}
                         onChange={(e) => handleChange('website', e.target.value)}
@@ -629,7 +629,7 @@ export default function Profile() {
                     <div>
                       <Label>Email de Contato</Label>
                       <div className="relative mt-2">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                         <Input
                           value={formData.contact_email}
                           onChange={(e) => handleChange('contact_email', e.target.value)}
@@ -640,7 +640,7 @@ export default function Profile() {
                     <div>
                       <Label>Telefone</Label>
                       <div className="relative mt-2">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                         <Input
                           value={formData.contact_phone}
                           onChange={(e) => handleChange('contact_phone', e.target.value)}
@@ -655,7 +655,7 @@ export default function Profile() {
                     <div>
                       <Label>Instagram Username</Label>
                       <div className="relative mt-2">
-                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                         <Input
                           value={formData.social_instagram}
                           onChange={(e) => handleChange('social_instagram', e.target.value)}
@@ -663,12 +663,12 @@ export default function Profile() {
                           placeholder="@suamarca"
                         />
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Digite seu @username para ajudar marcas a verificar seu perfil</p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>Digite seu @username para ajudar marcas a verificar seu perfil</p>
                     </div>
                     <div>
                       <Label>LinkedIn</Label>
                       <div className="relative mt-2">
-                        <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                         <Input
                           value={formData.social_linkedin}
                           onChange={(e) => handleChange('social_linkedin', e.target.value)}
