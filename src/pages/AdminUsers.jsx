@@ -35,14 +35,12 @@ export default function AdminUsers() {
 
   const loadUsers = async () => {
     try {
-      const [usersData, brandsData, creatorsData] = await Promise.all([
-        base44.entities.User.list(),
-        base44.entities.Brand.list(),
-        base44.entities.Creator.list()
-      ]);
-      setUsers(usersData);
-      setBrands(brandsData);
-      setCreators(creatorsData);
+      setLoading(true);
+      const response = await base44.functions.invoke('adminAnalytics', { type: 'list_users' });
+      const { users: usersData, brands: brandsData, creators: creatorsData } = response.data;
+      setUsers(usersData || []);
+      setBrands(brandsData || []);
+      setCreators(creatorsData || []);
     } catch (error) {
       console.error('Error loading users:', error);
       toast.error('Erro ao carregar usuários');
