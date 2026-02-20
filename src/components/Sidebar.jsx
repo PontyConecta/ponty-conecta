@@ -33,9 +33,9 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
   const creatorNavItems = [
     { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Descobrir Marcas', page: 'DiscoverBrands', icon: Building2 },
-    { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone },
-    { name: 'Minhas Candidaturas', page: 'MyApplications', icon: FileText },
-    { name: 'Minhas Entregas', page: 'MyDeliveries', icon: FileText },
+    { name: 'Campanhas', page: 'OpportunityFeed', icon: Compass },
+    { name: 'Minhas Candidaturas', page: 'MyApplications', icon: Send },
+    { name: 'Minhas Entregas', page: 'MyDeliveries', icon: PackageCheck },
     { type: 'divider' },
     { name: 'Meu Perfil', page: 'Profile', icon: User },
     { name: 'Configurações', page: 'Settings', icon: Settings },
