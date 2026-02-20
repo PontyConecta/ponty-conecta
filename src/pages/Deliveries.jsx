@@ -451,8 +451,8 @@ export default function Deliveries() {
                             {brand?.logo_url ? (
                               <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
                             ) : (
-                              <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center">
-                                <Building2 className="w-6 h-6 text-slate-400" />
+                              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                                <Building2 className="w-6 h-6" style={{ color: 'var(--text-secondary)' }} />
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
@@ -463,7 +463,7 @@ export default function Deliveries() {
                                 {brand?.company_name || 'Marca'}
                               </p>
                               <div className="flex flex-wrap gap-3 mt-2 text-sm">
-                                <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : 'text-slate-500'}`}>
+                                <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : ''}`} style={isOverdue ? {} : { color: 'var(--text-secondary)' }}>
                                   <Calendar className="w-4 h-4" />
                                   {formatDate(delivery.deadline)}
                                   {isOverdue && <span className="font-medium">(Atrasado!)</span>}
@@ -585,9 +585,9 @@ export default function Deliveries() {
         <Card>
           <CardContent className="p-12 text-center">
             {profileType === 'brand' ? (
-              <FileCheck className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+              <FileCheck className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
             ) : (
-              <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+              <FileText className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
             )}
             <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma entrega encontrada
@@ -614,15 +614,15 @@ export default function Deliveries() {
             <div className="space-y-6 py-4">
               {/* Campaign & Creator */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-slate-50 rounded-xl">
-                  <Label className="text-sm text-slate-500">Campanha</Label>
-                  <p className="font-medium text-slate-900">
+                <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Campanha</Label>
+                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 rounded-xl">
-                  <Label className="text-sm text-slate-500">Criador</Label>
-                  <p className="font-medium text-slate-900">
+                <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Criador</Label>
+                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
                     {creators[selectedDelivery.creator_id]?.display_name}
                   </p>
                 </div>
@@ -692,11 +692,11 @@ export default function Deliveries() {
               )}
 
               {/* Deadline Status */}
-              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
-                <Calendar className="w-5 h-5 text-slate-400" />
+              <div className="flex items-center gap-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                <Calendar className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                 <div>
-                  <Label className="text-sm text-slate-500">Prazo de Entrega</Label>
-                  <p className="font-medium text-slate-900">
+                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Prazo de Entrega</Label>
+                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
                     {selectedDelivery.deadline 
                       ? new Date(selectedDelivery.deadline).toLocaleDateString('pt-BR', { 
                           day: '2-digit', month: 'long', year: 'numeric' 
@@ -721,7 +721,7 @@ export default function Deliveries() {
               {/* Actions for Submitted Deliveries */}
               {selectedDelivery.status === 'submitted' && (
                 <div className="space-y-4 pt-4 border-t">
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                     Avalie a entrega com base nos <strong>critérios definidos na campanha</strong>. 
                     Contestações só devem ser feitas quando a entrega não cumpre os requisitos objetivos.
                   </p>
@@ -813,11 +813,11 @@ export default function Deliveries() {
             {selectedDelivery && (
               <div className="space-y-6 py-4">
                 {/* Campaign Info */}
-                <div className="p-4 bg-slate-50 rounded-xl">
-                  <h4 className="font-semibold text-slate-900">
+                <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                  <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </h4>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                     {brands[selectedDelivery.brand_id]?.company_name}
                   </p>
                 </div>
