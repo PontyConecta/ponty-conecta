@@ -397,12 +397,12 @@ export default function Applications() {
                       {/* Application Details */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         {profileType === 'brand' && application.proposed_rate && (
-                          <div className="flex items-center gap-1 text-slate-600">
+                          <div className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
                             <DollarSign className="w-4 h-4" />
                             R$ {application.proposed_rate}
                           </div>
                         )}
-                        <div className="text-slate-500">
+                        <div style={{ color: 'var(--text-secondary)' }}>
                           {formatDate(application.created_date)}
                         </div>
                         <StatusBadge type="application" status={application.status} />
@@ -539,26 +539,26 @@ export default function Applications() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-semibold text-slate-900">
+                    <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
                       {creators[selectedApplication.creator_id]?.display_name || 'Criador'}
                     </h4>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       {creators[selectedApplication.creator_id]?.bio?.slice(0, 100)}...
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <Label className="text-sm text-slate-500">Campanha</Label>
-                  <p className="font-medium text-slate-900">
+                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Campanha</Label>
+                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
                     {campaigns[selectedApplication.campaign_id]?.title}
                   </p>
                 </div>
 
                 {selectedApplication.message && (
                   <div>
-                    <Label className="text-sm text-slate-500">Mensagem</Label>
-                    <p className="text-slate-700 mt-1 whitespace-pre-wrap">
+                    <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Mensagem</Label>
+                    <p className="mt-1 whitespace-pre-wrap" style={{ color: 'var(--text-primary)' }}>
                       {selectedApplication.message}
                     </p>
                   </div>
@@ -566,7 +566,7 @@ export default function Applications() {
 
                 {selectedApplication.proposed_rate && (
                   <div>
-                    <Label className="text-sm text-slate-500">Valor Proposto</Label>
+                    <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Valor Proposto</Label>
                     <p className="text-lg font-semibold text-emerald-600">
                       R$ {selectedApplication.proposed_rate}
                     </p>
@@ -646,19 +646,19 @@ export default function Applications() {
             </DialogHeader>
             
             <div className="space-y-4 py-4">
-              <div className="p-4 bg-slate-50 rounded-xl">
-                <h4 className="font-semibold text-slate-900">
+              <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
                   {campaigns[selectedApplication.campaign_id]?.title}
                 </h4>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {brands[selectedApplication.brand_id]?.company_name}
                 </p>
               </div>
 
               {selectedApplication.message && (
                 <div>
-                  <Label className="text-sm text-slate-500">Sua Mensagem</Label>
-                  <p className="text-slate-700 mt-1">
+                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Sua Mensagem</Label>
+                  <p className="mt-1" style={{ color: 'var(--text-primary)' }}>
                     {selectedApplication.message}
                   </p>
                 </div>

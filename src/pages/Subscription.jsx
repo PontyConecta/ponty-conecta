@@ -297,12 +297,8 @@ export default function Subscription() {
                   <span className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ {plan.price}</span>
                   <span style={{ color: 'var(--text-secondary)' }}>{plan.period}</span>
                 </div>
-                <div className={`
-                  w-full h-1 rounded-full transition-colors
-                  ${selectedPlan === plan.id 
-                    ? 'bg-[#9038fa]'
-                    : ''}
-                `} />
+                <div className="w-full h-1 rounded-full transition-colors"
+                  style={{ backgroundColor: selectedPlan === plan.id ? '#9038fa' : 'var(--border-color)' }} />
               </CardContent>
             </Card>
           </motion.div>

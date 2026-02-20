@@ -483,7 +483,7 @@ export default function Deliveries() {
                               {formatDate(delivery.deadline)}
                             </div>
                             {delivery.proof_urls?.length > 0 && (
-                              <div className="flex items-center gap-1 text-slate-600">
+                              <div className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
                                 <ImageIcon className="w-4 h-4" />
                                 {delivery.proof_urls.length} arquivo(s)
                               </div>
