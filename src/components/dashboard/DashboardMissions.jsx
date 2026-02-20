@@ -42,6 +42,10 @@ export default function DashboardMissions({ userId, profileType }) {
 
   const completedCount = missions.filter(m => m.status === 'completed').length;
   const totalCount = missions.length;
+
+  // Hide the missions card when all missions are completed
+  if (completedCount === totalCount) return null;
+
   const overallProgress = Math.round((completedCount / totalCount) * 100);
 
   return (
