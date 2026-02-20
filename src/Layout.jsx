@@ -10,7 +10,7 @@ import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
 import AdminMenu from '@/components/AdminMenu';
-import BackButton from '@/components/BackButton';
+// BackButton removed
 import { Toaster } from 'sonner';
 import { 
         Crown,
