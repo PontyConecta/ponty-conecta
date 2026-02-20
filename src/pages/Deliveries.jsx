@@ -463,7 +463,7 @@ export default function Deliveries() {
                                 {brand?.company_name || 'Marca'}
                               </p>
                               <div className="flex flex-wrap gap-3 mt-2 text-sm">
-                                <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : 'text-slate-500'}`}>
+                                <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : 'text-[--ts]'}`}>
                                   <Calendar className="w-4 h-4" />
                                   {formatDate(delivery.deadline)}
                                   {isOverdue && <span className="font-medium">(Atrasado!)</span>}
@@ -615,13 +615,13 @@ export default function Deliveries() {
               {/* Campaign & Creator */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 bg-slate-50 rounded-xl">
-                  <Label className="text-sm text-slate-500">Campanha</Label>
+                  <Label className="text-sm text-[--ts]">Campanha</Label>
                   <p className="font-medium text-slate-900">
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </p>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl">
-                  <Label className="text-sm text-slate-500">Criador</Label>
+                  <Label className="text-sm text-[--ts]">Criador</Label>
                   <p className="font-medium text-slate-900">
                     {creators[selectedDelivery.creator_id]?.display_name}
                   </p>
@@ -641,7 +641,7 @@ export default function Deliveries() {
               {/* Proof Files */}
               {selectedDelivery.proof_urls?.length > 0 && (
                 <div>
-                  <Label className="text-sm text-slate-500">Arquivos de Prova</Label>
+                  <Label className="text-sm text-[--ts]">Arquivos de Prova</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     {selectedDelivery.proof_urls.map((url, i) => (
                       <a
@@ -663,7 +663,7 @@ export default function Deliveries() {
               {/* Content URLs */}
               {selectedDelivery.content_urls?.length > 0 && (
                 <div>
-                  <Label className="text-sm text-slate-500">Links do Conteúdo</Label>
+                  <Label className="text-sm text-[--ts]">Links do Conteúdo</Label>
                   <div className="space-y-2 mt-2">
                     {selectedDelivery.content_urls.map((url, i) => (
                       <a
@@ -684,7 +684,7 @@ export default function Deliveries() {
               {/* Proof Notes */}
               {selectedDelivery.proof_notes && (
                 <div>
-                  <Label className="text-sm text-slate-500">Observações do Criador</Label>
+                  <Label className="text-sm text-[--ts]">Observações do Criador</Label>
                   <p className="text-slate-700 mt-1 whitespace-pre-wrap">
                     {selectedDelivery.proof_notes}
                   </p>
@@ -695,7 +695,7 @@ export default function Deliveries() {
               <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
                 <Calendar className="w-5 h-5 text-slate-400" />
                 <div>
-                  <Label className="text-sm text-slate-500">Prazo de Entrega</Label>
+                  <Label className="text-sm text-[--ts]">Prazo de Entrega</Label>
                   <p className="font-medium text-slate-900">
                     {selectedDelivery.deadline 
                       ? new Date(selectedDelivery.deadline).toLocaleDateString('pt-BR', { 
@@ -758,7 +758,7 @@ export default function Deliveries() {
                       placeholder="Descreva objetivamente por que a entrega não atende aos requisitos..."
                       className="mt-2"
                     />
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-[--ts] mt-1">
                       A contestação abrirá uma disputa que será analisada pela plataforma.
                     </p>
                   </div>
@@ -817,7 +817,7 @@ export default function Deliveries() {
                   <h4 className="font-semibold text-slate-900">
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </h4>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-[--ts]">
                     {brands[selectedDelivery.brand_id]?.company_name}
                   </p>
                 </div>
@@ -954,7 +954,7 @@ export default function Deliveries() {
                         </>
                       )}
                     </Button>
-                    <p className="text-xs text-slate-500 text-center mt-2">
+                    <p className="text-xs text-[--ts] text-center mt-2">
                       Certifique-se de que a entrega atende todos os requisitos antes de enviar.
                     </p>
                   </div>
