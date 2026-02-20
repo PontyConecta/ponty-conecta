@@ -478,7 +478,7 @@ export default function Deliveries() {
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         {profileType === 'brand' && (
                           <>
-                            <div className="flex items-center gap-1 text-slate-600">
+                            <div className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
                               <Calendar className="w-4 h-4" />
                               {formatDate(delivery.deadline)}
                             </div>
