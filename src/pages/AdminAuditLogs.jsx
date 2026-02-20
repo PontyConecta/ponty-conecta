@@ -64,8 +64,8 @@ export default function AdminAuditLogs() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Logs de Auditoria</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Logs de Auditoria</h1>
+        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
           Histórico completo de ações administrativas • {filteredLogs.length} registros
         </p>
       </div>
@@ -105,34 +105,34 @@ export default function AdminAuditLogs() {
           <Card key={log.id} className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-5 h-5 text-slate-600" />
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                  <Shield className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                 </div>
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                   {getActionBadge(log.action)}
-                  <div className="flex items-center gap-1 text-xs text-slate-500">
+                  <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--text-secondary)' }}>
                     <Clock className="w-3 h-3" />
                     {formatDateTime(log.timestamp)}
                   </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
+                  <div className="flex items-center gap-2 text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
                     <User className="w-4 h-4" />
                     <span className="font-medium">{log.admin_email}</span>
                   </div>
 
-                  <div className="text-sm text-slate-700 mb-2">
+                  <div className="text-sm mb-2" style={{ color: 'var(--text-primary)' }}>
                     {log.details}
                   </div>
 
                   {log.note && (
-                    <div className="flex items-start gap-2 text-sm bg-slate-50 p-3 rounded-lg mt-2">
-                      <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                    <div className="flex items-start gap-2 text-sm p-3 rounded-lg mt-2" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                      <FileText className="w-4 h-4 mt-0.5" style={{ color: 'var(--text-secondary)' }} />
                       <div>
-                        <div className="text-xs text-slate-500 mb-1">Nota:</div>
-                        <div className="text-slate-700">{log.note}</div>
+                        <div className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Nota:</div>
+                        <div style={{ color: 'var(--text-primary)' }}>{log.note}</div>
                       </div>
                     </div>
                   )}
@@ -145,8 +145,8 @@ export default function AdminAuditLogs() {
         {filteredLogs.length === 0 && (
           <Card>
             <CardContent className="p-12 text-center">
-              <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-600">Nenhum log encontrado</p>
+              <FileText className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
+              <p style={{ color: 'var(--text-secondary)' }}>Nenhum log encontrado</p>
             </CardContent>
           </Card>
         )}

@@ -212,8 +212,8 @@ export default function AdminDisputes() {
           <Shield className="w-6 h-6 text-red-600" />
         </div>
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Painel de Disputas</h1>
-          <p className="text-slate-600">Resolver conflitos entre marcas e criadores</p>
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Painel de Disputas</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Resolver conflitos entre marcas e criadores</p>
         </div>
       </div>
 
@@ -274,7 +274,7 @@ export default function AdminDisputes() {
                               <Building2 className="w-5 h-5 text-indigo-600" />
                             </div>
                           )}
-                          <span className="font-medium text-slate-900">{brand?.company_name || 'Marca'}</span>
+                          <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{brand?.company_name || 'Marca'}</span>
                         </div>
                         
                         <Scale className="w-5 h-5 text-slate-400" />
@@ -286,13 +286,13 @@ export default function AdminDisputes() {
                               {creator?.display_name?.[0] || 'C'}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="font-medium text-slate-900">{creator?.display_name || 'Criador'}</span>
+                          <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{creator?.display_name || 'Criador'}</span>
                         </div>
                       </div>
 
                       {/* Info */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
-                        <span className="text-slate-500">
+                        <span style={{ color: 'var(--text-secondary)' }}>
                           {formatDate(dispute.created_date)}
                         </span>
                         <StatusBadge type="dispute" status={dispute.status} />
@@ -315,10 +315,10 @@ export default function AdminDisputes() {
 
                     {/* Reason Preview */}
                     <div className="mt-4 pt-4 border-t">
-                      <p className="text-sm text-slate-600 line-clamp-2">
+                      <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
                         <strong>Motivo:</strong> {dispute.reason}
                       </p>
-                      <p className="text-sm text-slate-500 mt-1">
+                      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
                         Campanha: {campaign?.title || '-'}
                       </p>
                     </div>
@@ -348,11 +348,11 @@ export default function AdminDisputes() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Shield className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <Shield className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma disputa encontrada
             </h3>
-            <p className="text-slate-500">
+            <p style={{ color: 'var(--text-secondary)' }}>
               {filterStatus !== 'all' ? 'Tente ajustar o filtro' : 'Não há disputas para resolver'}
             </p>
           </CardContent>
