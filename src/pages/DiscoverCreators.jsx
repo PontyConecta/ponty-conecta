@@ -140,7 +140,7 @@ export default function DiscoverCreators() {
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

@@ -272,7 +272,7 @@ export default function Subscription() {
                 relative cursor-pointer transition-all h-full
                 ${selectedPlan === plan.id 
                   ? `border-2 border-[#9038fa] shadow-lg` 
-                  : 'border-2 border-transparent hover:border-slate-200'}
+                  : 'border-2 border-transparent'}
               `}
               onClick={() => setSelectedPlan(plan.id)}
             >
@@ -301,7 +301,7 @@ export default function Subscription() {
                   w-full h-1 rounded-full transition-colors
                   ${selectedPlan === plan.id 
                     ? 'bg-[#9038fa]'
-                    : 'bg-slate-200'}
+                    : ''}
                 `} />
               </CardContent>
             </Card>
