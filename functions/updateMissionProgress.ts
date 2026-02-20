@@ -1,3 +1,4 @@
+// Mission progress tracker - auto-updates missions on entity events
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
