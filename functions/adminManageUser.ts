@@ -5,7 +5,6 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const admin = await base44.auth.me();
 
-    // Verify admin access
     if (!admin || admin.role !== 'admin') {
       return Response.json({ error: 'Unauthorized: Admin access required' }, { status: 403 });
     }
@@ -13,106 +12,111 @@ Deno.serve(async (req) => {
     const { userId, action, data } = await req.json();
 
     if (!userId || !action) {
-      return Response.json({ error: 'Invalid parameters' }, { status: 400 });
+      return Response.json({ error: 'userId and action are required' }, { status: 400 });
     }
 
+    // Find user profile (Brand or Creator)
+    const [brands, creators] = await Promise.all([
+      base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
+      base44.asServiceRole.entities.Creator.filter({ user_id: userId })
+    ]);
+
+    const profile = brands[0] || creators[0];
+    const profileType = brands[0] ? 'brand' : creators[0] ? 'creator' : null;
+    const entityName = profileType === 'brand' ? 'Brand' : 'Creator';
+
     let result = null;
-    let auditAction = '';
+    let auditAction = action;
+    let auditDetails = '';
 
     switch (action) {
-      case 'activate':
-        // Get user's profile type
-        const [brands, creators] = await Promise.all([
-          base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
-          base44.asServiceRole.entities.Creator.filter({ user_id: userId })
-        ]);
-
-        if (brands.length > 0) {
-          result = await base44.asServiceRole.entities.Brand.update(brands[0].id, {
-            subscription_status: 'premium',
-            plan_level: 'premium'
-          });
-        } else if (creators.length > 0) {
-          result = await base44.asServiceRole.entities.Creator.update(creators[0].id, {
-            subscription_status: 'premium',
-            plan_level: 'premium'
-          });
+      case 'set_subscription_status': {
+        // Set subscription status: starter, premium, pending, legacy, trial
+        const newStatus = data?.subscription_status;
+        if (!newStatus) {
+          return Response.json({ error: 'subscription_status is required' }, { status: 400 });
         }
-        auditAction = 'user_activated';
-        break;
 
-      case 'deactivate':
-        const [brandsDe, creatorsDe] = await Promise.all([
-          base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
-          base44.asServiceRole.entities.Creator.filter({ user_id: userId })
-        ]);
-
-        if (brandsDe.length > 0) {
-          result = await base44.asServiceRole.entities.Brand.update(brandsDe[0].id, {
-            subscription_status: 'starter',
-            plan_level: null
-          });
-        } else if (creatorsDe.length > 0) {
-          result = await base44.asServiceRole.entities.Creator.update(creatorsDe[0].id, {
-            subscription_status: 'starter',
-            plan_level: null
-          });
+        const validStatuses = ['starter', 'premium', 'pending', 'legacy', 'trial'];
+        if (!validStatuses.includes(newStatus)) {
+          return Response.json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` }, { status: 400 });
         }
-        auditAction = 'user_deactivated';
-        break;
 
-      case 'override_subscription':
-        const [brandsSub, creatorsSub] = await Promise.all([
-          base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
-          base44.asServiceRole.entities.Creator.filter({ user_id: userId })
-        ]);
-
-        const newStatus = data?.subscription_status || 'premium';
-        const newPlanLevel = (newStatus === 'premium' || newStatus === 'explorer' || newStatus === 'legacy') ? 'premium' : null;
-
-        if (brandsSub.length > 0) {
-          result = await base44.asServiceRole.entities.Brand.update(brandsSub[0].id, {
-            subscription_status: newStatus,
-            plan_level: newPlanLevel
-          });
-        } else if (creatorsSub.length > 0) {
-          result = await base44.asServiceRole.entities.Creator.update(creatorsSub[0].id, {
-            subscription_status: newStatus,
-            plan_level: newPlanLevel
-          });
+        if (!profile) {
+          return Response.json({ error: 'User profile not found' }, { status: 404 });
         }
+
+        const updateData = { subscription_status: newStatus };
+
+        if (newStatus === 'premium' || newStatus === 'legacy') {
+          updateData.plan_level = 'premium';
+        } else if (newStatus === 'trial') {
+          updateData.plan_level = 'trial';
+          // Set trial end date if provided, otherwise 30 days
+          const trialDays = data?.trial_days || 30;
+          const trialEnd = new Date();
+          trialEnd.setDate(trialEnd.getDate() + trialDays);
+          updateData.trial_end_date = trialEnd.toISOString();
+        } else {
+          updateData.plan_level = null;
+          updateData.trial_end_date = null;
+        }
+
+        result = await base44.asServiceRole.entities[entityName].update(profile.id, updateData);
         auditAction = 'subscription_override';
+        auditDetails = `Subscription changed to ${newStatus} for ${profileType} profile`;
         break;
+      }
 
-      case 'toggle_verified':
-        const [brandsVer, creatorsVer] = await Promise.all([
-          base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
-          base44.asServiceRole.entities.Creator.filter({ user_id: userId })
-        ]);
-
-        if (brandsVer.length > 0) {
-          result = await base44.asServiceRole.entities.Brand.update(brandsVer[0].id, {
-            is_verified: !brandsVer[0].is_verified
-          });
-          auditAction = brandsVer[0].is_verified ? 'user_unverified' : 'user_verified';
-        } else if (creatorsVer.length > 0) {
-          result = await base44.asServiceRole.entities.Creator.update(creatorsVer[0].id, {
-            is_verified: !creatorsVer[0].is_verified
-          });
-          auditAction = creatorsVer[0].is_verified ? 'user_unverified' : 'user_verified';
+      case 'set_account_state': {
+        const newState = data?.account_state;
+        if (!newState || !['incomplete', 'ready'].includes(newState)) {
+          return Response.json({ error: 'account_state must be "incomplete" or "ready"' }, { status: 400 });
         }
-        break;
 
-      case 'flag_review':
+        if (!profile) {
+          return Response.json({ error: 'User profile not found' }, { status: 404 });
+        }
+
+        const updateData = { account_state: newState };
+        if (newState === 'ready') {
+          updateData.onboarding_step = 4;
+        }
+
+        result = await base44.asServiceRole.entities[entityName].update(profile.id, updateData);
+        auditAction = 'user_activated';
+        auditDetails = `Account state changed to ${newState}`;
+        break;
+      }
+
+      case 'toggle_verified': {
+        if (!profile) {
+          return Response.json({ error: 'User profile not found' }, { status: 404 });
+        }
+
+        const newVerified = !profile.is_verified;
+        result = await base44.asServiceRole.entities[entityName].update(profile.id, {
+          is_verified: newVerified
+        });
+        auditAction = newVerified ? 'user_activated' : 'user_deactivated';
+        auditDetails = `Verification ${newVerified ? 'granted' : 'removed'} for ${profileType}`;
+        break;
+      }
+
+      case 'flag_review': {
         auditAction = 'user_flagged';
+        auditDetails = `User flagged for review`;
         break;
+      }
 
-      case 'unflag_review':
-        auditAction = 'user_unflagged';
+      case 'unflag_review': {
+        auditAction = 'user_flagged';
+        auditDetails = `User unflagged from review`;
         break;
+      }
 
       default:
-        return Response.json({ error: 'Invalid action' }, { status: 400 });
+        return Response.json({ error: `Invalid action: ${action}` }, { status: 400 });
     }
 
     // Create audit log
@@ -121,19 +125,21 @@ Deno.serve(async (req) => {
       admin_email: admin.email,
       action: auditAction,
       target_user_id: userId,
-      details: JSON.stringify({ action, data }),
+      details: auditDetails || JSON.stringify({ action, data }),
       note: data?.auditNote || '',
       timestamp: new Date().toISOString()
     });
 
+    console.log(`Admin action: ${action} by ${admin.email} on user ${userId}`);
+
     return Response.json({ 
       success: true, 
-      message: `Action '${action}' completed successfully`,
+      action,
       result
     });
 
   } catch (error) {
-    console.error('User management error:', error);
+    console.error('Admin manage user error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
