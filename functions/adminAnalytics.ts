@@ -64,8 +64,8 @@ Deno.serve(async (req) => {
     // Calcular métricas
     const activeSubscribers = subscriptions.filter(s => s.status === 'active').length;
     const totalUsers = brands.length + creators.length;
-    const activeUsers = brands.filter(b => b.account_state === 'active').length + 
-                        creators.filter(c => c.account_state === 'active').length;
+    const activeUsers = brands.filter(b => b.account_state === 'ready').length + 
+                        creators.filter(c => c.account_state === 'ready').length;
     
     // MRR (Monthly Recurring Revenue)
     const mrr = subscriptions
