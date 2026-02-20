@@ -9,11 +9,13 @@ import {
   Users, 
   FileText, 
   Search,
-  Sparkles,
   Building2,
   Crown,
   Settings,
-  User
+  User,
+  Send,
+  PackageCheck,
+  Compass
 } from 'lucide-react';
 
 export default function Sidebar({ profileType, currentPageName, isSubscribed }) {
