@@ -24,6 +24,18 @@ Deno.serve(async (req) => {
       startDate.setFullYear(now.getFullYear() - 1);
     }
 
+    // Check if this is a users-only request
+    const { dateRange, type } = await req.json();
+
+    if (type === 'list_users') {
+      const [users, brands, creators] = await Promise.all([
+        base44.asServiceRole.entities.User.list(),
+        base44.asServiceRole.entities.Brand.list(),
+        base44.asServiceRole.entities.Creator.list()
+      ]);
+      return Response.json({ users, brands, creators });
+    }
+
     // Buscar dados das entidades usando service role
     const [brands, creators, campaigns, applications, deliveries, subscriptions, disputes] = await Promise.all([
       base44.asServiceRole.entities.Brand.list(),
