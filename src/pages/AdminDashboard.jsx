@@ -131,9 +131,12 @@ export default function AdminDashboard() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Usuários Ativos</p>
+                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Total Usuários</p>
                     <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.activeUsers || 0}
+                      {analytics.totalUsers || 0}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+                      {analytics.activeUsers || 0} ativos
                     </p>
                   </div>
                   <Users className="w-8 h-8 text-blue-600" />
