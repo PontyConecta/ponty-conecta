@@ -201,10 +201,10 @@ export default function DiscoverCreators() {
         <Card>
           <CardContent className="p-12 text-center">
             <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhum criador encontrado
             </h3>
-            <p className="text-slate-500">
+            <p style={{ color: 'var(--text-secondary)' }}>
               Tente ajustar seus filtros
             </p>
           </CardContent>
@@ -222,7 +222,7 @@ export default function DiscoverCreators() {
             <div className="space-y-6 py-4">
               {/* Cover & Avatar */}
               <div className="relative">
-                <div className="h-32 rounded-xl bg-gradient-to-br from-[#b77aff] via-[#a055ff] to-[#9038fa] overflow-hidden">
+                <div className="h-32 rounded-xl overflow-hidden" style={{ backgroundColor: '#9038fa' }}>
                   {selectedCreator.cover_image_url && (
                     <img src={selectedCreator.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -239,13 +239,13 @@ export default function DiscoverCreators() {
               <div className="pt-10 space-y-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-2xl font-bold text-slate-900">{selectedCreator.display_name}</h2>
+                    <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{selectedCreator.display_name}</h2>
                     {selectedCreator.verified && (
                       <CheckCircle2 className="w-6 h-6 text-blue-500" />
                     )}
                   </div>
                   {selectedCreator.location && (
-                    <p className="text-slate-500 flex items-center gap-1 mt-1">
+                    <p className="flex items-center gap-1 mt-1" style={{ color: 'var(--text-secondary)' }}>
                       <MapPin className="w-4 h-4" />
                       {selectedCreator.location}
                     </p>
@@ -253,35 +253,35 @@ export default function DiscoverCreators() {
                 </div>
 
                 {selectedCreator.bio && (
-                  <p className="text-slate-600">{selectedCreator.bio}</p>
+                  <p style={{ color: 'var(--text-secondary)' }}>{selectedCreator.bio}</p>
                 )}
 
                 {/* Stats */}
                 <div className="flex items-center gap-6">
                   <div>
-                    <div className="text-2xl font-bold text-slate-900">
+                    <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {formatFollowers(getTotalFollowers(selectedCreator))}
                     </div>
-                    <div className="text-sm text-slate-500">Seguidores</div>
+                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Seguidores</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-slate-900">
+                    <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {selectedCreator.completed_campaigns || 0}
                     </div>
-                    <div className="text-sm text-slate-500">Campanhas</div>
+                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Campanhas</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-slate-900">
+                    <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {selectedCreator.on_time_rate || 100}%
                     </div>
-                    <div className="text-sm text-slate-500">No Prazo</div>
+                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>No Prazo</div>
                   </div>
                 </div>
 
                 {/* Niches */}
                 {selectedCreator.niche?.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-slate-900 mb-2">Nichos</h4>
+                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Nichos</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedCreator.niche.map((n, i) => (
                         <Badge key={i} variant="outline">{n}</Badge>
@@ -293,13 +293,13 @@ export default function DiscoverCreators() {
                 {/* Platforms */}
                 {selectedCreator.platforms?.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-slate-900 mb-2">Plataformas</h4>
+                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Plataformas</h4>
                     <div className="space-y-2">
                       {selectedCreator.platforms.map((p, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{p.name}</span>
-                            <span className="text-slate-500">@{p.handle}</span>
+                            <span style={{ color: 'var(--text-secondary)' }}>@{p.handle}</span>
                           </div>
                           <Badge variant="outline">{formatFollowers(p.followers || 0)}</Badge>
                         </div>
@@ -311,7 +311,7 @@ export default function DiscoverCreators() {
                 {/* Portfolio Images */}
                 {selectedCreator.portfolio_images?.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-slate-900 mb-2">Portfólio</h4>
+                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Portfólio</h4>
                     <div className="grid grid-cols-3 gap-2">
                       {selectedCreator.portfolio_images.slice(0, 6).map((url, i) => (
                         <img key={i} src={url} alt="" className="aspect-square rounded-lg object-cover" />
@@ -359,8 +359,8 @@ export default function DiscoverCreators() {
                     )}
                   </div>
                 ) : (
-                  <div className="p-4 bg-slate-100 rounded-xl text-center">
-                    <p className="text-slate-600 mb-3">Assine para ver informações de contato</p>
+                  <div className="p-4 rounded-xl text-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    <p className="mb-3" style={{ color: 'var(--text-secondary)' }}>Assine para ver informações de contato</p>
                     <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Desbloquear Contato
                     </Button>

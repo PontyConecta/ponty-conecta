@@ -194,10 +194,10 @@ export default function DiscoverBrands() {
         <Card>
           <CardContent className="p-12 text-center">
             <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               Nenhuma marca encontrada
             </h3>
-            <p className="text-slate-500">
+            <p style={{ color: 'var(--text-secondary)' }}>
               Tente ajustar seus filtros
             </p>
           </CardContent>
@@ -215,7 +215,7 @@ export default function DiscoverBrands() {
             <div className="space-y-6 py-4">
               {/* Cover & Logo */}
               <div className="relative">
-                <div className="h-32 rounded-xl bg-gradient-to-br from-[#9038fa] via-[#a055ff] to-[#b77aff] overflow-hidden">
+                <div className="h-32 rounded-xl overflow-hidden" style={{ backgroundColor: '#9038fa' }}>
                   {selectedBrand.cover_image_url && (
                     <img src={selectedBrand.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -235,7 +235,7 @@ export default function DiscoverBrands() {
               <div className="pt-10 space-y-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-2xl font-bold text-slate-900">{selectedBrand.company_name}</h2>
+                    <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{selectedBrand.company_name}</h2>
                     {selectedBrand.verified && (
                       <CheckCircle2 className="w-6 h-6 text-blue-500" />
                     )}
@@ -248,38 +248,38 @@ export default function DiscoverBrands() {
                 </div>
 
                 {selectedBrand.description && (
-                  <p className="text-slate-600">{selectedBrand.description}</p>
+                  <p style={{ color: 'var(--text-secondary)' }}>{selectedBrand.description}</p>
                 )}
 
                 {/* Stats */}
                 <div className="flex items-center gap-6">
                   <div>
-                    <div className="text-2xl font-bold text-slate-900">
+                    <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {selectedBrand.total_campaigns || 0}
                     </div>
-                    <div className="text-sm text-slate-500">Campanhas</div>
+                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Campanhas</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-emerald-600">
                       {selectedBrand.active_campaigns || 0}
                     </div>
-                    <div className="text-sm text-slate-500">Ativas</div>
+                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Ativas</div>
                   </div>
                 </div>
 
                 {/* Target Audience */}
                 {selectedBrand.target_audience && (
                   <div>
-                    <h4 className="font-medium text-slate-900 mb-2">Público-Alvo</h4>
-                    <p className="text-slate-600">{selectedBrand.target_audience}</p>
+                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Público-Alvo</h4>
+                    <p style={{ color: 'var(--text-secondary)' }}>{selectedBrand.target_audience}</p>
                   </div>
                 )}
 
                 {/* Content Guidelines */}
                 {selectedBrand.content_guidelines && (
                   <div>
-                    <h4 className="font-medium text-slate-900 mb-2">Diretrizes de Conteúdo</h4>
-                    <p className="text-slate-600">{selectedBrand.content_guidelines}</p>
+                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Diretrizes de Conteúdo</h4>
+                    <p style={{ color: 'var(--text-secondary)' }}>{selectedBrand.content_guidelines}</p>
                   </div>
                 )}
 
@@ -319,8 +319,8 @@ export default function DiscoverBrands() {
                     )}
                   </div>
                 ) : (
-                  <div className="p-4 bg-slate-100 rounded-xl text-center">
-                    <p className="text-slate-600 mb-3">Assine para ver informações de contato</p>
+                  <div className="p-4 rounded-xl text-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    <p className="mb-3" style={{ color: 'var(--text-secondary)' }}>Assine para ver informações de contato</p>
                     <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Desbloquear Contato
                     </Button>

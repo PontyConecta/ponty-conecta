@@ -226,7 +226,7 @@ export default function CampaignManager() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-lg font-semibold text-slate-900 truncate">
+                            <h3 className="text-lg font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                               {campaign.title}
                             </h3>
                             <StatusBadge type="campaign" status={campaign.status} />
@@ -297,11 +297,11 @@ export default function CampaignManager() {
                           </DropdownMenu>
                         </div>
                         
-                        <p className="text-slate-600 text-sm line-clamp-2 mb-3">
+                        <p className="text-sm line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>
                           {campaign.description}
                         </p>
                         
-                        <div className="flex flex-wrap items-center gap-3 lg:gap-4 text-sm text-slate-500">
+                        <div className="flex flex-wrap items-center gap-3 lg:gap-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
                           <span className="flex items-center gap-1">
                             <Users className="w-4 h-4" />
                             {campaign.slots_filled || 0}/{campaign.slots_total || 1}
@@ -335,12 +335,12 @@ export default function CampaignManager() {
         <Card>
           <CardContent className="p-12 text-center">
             <Megaphone className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               {searchTerm || filterStatus !== 'all' 
                 ? 'Nenhuma campanha encontrada' 
                 : 'Nenhuma campanha criada'}
             </h3>
-            <p className="text-slate-500 mb-6">
+            <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'Crie sua primeira campanha para conectar com criadores'}
