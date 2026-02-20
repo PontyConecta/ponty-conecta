@@ -10,7 +10,17 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
-    const { dateRange } = await req.json();
+    const { dateRange, type } = await req.json();
+
+    // Check if this is a users-only request
+    if (type === 'list_users') {
+      const [allUsers, allBrands, allCreators] = await Promise.all([
+        base44.asServiceRole.entities.User.list(),
+        base44.asServiceRole.entities.Brand.list(),
+        base44.asServiceRole.entities.Creator.list()
+      ]);
+      return Response.json({ users: allUsers, brands: allBrands, creators: allCreators });
+    }
 
     // Calcular datas baseado no range
     const now = new Date();
@@ -23,9 +33,6 @@ Deno.serve(async (req) => {
     } else if (dateRange === 'year') {
       startDate.setFullYear(now.getFullYear() - 1);
     }
-
-    // Check if this is a users-only request
-    const { dateRange, type } = await req.json();
 
     if (type === 'list_users') {
       const [users, brands, creators] = await Promise.all([
