@@ -118,7 +118,7 @@ export default function SelectProfile() {
       icon: Building2,
       title: 'Sou uma Marca',
       subtitle: 'Quero contratar criadores',
-      color: 'from-[#9038fa] to-[#b77aff]',
+      bgColor: '#9038fa',
       shadowColor: 'shadow-purple-500/25',
       features: [
         'Crie campanhas estruturadas',
@@ -132,7 +132,7 @@ export default function SelectProfile() {
       icon: Sparkles,
       title: 'Sou Criador',
       subtitle: 'Quero trabalhar com marcas',
-      color: 'from-[#b77aff] to-[#9038fa]',
+      bgColor: '#b77aff',
       shadowColor: 'shadow-purple-500/25',
       features: [
         'Acesse oportunidades filtradas',
@@ -148,16 +148,16 @@ export default function SelectProfile() {
       {/* Header */}
       <div className="text-center mb-12">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20" style={{ backgroundColor: '#9038fa' }}>
             <span className="text-white font-bold text-xl">P</span>
           </div>
-          <span className="text-2xl font-semibold text-slate-900">Ponty</span>
+          <span className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Ponty</span>
         </Link>
 
-        <h1 className="text-4xl font-bold text-slate-900 mb-4">
+        <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
           Bem-vindo, {user?.full_name?.split(' ')[0]}!
         </h1>
-        <p className="text-lg text-slate-600 max-w-xl mx-auto">
+        <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
           Escolha como você quer usar a plataforma. Você poderá criar perfis adicionais depois.
         </p>
       </div>
@@ -179,22 +179,22 @@ export default function SelectProfile() {
               `}
               onClick={() => !selecting && selectProfile(profile.type)}
             >
-              {/* Background Gradient */}
-              <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-br ${profile.color} opacity-10 rounded-full -translate-y-1/2 translate-x-1/2`} />
+              {/* Background circle */}
+              <div className="absolute top-0 right-0 w-40 h-40 rounded-full -translate-y-1/2 translate-x-1/2 opacity-10" style={{ backgroundColor: profile.bgColor }} />
               
               {/* Icon */}
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${profile.color} flex items-center justify-center mb-6 shadow-xl ${profile.shadowColor}`}>
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-xl" style={{ backgroundColor: profile.bgColor }}>
                 <profile.icon className="w-8 h-8 text-white" />
               </div>
 
               {/* Content */}
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">{profile.title}</h2>
-              <p className="text-slate-600 mb-6">{profile.subtitle}</p>
+              <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{profile.title}</h2>
+              <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>{profile.subtitle}</p>
 
               {/* Features */}
               <ul className="space-y-3 mb-8">
                 {profile.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-700">
+                  <li key={i} className="flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
@@ -203,7 +203,8 @@ export default function SelectProfile() {
 
               {/* Button */}
               <Button 
-                className={`w-full bg-gradient-to-r ${profile.color} hover:opacity-90 text-white h-12`}
+                className="w-full hover:opacity-90 text-white h-12"
+                style={{ backgroundColor: profile.bgColor }}
                 disabled={selecting}
               >
                 {selecting ? (
@@ -222,7 +223,7 @@ export default function SelectProfile() {
 
       {/* Info Section */}
       <div className="max-w-2xl mx-auto mt-12 text-center">
-        <p className="text-slate-500 text-sm">
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           Ao continuar, você concorda com nossos{' '}
           <a href="#" className="text-[#9038fa] hover:underline">Termos de Uso</a>
           {' '}e{' '}
