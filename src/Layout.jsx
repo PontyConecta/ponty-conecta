@@ -203,13 +203,13 @@ function LayoutContent({ children, currentPageName }) {
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
           {/* Back Button + Logo */}
           <div className="flex items-center gap-2">
-            {!noBackButtonPages.includes(currentPageName) && <BackButton />}
+            {/* BackButton removed */}
             <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform" style={{ backgroundColor: '#9038fa' }}>
               <span className="text-white font-bold text-base lg:text-lg">P</span>
             </div>
             <div className="hidden sm:flex flex-col">
-              <span className="text-base lg:text-lg font-bold bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent leading-tight">Ponty</span>
+              <span className="text-base lg:text-lg font-bold leading-tight" style={{ color: '#9038fa' }}>Ponty</span>
               <span className="text-[10px] lg:text-xs font-medium text-slate-500 leading-tight">
                 {profileType === 'brand' ? 'Marcas' : 'Creators'}
               </span>

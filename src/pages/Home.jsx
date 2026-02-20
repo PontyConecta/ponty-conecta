@@ -39,11 +39,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-4 lg:mb-10">
             <div className="flex items-center gap-2 lg:gap-3 group">
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform" style={{ backgroundColor: '#9038fa' }}>
                 <span className="text-white font-bold text-xl lg:text-2xl">P</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent leading-tight">Ponty</span>
+                <span className="text-xl lg:text-2xl font-bold leading-tight" style={{ color: '#9038fa' }}>Ponty</span>
                 <span className="text-xs lg:text-sm font-medium text-gray-500 leading-tight">Conecta</span>
               </div>
             </div>
@@ -57,7 +57,7 @@ export default function Home() {
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight tracking-tight">
-                A <span className="bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent">Ponte Profissional</span> Entre Marcas e Criadores
+                A <span style={{ color: '#9038fa' }}>Ponte Profissional</span> Entre Marcas e Criadores
               </h1>
 
               <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-md">
@@ -90,9 +90,7 @@ export default function Home() {
             </div>
 
             <div className="relative hidden lg:flex min-h-[420px] items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/8 via-[#b77aff]/5 to-[#9038fa]/8 rounded-3xl overflow-hidden">
-                <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-[#9038fa]/20 to-[#b77aff]/10 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-[#b77aff]/20 to-[#9038fa]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ backgroundColor: 'rgba(144, 56, 250, 0.05)' }}>
               </div>
 
               <div className="relative z-10 grid grid-cols-2 gap-3 p-6 w-full max-w-lg">
@@ -146,10 +144,7 @@ export default function Home() {
 
             <TabsContent value="brands" className="mt-8">
               <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#9038fa]/10 via-purple-50 to-[#b77aff]/10"></div>
-
-                  <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-[#9038fa]/20 to-[#b77aff]/20 rounded-full blur-2xl"></div>
-                  <div className="absolute bottom-12 left-12 w-40 h-40 bg-gradient-to-tl from-[#9038fa]/15 to-[#b77aff]/15 rounded-full blur-2xl"></div>
+                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(144, 56, 250, 0.06)' }}></div>
 
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
@@ -195,10 +190,7 @@ export default function Home() {
 
             <TabsContent value="creators" className="mt-8">
               <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#b77aff]/10 via-purple-50 to-[#9038fa]/10"></div>
-
-                  <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-[#b77aff]/20 to-[#9038fa]/20 rounded-full blur-2xl"></div>
-                  <div className="absolute bottom-12 right-12 w-40 h-40 bg-gradient-to-tl from-[#b77aff]/15 to-[#9038fa]/15 rounded-full blur-2xl"></div>
+                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(183, 122, 255, 0.06)' }}></div>
 
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
@@ -245,7 +237,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#9038fa]/4 via-white to-[#b77aff]/4 relative overflow-hidden">
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
             <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-3 tracking-tight">
@@ -279,7 +271,7 @@ export default function Home() {
             ].map((step, idx) => (
               <Card key={idx} className="bg-white hover:shadow-lg transition-all hover:-translate-y-1">
                 <CardContent className="p-4 sm:pt-6 lg:pt-8">
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-[#9038fa] to-[#b77aff] bg-clip-text text-transparent mb-2 sm:mb-4">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black mb-2 sm:mb-4" style={{ color: '#9038fa' }}>
                     {step.number}
                   </div>
                   <h3 className="text-sm sm:text-base lg:text-xl font-bold mb-1.5 sm:mb-3">{step.title}</h3>
@@ -291,7 +283,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#9038fa' }}>
         <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-4 tracking-tight">
             Pronto para começar?
