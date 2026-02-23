@@ -11,8 +11,8 @@ Deno.serve(async (req) => {
 
     const { userId, trialDays } = await req.json();
 
-    if (!userId || !trialDays || trialDays < 1 || trialDays > 90) {
-      return Response.json({ error: 'userId and trialDays (1-90) are required' }, { status: 400 });
+    if (!userId || !trialDays || trialDays < 1 || trialDays > 365) {
+      return Response.json({ error: 'userId and trialDays (1-365) are required' }, { status: 400 });
     }
 
     const trialEndDate = new Date();

@@ -196,6 +196,10 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                     <SelectItem value="30">30 dias</SelectItem>
                     <SelectItem value="60">60 dias</SelectItem>
                     <SelectItem value="90">90 dias</SelectItem>
+                    <SelectItem value="120">120 dias</SelectItem>
+                    <SelectItem value="180">180 dias</SelectItem>
+                    <SelectItem value="270">270 dias</SelectItem>
+                    <SelectItem value="365">365 dias (1 ano)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
