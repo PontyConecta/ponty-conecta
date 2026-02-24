@@ -55,6 +55,7 @@ import {
   Building
 } from 'lucide-react';
 import BrazilStateSelect, { getStateLabel } from '@/components/common/BrazilStateSelect';
+import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
 
 export default function Profile() {
   const { user, profile, profileType, refreshProfile, logout } = useAuth();
@@ -87,17 +88,22 @@ export default function Profile() {
 
       // Initialize form data from profile
       if (profileType === 'brand') {
+        // Migrate legacy fields to online_presences if needed
+        let presences = profile.online_presences || [];
+        if (presences.length === 0) {
+          if (profile.website) presences.push({ type: 'website', value: profile.website });
+          if (profile.social_instagram) presences.push({ type: 'instagram', value: profile.social_instagram });
+          if (profile.social_linkedin) presences.push({ type: 'linkedin', value: profile.social_linkedin });
+        }
         setFormData({
           company_name: profile.company_name || '',
           industry: profile.industry || '',
           description: profile.description || '',
-          website: profile.website || '',
+          online_presences: presences,
           contact_email: profile.contact_email || user.email,
           contact_phone: profile.contact_phone || '',
           logo_url: profile.logo_url || '',
           cover_image_url: profile.cover_image_url || '',
-          social_instagram: profile.social_instagram || '',
-          social_linkedin: profile.social_linkedin || '',
           target_audience: profile.target_audience || '',
           content_guidelines: profile.content_guidelines || '',
           state: profile.state || '',
@@ -207,6 +213,16 @@ export default function Profile() {
         processedFormData.location = `${processedFormData.city}, ${processedFormData.state}`;
       } else if (processedFormData.state) {
         processedFormData.location = processedFormData.state;
+      }
+
+      // Sync legacy fields for brand backward compatibility
+      if (profileType === 'brand' && processedFormData.online_presences) {
+        const ig = processedFormData.online_presences.find(p => p.type === 'instagram');
+        const li = processedFormData.online_presences.find(p => p.type === 'linkedin');
+        const ws = processedFormData.online_presences.find(p => p.type === 'website');
+        processedFormData.social_instagram = ig?.value || '';
+        processedFormData.social_linkedin = li?.value || '';
+        processedFormData.website = ws?.value || '';
       }
 
       const updates = profileType === 'creator' ? {
@@ -653,18 +669,10 @@ export default function Profile() {
             <CardContent className="space-y-6">
               {isBrand ? (
                 <>
-                  <div>
-                    <Label>Website</Label>
-                    <div className="relative mt-2">
-                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                      <Input
-                        value={formData.website}
-                        onChange={(e) => handleChange('website', e.target.value)}
-                        className="pl-10"
-                        placeholder="https://suamarca.com.br"
-                      />
-                    </div>
-                  </div>
+                  <OnlinePresenceManager
+                    presences={formData.online_presences || []}
+                    onChange={(presences) => handleChange('online_presences', presences)}
+                  />
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
@@ -687,34 +695,6 @@ export default function Profile() {
                           onChange={(e) => handleChange('contact_phone', e.target.value)}
                           className="pl-10"
                           placeholder="(11) 99999-9999"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label>Instagram Username</Label>
-                      <div className="relative mt-2">
-                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                        <Input
-                          value={formData.social_instagram}
-                          onChange={(e) => handleChange('social_instagram', e.target.value)}
-                          className="pl-10"
-                          placeholder="@suamarca"
-                        />
-                      </div>
-                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>Digite seu @username para ajudar marcas a verificar seu perfil</p>
-                    </div>
-                    <div>
-                      <Label>LinkedIn</Label>
-                      <div className="relative mt-2">
-                        <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                        <Input
-                          value={formData.social_linkedin}
-                          onChange={(e) => handleChange('social_linkedin', e.target.value)}
-                          className="pl-10"
-                          placeholder="linkedin.com/company/..."
                         />
                       </div>
                     </div>
