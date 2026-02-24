@@ -78,7 +78,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
             <div className="p-4 rounded-xl text-white cursor-pointer hover:shadow-lg transition-shadow" style={{ backgroundColor: '#9038fa' }}>
               <div className="flex items-center gap-2 mb-2">
                 <Crown className="w-5 h-5" />
-                <span className="font-semibold text-sm">Plano Pro</span>
+                <span className="font-semibold text-sm">Plano Premium</span>
               </div>
               <p className="text-xs text-white/90 leading-relaxed">
                 Desbloqueie recursos premium e crie campanhas ilimitadas
