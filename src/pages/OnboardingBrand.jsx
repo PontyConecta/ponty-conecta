@@ -233,7 +233,7 @@ export default function OnboardingBrand() {
       case 1: return formData.company_name?.trim().length >= 2 && formData.state;
       case 2: return formData.industry && formData.description?.length >= 20;
       case 3: return formData.online_presences.length > 0;
-      case 4: return isValidEmail(formData.contact_email);
+      case 4: return isValidEmail(formData.contact_email) && formData.contact_phone?.replace(/\D/g, '').length >= 10;
       case 5: return true;
       default: return false;
     }
@@ -373,7 +373,7 @@ export default function OnboardingBrand() {
                       <FieldHint text="Email principal para comunicação com creators." />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone</Label>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone *</Label>
                       <div className="relative mt-2">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                         <Input 

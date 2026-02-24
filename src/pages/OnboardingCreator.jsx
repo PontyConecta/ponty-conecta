@@ -225,7 +225,7 @@ export default function OnboardingCreator() {
       case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state;
       case 2: return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
       case 3: return formData.platforms.length > 0;
-      case 4: return isValidEmail(formData.contact_email);
+      case 4: return isValidEmail(formData.contact_email) && formData.contact_whatsapp?.replace(/\D/g, '').length >= 10;
       case 5: return true;
       default: return false;
     }
@@ -398,7 +398,7 @@ export default function OnboardingCreator() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>WhatsApp</Label>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>WhatsApp *</Label>
                       <Input 
                         value={formData.contact_whatsapp} 
                         onChange={(e) => handleChange('contact_whatsapp', formatPhoneNumber(e.target.value))} 
