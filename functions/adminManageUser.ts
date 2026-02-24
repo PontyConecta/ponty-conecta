@@ -103,6 +103,28 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case 'set_user_role': {
+        const newRole = data?.role;
+        if (!newRole || !['user', 'admin'].includes(newRole)) {
+          return Response.json({ error: 'role must be "user" or "admin"' }, { status: 400 });
+        }
+
+        // Get all users to find the target user
+        const allUsers = await base44.asServiceRole.entities.User.filter({});
+        const targetUser = allUsers.find(u => u.id === userId);
+        
+        if (!targetUser) {
+          return Response.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        await base44.asServiceRole.entities.User.update(userId, { role: newRole });
+        
+        auditAction = 'role_switch';
+        auditDetails = `User role changed to ${newRole}`;
+        result = { role: newRole };
+        break;
+      }
+
       case 'flag_review': {
         auditAction = 'user_flagged';
         auditDetails = `User flagged for review`;
