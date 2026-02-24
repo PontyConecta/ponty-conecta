@@ -21,6 +21,7 @@ import BrazilStateSelect from '@/components/common/BrazilStateSelect';
 import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
+import FieldHint from '@/components/onboarding/FieldHint';
 
 const STEPS = [
   { number: 1, title: 'Identidade' },
@@ -242,7 +243,7 @@ export default function OnboardingCreator() {
           <p style={{ color: 'var(--text-secondary)' }}>Complete seu perfil para acessar oportunidades</p>
         </div>
 
-        <OnboardingProgress steps={STEPS} currentStep={step} accentColor="orange" />
+        <OnboardingProgress steps={STEPS} currentStep={step} accentColor="orange" onStepClick={(s) => { if (s < step) setStep(s); }} />
 
         <Card className="shadow-xl border-0 mb-24" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <CardContent className="p-6 sm:p-8">
@@ -268,7 +269,8 @@ export default function OnboardingCreator() {
                       <div className="flex-1">
                         <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nome Artístico *</Label>
                         <Input value={formData.display_name} onChange={(e) => handleChange('display_name', e.target.value)} placeholder="Como você quer ser conhecido" className="mt-2 h-12" />
-                      </div>
+                        <FieldHint text="O nome que será exibido no seu perfil público." />
+                        </div>
                     </div>
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Bio * (mínimo 20 caracteres)</Label>
@@ -297,6 +299,7 @@ export default function OnboardingCreator() {
                   <div className="space-y-6">
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nichos de Conteúdo *</Label>
+                      <FieldHint text="Nos ajuda a conectar você com as melhores campanhas para o seu perfil." />
                       <p className="text-sm mt-1 mb-3" style={{ color: 'var(--text-secondary)' }}>Selecione até 5 nichos</p>
                       <div className="flex flex-wrap gap-2">
                         {NICHES.map(niche => (
@@ -342,6 +345,7 @@ export default function OnboardingCreator() {
                   <div className="space-y-6">
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Suas Plataformas *</Label>
+                      <FieldHint text="Marcas verificam seus perfis para avaliar candidaturas. Adicione pelo menos uma." />
                       <p className="text-sm mt-1 mb-4" style={{ color: 'var(--text-secondary)' }}>Adicione suas redes sociais</p>
                       {formData.platforms.length > 0 && (
                         <div className="space-y-2 mb-4">

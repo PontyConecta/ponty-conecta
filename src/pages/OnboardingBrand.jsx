@@ -12,13 +12,15 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { 
-  Building2, ArrowRight, ArrowLeft, Upload, Globe, Mail, Phone,
-  Loader2, Sparkles, Instagram, Linkedin, Building
+  Building2, ArrowRight, ArrowLeft, Upload, Mail, Phone,
+  Loader2, Building
 } from 'lucide-react';
 import BrazilStateSelect from '@/components/common/BrazilStateSelect';
 import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
+import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
+import FieldHint from '@/components/onboarding/FieldHint';
 
 const STEPS = [
   { number: 1, title: 'Identidade' },
@@ -59,6 +61,18 @@ const BUDGETS = [
   { value: 'R$20k+', label: 'Acima de R$20.000' },
 ];
 
+// Helper to migrate legacy fields to online_presences array
+function migrateLegacyPresences(brand) {
+  const presences = brand.online_presences || [];
+  if (presences.length > 0) return presences;
+  
+  const migrated = [];
+  if (brand.website) migrated.push({ type: 'website', value: brand.website });
+  if (brand.social_instagram) migrated.push({ type: 'instagram', value: brand.social_instagram });
+  if (brand.social_linkedin) migrated.push({ type: 'linkedin', value: brand.social_linkedin });
+  return migrated;
+}
+
 export default function OnboardingBrand() {
   const { refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -75,11 +89,9 @@ export default function OnboardingBrand() {
     marketing_budget: '',
     description: '',
     target_audience: '',
-    website: '',
+    online_presences: [],
     contact_email: '',
     contact_phone: '',
-    social_instagram: '',
-    social_linkedin: '',
     logo_url: '',
     state: '',
     city: '',
@@ -90,43 +102,38 @@ export default function OnboardingBrand() {
   }, []);
 
   const loadData = async () => {
-    try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+    const userData = await base44.auth.me();
+    setUser(userData);
 
-      const brands = await base44.entities.Brand.filter({ user_id: userData.id });
-      if (brands.length > 0) {
-        const existing = brands[0];
+    const brands = await base44.entities.Brand.filter({ user_id: userData.id });
+    if (brands.length > 0) {
+      const existing = brands[0];
 
-        if (existing.account_state === 'ready') {
-          navigate(createPageUrl('BrandDashboard'));
-          return;
-        }
-
-        setBrand(existing);
-        setStep(existing.onboarding_step || 1);
-        setFormData({
-          company_name: existing.company_name || '',
-          industry: existing.industry || '',
-          company_size: existing.company_size || '',
-          marketing_budget: existing.marketing_budget || '',
-          description: existing.description || '',
-          target_audience: existing.target_audience || '',
-          website: existing.website || '',
-          contact_email: existing.contact_email || userData.email,
-          contact_phone: existing.contact_phone || '',
-          social_instagram: existing.social_instagram || '',
-          social_linkedin: existing.social_linkedin || '',
-          logo_url: existing.logo_url || '',
-          state: existing.state || '',
-          city: existing.city || '',
-        });
+      if (existing.account_state === 'ready') {
+        navigate(createPageUrl('BrandDashboard'));
+        return;
       }
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
+
+      setBrand(existing);
+      setStep(existing.onboarding_step || 1);
+      setFormData({
+        company_name: existing.company_name || '',
+        industry: existing.industry || '',
+        company_size: existing.company_size || '',
+        marketing_budget: existing.marketing_budget || '',
+        description: existing.description || '',
+        target_audience: existing.target_audience || '',
+        online_presences: migrateLegacyPresences(existing),
+        contact_email: existing.contact_email || userData.email,
+        contact_phone: existing.contact_phone || '',
+        logo_url: existing.logo_url || '',
+        state: existing.state || '',
+        city: existing.city || '',
+      });
+    } else {
+      setFormData(prev => ({ ...prev, contact_email: userData.email }));
     }
+    setLoading(false);
   };
 
   const handleChange = (field, value) => {
@@ -142,7 +149,6 @@ export default function OnboardingBrand() {
     setUploadingLogo(false);
   };
 
-  // Save current step data incrementally
   const saveStepData = async (nextStep) => {
     setSaving(true);
     const dataToSave = { onboarding_step: nextStep };
@@ -159,9 +165,14 @@ export default function OnboardingBrand() {
       dataToSave.description = formData.description;
       dataToSave.target_audience = formData.target_audience;
     } else if (step === 3) {
-      dataToSave.website = formData.website;
-      dataToSave.social_instagram = formData.social_instagram;
-      dataToSave.social_linkedin = formData.social_linkedin;
+      dataToSave.online_presences = formData.online_presences;
+      // Also sync legacy fields for backward compatibility
+      const ig = formData.online_presences.find(p => p.type === 'instagram');
+      const li = formData.online_presences.find(p => p.type === 'linkedin');
+      const ws = formData.online_presences.find(p => p.type === 'website');
+      dataToSave.social_instagram = ig?.value || '';
+      dataToSave.social_linkedin = li?.value || '';
+      dataToSave.website = ws?.value || '';
     } else if (step === 4) {
       dataToSave.contact_email = formData.contact_email;
       dataToSave.contact_phone = formData.contact_phone;
@@ -190,11 +201,15 @@ export default function OnboardingBrand() {
     if (step > 1) setStep(step - 1);
   };
 
-  // Final step: mark as ready and create onboarding missions
+  const handleStepClick = (targetStep) => {
+    if (targetStep < step) {
+      setStep(targetStep);
+    }
+  };
+
   const handleFinalize = async () => {
     setSaving(true);
     await base44.entities.Brand.update(brand.id, { account_state: 'ready', onboarding_step: 5 });
-    // Create onboarding missions in background
     base44.functions.invoke('createOnboardingMissions', {
       profile_type: 'brand',
       profile_id: brand.id
@@ -237,7 +252,7 @@ export default function OnboardingBrand() {
           <p style={{ color: 'var(--text-secondary)' }}>Complete seu perfil para começar a criar campanhas</p>
         </div>
 
-        <OnboardingProgress steps={STEPS} currentStep={step} accentColor="indigo" />
+        <OnboardingProgress steps={STEPS} currentStep={step} accentColor="indigo" onStepClick={handleStepClick} />
 
         <Card className="shadow-xl border-0 mb-24" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <CardContent className="p-6 sm:p-8">
@@ -254,6 +269,7 @@ export default function OnboardingBrand() {
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nome da Empresa *</Label>
                       <Input value={formData.company_name} onChange={(e) => handleChange('company_name', e.target.value)} placeholder="Ex: Minha Empresa LTDA" className="mt-2 h-12" />
+                      <FieldHint text="O nome que será exibido para creators na plataforma." />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -270,6 +286,7 @@ export default function OnboardingBrand() {
                         </div>
                       </div>
                     </div>
+                    <FieldHint text="Sua localização ajuda a conectar com creators da mesma região." />
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Logo da Marca</Label>
                       <div className="mt-3 flex items-center gap-4">
@@ -303,6 +320,7 @@ export default function OnboardingBrand() {
                         <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione o segmento" /></SelectTrigger>
                         <SelectContent>{INDUSTRIES.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
                       </Select>
+                      <FieldHint text="Nos ajuda a sugerir creators que atuam no seu segmento." />
                     </div>
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tamanho da Empresa</Label>
@@ -317,6 +335,7 @@ export default function OnboardingBrand() {
                         <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent>{BUDGETS.map(b => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}</SelectContent>
                       </Select>
+                      <FieldHint text="Para apresentarmos creators que se encaixam na sua capacidade de investimento." />
                     </div>
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Sobre a Marca * (mínimo 20 caracteres)</Label>
@@ -333,29 +352,10 @@ export default function OnboardingBrand() {
                 )}
 
                 {step === 3 && (
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Website</Label>
-                      <div className="relative mt-2">
-                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <Input value={formData.website} onChange={(e) => handleChange('website', e.target.value)} placeholder="https://suamarca.com.br" className="pl-11 h-12" />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Instagram</Label>
-                      <div className="relative mt-2">
-                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <Input value={formData.social_instagram} onChange={(e) => handleChange('social_instagram', e.target.value)} placeholder="@suamarca" className="pl-11 h-12" />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>LinkedIn</Label>
-                      <div className="relative mt-2">
-                        <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <Input value={formData.social_linkedin} onChange={(e) => handleChange('social_linkedin', e.target.value)} placeholder="linkedin.com/company/suamarca" className="pl-11 h-12" />
-                      </div>
-                    </div>
-                  </div>
+                  <OnlinePresenceManager
+                    presences={formData.online_presences}
+                    onChange={(presences) => handleChange('online_presences', presences)}
+                  />
                 )}
 
                 {step === 4 && (
@@ -366,6 +366,7 @@ export default function OnboardingBrand() {
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                         <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="contato@suamarca.com.br" className="pl-11 h-12" />
                       </div>
+                      <FieldHint text="Email principal para comunicação com creators." />
                     </div>
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone</Label>
