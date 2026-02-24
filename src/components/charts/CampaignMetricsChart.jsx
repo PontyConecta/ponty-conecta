@@ -38,7 +38,10 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
       {/* Campanhas ao Longo do Tempo */}
       <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Campanhas Criadas</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Campanhas Criadas</CardTitle>
+            <span className="text-sm font-bold" style={{ color: 'var(--accent-primary)' }}>{campaigns.length} total</span>
+          </div>
         </CardHeader>
         <CardContent>
           {chartData.length > 0 ? (
