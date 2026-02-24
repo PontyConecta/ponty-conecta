@@ -31,6 +31,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [newVerified, setNewVerified] = useState(profile?.is_verified || false);
   const [auditNote, setAuditNote] = useState('');
   const [trialDays, setTrialDays] = useState(30);
+  const [newRole, setNewRole] = useState(user?.role || 'user');
 
   if (!user || !profile) return null;
 
