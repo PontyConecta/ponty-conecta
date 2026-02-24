@@ -47,6 +47,23 @@ export default function CreatorDashboard() {
     loadData();
   }, []);
 
+  // Real-time subscriptions
+  useEffect(() => {
+    if (!creator?.id) return;
+    const unsubs = [
+      base44.entities.Application.subscribe((event) => {
+        if (event.data?.creator_id === creator.id || event.type === 'delete') loadData();
+      }),
+      base44.entities.Delivery.subscribe((event) => {
+        if (event.data?.creator_id === creator.id || event.type === 'delete') loadData();
+      }),
+      base44.entities.Reputation.subscribe((event) => {
+        if (event.data?.user_id === user?.id) loadData();
+      })
+    ];
+    return () => unsubs.forEach(u => u());
+  }, [creator?.id, user?.id]);
+
   const loadData = async () => {
     try {
       const userData = await base44.auth.me();
@@ -60,9 +77,10 @@ export default function CreatorDashboard() {
         const validation = validateCreatorProfile(creators[0]);
         setProfileValidation(validation);
         
+        // Load ALL data for accurate metrics  
         const [applicationsData, deliveriesData, reputationData] = await Promise.all([
-          base44.entities.Application.filter({ creator_id: creators[0].id }, '-created_date', 10),
-          base44.entities.Delivery.filter({ creator_id: creators[0].id }, '-created_date', 10),
+          base44.entities.Application.filter({ creator_id: creators[0].id }, '-created_date'),
+          base44.entities.Delivery.filter({ creator_id: creators[0].id }, '-created_date'),
           base44.entities.Reputation.filter({ user_id: userData.id, profile_type: 'creator' })
         ]);
         
@@ -72,23 +90,21 @@ export default function CreatorDashboard() {
         // Load campaigns and brands for deliveries
         const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id).filter(Boolean))];
         const brandIds = [...new Set(deliveriesData.map(d => d.brand_id).filter(Boolean))];
+        const appCampaignIds = [...new Set(applicationsData.map(a => a.campaign_id).filter(Boolean))];
+        const allCampaignIds = [...new Set([...campaignIds, ...appCampaignIds])];
+
         const [campaignsData, brandsData] = await Promise.all([
-          Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))),
-          Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id })))
+          allCampaignIds.length > 0 ? Promise.all(allCampaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
+          brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
         ]);
         const cMap = {};
         campaignsData.flat().forEach(c => { cMap[c.id] = c; });
         setCampaignsMap(cMap);
+        setAppCampaignsMap(cMap);
         const bMap = {};
         brandsData.flat().forEach(b => { bMap[b.id] = b; });
         setBrandsMap(bMap);
 
-        // Load campaigns for applications
-        const appCampaignIds = [...new Set(applicationsData.map(a => a.campaign_id).filter(Boolean))];
-        const appCampaignsData = await Promise.all(appCampaignIds.map(id => base44.entities.Campaign.filter({ id })));
-        const acMap = {};
-        appCampaignsData.flat().forEach(c => { acMap[c.id] = c; });
-        setAppCampaignsMap(acMap);
         if (reputationData.length > 0) {
           setReputation(reputationData[0]);
         }
@@ -108,23 +124,29 @@ export default function CreatorDashboard() {
     );
   }
 
+  const activeApplications = applications.filter(a => a.status === 'pending' || a.status === 'accepted');
+  const activeDeliveries = deliveries.filter(d => d.status === 'pending' || d.status === 'submitted');
+  const completedDeliveries = deliveries.filter(d => d.status === 'approved');
+
   const stats = [
     { 
       label: 'Candidaturas Ativas', 
-      value: applications.filter(a => a.status === 'pending' || a.status === 'accepted').length,
+      value: activeApplications.length,
+      total: applications.length,
       icon: Target,
       color: 'bg-[#9038fa]'
     },
     { 
       label: 'Trabalhos em Andamento', 
-      value: deliveries.filter(d => d.status === 'pending' || d.status === 'submitted').length,
+      value: activeDeliveries.length,
+      total: deliveries.length,
       icon: FileText,
       color: 'bg-[#b77aff]'
     }
   ];
 
   const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'legacy' || (creator?.subscription_status === 'trial' && creator?.trial_end_date && new Date(creator.trial_end_date) > new Date());
-  const isNewUser = applications.length === 0 && deliveries.length === 0;
+  const isNewUser = activeApplications.length === 0 && deliveries.length === 0;
 
   const getStatusBadge = (status) => {
     const styles = {
@@ -194,9 +216,12 @@ export default function CreatorDashboard() {
                   <stat.icon className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                 </div>
                 <div className="text-2xl lg:text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
-                  {stat.value}{stat.suffix}
+                  {stat.value}
                 </div>
                 <div className="text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
+                {stat.total > 0 && stat.total !== stat.value && (
+                  <div className="text-[10px] lg:text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>de {stat.total} no total</div>
+                )}
               </CardContent>
             </Card>
           </motion.div>
