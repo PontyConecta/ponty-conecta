@@ -768,7 +768,7 @@ export default function Profile() {
                          <div className="flex items-center justify-between">
                            <div>
                              <Badge className="border-0 mb-2" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'rgb(5, 150, 105)' }}>Ativa</Badge>
-                             <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Plano Pro</h4>
+                             <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Plano Premium</h4>
                              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Acesso completo a todas as funcionalidades</p>
                            </div>
                            <div className="text-right">
