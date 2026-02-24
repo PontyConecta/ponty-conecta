@@ -43,6 +43,23 @@ export default function BrandDashboard() {
     loadData();
   }, []);
 
+  // Real-time subscriptions
+  useEffect(() => {
+    if (!brand?.id) return;
+    const unsubs = [
+      base44.entities.Campaign.subscribe((event) => {
+        if (event.data?.brand_id === brand.id || event.type === 'delete') loadData();
+      }),
+      base44.entities.Application.subscribe((event) => {
+        if (event.data?.brand_id === brand.id || event.type === 'delete') loadData();
+      }),
+      base44.entities.Delivery.subscribe((event) => {
+        if (event.data?.brand_id === brand.id || event.type === 'delete') loadData();
+      })
+    ];
+    return () => unsubs.forEach(u => u());
+  }, [brand?.id]);
+
   const loadData = async () => {
     try {
       const userData = await base44.auth.me();
@@ -56,15 +73,16 @@ export default function BrandDashboard() {
         const validation = validateBrandProfile(brands[0]);
         setProfileValidation(validation);
         
-        const [campaignsData, applicationsData, deliveriesData] = await Promise.all([
-          base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date', 10),
-          base44.entities.Application.filter({ brand_id: brands[0].id, status: 'pending' }, '-created_date', 10),
-          base44.entities.Delivery.filter({ brand_id: brands[0].id }, '-created_date', 10)
+        // Load ALL data for accurate metrics
+        const [campaignsData, allApplicationsData, allDeliveriesData] = await Promise.all([
+          base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date'),
+          base44.entities.Application.filter({ brand_id: brands[0].id }, '-created_date'),
+          base44.entities.Delivery.filter({ brand_id: brands[0].id }, '-created_date')
         ]);
         
         setCampaigns(campaignsData);
-        setApplications(applicationsData);
-        setDeliveries(deliveriesData);
+        setApplications(allApplicationsData);
+        setDeliveries(allDeliveriesData);
 
         // Build campaigns map for deliveries
         const cMap = {};
@@ -86,28 +104,37 @@ export default function BrandDashboard() {
     );
   }
 
+  const pendingApplications = applications.filter(a => a.status === 'pending');
+  const activeCampaigns = campaigns.filter(c => c.status === 'active');
+  const submittedDeliveries = deliveries.filter(d => d.status === 'submitted');
+  const approvedDeliveries = deliveries.filter(d => d.status === 'approved');
+
   const stats = [
     { 
       label: 'Campanhas Ativas', 
-      value: campaigns.filter(c => c.status === 'active').length,
+      value: activeCampaigns.length,
+      total: campaigns.length,
       icon: Megaphone,
       color: 'bg-[#9038fa]'
     },
     { 
       label: 'Candidaturas Pendentes', 
-      value: applications.length,
+      value: pendingApplications.length,
+      total: applications.length,
       icon: Users,
       color: 'bg-[#b77aff]'
     },
     { 
       label: 'Entregas Aguardando', 
-      value: deliveries.filter(d => d.status === 'submitted').length,
+      value: submittedDeliveries.length,
+      total: deliveries.length,
       icon: FileCheck,
       color: 'bg-emerald-500'
     },
     { 
       label: 'Total Concluídas', 
-      value: deliveries.filter(d => d.status === 'approved').length,
+      value: approvedDeliveries.length,
+      total: deliveries.length,
       icon: TrendingUp,
       color: 'bg-[#7a2de0]'
     }
@@ -126,7 +153,7 @@ export default function BrandDashboard() {
   };
 
   const isSubscribed = brand?.subscription_status === 'premium' || brand?.subscription_status === 'legacy' || (brand?.subscription_status === 'trial' && brand?.trial_end_date && new Date(brand.trial_end_date) > new Date());
-  const isNewUser = campaigns.length === 0 && applications.length === 0;
+  const isNewUser = campaigns.length === 0 && pendingApplications.length === 0;
 
   return (
     <div className="space-y-4 lg:space-y-6">
@@ -185,6 +212,9 @@ export default function BrandDashboard() {
                   </div>
                   <div className="text-2xl lg:text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
                   <div className="text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
+                  {stat.total > 0 && stat.total !== stat.value && (
+                    <div className="text-[10px] lg:text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>de {stat.total} no total</div>
+                  )}
                 </CardContent>
               </Card>
           </motion.div>
