@@ -51,8 +51,10 @@ import {
   Linkedin,
   Link as LinkIcon,
   Camera,
-  CheckCircle2
+  CheckCircle2,
+  Building
 } from 'lucide-react';
+import BrazilStateSelect, { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 export default function Profile() {
   const { user, profile, profileType, refreshProfile, logout } = useAuth();
@@ -97,7 +99,9 @@ export default function Profile() {
           social_instagram: profile.social_instagram || '',
           social_linkedin: profile.social_linkedin || '',
           target_audience: profile.target_audience || '',
-          content_guidelines: profile.content_guidelines || ''
+          content_guidelines: profile.content_guidelines || '',
+          state: profile.state || '',
+          city: profile.city || '',
         });
       } else if (profileType === 'creator') {
         setFormData({
@@ -105,6 +109,8 @@ export default function Profile() {
           bio: profile.bio || '',
           avatar_url: profile.avatar_url || '',
           cover_image_url: profile.cover_image_url || '',
+          state: profile.state || '',
+          city: profile.city || '',
           location: profile.location || '',
           portfolio_url: profile.portfolio_url || '',
           portfolio_images: profile.portfolio_images || [],
@@ -195,11 +201,19 @@ export default function Profile() {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const processedFormData = { ...formData };
+      // Auto-generate location from state + city
+      if (processedFormData.city && processedFormData.state) {
+        processedFormData.location = `${processedFormData.city}, ${processedFormData.state}`;
+      } else if (processedFormData.state) {
+        processedFormData.location = processedFormData.state;
+      }
+
       const updates = profileType === 'creator' ? {
-        ...formData,
-        rate_cash_min: formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null,
-        rate_cash_max: formData.rate_cash_max ? parseFloat(formData.rate_cash_max) : null
-      } : formData;
+        ...processedFormData,
+        rate_cash_min: processedFormData.rate_cash_min ? parseFloat(processedFormData.rate_cash_min) : null,
+        rate_cash_max: processedFormData.rate_cash_max ? parseFloat(processedFormData.rate_cash_max) : null
+      } : processedFormData;
 
       const response = await base44.functions.invoke('updateProfile', {
         profile_type: profileType,
@@ -356,6 +370,27 @@ export default function Profile() {
                       </div>
                     </div>
 
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Estado</Label>
+                        <div className="mt-2">
+                          <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} />
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Cidade</Label>
+                        <div className="relative mt-2">
+                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                          <Input
+                            value={formData.city}
+                            onChange={(e) => handleChange('city', e.target.value)}
+                            className="pl-10"
+                            placeholder="Ex: São Paulo"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                     <div>
                       <Label>Descrição da Marca</Label>
                       <Textarea
@@ -398,16 +433,22 @@ export default function Profile() {
                         />
                       </div>
                       <div>
-                        <Label>Localização</Label>
-                        <div className="relative mt-2">
-                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                          <Input
-                            value={formData.location}
-                            onChange={(e) => handleChange('location', e.target.value)}
-                            className="pl-10"
-                            placeholder="São Paulo, SP"
-                          />
+                        <Label>Estado</Label>
+                        <div className="mt-2">
+                          <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} />
                         </div>
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Cidade</Label>
+                      <div className="relative mt-2">
+                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                        <Input
+                          value={formData.city}
+                          onChange={(e) => handleChange('city', e.target.value)}
+                          className="pl-10"
+                          placeholder="Ex: São Paulo"
+                        />
                       </div>
                     </div>
 

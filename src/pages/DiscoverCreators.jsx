@@ -35,6 +35,7 @@ import {
   X,
   Instagram
 } from 'lucide-react';
+import { BRAZIL_STATES, getStateLabel } from '@/components/common/BrazilStateSelect';
 import { motion } from 'framer-motion';
 
 export default function DiscoverCreators() {
@@ -45,6 +46,7 @@ export default function DiscoverCreators() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterNiche, setFilterNiche] = useState('all');
   const [filterSize, setFilterSize] = useState('all');
+  const [filterState, setFilterState] = useState('all');
   const [selectedCreator, setSelectedCreator] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -103,7 +105,8 @@ export default function DiscoverCreators() {
                          c.bio?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesNiche = filterNiche === 'all' || c.niche?.includes(filterNiche);
     const matchesSize = filterSize === 'all' || c.profile_size === filterSize;
-    return matchesSearch && matchesNiche && matchesSize;
+    const matchesState = filterState === 'all' || c.state === filterState;
+    return matchesSearch && matchesNiche && matchesSize && matchesState;
   });
 
   if (loading) {
@@ -171,6 +174,17 @@ export default function DiscoverCreators() {
                   <SelectItem value="mid">Mid</SelectItem>
                   <SelectItem value="macro">Macro</SelectItem>
                   <SelectItem value="mega">Mega</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filterState} onValueChange={setFilterState}>
+                <SelectTrigger className="w-32 flex-shrink-0">
+                  <SelectValue placeholder="Estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos Estados</SelectItem>
+                  {BRAZIL_STATES.map(s => (
+                    <SelectItem key={s.value} value={s.value}>{s.value} - {s.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -244,10 +258,10 @@ export default function DiscoverCreators() {
                       <CheckCircle2 className="w-6 h-6 text-blue-500" />
                     )}
                   </div>
-                  {selectedCreator.location && (
+                  {(selectedCreator.state || selectedCreator.location) && (
                     <p className="flex items-center gap-1 mt-1" style={{ color: 'var(--text-secondary)' }}>
                       <MapPin className="w-4 h-4" />
-                      {selectedCreator.location}
+                      {selectedCreator.city ? `${selectedCreator.city}, ` : ''}{getStateLabel(selectedCreator.state) || selectedCreator.location}
                     </p>
                   )}
                 </div>

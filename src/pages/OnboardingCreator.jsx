@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/select";
 import { 
   User, ArrowRight, ArrowLeft, Upload, MapPin,
-  Link as LinkIcon, Loader2, Plus, X
+  Link as LinkIcon, Loader2, Plus, X, Building
 } from 'lucide-react';
+import BrazilStateSelect from '@/components/common/BrazilStateSelect';
 import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
@@ -65,6 +66,8 @@ export default function OnboardingCreator() {
     platforms: [],
     profile_size: '',
     content_types: [],
+    state: '',
+    city: '',
     location: '',
     portfolio_url: '',
     rate_cash_min: '',
@@ -98,6 +101,8 @@ export default function OnboardingCreator() {
           platforms: existing.platforms || [],
           profile_size: existing.profile_size || '',
           content_types: existing.content_types || [],
+          state: existing.state || '',
+          city: existing.city || '',
           location: existing.location || '',
           portfolio_url: existing.portfolio_url || '',
           rate_cash_min: existing.rate_cash_min || '',
@@ -156,7 +161,9 @@ export default function OnboardingCreator() {
       dataToSave.display_name = formData.display_name;
       dataToSave.bio = formData.bio;
       dataToSave.avatar_url = formData.avatar_url;
-      dataToSave.location = formData.location;
+      dataToSave.state = formData.state;
+      dataToSave.city = formData.city;
+      dataToSave.location = formData.city && formData.state ? `${formData.city}, ${formData.state}` : formData.city || formData.state || '';
     } else if (step === 2) {
       dataToSave.niche = formData.niche;
       dataToSave.content_types = formData.content_types;
@@ -213,7 +220,7 @@ export default function OnboardingCreator() {
 
   const isStepValid = () => {
     switch (step) {
-      case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20;
+      case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state;
       case 2: return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
       case 3: return formData.platforms.length > 0;
       case 4: return formData.contact_email?.includes('@');
@@ -271,10 +278,16 @@ export default function OnboardingCreator() {
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Localização</Label>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Estado *</Label>
+                      <div className="mt-2">
+                        <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione seu estado" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Cidade</Label>
                       <div className="relative mt-2">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <Input value={formData.location} onChange={(e) => handleChange('location', e.target.value)} placeholder="Ex: São Paulo, SP" className="pl-11 h-12" />
+                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="Ex: São Paulo" className="pl-11 h-12" />
                       </div>
                     </div>
                   </div>

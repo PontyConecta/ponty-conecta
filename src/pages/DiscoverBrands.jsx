@@ -30,8 +30,10 @@ import {
   ExternalLink,
   Megaphone,
   Instagram,
-  Linkedin
+  Linkedin,
+  MapPin
 } from 'lucide-react';
+import { BRAZIL_STATES, getStateLabel } from '@/components/common/BrazilStateSelect';
 import { motion } from 'framer-motion';
 
 export default function DiscoverBrands() {
@@ -41,6 +43,7 @@ export default function DiscoverBrands() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterIndustry, setFilterIndustry] = useState('all');
+  const [filterState, setFilterState] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -106,7 +109,8 @@ export default function DiscoverBrands() {
     const matchesSearch = b.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          b.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesIndustry = filterIndustry === 'all' || b.industry === filterIndustry;
-    return matchesSearch && matchesIndustry;
+    const matchesState = filterState === 'all' || b.state === filterState;
+    return matchesSearch && matchesIndustry && matchesState;
   });
 
   const industryLabels = {
@@ -156,17 +160,30 @@ export default function DiscoverBrands() {
                 className="pl-10"
               />
             </div>
-            <Select value={filterIndustry} onValueChange={setFilterIndustry}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Segmento" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                {industries.map((ind) => (
-                  <SelectItem key={ind.value} value={ind.value}>{ind.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0">
+              <Select value={filterIndustry} onValueChange={setFilterIndustry}>
+                <SelectTrigger className="w-40 flex-shrink-0">
+                  <SelectValue placeholder="Segmento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  {industries.map((ind) => (
+                    <SelectItem key={ind.value} value={ind.value}>{ind.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterState} onValueChange={setFilterState}>
+                <SelectTrigger className="w-40 flex-shrink-0">
+                  <SelectValue placeholder="Estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos Estados</SelectItem>
+                  {BRAZIL_STATES.map(s => (
+                    <SelectItem key={s.value} value={s.value}>{s.value} - {s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -240,11 +257,19 @@ export default function DiscoverBrands() {
                       <CheckCircle2 className="w-6 h-6 text-blue-500" />
                     )}
                   </div>
-                  {selectedBrand.industry && (
-                    <Badge variant="outline" className="mt-2">
-                      {industryLabels[selectedBrand.industry] || selectedBrand.industry}
-                    </Badge>
-                  )}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedBrand.industry && (
+                      <Badge variant="outline">
+                        {industryLabels[selectedBrand.industry] || selectedBrand.industry}
+                      </Badge>
+                    )}
+                    {selectedBrand.state && (
+                      <Badge variant="outline" className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {selectedBrand.city ? `${selectedBrand.city}, ` : ''}{getStateLabel(selectedBrand.state)}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
 
                 {selectedBrand.description && (

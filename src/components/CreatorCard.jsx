@@ -12,6 +12,7 @@ import {
   Eye,
   MessageCircle
 } from 'lucide-react';
+import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 export default function CreatorCard({ 
   creator, 
@@ -125,10 +126,10 @@ export default function CreatorCard({
               )}
             </div>
             <div className="flex flex-wrap gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-              {creator.location && (
+              {(creator.state || creator.location) && (
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
-                  {creator.location}
+                  {creator.city ? `${creator.city}, ` : ''}{creator.state ? getStateLabel(creator.state) : creator.location}
                 </span>
               )}
               {creator.platforms?.[0] && isSubscribed && (

@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/select";
 import { 
   Building2, ArrowRight, ArrowLeft, Upload, Globe, Mail, Phone,
-  Loader2, Sparkles, Instagram, Linkedin
+  Loader2, Sparkles, Instagram, Linkedin, Building
 } from 'lucide-react';
+import BrazilStateSelect from '@/components/common/BrazilStateSelect';
 import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
@@ -79,6 +80,8 @@ export default function OnboardingBrand() {
     social_instagram: '',
     social_linkedin: '',
     logo_url: '',
+    state: '',
+    city: '',
   });
 
   useEffect(() => {
@@ -114,6 +117,8 @@ export default function OnboardingBrand() {
           social_instagram: existing.social_instagram || '',
           social_linkedin: existing.social_linkedin || '',
           logo_url: existing.logo_url || '',
+          state: existing.state || '',
+          city: existing.city || '',
         });
       }
     } catch (error) {
@@ -144,6 +149,8 @@ export default function OnboardingBrand() {
     if (step === 1) {
       dataToSave.company_name = formData.company_name;
       dataToSave.logo_url = formData.logo_url;
+      dataToSave.state = formData.state;
+      dataToSave.city = formData.city;
     } else if (step === 2) {
       dataToSave.industry = formData.industry;
       dataToSave.company_size = formData.company_size;
@@ -205,7 +212,7 @@ export default function OnboardingBrand() {
 
   const isStepValid = () => {
     switch (step) {
-      case 1: return formData.company_name?.trim().length >= 2;
+      case 1: return formData.company_name?.trim().length >= 2 && formData.state;
       case 2: return formData.industry && formData.description?.length >= 20;
       case 3: return formData.contact_email?.includes('@');
       case 4: return true;
@@ -244,6 +251,21 @@ export default function OnboardingBrand() {
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nome da Empresa *</Label>
                       <Input value={formData.company_name} onChange={(e) => handleChange('company_name', e.target.value)} placeholder="Ex: Minha Empresa LTDA" className="mt-2 h-12" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Estado *</Label>
+                        <div className="mt-2">
+                          <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione" />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Cidade</Label>
+                        <div className="relative mt-2">
+                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                          <Input value={formData.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="Ex: São Paulo" className="pl-11 h-12" />
+                        </div>
+                      </div>
                     </div>
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Logo da Marca</Label>
