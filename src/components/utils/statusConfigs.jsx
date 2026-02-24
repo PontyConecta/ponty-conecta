@@ -151,6 +151,10 @@ export const auditLogActionConfig = {
     label: 'Troca de Perfil', 
     color: 'bg-violet-100 text-violet-700' 
   },
+  user_role_change: {
+    label: 'Papel Alterado',
+    color: 'bg-red-100 text-red-700'
+  },
   user_activated: { 
     label: 'Usuário Ativado', 
     color: 'bg-emerald-100 text-emerald-700' 
