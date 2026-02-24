@@ -180,11 +180,11 @@ export default function DiscoverCreators() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Tamanhos</SelectItem>
-                  <SelectItem value="nano">Nano</SelectItem>
-                  <SelectItem value="micro">Micro</SelectItem>
-                  <SelectItem value="mid">Mid</SelectItem>
-                  <SelectItem value="macro">Macro</SelectItem>
-                  <SelectItem value="mega">Mega</SelectItem>
+                  <SelectItem value="nano">Nano (1K-10K)</SelectItem>
+                  <SelectItem value="micro">Micro (10K-50K)</SelectItem>
+                  <SelectItem value="mid">Mid (50K-500K)</SelectItem>
+                  <SelectItem value="macro">Macro (500K-1M)</SelectItem>
+                  <SelectItem value="mega">Mega (1M+)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
