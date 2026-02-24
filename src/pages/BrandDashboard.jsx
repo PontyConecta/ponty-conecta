@@ -4,7 +4,6 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { 
   Megaphone, 
   Users, 
@@ -12,20 +11,17 @@ import {
   TrendingUp,
   Plus,
   ArrowRight,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   Loader2,
-  Eye,
   Crown
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
+import StatCard from '@/components/dashboard/StatCard';
+import StatusBadge from '@/components/common/StatusBadge';
 
 
 export default function BrandDashboard() {
@@ -140,21 +136,6 @@ export default function BrandDashboard() {
     }
   ];
 
-  const getStatusBadge = (status) => {
-    const styles = {
-      draft: { label: 'Rascunho', color: 'bg-slate-100 text-slate-700' },
-      under_review: { label: 'Em Análise', color: 'bg-yellow-100 text-yellow-700' },
-      active: { label: 'Ativa', color: 'bg-emerald-100 text-emerald-700' },
-      paused: { label: 'Pausada', color: 'bg-purple-100 text-purple-700' },
-      applications_closed: { label: 'Inscrições Fechadas', color: 'bg-blue-100 text-blue-700' },
-      completed: { label: 'Concluída', color: 'bg-violet-100 text-violet-700' },
-      cancelled: { label: 'Cancelada', color: 'bg-red-100 text-red-700' },
-      closed: { label: 'Encerrada', color: 'bg-slate-100 text-slate-700' }
-    };
-    const style = styles[status] || styles.draft;
-    return <Badge className={`${style.color} border-0`}>{style.label}</Badge>;
-  };
-
   const isSubscribed = brand?.subscription_status === 'premium' || brand?.subscription_status === 'legacy' || (brand?.subscription_status === 'trial' && brand?.trial_end_date && new Date(brand.trial_end_date) > new Date());
   const isNewUser = campaigns.length === 0 && pendingApplications.length === 0;
 
@@ -202,25 +183,7 @@ export default function BrandDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {stats.map((stat, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            <Card className="hover:shadow-md transition-shadow h-full" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-                <CardContent className="p-4 lg:p-6 h-full flex flex-col">
-                  <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl ${stat.color} flex items-center justify-center mb-3`}>
-                    <stat.icon className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
-                  </div>
-                  <div className="text-2xl lg:text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
-                  <div className="text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
-                  <div className="text-[10px] lg:text-xs mt-auto pt-1" style={{ color: 'var(--text-secondary)' }}>
-                    {stat.total > 0 ? `de ${stat.total} no total` : '\u00A0'}
-                  </div>
-                </CardContent>
-              </Card>
-          </motion.div>
+          <StatCard key={index} index={index} {...stat} />
         ))}
       </div>
 
@@ -244,15 +207,15 @@ export default function BrandDashboard() {
                 <div
                   key={campaign.id}
                   className="flex items-center justify-between p-3 rounded-xl transition-colors"
-                  style={{ backgroundColor: 'var(--bg-secondary)' }}
-                  >
+                  style={{ backgroundColor: 'var(--bg-primary)' }}
+                >
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{campaign.title}</h4>
                     <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas preenchidas
                     </p>
                   </div>
-                  {getStatusBadge(campaign.status)}
+                  <StatusBadge type="campaign" status={campaign.status} />
                 </div>
               ))
             ) : (
@@ -300,10 +263,7 @@ export default function BrandDashboard() {
                         {app.message?.slice(0, 50) || 'Sem mensagem'}
                       </p>
                     </div>
-                    <Badge className="bg-amber-100 text-amber-700 border-0">
-                      <Clock className="w-3 h-3 mr-1" />
-                      Pendente
-                    </Badge>
+                    <StatusBadge type="application" status={app.status} />
                   </div>
                 );
               })
@@ -330,39 +290,26 @@ export default function BrandDashboard() {
         <CardContent>
           {deliveries.length > 0 ? (
             <div className="space-y-3">
-              {deliveries.slice(0, 5).map((delivery) => {
-                const statusConfig = {
-                  pending: { label: 'Aguardando', color: 'bg-slate-100 text-slate-700', icon: Clock },
-                  submitted: { label: 'Enviada', color: 'bg-blue-100 text-blue-700', icon: Eye },
-                  approved: { label: 'Aprovada', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
-                  contested: { label: 'Contestada', color: 'bg-red-100 text-red-700', icon: AlertCircle }
-                };
-                const config = statusConfig[delivery.status] || statusConfig.pending;
-                
-                return (
-                  <div
-                    key={delivery.id}
-                    className="flex items-center justify-between p-4 rounded-xl transition-colors"
-                    style={{ backgroundColor: 'var(--bg-secondary)' }}
-                    >
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
-                        {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
-                      </h4>
-                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        {delivery.submitted_at 
-                          ? `Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
-                          : `Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
-                        }
-                      </p>
-                    </div>
-                    <Badge className={`${config.color} border-0`}>
-                      <config.icon className="w-3 h-3 mr-1" />
-                      {config.label}
-                    </Badge>
+              {deliveries.slice(0, 5).map((delivery) => (
+                <div
+                  key={delivery.id}
+                  className="flex items-center justify-between p-4 rounded-xl transition-colors"
+                  style={{ backgroundColor: 'var(--bg-primary)' }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                      {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
+                    </h4>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      {delivery.submitted_at 
+                        ? `Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
+                        : `Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
+                      }
+                    </p>
                   </div>
-                );
-              })}
+                  <StatusBadge type="delivery" status={delivery.status} />
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-8">

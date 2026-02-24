@@ -4,25 +4,15 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { 
   Sparkles, 
   Megaphone,
   FileText, 
-  TrendingUp,
   ArrowRight,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   Loader2,
-  Eye,
   Crown,
-  Target,
-  Award,
-  Calendar
+  Target
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateCreatorProfile } from '@/components/utils/profileValidation';
 import CreatorMetricsChart from '@/components/charts/CreatorMetricsChart';
@@ -30,6 +20,8 @@ import CreatorReputationSection from '@/components/creator/CreatorReputationSect
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
+import StatCard from '@/components/dashboard/StatCard';
+import StatusBadge from '@/components/common/StatusBadge';
 
 export default function CreatorDashboard() {
   const [user, setUser] = useState(null);
@@ -41,7 +33,6 @@ export default function CreatorDashboard() {
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
   const [campaignsMap, setCampaignsMap] = useState({});
   const [brandsMap, setBrandsMap] = useState({});
-  const [appCampaignsMap, setAppCampaignsMap] = useState({});
 
   useEffect(() => {
     loadData();
@@ -73,11 +64,9 @@ export default function CreatorDashboard() {
       if (creators.length > 0) {
         setCreator(creators[0]);
         
-        // Validar completude do perfil
         const validation = validateCreatorProfile(creators[0]);
         setProfileValidation(validation);
         
-        // Load ALL data for accurate metrics  
         const [applicationsData, deliveriesData, reputationData] = await Promise.all([
           base44.entities.Application.filter({ creator_id: creators[0].id }, '-created_date'),
           base44.entities.Delivery.filter({ creator_id: creators[0].id }, '-created_date'),
@@ -87,7 +76,7 @@ export default function CreatorDashboard() {
         setApplications(applicationsData);
         setDeliveries(deliveriesData);
 
-        // Load campaigns and brands for deliveries
+        // Load campaigns and brands for deliveries and applications
         const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id).filter(Boolean))];
         const brandIds = [...new Set(deliveriesData.map(d => d.brand_id).filter(Boolean))];
         const appCampaignIds = [...new Set(applicationsData.map(a => a.campaign_id).filter(Boolean))];
@@ -100,7 +89,6 @@ export default function CreatorDashboard() {
         const cMap = {};
         campaignsData.flat().forEach(c => { cMap[c.id] = c; });
         setCampaignsMap(cMap);
-        setAppCampaignsMap(cMap);
         const bMap = {};
         brandsData.flat().forEach(b => { bMap[b.id] = b; });
         setBrandsMap(bMap);
@@ -126,7 +114,6 @@ export default function CreatorDashboard() {
 
   const activeApplications = applications.filter(a => a.status === 'pending' || a.status === 'accepted');
   const activeDeliveries = deliveries.filter(d => d.status === 'pending' || d.status === 'submitted');
-  const completedDeliveries = deliveries.filter(d => d.status === 'approved');
 
   const stats = [
     { 
@@ -147,18 +134,6 @@ export default function CreatorDashboard() {
 
   const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'legacy' || (creator?.subscription_status === 'trial' && creator?.trial_end_date && new Date(creator.trial_end_date) > new Date());
   const isNewUser = activeApplications.length === 0 && deliveries.length === 0;
-
-  const getStatusBadge = (status) => {
-    const styles = {
-      pending: { label: 'Pendente', color: 'bg-amber-100 text-amber-700' },
-      accepted: { label: 'Aceita', color: 'bg-emerald-100 text-emerald-700' },
-      rejected: { label: 'Recusada', color: 'bg-red-100 text-red-700' },
-      withdrawn: { label: 'Cancelada', color: 'bg-slate-100 text-slate-700' },
-      completed: { label: 'Concluída', color: 'bg-blue-100 text-blue-700' }
-    };
-    const style = styles[status] || styles.pending;
-    return <Badge className={`${style.color} border-0`}>{style.label}</Badge>;
-  };
 
   return (
     <div className="space-y-4 lg:space-y-6">
@@ -204,27 +179,7 @@ export default function CreatorDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3 lg:gap-4">
         {stats.map((stat, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            <Card className="hover:shadow-md transition-shadow h-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <CardContent className="p-4 lg:p-6 h-full flex flex-col">
-                <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl ${stat.color} flex items-center justify-center mb-3`}>
-                  <stat.icon className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
-                </div>
-                <div className="text-2xl lg:text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
-                  {stat.value}
-                </div>
-                <div className="text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
-                <div className="text-[10px] lg:text-xs mt-auto pt-1" style={{ color: 'var(--text-secondary)' }}>
-                  {stat.total > 0 ? `de ${stat.total} no total` : '\u00A0'}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <StatCard key={index} index={index} {...stat} />
         ))}
       </div>
 
@@ -235,7 +190,7 @@ export default function CreatorDashboard() {
       <CreatorReputationSection reputation={reputation} deliveries={deliveries} />
 
       {/* My Applications */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Candidaturas</CardTitle>
           <Link to={createPageUrl('MyApplications')}>
@@ -255,13 +210,13 @@ export default function CreatorDashboard() {
                 >
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
-                      {appCampaignsMap[app.campaign_id]?.title || `Campanha #${app.campaign_id?.slice(-6)}`}
+                      {campaignsMap[app.campaign_id]?.title || `Campanha #${app.campaign_id?.slice(-6)}`}
                     </h4>
                     <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
                       {app.message?.slice(0, 50) || 'Sem mensagem'}
                     </p>
                   </div>
-                  {getStatusBadge(app.status)}
+                  <StatusBadge type="application" status={app.status} />
                 </div>
               ))}
             </div>
@@ -283,7 +238,7 @@ export default function CreatorDashboard() {
       </Card>
 
       {/* My Deliveries */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Entregas</CardTitle>
           <Link to={createPageUrl('MyDeliveries')}>
@@ -295,40 +250,27 @@ export default function CreatorDashboard() {
         <CardContent>
           {deliveries.length > 0 ? (
             <div className="space-y-3">
-              {deliveries.slice(0, 5).map((delivery) => {
-                const statusConfig = {
-                  pending: { label: 'Aguardando', color: 'bg-slate-100 text-slate-700', icon: Clock },
-                  submitted: { label: 'Enviada', color: 'bg-blue-100 text-blue-700', icon: Eye },
-                  approved: { label: 'Aprovada', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
-                  contested: { label: 'Contestada', color: 'bg-red-100 text-red-700', icon: AlertCircle }
-                };
-                const config = statusConfig[delivery.status] || statusConfig.pending;
-                
-                return (
-                  <div
-                    key={delivery.id}
-                    className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors"
-                    style={{ backgroundColor: 'var(--bg-primary)' }}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
-                        {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
-                      </h4>
-                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        {brandsMap[delivery.brand_id]?.company_name || ''}
-                        {delivery.submitted_at 
-                          ? ` · Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
-                          : ` · Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
-                        }
-                      </p>
-                    </div>
-                    <Badge className={`${config.color} border-0`}>
-                      <config.icon className="w-3 h-3 mr-1" />
-                      {config.label}
-                    </Badge>
+              {deliveries.slice(0, 5).map((delivery) => (
+                <div
+                  key={delivery.id}
+                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors"
+                  style={{ backgroundColor: 'var(--bg-primary)' }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                      {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
+                    </h4>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      {brandsMap[delivery.brand_id]?.company_name || ''}
+                      {delivery.submitted_at 
+                        ? ` · Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
+                        : ` · Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
+                      }
+                    </p>
                   </div>
-                );
-              })}
+                  <StatusBadge type="delivery" status={delivery.status} />
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-8">
