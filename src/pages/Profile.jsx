@@ -56,6 +56,7 @@ import {
 } from 'lucide-react';
 import BrazilStateSelect, { getStateLabel } from '@/components/common/BrazilStateSelect';
 import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
+import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
 
 export default function Profile() {
   const { user, profile, profileType, refreshProfile, logout } = useAuth();
@@ -552,8 +553,8 @@ export default function Profile() {
                           </Select>
                           <Input
                             value={newPlatform.handle}
-                            onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value }))}
-                            placeholder="@usuario"
+                            onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value.replace(/^@/, '') }))}
+                            placeholder="usuario (sem @)"
                           />
                           <Input
                             type="number"
@@ -672,6 +673,7 @@ export default function Profile() {
                   <OnlinePresenceManager
                     presences={formData.online_presences || []}
                     onChange={(presences) => handleChange('online_presences', presences)}
+                    showLinks={true}
                   />
 
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -680,11 +682,15 @@ export default function Profile() {
                       <div className="relative mt-2">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                         <Input
+                          type="email"
                           value={formData.contact_email}
                           onChange={(e) => handleChange('contact_email', e.target.value)}
                           className="pl-10"
                         />
                       </div>
+                      {formData.contact_email && !isValidEmail(formData.contact_email) && (
+                        <p className="text-xs mt-1 text-red-500">Email inválido</p>
+                      )}
                     </div>
                     <div>
                       <Label>Telefone</Label>
@@ -692,9 +698,10 @@ export default function Profile() {
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                         <Input
                           value={formData.contact_phone}
-                          onChange={(e) => handleChange('contact_phone', e.target.value)}
+                          onChange={(e) => handleChange('contact_phone', formatPhoneNumber(e.target.value))}
                           className="pl-10"
                           placeholder="(11) 99999-9999"
+                          maxLength={15}
                         />
                       </div>
                     </div>
@@ -713,11 +720,15 @@ export default function Profile() {
                     <div className="relative mt-2">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
+                        type="email"
                         value={formData.contact_email}
                         onChange={(e) => handleChange('contact_email', e.target.value)}
                         className="pl-10"
                       />
                     </div>
+                    {formData.contact_email && !isValidEmail(formData.contact_email) && (
+                      <p className="text-xs mt-1 text-red-500">Email inválido</p>
+                    )}
                   </div>
 
                   <div>
@@ -726,9 +737,10 @@ export default function Profile() {
                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
                         value={formData.contact_whatsapp}
-                        onChange={(e) => handleChange('contact_whatsapp', e.target.value)}
+                        onChange={(e) => handleChange('contact_whatsapp', formatPhoneNumber(e.target.value))}
                         className="pl-10"
                         placeholder="(11) 99999-9999"
+                        maxLength={15}
                       />
                     </div>
                   </div>

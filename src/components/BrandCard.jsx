@@ -9,8 +9,11 @@ import {
   Lock,
   Eye,
   MessageCircle,
-  Megaphone
+  Megaphone,
+  MapPin
 } from 'lucide-react';
+import { getPresenceUrl } from '@/components/utils/phoneFormatter';
+import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 export default function BrandCard({ 
   brand, 
@@ -121,36 +124,33 @@ export default function BrandCard({
                 {brand.city ? `${brand.city}, ` : ''}{getStateLabel(brand.state)}
               </span>
             )}
-            {brand.website && isSubscribed && (
-              <a 
-                href={brand.website} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-sm text-[#9038fa] hover:underline flex items-center gap-1"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Globe className="w-3 h-3" />
-                Website
-              </a>
-            )}
             {isSubscribed && brand.online_presences?.length > 0 ? (
-              brand.online_presences.filter(p => p.type === 'instagram').slice(0, 1).map((p, i) => (
+              brand.online_presences.slice(0, 2).map((p, i) => (
                 <a key={i}
-                  href={p.value?.startsWith('http') ? p.value : `https://instagram.com/${p.value.replace('@', '')}`}
+                  href={getPresenceUrl(p)}
                   target="_blank" rel="noopener noreferrer"
-                  className="text-sm text-pink-600 hover:underline flex items-center gap-1"
+                  className="text-sm text-[#9038fa] hover:underline flex items-center gap-1"
                   onClick={(e) => e.stopPropagation()}
-                >Instagram</a>
+                >
+                  <Globe className="w-3 h-3" />
+                  {p.type === 'website' ? 'Website' : p.type === 'instagram' ? 'Instagram' : p.type === 'linkedin' ? 'LinkedIn' : p.type.charAt(0).toUpperCase() + p.type.slice(1)}
+                </a>
               ))
-            ) : (
-              brand.social_instagram && isSubscribed && (
-                <a 
-                  href={`https://instagram.com/${brand.social_instagram.replace('@', '')}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="text-sm text-pink-600 hover:underline flex items-center gap-1"
-                  onClick={(e) => e.stopPropagation()}
-                >Instagram</a>
-              )
+            ) : isSubscribed && (
+              <>
+                {brand.website && (
+                  <a href={brand.website.startsWith('http') ? brand.website : `https://${brand.website}`} target="_blank" rel="noopener noreferrer"
+                    className="text-sm text-[#9038fa] hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                    <Globe className="w-3 h-3" /> Website
+                  </a>
+                )}
+                {brand.social_instagram && (
+                  <a href={`https://instagram.com/${brand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer"
+                    className="text-sm text-pink-600 hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                    Instagram
+                  </a>
+                )}
+              </>
             )}
           </div>
 

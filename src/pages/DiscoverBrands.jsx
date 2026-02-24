@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { BRAZIL_STATES, getStateLabel } from '@/components/common/BrazilStateSelect';
 import { motion } from 'framer-motion';
+import { getPresenceUrl, getPresenceLabel } from '@/components/utils/phoneFormatter';
 
 export default function DiscoverBrands() {
   const [user, setUser] = useState(null);
@@ -319,36 +320,23 @@ export default function DiscoverBrands() {
                       </a>
                     )}
                     {selectedBrand.contact_phone && (
-                      <p className="flex items-center gap-2 text-[#9038fa]">
+                      <a href={`tel:${selectedBrand.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Phone className="w-4 h-4" />
                         {selectedBrand.contact_phone}
-                      </p>
+                      </a>
                     )}
                     {/* Online presences (new format) */}
                     {selectedBrand.online_presences?.length > 0 ? (
-                      selectedBrand.online_presences.map((p, idx) => {
-                        const isLink = p.value?.startsWith('http');
-                        const label = p.type === 'website' ? 'Website' : 
-                                     p.type === 'instagram' ? p.value : 
-                                     p.type === 'linkedin' ? 'LinkedIn' : 
-                                     p.type === 'tiktok' ? 'TikTok' :
-                                     p.type === 'youtube' ? 'YouTube' :
-                                     p.type === 'facebook' ? 'Facebook' :
-                                     p.type === 'twitter' ? 'Twitter / X' : p.value;
-                        const href = p.type === 'instagram' && !p.value.startsWith('http') 
-                          ? `https://instagram.com/${p.value.replace('@', '')}` 
-                          : isLink ? p.value : `https://${p.value}`;
-                        return (
-                          <a key={idx} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
-                            <Globe className="w-4 h-4" />
-                            {label}
-                          </a>
-                        );
-                      })
+                      selectedBrand.online_presences.map((p, idx) => (
+                        <a key={idx} href={getPresenceUrl(p)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                          <Globe className="w-4 h-4" />
+                          {getPresenceLabel(p)}
+                        </a>
+                      ))
                     ) : (
                       <>
                         {selectedBrand.website && (
-                          <a href={selectedBrand.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                          <a href={selectedBrand.website.startsWith('http') ? selectedBrand.website : `https://${selectedBrand.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                             <Globe className="w-4 h-4" />
                             Website
                           </a>
@@ -356,11 +344,11 @@ export default function DiscoverBrands() {
                         {selectedBrand.social_instagram && (
                           <a href={`https://instagram.com/${selectedBrand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                             <Instagram className="w-4 h-4" />
-                            {selectedBrand.social_instagram}
+                            {selectedBrand.social_instagram.replace('@', '')}
                           </a>
                         )}
                         {selectedBrand.social_linkedin && (
-                          <a href={selectedBrand.social_linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                          <a href={selectedBrand.social_linkedin.startsWith('http') ? selectedBrand.social_linkedin : `https://${selectedBrand.social_linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
                             <Linkedin className="w-4 h-4" />
                             LinkedIn
                           </a>

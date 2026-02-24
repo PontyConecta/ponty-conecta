@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import FieldHint from '@/components/onboarding/FieldHint';
+import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
 
 const STEPS = [
   { number: 1, title: 'Identidade' },
@@ -224,7 +225,7 @@ export default function OnboardingCreator() {
       case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state;
       case 2: return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
       case 3: return formData.platforms.length > 0;
-      case 4: return formData.contact_email?.includes('@');
+      case 4: return isValidEmail(formData.contact_email);
       case 5: return true;
       default: return false;
     }
@@ -368,7 +369,7 @@ export default function OnboardingCreator() {
                           <SelectTrigger><SelectValue placeholder="Plataforma" /></SelectTrigger>
                           <SelectContent>{PLATFORM_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
                         </Select>
-                        <Input value={newPlatform.handle} onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value }))} placeholder="@usuario" />
+                        <Input value={newPlatform.handle} onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value.replace(/^@/, '') }))} placeholder="usuario (sem @)" />
                         <Input type="number" value={newPlatform.followers} onChange={(e) => setNewPlatform(p => ({ ...p, followers: e.target.value }))} placeholder="Seguidores" />
                       </div>
                       <Button variant="outline" onClick={addPlatform} disabled={!newPlatform.name || !newPlatform.handle} className="w-full mt-2">
@@ -391,11 +392,20 @@ export default function OnboardingCreator() {
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email de Contato *</Label>
                       <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="seu@email.com" className="mt-2 h-12" />
+                      {formData.contact_email && !isValidEmail(formData.contact_email) && (
+                        <p className="text-xs mt-1 text-red-500">Digite um email válido (ex: nome@email.com)</p>
+                      )}
                     </div>
 
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>WhatsApp</Label>
-                      <Input value={formData.contact_whatsapp} onChange={(e) => handleChange('contact_whatsapp', e.target.value)} placeholder="(11) 99999-9999" className="mt-2 h-12" />
+                      <Input 
+                        value={formData.contact_whatsapp} 
+                        onChange={(e) => handleChange('contact_whatsapp', formatPhoneNumber(e.target.value))} 
+                        placeholder="(11) 99999-9999" 
+                        className="mt-2 h-12"
+                        maxLength={15}
+                      />
                     </div>
 
                     <div>

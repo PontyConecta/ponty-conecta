@@ -21,6 +21,7 @@ import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
 import FieldHint from '@/components/onboarding/FieldHint';
+import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
 
 const STEPS = [
   { number: 1, title: 'Identidade' },
@@ -232,7 +233,7 @@ export default function OnboardingBrand() {
       case 1: return formData.company_name?.trim().length >= 2 && formData.state;
       case 2: return formData.industry && formData.description?.length >= 20;
       case 3: return true; // Redes sociais são opcionais
-      case 4: return formData.contact_email?.includes('@');
+      case 4: return isValidEmail(formData.contact_email);
       case 5: return true;
       default: return false;
     }
@@ -366,13 +367,22 @@ export default function OnboardingBrand() {
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                         <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="contato@suamarca.com.br" className="pl-11 h-12" />
                       </div>
+                      {formData.contact_email && !isValidEmail(formData.contact_email) && (
+                        <p className="text-xs mt-1 text-red-500">Digite um email válido (ex: nome@empresa.com)</p>
+                      )}
                       <FieldHint text="Email principal para comunicação com creators." />
                     </div>
                     <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone</Label>
                       <div className="relative mt-2">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <Input value={formData.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} placeholder="(11) 99999-9999" className="pl-11 h-12" />
+                        <Input 
+                          value={formData.contact_phone} 
+                          onChange={(e) => handleChange('contact_phone', formatPhoneNumber(e.target.value))} 
+                          placeholder="(11) 99999-9999" 
+                          className="pl-11 h-12"
+                          maxLength={15}
+                        />
                       </div>
                     </div>
                   </div>
