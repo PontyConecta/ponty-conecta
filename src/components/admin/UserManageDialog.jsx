@@ -70,6 +70,10 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
     handleAction('toggle_verified');
   };
 
+  const handleSaveRole = () => {
+    handleAction('set_user_role', { role: newRole });
+  };
+
   const subscriptionBadge = (status) => {
     const configs = {
       starter: { label: 'Starter', className: 'bg-slate-100 text-slate-700' },
