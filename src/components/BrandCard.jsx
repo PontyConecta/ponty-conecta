@@ -115,6 +115,12 @@ export default function BrandCard({
                 <CheckCircle2 className="w-5 h-5 text-blue-500" />
               )}
             </div>
+            {brand.state && (
+              <span className="text-sm flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                <MapPin className="w-3 h-3" />
+                {brand.city ? `${brand.city}, ` : ''}{getStateLabel(brand.state)}
+              </span>
+            )}
             {brand.website && isSubscribed && (
               <a 
                 href={brand.website} 
