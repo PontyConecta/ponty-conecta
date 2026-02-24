@@ -280,25 +280,30 @@ export default function BrandDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-3">
-            {applications.length > 0 ? (
-              applications.slice(0, 5).map((app) => (
-                <div
-                  key={app.id}
-                  className="flex items-center justify-between p-3 rounded-xl transition-colors"
-                  style={{ backgroundColor: 'var(--bg-secondary)' }}
+            {pendingApplications.length > 0 ? (
+              pendingApplications.slice(0, 5).map((app) => {
+                const campaign = campaignsMap[app.campaign_id];
+                return (
+                  <div
+                    key={app.id}
+                    className="flex items-center justify-between p-3 rounded-xl transition-colors"
+                    style={{ backgroundColor: 'var(--bg-primary)' }}
                   >
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>Candidatura #{app.id.slice(-6)}</h4>
-                    <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
-                      {app.message?.slice(0, 50) || 'Sem mensagem'}...
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                        {campaign?.title || `Candidatura #${app.id.slice(-6)}`}
+                      </h4>
+                      <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
+                        {app.message?.slice(0, 50) || 'Sem mensagem'}
+                      </p>
+                    </div>
+                    <Badge className="bg-amber-100 text-amber-700 border-0">
+                      <Clock className="w-3 h-3 mr-1" />
+                      Pendente
+                    </Badge>
                   </div>
-                  <Badge className="bg-amber-100 text-amber-700 border-0">
-                    <Clock className="w-3 h-3 mr-1" />
-                    Pendente
-                  </Badge>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="text-center py-8">
                   <Users className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
