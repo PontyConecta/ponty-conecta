@@ -133,16 +133,24 @@ export default function BrandCard({
                 Website
               </a>
             )}
-            {brand.social_instagram && isSubscribed && (
-              <a 
-                href={`https://instagram.com/${brand.social_instagram.replace('@', '')}`}
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-sm text-pink-600 hover:underline flex items-center gap-1"
-                onClick={(e) => e.stopPropagation()}
-              >
-                Instagram
-              </a>
+            {isSubscribed && brand.online_presences?.length > 0 ? (
+              brand.online_presences.filter(p => p.type === 'instagram').slice(0, 1).map((p, i) => (
+                <a key={i}
+                  href={p.value?.startsWith('http') ? p.value : `https://instagram.com/${p.value.replace('@', '')}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="text-sm text-pink-600 hover:underline flex items-center gap-1"
+                  onClick={(e) => e.stopPropagation()}
+                >Instagram</a>
+              ))
+            ) : (
+              brand.social_instagram && isSubscribed && (
+                <a 
+                  href={`https://instagram.com/${brand.social_instagram.replace('@', '')}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="text-sm text-pink-600 hover:underline flex items-center gap-1"
+                  onClick={(e) => e.stopPropagation()}
+                >Instagram</a>
+              )
             )}
           </div>
 
