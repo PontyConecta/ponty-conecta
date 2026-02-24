@@ -1,26 +1,36 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function CampaignMetricsChart({ campaigns, applications }) {
-  // Dados por mês
+  // Dados por mês - campanhas criadas
   const monthlyData = {};
   
   campaigns.forEach(campaign => {
     const date = new Date(campaign.created_date);
-    const month = date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
-    monthlyData[month] = (monthlyData[month] || 0) + 1;
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const label = date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+    if (!monthlyData[key]) monthlyData[key] = { key, month: label, campanhas: 0 };
+    monthlyData[key].campanhas += 1;
   });
 
-  const chartData = Object.entries(monthlyData).map(([month, count]) => ({
-    month,
-    campanhas: count
-  })).slice(-6);
+  const chartData = Object.values(monthlyData)
+    .sort((a, b) => a.key.localeCompare(b.key))
+    .slice(-6)
+    .map(({ month, campanhas }) => ({ month, campanhas }));
 
-  // Taxa de aceitação
+  // Taxa de aceitação - baseada em TODAS as candidaturas (não apenas pendentes)
   const totalApps = applications.length;
-  const acceptedApps = applications.filter(a => a.status === 'accepted').length;
-  const acceptanceRate = totalApps > 0 ? Math.round((acceptedApps / totalApps) * 100) : 0;
+  const acceptedApps = applications.filter(a => a.status === 'accepted' || a.status === 'completed').length;
+  const rejectedApps = applications.filter(a => a.status === 'rejected').length;
+  const pendingApps = applications.filter(a => a.status === 'pending').length;
+  const decidedApps = acceptedApps + rejectedApps;
+  const acceptanceRate = decidedApps > 0 ? Math.round((acceptedApps / decidedApps) * 100) : 0;
+
+  // Status de campanhas
+  const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
+  const draftCampaigns = campaigns.filter(c => c.status === 'draft').length;
+  const completedCampaigns = campaigns.filter(c => c.status === 'completed').length;
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
@@ -31,20 +41,38 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
         </CardHeader>
         <CardContent>
           {chartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="month" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                <Bar dataKey="campanhas" fill="#4f46e5" radius={[8, 8, 0, 0]} />
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                <XAxis dataKey="month" stroke="var(--text-secondary)" fontSize={12} />
+                <YAxis stroke="var(--text-secondary)" fontSize={12} allowDecimals={false} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+                  labelStyle={{ color: 'var(--text-primary)' }}
+                />
+                <Bar dataKey="campanhas" fill="#9038fa" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[250px] flex items-center justify-center" style={{ color: 'var(--text-secondary)' }}>
-              Sem dados disponíveis
+            <div className="h-[220px] flex items-center justify-center" style={{ color: 'var(--text-secondary)' }}>
+              Nenhuma campanha criada ainda
             </div>
           )}
+          {/* Summary stats below chart */}
+          <div className="grid grid-cols-3 gap-3 mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
+            <div className="text-center">
+              <div className="text-lg font-bold" style={{ color: '#9038fa' }}>{activeCampaigns}</div>
+              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Ativas</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold" style={{ color: 'var(--text-secondary)' }}>{draftCampaigns}</div>
+              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Rascunhos</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-emerald-600">{completedCampaigns}</div>
+              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Concluídas</div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -58,13 +86,13 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
             <div className="flex items-center justify-center">
               <div className="relative w-32 h-32">
                 <svg className="w-full h-full" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--border-color)" strokeWidth="8" />
                   <circle
                     cx="50"
                     cy="50"
                     r="45"
                     fill="none"
-                    stroke="#4f46e5"
+                    stroke="#9038fa"
                     strokeWidth="8"
                     strokeDasharray={`${acceptanceRate * 2.83} 283`}
                     strokeLinecap="round"
@@ -78,14 +106,18 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 text-center pt-4" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="grid grid-cols-3 gap-3 text-center pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
               <div>
                 <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalApps}</div>
-                <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Total de candidatos</div>
+                <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Total de candidatos</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-emerald-600">{acceptedApps}</div>
-                <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Aceitos</div>
+                <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Aceitos</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-amber-600">{pendingApps}</div>
+                <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Pendentes</div>
               </div>
             </div>
           </div>

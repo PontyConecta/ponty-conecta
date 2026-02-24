@@ -6,12 +6,20 @@ import { Award, TrendingUp, CheckCircle2, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CreatorReputationSection({ reputation, deliveries }) {
-  const onTimeRate = reputation?.campaigns_completed > 0 
-    ? Math.round((reputation.on_time_deliveries / reputation.campaigns_completed) * 100)
-    : 100;
-
+  // Compute real metrics from actual delivery data
+  const totalDeliveries = deliveries?.length || 0;
   const submittedDeliveries = deliveries?.filter(d => d.status === 'submitted').length || 0;
   const approvedDeliveries = deliveries?.filter(d => d.status === 'approved').length || 0;
+  const completedDeliveries = approvedDeliveries;
+  
+  // On-time rate: use reputation if available, otherwise compute from deliveries
+  const onTimeFromDeliveries = deliveries?.filter(d => d.on_time === true).length || 0;
+  const finishedDeliveries = deliveries?.filter(d => d.status === 'approved' || d.status === 'closed').length || 0;
+  const onTimeRate = reputation?.campaigns_completed > 0 
+    ? Math.round((reputation.on_time_deliveries / reputation.campaigns_completed) * 100)
+    : finishedDeliveries > 0
+    ? Math.round((onTimeFromDeliveries / finishedDeliveries) * 100)
+    : 100;
 
   const scoreColor = (score) => {
     if (score >= 90) return 'from-emerald-500 to-teal-500';
@@ -85,7 +93,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                   </div>
                   <span className="text-2xl font-bold text-emerald-600">{approvedDeliveries}</span>
                 </div>
-                <Progress value={approvedDeliveries > 0 ? 80 : 0} className="h-1.5" />
+                <Progress value={totalDeliveries > 0 ? Math.round((approvedDeliveries / totalDeliveries) * 100) : 0} className="h-1.5" />
               </div>
 
               <div>
@@ -98,12 +106,12 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
                   </div>
                   <span className="text-2xl font-bold text-blue-600">{submittedDeliveries}</span>
                 </div>
-                <Progress value={submittedDeliveries > 0 ? 60 : 0} className="h-1.5" />
+                <Progress value={totalDeliveries > 0 ? Math.round((submittedDeliveries / totalDeliveries) * 100) : 0} className="h-1.5" />
               </div>
 
               <div className="pt-2">
                 <p className="text-xs mb-2 transition-colors" style={{ color: 'var(--text-secondary)' }}>
-                  {reputation?.campaigns_completed || 0} campanhas concluídas
+                  {completedDeliveries} {completedDeliveries === 1 ? 'entrega aprovada' : 'entregas aprovadas'} de {totalDeliveries} no total
                 </p>
               </div>
             </div>
@@ -130,7 +138,7 @@ export default function CreatorReputationSection({ reputation, deliveries }) {
               </div>
 
               <div className="text-xs text-center transition-colors" style={{ color: 'var(--text-secondary)' }}>
-                {reputation?.on_time_deliveries || 0} de {reputation?.campaigns_completed || 0} no prazo
+                {reputation?.on_time_deliveries || onTimeFromDeliveries} de {reputation?.campaigns_completed || finishedDeliveries} no prazo
               </div>
             </div>
 
