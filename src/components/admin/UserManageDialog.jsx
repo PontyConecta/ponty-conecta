@@ -132,6 +132,36 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
             </div>
           </div>
 
+          {/* Role Management */}
+          <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4" style={{ color: '#9038fa' }} />
+              <Label className="font-semibold" style={{ color: 'var(--text-primary)' }}>Papel do Usuário</Label>
+            </div>
+            <div className="flex items-center gap-3">
+              <Select value={newRole} onValueChange={setNewRole}>
+                <SelectTrigger className="flex-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">Usuário (padrão)</SelectItem>
+                  <SelectItem value="admin">Administrador</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button 
+                onClick={handleSaveRole} 
+                disabled={actionLoading || newRole === user.role}
+                className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
+                size="sm"
+              >
+                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
+              </Button>
+            </div>
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+              Administradores têm acesso ao painel admin, gerenciamento de usuários e moderação.
+            </p>
+          </div>
+
           {/* Current Info Grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
