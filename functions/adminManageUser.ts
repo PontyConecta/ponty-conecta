@@ -117,11 +117,12 @@ Deno.serve(async (req) => {
           return Response.json({ error: 'User not found' }, { status: 404 });
         }
 
+        const oldRole = targetUser.role || 'user';
         await base44.asServiceRole.entities.User.update(userId, { role: newRole });
         
-        auditAction = 'role_switch';
-        auditDetails = `User role changed to ${newRole}`;
-        result = { role: newRole };
+        auditAction = 'user_role_change';
+        auditDetails = `User role changed from "${oldRole}" to "${newRole}" (${targetUser.email})`;
+        result = { role: newRole, previousRole: oldRole };
         break;
       }
 

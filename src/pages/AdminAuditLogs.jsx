@@ -49,7 +49,9 @@ export default function AdminAuditLogs() {
   const filteredLogs = logs.filter(log => {
     const matchesSearch = 
       log.admin_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.details?.toLowerCase().includes(searchTerm.toLowerCase());
+      log.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.note?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.target_user_id?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesAction = actionFilter === 'all' || log.action === actionFilter;
     
@@ -87,11 +89,13 @@ export default function AdminAuditLogs() {
               <SelectContent>
                 <SelectItem value="all">Todas as Ações</SelectItem>
                 <SelectItem value="role_switch">Troca de Perfil</SelectItem>
+                <SelectItem value="user_role_change">Papel Alterado</SelectItem>
                 <SelectItem value="user_activated">Usuário Ativado</SelectItem>
                 <SelectItem value="user_deactivated">Usuário Desativado</SelectItem>
                 <SelectItem value="subscription_override">Assinatura Alterada</SelectItem>
                 <SelectItem value="user_flagged">Usuário Marcado</SelectItem>
                 <SelectItem value="data_export">Exportação de Dados</SelectItem>
+                <SelectItem value="campaign_status_change">Status de Campanha</SelectItem>
                 <SelectItem value="dispute_resolved">Disputa Resolvida</SelectItem>
               </SelectContent>
             </Select>

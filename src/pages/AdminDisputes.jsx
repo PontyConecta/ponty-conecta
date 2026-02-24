@@ -137,6 +137,18 @@ export default function AdminDisputes() {
         resolved_at: new Date().toISOString()
       });
 
+      // Create audit log for dispute resolution
+      await base44.entities.AuditLog.create({
+        admin_id: user.id,
+        admin_email: user.email,
+        action: 'dispute_resolved',
+        target_entity_id: selectedDispute.id,
+        target_user_id: selectedDispute.raised_by === 'brand' ? selectedDispute.brand_id : selectedDispute.creator_id,
+        details: `Disputa resolvida: ${resolutionType === 'resolved_creator_favor' ? 'Favorável ao Criador' : 'Favorável à Marca'}. Campanha: ${campaigns[selectedDispute.campaign_id]?.title || '-'}`,
+        note: resolution,
+        timestamp: new Date().toISOString()
+      });
+
       // Update delivery based on resolution
       const delivery = deliveries[selectedDispute.delivery_id];
       if (delivery) {
