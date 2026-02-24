@@ -23,8 +23,9 @@ import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 const STEPS = [
   { number: 1, title: 'Identidade' },
   { number: 2, title: 'Especialização' },
-  { number: 3, title: 'Social & Contato' },
-  { number: 4, title: 'Finalização' },
+  { number: 3, title: 'Redes Sociais' },
+  { number: 4, title: 'Contato' },
+  { number: 5, title: 'Finalização' },
 ];
 
 const INDUSTRIES = [
@@ -159,10 +160,11 @@ export default function OnboardingBrand() {
       dataToSave.target_audience = formData.target_audience;
     } else if (step === 3) {
       dataToSave.website = formData.website;
-      dataToSave.contact_email = formData.contact_email;
-      dataToSave.contact_phone = formData.contact_phone;
       dataToSave.social_instagram = formData.social_instagram;
       dataToSave.social_linkedin = formData.social_linkedin;
+    } else if (step === 4) {
+      dataToSave.contact_email = formData.contact_email;
+      dataToSave.contact_phone = formData.contact_phone;
     }
 
     if (brand) {
@@ -178,7 +180,7 @@ export default function OnboardingBrand() {
   };
 
   const handleNext = async () => {
-    if (step < 4) {
+    if (step < 5) {
       await saveStepData(step + 1);
       setStep(step + 1);
     }
@@ -191,7 +193,7 @@ export default function OnboardingBrand() {
   // Final step: mark as ready and create onboarding missions
   const handleFinalize = async () => {
     setSaving(true);
-    await base44.entities.Brand.update(brand.id, { account_state: 'ready', onboarding_step: 4 });
+    await base44.entities.Brand.update(brand.id, { account_state: 'ready', onboarding_step: 5 });
     // Create onboarding missions in background
     base44.functions.invoke('createOnboardingMissions', {
       profile_type: 'brand',
@@ -214,8 +216,9 @@ export default function OnboardingBrand() {
     switch (step) {
       case 1: return formData.company_name?.trim().length >= 2 && formData.state;
       case 2: return formData.industry && formData.description?.length >= 20;
-      case 3: return formData.contact_email?.includes('@');
-      case 4: return true;
+      case 3: return true; // Redes sociais são opcionais
+      case 4: return formData.contact_email?.includes('@');
+      case 5: return true;
       default: return false;
     }
   };
@@ -332,20 +335,6 @@ export default function OnboardingBrand() {
                 {step === 3 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email de Contato *</Label>
-                      <div className="relative mt-2">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="contato@suamarca.com.br" className="pl-11 h-12" />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone</Label>
-                      <div className="relative mt-2">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <Input value={formData.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} placeholder="(11) 99999-9999" className="pl-11 h-12" />
-                      </div>
-                    </div>
-                    <div>
                       <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Website</Label>
                       <div className="relative mt-2">
                         <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
@@ -370,12 +359,31 @@ export default function OnboardingBrand() {
                 )}
 
                 {step === 4 && (
+                  <div className="space-y-6">
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email de Contato *</Label>
+                      <div className="relative mt-2">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="contato@suamarca.com.br" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone</Label>
+                      <div className="relative mt-2">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Input value={formData.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} placeholder="(11) 99999-9999" className="pl-11 h-12" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {step === 5 && (
                   <OnboardingSuccess profileType="brand" onContinue={handleFinalize} />
                 )}
               </motion.div>
             </AnimatePresence>
 
-            {step < 4 && (
+            {step < 5 && (
               <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
                 <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
                   <ArrowLeft className="w-4 h-4" /> Voltar
