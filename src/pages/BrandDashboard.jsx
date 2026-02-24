@@ -146,6 +146,9 @@ export default function BrandDashboard() {
       under_review: { label: 'Em Análise', color: 'bg-yellow-100 text-yellow-700' },
       active: { label: 'Ativa', color: 'bg-emerald-100 text-emerald-700' },
       paused: { label: 'Pausada', color: 'bg-purple-100 text-purple-700' },
+      applications_closed: { label: 'Inscrições Fechadas', color: 'bg-blue-100 text-blue-700' },
+      completed: { label: 'Concluída', color: 'bg-violet-100 text-violet-700' },
+      cancelled: { label: 'Cancelada', color: 'bg-red-100 text-red-700' },
       closed: { label: 'Encerrada', color: 'bg-slate-100 text-slate-700' }
     };
     const style = styles[status] || styles.draft;
@@ -317,7 +320,7 @@ export default function BrandDashboard() {
       {/* Recent Deliveries */}
       <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Entregas Recentes</CardTitle>
+          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Entregas de Criadores</CardTitle>
           <Link to={createPageUrl('DeliveriesManager')}>
             <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />

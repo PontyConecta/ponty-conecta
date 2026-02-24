@@ -193,7 +193,7 @@ export default function DeliveriesManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Entregas</h1>
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Entregas de Criadores</h1>
         <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
           {filteredDeliveries.length} entregas encontradas
         </p>

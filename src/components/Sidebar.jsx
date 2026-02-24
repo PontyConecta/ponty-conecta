@@ -24,7 +24,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed }) 
     { name: 'Descobrir Criadores', page: 'DiscoverCreators', icon: Search },
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Candidaturas', page: 'Applications', icon: Users },
-    { name: 'Entregas', page: 'Deliveries', icon: FileText },
+    { name: 'Entregas de Criadores', page: 'Deliveries', icon: FileText },
     { type: 'divider' },
     { name: 'Meu Perfil', page: 'Profile', icon: User },
     { name: 'Configurações', page: 'Settings', icon: Settings },
