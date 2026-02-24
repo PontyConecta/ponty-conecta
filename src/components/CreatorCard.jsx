@@ -80,9 +80,9 @@ export default function CreatorCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02]" style={{ borderColor: 'var(--border-color)' }}>
+    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02] flex flex-col" style={{ borderColor: 'var(--border-color)' }}>
       {/* Cover Image */}
-      <div className="h-24 relative" style={{ backgroundColor: '#9038fa' }}>
+      <div className="h-24 relative flex-shrink-0" style={{ backgroundColor: '#9038fa' }}>
         {creator.cover_image_url && (
           <img 
             src={creator.cover_image_url} 
@@ -98,7 +98,7 @@ export default function CreatorCard({
         )}
       </div>
 
-      <CardContent className="pt-0 -mt-10 relative">
+      <CardContent className="pt-0 -mt-10 relative flex flex-col flex-1">
         {/* Avatar */}
         <div className="flex justify-between items-end mb-4">
           <Avatar className="w-20 h-20 border-4 shadow-xl transition-all" style={{ borderColor: 'var(--bg-secondary)' }}>
@@ -115,24 +115,24 @@ export default function CreatorCard({
         </div>
 
         {/* Info */}
-        <div className="space-y-3">
+        <div className="space-y-3 flex flex-col flex-1">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg transition-colors" style={{ color: 'var(--text-primary)' }}>
+              <h3 className="font-semibold text-lg transition-colors truncate" style={{ color: 'var(--text-primary)' }}>
                 {creator.display_name}
               </h3>
               {creator.verified && (
-                <CheckCircle2 className="w-5 h-5 text-blue-500" />
+                <CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex flex-wrap gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <div className="flex flex-wrap gap-x-2 gap-y-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
               {(creator.state || creator.location) && (
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
                   {creator.city ? `${creator.city}, ` : ''}{creator.state ? getStateLabel(creator.state) : creator.location}
                 </span>
               )}
-              {creator.platforms?.[0] && isSubscribed && (
+              {isSubscribed && creator.platforms?.find(p => p.name === 'Instagram') && (
                 <a 
                   href={`https://instagram.com/${creator.platforms.find(p => p.name === 'Instagram')?.handle?.replace('@', '') || ''}`}
                   target="_blank" 
@@ -147,7 +147,7 @@ export default function CreatorCard({
           </div>
 
           {creator.bio && (
-            <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm line-clamp-2 min-h-[2.5rem]" style={{ color: 'var(--text-secondary)' }}>
               {isSubscribed ? creator.bio : creator.bio.slice(0, 50) + '...'}
             </p>
           )}
@@ -167,23 +167,25 @@ export default function CreatorCard({
           </div>
 
           {/* Niches */}
-          {creator.niche?.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {creator.niche.slice(0, 3).map((n, i) => (
-                <Badge key={i} variant="outline" className="text-xs">
-                  {n}
-                </Badge>
-              ))}
-              {creator.niche.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{creator.niche.length - 3}
-                </Badge>
-              )}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-1 min-h-[1.75rem]">
+            {creator.niche?.length > 0 ? (
+              <>
+                {creator.niche.slice(0, 3).map((n, i) => (
+                  <Badge key={i} variant="outline" className="text-xs">
+                    {n}
+                  </Badge>
+                ))}
+                {creator.niche.length > 3 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{creator.niche.length - 3}
+                  </Badge>
+                )}
+              </>
+            ) : null}
+          </div>
 
-          {/* Actions */}
-          <div className="flex gap-2 pt-2">
+          {/* Actions - pushed to bottom */}
+          <div className="flex gap-2 pt-2 mt-auto">
             <Button 
               variant="outline" 
               size="sm" 

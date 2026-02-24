@@ -144,7 +144,7 @@ export default function DiscoverBrands() {
       <div>
         <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Descobrir Marcas</h1>
         <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
-          {filteredBrands.length} marcas encontradas
+          {filteredBrands.length} {filteredBrands.length === 1 ? 'marca encontrada' : 'marcas encontradas'}
         </p>
       </div>
 
@@ -162,25 +162,25 @@ export default function DiscoverBrands() {
               />
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0">
-              <Select value={filterIndustry} onValueChange={setFilterIndustry}>
-                <SelectTrigger className="w-40 flex-shrink-0">
-                  <SelectValue placeholder="Segmento" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {industries.map((ind) => (
-                    <SelectItem key={ind.value} value={ind.value}>{ind.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
               <Select value={filterState} onValueChange={setFilterState}>
                 <SelectTrigger className="w-40 flex-shrink-0">
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos Estados</SelectItem>
+                  <SelectItem value="all">Todos os Estados</SelectItem>
                   {BRAZIL_STATES.map(s => (
                     <SelectItem key={s.value} value={s.value}>{s.value} - {s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterIndustry} onValueChange={setFilterIndustry}>
+                <SelectTrigger className="w-40 flex-shrink-0">
+                  <SelectValue placeholder="Segmento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Segmentos</SelectItem>
+                  {industries.map((ind) => (
+                    <SelectItem key={ind.value} value={ind.value}>{ind.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

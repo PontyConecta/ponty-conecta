@@ -73,9 +73,9 @@ export default function BrandCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02]" style={{ borderColor: 'var(--border-color)' }}>
+    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02] flex flex-col" style={{ borderColor: 'var(--border-color)' }}>
       {/* Cover Image */}
-      <div className="h-24 relative" style={{ backgroundColor: '#9038fa' }}>
+      <div className="h-24 relative flex-shrink-0" style={{ backgroundColor: '#9038fa' }}>
         {brand.cover_image_url && (
           <img 
             src={brand.cover_image_url} 
@@ -85,7 +85,7 @@ export default function BrandCard({
         )}
       </div>
 
-      <CardContent className="pt-0 -mt-10 relative">
+      <CardContent className="pt-0 -mt-10 relative flex flex-col flex-1">
         {/* Logo */}
         <div className="flex justify-between items-end mb-4">
           {brand.logo_url ? (
@@ -108,70 +108,72 @@ export default function BrandCard({
         </div>
 
         {/* Info */}
-        <div className="space-y-3">
+        <div className="space-y-3 flex flex-col flex-1">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg transition-colors" style={{ color: 'var(--text-primary)' }}>
+              <h3 className="font-semibold text-lg transition-colors truncate" style={{ color: 'var(--text-primary)' }}>
                 {brand.company_name}
               </h3>
               {brand.verified && (
-                <CheckCircle2 className="w-5 h-5 text-blue-500" />
+                <CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0" />
               )}
             </div>
-            {brand.state && (
-              <span className="text-sm flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
-                <MapPin className="w-3 h-3" />
-                {brand.city ? `${brand.city}, ` : ''}{getStateLabel(brand.state)}
-              </span>
-            )}
-            {isSubscribed && brand.online_presences?.length > 0 ? (
-              brand.online_presences.slice(0, 2).map((p, i) => (
-                <a key={i}
-                  href={getPresenceUrl(p)}
-                  target="_blank" rel="noopener noreferrer"
-                  className="text-sm text-[#9038fa] hover:underline flex items-center gap-1"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Globe className="w-3 h-3" />
-                  {p.type === 'website' ? 'Website' : p.type === 'instagram' ? 'Instagram' : p.type === 'linkedin' ? 'LinkedIn' : p.type.charAt(0).toUpperCase() + p.type.slice(1)}
-                </a>
-              ))
-            ) : isSubscribed && (
-              <>
-                {brand.website && (
-                  <a href={brand.website.startsWith('http') ? brand.website : `https://${brand.website}`} target="_blank" rel="noopener noreferrer"
-                    className="text-sm text-[#9038fa] hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                    <Globe className="w-3 h-3" /> Website
+            <div className="flex flex-wrap gap-x-2 gap-y-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
+              {brand.state && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {brand.city ? `${brand.city}, ` : ''}{getStateLabel(brand.state)}
+                </span>
+              )}
+              {isSubscribed && brand.online_presences?.length > 0 ? (
+                brand.online_presences.slice(0, 2).map((p, i) => (
+                  <a key={i}
+                    href={getPresenceUrl(p)}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-[#9038fa] hover:underline flex items-center gap-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Globe className="w-3 h-3" />
+                    {p.type === 'website' ? 'Website' : p.type === 'instagram' ? 'Instagram' : p.type === 'linkedin' ? 'LinkedIn' : p.type.charAt(0).toUpperCase() + p.type.slice(1)}
                   </a>
-                )}
-                {brand.social_instagram && (
-                  <a href={`https://instagram.com/${brand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer"
-                    className="text-sm text-pink-600 hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                    Instagram
-                  </a>
-                )}
-              </>
-            )}
+                ))
+              ) : isSubscribed && (
+                <>
+                  {brand.website && (
+                    <a href={brand.website.startsWith('http') ? brand.website : `https://${brand.website}`} target="_blank" rel="noopener noreferrer"
+                      className="text-[#9038fa] hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                      <Globe className="w-3 h-3" /> Website
+                    </a>
+                  )}
+                  {brand.social_instagram && (
+                    <a href={`https://instagram.com/${brand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer"
+                      className="text-pink-600 hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                      Instagram
+                    </a>
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {brand.description && (
-            <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm line-clamp-2 min-h-[2.5rem]" style={{ color: 'var(--text-secondary)' }}>
               {isSubscribed ? brand.description : brand.description.slice(0, 50) + '...'}
             </p>
           )}
 
           {/* Stats */}
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-4 text-sm min-h-[1.25rem]">
             {brand.active_campaigns > 0 && (
               <div className="flex items-center gap-1 text-emerald-600">
                 <Megaphone className="w-4 h-4" />
-                <span className="font-medium">{brand.active_campaigns} campanhas ativas</span>
+                <span className="font-medium">{brand.active_campaigns} {brand.active_campaigns === 1 ? 'campanha ativa' : 'campanhas ativas'}</span>
               </div>
             )}
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-2 pt-2">
+          {/* Actions - pushed to bottom */}
+          <div className="flex gap-2 pt-2 mt-auto">
             <Button 
               variant="outline" 
               size="sm" 

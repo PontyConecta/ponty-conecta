@@ -132,9 +132,9 @@ export default function DiscoverCreators() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Descobrir Criadores</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Descobrir Creators</h1>
         <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
-          {filteredCreators.length} criadores encontrados
+          {filteredCreators.length} {filteredCreators.length === 1 ? 'creator encontrado' : 'creators encontrados'}
         </p>
       </div>
 
@@ -152,39 +152,39 @@ export default function DiscoverCreators() {
               />
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0">
+              <Select value={filterState} onValueChange={setFilterState}>
+                <SelectTrigger className="w-36 flex-shrink-0">
+                  <SelectValue placeholder="Estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Estados</SelectItem>
+                  {BRAZIL_STATES.map(s => (
+                    <SelectItem key={s.value} value={s.value}>{s.value} - {s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Select value={filterNiche} onValueChange={setFilterNiche}>
-                <SelectTrigger className="w-32 flex-shrink-0">
+                <SelectTrigger className="w-36 flex-shrink-0">
                   <SelectValue placeholder="Nicho" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos Nichos</SelectItem>
+                  <SelectItem value="all">Todos os Nichos</SelectItem>
                   {niches.map((n) => (
                     <SelectItem key={n} value={n}>{n}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <Select value={filterSize} onValueChange={setFilterSize}>
-                <SelectTrigger className="w-32 flex-shrink-0">
+                <SelectTrigger className="w-36 flex-shrink-0">
                   <SelectValue placeholder="Tamanho" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="all">Todos os Tamanhos</SelectItem>
                   <SelectItem value="nano">Nano</SelectItem>
                   <SelectItem value="micro">Micro</SelectItem>
                   <SelectItem value="mid">Mid</SelectItem>
                   <SelectItem value="macro">Macro</SelectItem>
                   <SelectItem value="mega">Mega</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={filterState} onValueChange={setFilterState}>
-                <SelectTrigger className="w-32 flex-shrink-0">
-                  <SelectValue placeholder="Estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos Estados</SelectItem>
-                  {BRAZIL_STATES.map(s => (
-                    <SelectItem key={s.value} value={s.value}>{s.value} - {s.label}</SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -216,7 +216,7 @@ export default function DiscoverCreators() {
           <CardContent className="p-12 text-center">
             <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-              Nenhum criador encontrado
+              Nenhum creator encontrado
             </h3>
             <p style={{ color: 'var(--text-secondary)' }}>
               Tente ajustar seus filtros
@@ -309,15 +309,28 @@ export default function DiscoverCreators() {
                   <div>
                     <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Plataformas</h4>
                     <div className="space-y-2">
-                      {selectedCreator.platforms.map((p, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{p.name}</span>
-                            <span style={{ color: 'var(--text-secondary)' }}>@{p.handle}</span>
-                          </div>
-                          <Badge variant="outline">{formatFollowers(p.followers || 0)}</Badge>
-                        </div>
-                      ))}
+                      {selectedCreator.platforms.map((p, i) => {
+                        const platformUrls = {
+                          'Instagram': `https://instagram.com/${p.handle?.replace('@', '')}`,
+                          'TikTok': `https://tiktok.com/@${p.handle?.replace('@', '')}`,
+                          'YouTube': `https://youtube.com/@${p.handle?.replace('@', '')}`,
+                          'Twitter/X': `https://x.com/${p.handle?.replace('@', '')}`,
+                          'LinkedIn': `https://linkedin.com/in/${p.handle?.replace('@', '')}`,
+                          'Threads': `https://threads.net/@${p.handle?.replace('@', '')}`,
+                          'Pinterest': `https://pinterest.com/${p.handle?.replace('@', '')}`,
+                          'Twitch': `https://twitch.tv/${p.handle?.replace('@', '')}`
+                        };
+                        const url = platformUrls[p.name];
+                        return (
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 rounded-lg hover:opacity-80 transition-opacity" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{p.name}</span>
+                              <span className="text-[#9038fa]">@{p.handle}</span>
+                            </div>
+                            <Badge variant="outline">{formatFollowers(p.followers || 0)}</Badge>
+                          </a>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
