@@ -27,10 +27,11 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
   const decidedApps = acceptedApps + rejectedApps;
   const acceptanceRate = decidedApps > 0 ? Math.round((acceptedApps / decidedApps) * 100) : 0;
 
-  // Status de campanhas
+  // Status de campanhas - contabilizar TODOS os status
   const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
-  const draftCampaigns = campaigns.filter(c => c.status === 'draft').length;
+  const draftCampaigns = campaigns.filter(c => c.status === 'draft' || c.status === 'under_review').length;
   const completedCampaigns = campaigns.filter(c => c.status === 'completed').length;
+  const otherCampaigns = campaigns.filter(c => ['paused', 'applications_closed', 'cancelled'].includes(c.status)).length;
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
