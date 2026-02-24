@@ -210,8 +210,8 @@ export default function CreatorDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
-            <Card className="hover:shadow-md transition-shadow" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <CardContent className="p-4 lg:p-6">
+            <Card className="hover:shadow-md transition-shadow h-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+              <CardContent className="p-4 lg:p-6 h-full flex flex-col">
                 <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl ${stat.color} flex items-center justify-center mb-3`}>
                   <stat.icon className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                 </div>
@@ -219,9 +219,9 @@ export default function CreatorDashboard() {
                   {stat.value}
                 </div>
                 <div className="text-xs lg:text-sm" style={{ color: 'var(--text-secondary)' }}>{stat.label}</div>
-                {stat.total > 0 && stat.total !== stat.value && (
-                  <div className="text-[10px] lg:text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>de {stat.total} no total</div>
-                )}
+                <div className="text-[10px] lg:text-xs mt-auto pt-1" style={{ color: 'var(--text-secondary)' }}>
+                  {stat.total > 0 ? `de ${stat.total} no total` : '\u00A0'}
+                </div>
               </CardContent>
             </Card>
           </motion.div>
