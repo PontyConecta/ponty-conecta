@@ -60,7 +60,7 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
             </div>
           )}
           {/* Summary stats below chart */}
-          <div className="grid grid-cols-3 gap-3 mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
+          <div className="grid grid-cols-4 gap-2 mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
             <div className="text-center">
               <div className="text-lg font-bold" style={{ color: '#9038fa' }}>{activeCampaigns}</div>
               <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Ativas</div>
@@ -72,6 +72,10 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
             <div className="text-center">
               <div className="text-lg font-bold text-emerald-600">{completedCampaigns}</div>
               <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Concluídas</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-amber-600">{otherCampaigns}</div>
+              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Outras</div>
             </div>
           </div>
         </CardContent>
