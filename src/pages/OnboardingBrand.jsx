@@ -232,7 +232,7 @@ export default function OnboardingBrand() {
     switch (step) {
       case 1: return formData.company_name?.trim().length >= 2 && formData.state;
       case 2: return formData.industry && formData.description?.length >= 20;
-      case 3: return true; // Redes sociais são opcionais
+      case 3: return formData.online_presences.length > 0;
       case 4: return isValidEmail(formData.contact_email);
       case 5: return true;
       default: return false;
