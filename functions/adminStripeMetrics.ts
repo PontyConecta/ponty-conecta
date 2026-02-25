@@ -32,6 +32,7 @@ Deno.serve(async (req) => {
     }
 
     console.log(`Excluding ${excludedUsers.length} user(s) (${excludedCustomerIds.size} Stripe customer(s)) from financials`);
+    console.log(`Excluded Stripe IDs: ${[...excludedCustomerIds].join(', ')}`);
 
     const subscriptions = [];
     let hasMore = true;
