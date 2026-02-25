@@ -13,8 +13,7 @@ import {
   AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { 
-  User, Crown, LogOut, CreditCard, Bell, Shield, ChevronRight,
-  Building2, ExternalLink, Loader2, Sun, Moon, Zap
+  User, Crown, LogOut, CreditCard, ExternalLink, Loader2, Sun, Moon, Zap
 } from 'lucide-react';
 import { useTheme } from '@/components/contexts/ThemeContext';
 
@@ -56,26 +55,24 @@ export default function Settings() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-        Configurações
-      </h1>
+      <h1 className="text-2xl lg:text-3xl font-bold">Configurações</h1>
 
       {/* Profile Card */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card>
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <Avatar className="w-16 h-16">
               <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-              <AvatarFallback className="text-lg font-bold" style={{ backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' }}>
+              <AvatarFallback className="text-lg font-bold bg-primary/10 text-primary">
                 {user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-lg truncate" style={{ color: 'var(--text-primary)' }}>
+              <h3 className="font-bold text-lg truncate">
                 {profile?.display_name || profile?.company_name || user?.full_name || 'Usuário'}
               </h3>
-              <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>{user?.email}</p>
-              <Badge variant="outline" className="mt-1 capitalize" style={{ borderColor: 'rgba(144, 56, 250, 0.3)', color: '#9038fa' }}>
+              <p className="text-sm truncate text-muted-foreground">{user?.email}</p>
+              <Badge variant="outline" className="mt-1 capitalize border-primary/30 text-primary">
                 {profileType === 'brand' ? 'Marca' : 'Creator'}
               </Badge>
             </div>
@@ -88,24 +85,24 @@ export default function Settings() {
       </Card>
 
       {/* Subscription */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Crown className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Crown className="w-5 h-5 text-primary" />
             Assinatura
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
+              <p className="font-medium">
                 Plano {statusLabels[subscriptionStatus] || 'Gratuito'}
               </p>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-sm text-muted-foreground">
                 {isSubscribed ? 'Acesso completo a todos os recursos' : 'Funcionalidades limitadas'}
               </p>
             </div>
-            <Badge className={isSubscribed ? 'bg-emerald-100 text-emerald-700 border-0' : 'bg-slate-100 text-slate-700 border-0'}>
+            <Badge className={isSubscribed ? 'bg-emerald-100 text-emerald-700 border-0' : 'bg-muted text-muted-foreground border-0'}>
               {isSubscribed ? 'Ativa' : 'Gratuito'}
             </Badge>
           </div>
@@ -118,8 +115,7 @@ export default function Settings() {
             </Button>
           ) : (
             <Button 
-              className="w-full text-white"
-              style={{ backgroundColor: '#9038fa' }}
+              className="w-full bg-[#9038fa] hover:bg-[#9038fa]/90"
               onClick={() => navigate(createPageUrl('Subscription'))}
             >
               <Crown className="w-4 h-4 mr-2" />
@@ -130,10 +126,10 @@ export default function Settings() {
       </Card>
 
       {/* Theme */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Sun className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Sun className="w-5 h-5 text-muted-foreground" />
             Aparência
           </CardTitle>
         </CardHeader>
@@ -147,12 +143,13 @@ export default function Settings() {
                   key={t.value}
                   onClick={() => changeTheme(t.value)}
                   className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                    isActive ? 'border-[#9038fa] shadow-md' : 'border-transparent'
+                    isActive 
+                      ? 'border-primary bg-primary/10 shadow-sm' 
+                      : 'border-transparent bg-muted hover:bg-muted/80'
                   }`}
-                  style={{ backgroundColor: isActive ? 'rgba(144, 56, 250, 0.1)' : 'var(--bg-primary)' }}
                 >
-                  <Icon className="w-6 h-6" style={{ color: isActive ? '#9038fa' : 'var(--text-secondary)' }} />
-                  <span className="text-sm font-medium" style={{ color: isActive ? '#9038fa' : 'var(--text-secondary)' }}>
+                  <Icon className={`w-6 h-6 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
                     {t.label}
                   </span>
                 </button>
@@ -165,19 +162,19 @@ export default function Settings() {
       {/* Logout */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="outline" className="w-full text-red-500 border-red-200 hover:bg-red-50">
+          <Button variant="outline" className="w-full text-destructive border-destructive/20 hover:bg-destructive/5">
             <LogOut className="w-4 h-4 mr-2" />
             Sair da Conta
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+        <AlertDialogContent>
           <AlertDialogTitle>Sair da conta?</AlertDialogTitle>
-          <AlertDialogDescription style={{ color: 'var(--text-secondary)' }}>
+          <AlertDialogDescription>
             Você será desconectado e redirecionado para a página inicial.
           </AlertDialogDescription>
           <div className="flex gap-3 justify-end">
-            <AlertDialogCancel style={{ color: 'var(--text-primary)' }}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white">
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
               Sair
             </AlertDialogAction>
           </div>
