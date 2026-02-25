@@ -73,9 +73,14 @@ export default function DashboardFinancials() {
         <div className="flex items-center gap-3 flex-wrap">
           <DashboardProfileFilter value={profileFilter} onChange={setProfileFilter} />
           {d.excludedCount > 0 && (
-            <Badge variant="outline" className="gap-1 text-xs" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
-              <EyeOff className="w-3 h-3" />
-              {d.excludedCount} excluído(s){d.excludedPremiumCount > 0 ? ` (${d.excludedPremiumCount} premium)` : ''}
+            <Badge variant="outline" className="gap-1.5 text-xs py-1 px-2.5" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
+              <EyeOff className="w-3 h-3 flex-shrink-0" />
+              <span>
+                {d.excludedCount} excluído(s)
+                <span className="text-[10px] opacity-70 ml-1">
+                  ({d.excludedManualCount > 0 ? `${d.excludedManualCount} manual` : ''}{d.excludedManualCount > 0 && d.excludedOrphanCount > 0 ? ' · ' : ''}{d.excludedOrphanCount > 0 ? `${d.excludedOrphanCount} Stripe órfão` : ''}{d.excludedPremiumCount > 0 ? ` · ${d.excludedPremiumCount} premium` : ''})
+                </span>
+              </span>
             </Badge>
           )}
         </div>

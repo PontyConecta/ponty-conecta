@@ -22,15 +22,7 @@ import {
   PanelLeftOpen
 } from 'lucide-react';
 
-export default function Sidebar({ profileType, currentPageName, isSubscribed, collapsed, onToggleCollapsed }) {
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    const saved = localStorage.getItem('sidebar-collapsed');
-    return saved === 'true';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('sidebar-collapsed', isCollapsed);
-  }, [isCollapsed]);
+export default function Sidebar({ profileType, currentPageName, isSubscribed, isCollapsed, onToggleCollapse }) {
   const brandNavItems = [
     { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Descobrir Criadores', page: 'DiscoverCreators', icon: Search },
@@ -55,8 +47,6 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, co
 
   const navItems = profileType === 'brand' ? brandNavItems : creatorNavItems;
 
-  const sidebarWidth = isCollapsed ? 'w-16' : 'w-64';
-
   return (
     <TooltipProvider delayDuration={0}>
       <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 flex-col transition-all duration-200 border-r z-40`} style={{ width: isCollapsed ? '4rem' : '16rem', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
@@ -66,7 +56,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, co
             variant="ghost"
             size="icon"
             className="h-7 w-7 rounded-md"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={onToggleCollapse}
           >
             {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </Button>

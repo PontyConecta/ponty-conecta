@@ -33,9 +33,10 @@ Deno.serve(async (req) => {
 
     // Hardcoded orphan test customers (no matching profile in platform)
     const orphanTestCustomers = ['cus_U0hgFkIXfbehSJ'];
+    const orphanExcludedCount = orphanTestCustomers.length;
     orphanTestCustomers.forEach(id => excludedCustomerIds.add(id));
 
-    console.log(`Excluding ${excludedUsers.length} user(s) (${excludedCustomerIds.size} Stripe customer(s)) from financials`);
+    console.log(`Excluding ${excludedUsers.length} user(s) + ${orphanExcludedCount} orphan(s) (${excludedCustomerIds.size} Stripe customer(s)) from financials`);
     console.log(`Excluded Stripe IDs: ${[...excludedCustomerIds].join(', ')}`);
 
     const subscriptions = [];
@@ -261,7 +262,9 @@ Deno.serve(async (req) => {
       cancelledSubscribers: cancelledSubs.length,
       pastDueSubscribers: pastDueSubs.length,
       totalSubscriptions: subscriptions.filter(s => validSub(s)).length,
-      excludedCount: excludedUsers.length,
+      excludedCount: excludedUsers.length + orphanExcludedCount,
+      excludedManualCount: excludedUsers.length,
+      excludedOrphanCount: orphanExcludedCount,
       excludedPremiumCount,
       recentlyCancelledCount: recentlyCancelled.length,
       brandRecentlyCancelledCount: brandRecentlyCancelled.length,
