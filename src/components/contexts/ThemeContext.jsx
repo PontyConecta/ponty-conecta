@@ -21,9 +21,12 @@ export const ThemeProvider = ({ children }) => {
     const raw = localStorage.getItem('ponty-theme') || 'light';
     const normalized = normalizeTheme(raw);
     const safe = VALID_THEMES.includes(normalized) ? normalized : 'light';
-    // Persist canonical name if it was legacy
     if (raw !== safe) localStorage.setItem('ponty-theme', safe);
     applyTheme(safe);
+    // Ensure theme is always set even without interaction
+    if (!document.documentElement.getAttribute('data-theme')) {
+      document.documentElement.setAttribute('data-theme', safe);
+    }
   }, []);
 
   const applyTheme = (themeName) => {
