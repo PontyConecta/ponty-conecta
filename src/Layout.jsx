@@ -13,7 +13,8 @@ import NotificationDropdown from '@/components/NotificationDropdown';
 import { Toaster } from 'sonner';
 import { 
         Crown,
-        HelpCircle
+        HelpCircle,
+        Shield
       } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
@@ -124,6 +125,8 @@ function LayoutContent({ children, currentPageName }) {
                 return null;
               }
             }
+
+  const isAdmin = user?.role === 'admin';
 
   // Pages that don't need back button
   const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
