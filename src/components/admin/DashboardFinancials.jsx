@@ -190,7 +190,7 @@ export default function DashboardFinancials() {
       <DashboardRevenueChart data={d.revenueChart} profileFilter={profileFilter} />
 
       {/* Distribution Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className={`grid gap-4 ${(d.subDistribution?.length > 0 && d.planTypeDistribution?.length > 0) ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 lg:grid-cols-1'}`}>
         {d.subDistribution?.length > 0 && (
           <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
             <CardContent className="p-4">
