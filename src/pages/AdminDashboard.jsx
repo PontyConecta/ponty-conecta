@@ -26,15 +26,19 @@ export default function AdminDashboard() {
 
   const isAdmin = user?.role === 'admin';
 
+  const [analyticsError, setAnalyticsError] = useState(false);
+
   const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true);
+      setAnalyticsError(false);
       const response = await base44.functions.invoke('adminAnalytics', { dateRange });
       if (response.data?.error) throw new Error(response.data.error);
       setAnalytics(response.data);
       setLastRefresh(new Date());
     } catch (error) {
       console.error('Error loading analytics:', error);
+      setAnalyticsError(true);
       toast.error('Erro ao carregar analytics');
     } finally {
       setLoading(false);
@@ -53,18 +57,6 @@ export default function AdminDashboard() {
         <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
         <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Acesso Negado</h2>
         <p style={{ color: 'var(--text-secondary)' }}>Você não tem permissão para acessar este painel.</p>
-      </div>
-    );
-  }
-
-  if (loading && !analytics) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-28" />)}
-        </div>
-        <Skeleton className="h-80" />
       </div>
     );
   }
@@ -90,19 +82,32 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {analytics && (
-        <>
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="flex-wrap h-auto gap-1 p-1" style={{ backgroundColor: 'var(--bg-primary)' }}>
-              <TabsTrigger value="overview" className="text-xs">Visão Geral</TabsTrigger>
-              <TabsTrigger value="financials" className="text-xs">Financeiro</TabsTrigger>
-              <TabsTrigger value="users" className="text-xs">Usuários</TabsTrigger>
-              <TabsTrigger value="engagement" className="text-xs">Engajamento</TabsTrigger>
-              <TabsTrigger value="marketplace" className="text-xs">Marketplace</TabsTrigger>
-            </TabsList>
+      {/* Tabs - always visible so Financeiro works even if analytics fails */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="flex-wrap h-auto gap-1 p-1" style={{ backgroundColor: 'var(--bg-primary)' }}>
+          <TabsTrigger value="overview" className="text-xs">Visão Geral</TabsTrigger>
+          <TabsTrigger value="financials" className="text-xs">Financeiro</TabsTrigger>
+          <TabsTrigger value="users" className="text-xs">Usuários</TabsTrigger>
+          <TabsTrigger value="engagement" className="text-xs">Engajamento</TabsTrigger>
+          <TabsTrigger value="marketplace" className="text-xs">Marketplace</TabsTrigger>
+        </TabsList>
 
-            <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-6">
+          {loading && !analytics ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-28" />)}
+              </div>
+              <Skeleton className="h-80" />
+            </div>
+          ) : analyticsError && !analytics ? (
+            <div className="text-center py-12">
+              <AlertCircle className="w-10 h-10 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
+              <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Erro ao carregar dados gerais.</p>
+              <Button onClick={loadAnalytics} variant="outline" size="sm">Tentar novamente</Button>
+            </div>
+          ) : analytics ? (
+            <>
               <DashboardDateFilter value={dateRange} onChange={setDateRange} />
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <DashboardMetricCard
@@ -141,17 +146,27 @@ export default function AdminDashboard() {
               </div>
               <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
               <DashboardEngagementChart data={analytics.engagementChart} />
-            </TabsContent>
+            </>
+          ) : null}
+        </TabsContent>
 
-            <TabsContent value="financials" className="space-y-6">
-              {activeTab === 'financials' && <DashboardFinancials />}
-            </TabsContent>
+        <TabsContent value="financials" className="space-y-6">
+          {activeTab === 'financials' && <DashboardFinancials />}
+        </TabsContent>
 
-            <TabsContent value="users" className="space-y-6">
-              <DashboardUserStats analytics={analytics} />
-            </TabsContent>
+        <TabsContent value="users" className="space-y-6">
+          {analytics ? (
+            <DashboardUserStats analytics={analytics} />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Carregando dados de usuários...</p>
+            </div>
+          )}
+        </TabsContent>
 
-            <TabsContent value="engagement" className="space-y-6">
+        <TabsContent value="engagement" className="space-y-6">
+          {analytics ? (
+            <>
               <DashboardDateFilter value={dateRange} onChange={setDateRange} />
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <DashboardMetricCard label="Campanhas Ativas" value={analytics.activeCampaigns || 0} tooltip="Campanhas com status 'ativa' atualmente." />
@@ -160,14 +175,24 @@ export default function AdminDashboard() {
                 <DashboardMetricCard label="Cumprimento" value={`${analytics.fulfillmentRate || 0}%`} tooltip="Percentual de entregas feitas sobre candidaturas aceitas." />
               </div>
               <DashboardEngagementChart data={analytics.engagementChart} />
-            </TabsContent>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Carregando dados de engajamento...</p>
+            </div>
+          )}
+        </TabsContent>
 
-            <TabsContent value="marketplace" className="space-y-6">
-              <DashboardMarketplace analytics={analytics} />
-            </TabsContent>
-          </Tabs>
-        </>
-      )}
+        <TabsContent value="marketplace" className="space-y-6">
+          {analytics ? (
+            <DashboardMarketplace analytics={analytics} />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Carregando dados do marketplace...</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
