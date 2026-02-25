@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, DollarSign, Users, TrendingUp, Activity, RefreshCw, Repeat, Target, Shield } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +14,7 @@ import DashboardRevenueChart from '../components/admin/DashboardRevenueChart';
 import DashboardEngagementChart from '../components/admin/DashboardEngagementChart';
 import DashboardMarketplace from '../components/admin/DashboardMarketplace';
 import DashboardPipeline from '../components/admin/DashboardPipeline';
+import DashboardFinancials from '../components/admin/DashboardFinancials';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -73,7 +74,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard Admin</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
           <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
             Atualizado: {lastRefresh.toLocaleTimeString('pt-BR')}
           </p>
@@ -109,39 +110,7 @@ export default function AdminDashboard() {
 
       {analytics && (
         <>
-          {/* Primary Metrics */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <DashboardMetricCard
-              label="MRR"
-              value={`R$ ${(analytics.mrr || 0).toLocaleString('pt-BR')}`}
-              subtitle={profileFilter === 'all' ? `Marcas R$${analytics.brandMRR || 0} · Creators R$${analytics.creatorMRR || 0}` : undefined}
-              icon={DollarSign}
-              iconColor="text-green-600"
-            />
-            <DashboardMetricCard
-              label="ARR"
-              value={`R$ ${(analytics.arr || 0).toLocaleString('pt-BR')}`}
-              subtitle={`ARPU R$ ${(analytics.arpu || 0).toFixed(2)}`}
-              icon={TrendingUp}
-              iconColor="text-blue-600"
-            />
-            <DashboardMetricCard
-              label="LTV Estimado"
-              value={`R$ ${(analytics.ltv || 0).toLocaleString('pt-BR')}`}
-              subtitle={`Retenção ${analytics.retentionRate || 0}%`}
-              icon={Target}
-              iconColor="text-purple-600"
-            />
-            <DashboardMetricCard
-              label="Churn Rate"
-              value={`${analytics.churnRate || 0}%`}
-              subtitle={`${analytics.activeSubscribers || 0} assinantes ativos`}
-              icon={Repeat}
-              iconColor="text-orange-600"
-            />
-          </div>
-
-          {/* Secondary Metrics */}
+          {/* Overview Metrics (non-financial) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <DashboardMetricCard
               label="Total Usuários"
@@ -149,6 +118,7 @@ export default function AdminDashboard() {
               subtitle={`${analytics.totalBrands || 0} marcas · ${analytics.totalCreators || 0} criadores`}
               icon={Users}
               iconColor="text-indigo-600"
+              tooltip="Número total de usuários cadastrados na plataforma."
             />
             <DashboardMetricCard
               label="Novos no Período"
@@ -157,6 +127,7 @@ export default function AdminDashboard() {
               subtitle={`Crescimento ${analytics.growthRate || 0}%`}
               icon={TrendingUp}
               iconColor="text-emerald-600"
+              tooltip="Novos cadastros no período selecionado, comparado com o período anterior."
             />
             <DashboardMetricCard
               label="Conversão"
@@ -164,6 +135,7 @@ export default function AdminDashboard() {
               subtitle={`${analytics.acceptedApplications || 0} de ${analytics.totalApplications || 0} aceitas`}
               icon={Activity}
               iconColor="text-cyan-600"
+              tooltip="Taxa de candidaturas aceitas sobre o total de candidaturas recebidas."
             />
             <DashboardMetricCard
               label="Taxa de Sucesso"
@@ -171,6 +143,7 @@ export default function AdminDashboard() {
               subtitle={`${analytics.completedDeliveries || 0} entregas aprovadas`}
               icon={Shield}
               iconColor="text-green-600"
+              tooltip="Percentual de entregas aprovadas sobre o total de entregas finalizadas."
             />
           </div>
 
@@ -178,6 +151,7 @@ export default function AdminDashboard() {
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="flex-wrap h-auto gap-1 p-1" style={{ backgroundColor: 'var(--bg-primary)' }}>
               <TabsTrigger value="overview" className="text-xs">Visão Geral</TabsTrigger>
+              <TabsTrigger value="financials" className="text-xs">Financeiro</TabsTrigger>
               <TabsTrigger value="users" className="text-xs">Usuários</TabsTrigger>
               <TabsTrigger value="engagement" className="text-xs">Engajamento</TabsTrigger>
               <TabsTrigger value="pipeline" className="text-xs">Pipeline</TabsTrigger>
@@ -185,8 +159,12 @@ export default function AdminDashboard() {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
-              <DashboardRevenueChart data={analytics.revenueChart} profileFilter={profileFilter} />
               <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
+              <DashboardEngagementChart data={analytics.engagementChart} />
+            </TabsContent>
+
+            <TabsContent value="financials" className="space-y-6">
+              <DashboardFinancials profileFilter={profileFilter} />
             </TabsContent>
 
             <TabsContent value="users" className="space-y-6">
@@ -195,10 +173,10 @@ export default function AdminDashboard() {
 
             <TabsContent value="engagement" className="space-y-6">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <DashboardMetricCard label="Campanhas Ativas" value={analytics.activeCampaigns || 0} />
-                <DashboardMetricCard label="Total Candidaturas" value={analytics.totalApplications || 0} />
-                <DashboardMetricCard label="Novas Candidaturas" value={analytics.newApplications || 0} previousValue={analytics.previousNewUsers} />
-                <DashboardMetricCard label="Cumprimento" value={`${analytics.fulfillmentRate || 0}%`} />
+                <DashboardMetricCard label="Campanhas Ativas" value={analytics.activeCampaigns || 0} tooltip="Campanhas com status 'ativa' atualmente." />
+                <DashboardMetricCard label="Total Candidaturas" value={analytics.totalApplications || 0} tooltip="Número total de candidaturas de creators a campanhas." />
+                <DashboardMetricCard label="Novas Candidaturas" value={analytics.newApplications || 0} previousValue={analytics.previousNewUsers} tooltip="Candidaturas recebidas no período selecionado." />
+                <DashboardMetricCard label="Cumprimento" value={`${analytics.fulfillmentRate || 0}%`} tooltip="Percentual de entregas feitas sobre candidaturas aceitas." />
               </div>
               <DashboardEngagementChart data={analytics.engagementChart} />
             </TabsContent>
