@@ -153,6 +153,7 @@ export default function AdminDashboard() {
             </TabsContent>
 
             <TabsContent value="engagement" className="space-y-6">
+              <DashboardDateFilter value={dateRange} onChange={setDateRange} />
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <DashboardMetricCard label="Campanhas Ativas" value={analytics.activeCampaigns || 0} tooltip="Campanhas com status 'ativa' atualmente." />
                 <DashboardMetricCard label="Total Candidaturas" value={analytics.totalApplications || 0} tooltip="Número total de candidaturas de creators a campanhas." />
