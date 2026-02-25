@@ -55,10 +55,10 @@ export default function Settings() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl lg:text-3xl font-bold">Configurações</h1>
+      <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Configurações</h1>
 
       {/* Profile Card */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <Avatar className="w-16 h-16">
@@ -85,7 +85,7 @@ export default function Settings() {
       </Card>
 
       {/* Subscription */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <Crown className="w-5 h-5 text-primary" />
@@ -126,7 +126,7 @@ export default function Settings() {
       </Card>
 
       {/* Theme */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <Sun className="w-5 h-5 text-muted-foreground" />
