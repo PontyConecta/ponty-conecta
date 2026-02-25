@@ -55,16 +55,16 @@ export default function DashboardFinancials() {
   const d = stripeData;
 
   // All metrics now respect the filter with real per-segment backend data
-  const mrr = f === 'brand' ? d.brandMRR : f === 'creator' ? d.creatorMRR : d.mrr;
+  const mrr = (f === 'brand' ? d.brandMRR : f === 'creator' ? d.creatorMRR : d.mrr) || 0;
   const arr = mrr * 12;
-  const subscribers = f === 'brand' ? d.brandSubscribers : f === 'creator' ? d.creatorSubscribers : d.totalActiveSubscribers;
-  const arpu = f === 'brand' ? d.brandArpu : f === 'creator' ? d.creatorArpu : d.arpu;
-  const ltv = f === 'brand' ? d.brandLtv : f === 'creator' ? d.creatorLtv : d.ltv;
-  const churnRate = f === 'brand' ? d.brandChurnRate : f === 'creator' ? d.creatorChurnRate : d.churnRate;
-  const retentionRate = f === 'brand' ? d.brandRetentionRate : f === 'creator' ? d.creatorRetentionRate : d.retentionRate;
-  const thisMonthRevenue = f === 'brand' ? d.thisMonthBrandRevenue : f === 'creator' ? d.thisMonthCreatorRevenue : d.thisMonthRevenue;
-  const lastMonthRevenue = f === 'brand' ? d.lastMonthBrandRevenue : f === 'creator' ? d.lastMonthCreatorRevenue : d.lastMonthRevenue;
-  const cancelledCount = f === 'brand' ? d.brandRecentlyCancelledCount : f === 'creator' ? d.creatorRecentlyCancelledCount : d.recentlyCancelledCount;
+  const subscribers = (f === 'brand' ? d.brandSubscribers : f === 'creator' ? d.creatorSubscribers : d.totalActiveSubscribers) || 0;
+  const arpu = (f === 'brand' ? d.brandArpu : f === 'creator' ? d.creatorArpu : d.arpu) || 0;
+  const ltv = (f === 'brand' ? d.brandLtv : f === 'creator' ? d.creatorLtv : d.ltv) || 0;
+  const churnRate = (f === 'brand' ? d.brandChurnRate : f === 'creator' ? d.creatorChurnRate : d.churnRate) || 0;
+  const retentionRate = (f === 'brand' ? d.brandRetentionRate : f === 'creator' ? d.creatorRetentionRate : d.retentionRate) || 0;
+  const thisMonthRevenue = (f === 'brand' ? d.thisMonthBrandRevenue : f === 'creator' ? d.thisMonthCreatorRevenue : d.thisMonthRevenue) || 0;
+  const lastMonthRevenue = (f === 'brand' ? d.lastMonthBrandRevenue : f === 'creator' ? d.lastMonthCreatorRevenue : d.lastMonthRevenue) || 0;
+  const cancelledCount = (f === 'brand' ? d.brandRecentlyCancelledCount : f === 'creator' ? d.creatorRecentlyCancelledCount : d.recentlyCancelledCount) || 0;
 
   return (
     <div className="space-y-6">
