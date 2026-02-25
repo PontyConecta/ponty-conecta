@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Download, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
-import UserStatsCards from '../components/admin/UserStatsCards';
-import UserGrowthChart from '../components/admin/UserGrowthChart';
 import UserFilters from '../components/admin/UserFilters';
 import UserBulkActions from '../components/admin/UserBulkActions';
 import UserTable from '../components/admin/UserTable';
@@ -27,7 +25,6 @@ export default function AdminUsers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
-  const [showCharts, setShowCharts] = useState(true);
 
   useEffect(() => {
     loadUsers();
@@ -157,11 +154,6 @@ export default function AdminUsers() {
     }
   };
 
-  const handleStatClick = (filter) => {
-    setRoleFilter(filter.role);
-    setStatusFilter(filter.status);
-  };
-
   const selectedUserProfile = selectedUser ? getUserProfile(selectedUser.id) : null;
 
   if (loading) {
@@ -178,16 +170,13 @@ export default function AdminUsers() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-            Gerenciamento de Usuários
+            Usuários
           </h1>
           <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
             {filteredUsers.length} de {users.length} usuários
           </p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => setShowCharts(v => !v)} variant="outline" size="sm">
-            {showCharts ? 'Ocultar Gráficos' : 'Mostrar Gráficos'}
-          </Button>
           <Button onClick={loadUsers} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-1" /> Atualizar
           </Button>
@@ -196,12 +185,6 @@ export default function AdminUsers() {
           </Button>
         </div>
       </div>
-
-      {/* Stats Cards */}
-      <UserStatsCards brands={brands} creators={creators} onStatClick={handleStatClick} />
-
-      {/* Charts */}
-      {showCharts && <UserGrowthChart brands={brands} creators={creators} />}
 
       {/* Filters */}
       <UserFilters

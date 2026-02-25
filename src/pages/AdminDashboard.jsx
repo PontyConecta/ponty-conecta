@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { AlertCircle, TrendingUp, Users, DollarSign, Activity, Loader2, RefreshCw } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertCircle, DollarSign, Users, TrendingUp, Activity, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +7,11 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { toast } from 'sonner';
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+import DashboardMetricCard from '../components/admin/DashboardMetricCard';
+import DashboardUserStats from '../components/admin/DashboardUserStats';
+import DashboardRevenueChart from '../components/admin/DashboardRevenueChart';
+import DashboardEngagementChart from '../components/admin/DashboardEngagementChart';
+import DashboardMarketplace from '../components/admin/DashboardMarketplace';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -31,10 +33,7 @@ export default function AdminDashboard() {
   const loadAnalytics = async () => {
     try {
       setLoading(true);
-
-      const response = await base44.functions.invoke('adminAnalytics', {
-        dateRange
-      });
+      const response = await base44.functions.invoke('adminAnalytics', { dateRange });
 
       if (response.data.error) {
         throw new Error(response.data.error);
@@ -62,34 +61,27 @@ export default function AdminDashboard() {
 
   if (loading && !analytics) {
     return (
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
-        <Skeleton className="h-12 w-64" />
-        <div className="grid md:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-32" />
-          ))}
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-28" />)}
         </div>
-        <Skeleton className="h-96" />
+        <Skeleton className="h-80" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8" style={{ color: 'var(--text-primary)' }}>
+    <div className="space-y-6" style={{ color: 'var(--text-primary)' }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard de Admin</h1>
-          <p style={{ color: 'var(--text-secondary)' }} className="mt-1">
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
+          <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
             Última atualização: {lastRefresh.toLocaleTimeString('pt-BR')}
           </p>
         </div>
-        <Button
-          onClick={loadAnalytics}
-          variant="outline"
-          size="sm"
-          disabled={loading}
-        >
+        <Button onClick={loadAnalytics} variant="outline" size="sm" disabled={loading}>
           <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Atualizar
         </Button>
@@ -97,300 +89,88 @@ export default function AdminDashboard() {
 
       {/* Date Range Filter */}
       <div className="flex gap-2 flex-wrap">
-        {['day', 'week', 'month', 'year', 'custom'].map(range => (
+        {[
+          { key: 'day', label: 'Diário' },
+          { key: 'week', label: 'Semana' },
+          { key: 'month', label: 'Mês' },
+          { key: 'year', label: 'Ano' },
+        ].map(range => (
           <Button
-            key={range}
-            variant={dateRange === range ? 'default' : 'outline'}
-            onClick={() => setDateRange(range)}
+            key={range.key}
+            variant={dateRange === range.key ? 'default' : 'outline'}
+            onClick={() => setDateRange(range.key)}
             size="sm"
+            className={dateRange === range.key ? 'bg-[#9038fa] hover:bg-[#7a2de0] text-white' : ''}
           >
-            {range === 'day' ? 'Diário' : range === 'week' ? 'Semana' : range === 'month' ? 'Mês' : range === 'year' ? 'Ano' : 'Personalizado'}
+            {range.label}
           </Button>
         ))}
       </div>
 
-      {/* Main Metrics */}
       {analytics && (
         <>
-          <div className="grid md:grid-cols-4 gap-6">
-            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>MRR</p>
-                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      R$ {analytics.mrr?.toLocaleString('pt-BR') || '0'}
-                    </p>
-                  </div>
-                  <DollarSign className="w-8 h-8 text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Total Usuários</p>
-                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.totalUsers || 0}
-                    </p>
-                    <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-                      {analytics.activeUsers || 0} ativos
-                    </p>
-                  </div>
-                  <Users className="w-8 h-8 text-blue-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Taxa de Sucesso</p>
-                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.successRate || 0}%
-                    </p>
-                  </div>
-                  <TrendingUp className="w-8 h-8 text-purple-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>ARPU</p>
-                    <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      R$ {analytics.arpu?.toFixed(2) || '0.00'}
-                    </p>
-                  </div>
-                  <Activity className="w-8 h-8 text-orange-600" />
-                </div>
-              </CardContent>
-            </Card>
+          {/* Main Metrics */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <DashboardMetricCard
+              label="MRR"
+              value={`R$ ${(analytics.mrr || 0).toLocaleString('pt-BR')}`}
+              icon={DollarSign}
+              iconColor="text-green-600"
+            />
+            <DashboardMetricCard
+              label="Total Usuários"
+              value={analytics.totalUsers || 0}
+              subtitle={`${analytics.activeUsers || 0} ativos`}
+              icon={Users}
+              iconColor="text-blue-600"
+            />
+            <DashboardMetricCard
+              label="Taxa de Sucesso"
+              value={`${analytics.successRate || 0}%`}
+              icon={TrendingUp}
+              iconColor="text-purple-600"
+            />
+            <DashboardMetricCard
+              label="ARPU"
+              value={`R$ ${(analytics.arpu || 0).toFixed(2)}`}
+              icon={Activity}
+              iconColor="text-orange-600"
+            />
           </div>
 
           {/* Tabs */}
           <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
+            <TabsList className="flex-wrap">
               <TabsTrigger value="overview">Visão Geral</TabsTrigger>
               <TabsTrigger value="users">Usuários</TabsTrigger>
               <TabsTrigger value="engagement">Engajamento</TabsTrigger>
               <TabsTrigger value="marketplace">Marketplace</TabsTrigger>
             </TabsList>
 
-            {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Receita Mensal</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={analytics.revenueChart || []}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="revenue" stroke="#3b82f6" name="Receita (R$)" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Assinantes Ativos</p>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.activeSubscribers || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Novos Usuários</p>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.newUsers || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Churn Rate</p>
-                    <p className="text-2xl font-bold text-red-600">
-                      {analytics.churnRate || 0}%
-                    </p>
-                  </CardContent>
-                </Card>
+              <DashboardRevenueChart data={analytics.revenueChart} />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <DashboardMetricCard label="Assinantes Ativos" value={analytics.activeSubscribers || 0} />
+                <DashboardMetricCard label="Novos Usuários" value={analytics.newUsers || 0} />
+                <DashboardMetricCard label="Churn Rate" value={`${analytics.churnRate || 0}%`} />
               </div>
             </TabsContent>
 
-            {/* Users Tab */}
             <TabsContent value="users" className="space-y-6">
-              <div className="grid md:grid-cols-3 gap-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Total de Usuários</p>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.totalUsers || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Marcas</p>
-                    <p className="text-2xl font-bold text-blue-600">
-                      {analytics.totalBrands || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Criadores</p>
-                    <p className="text-2xl font-bold text-purple-600">
-                      {analytics.totalCreators || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Crescimento de Usuários</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={analytics.userGrowthChart || []}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="brands" fill="#3b82f6" name="Marcas" />
-                      <Bar dataKey="creators" fill="#8b5cf6" name="Criadores" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+              <DashboardUserStats analytics={analytics} />
             </TabsContent>
 
-            {/* Engagement Tab */}
             <TabsContent value="engagement" className="space-y-6">
-              <div className="grid md:grid-cols-3 gap-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Campanhas Ativas</p>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.activeCampaigns || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Aplicações</p>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.totalApplications || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Taxa de Conversão</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {analytics.conversionRate || 0}%
-                    </p>
-                  </CardContent>
-                </Card>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <DashboardMetricCard label="Campanhas Ativas" value={analytics.activeCampaigns || 0} />
+                <DashboardMetricCard label="Aplicações" value={analytics.totalApplications || 0} />
+                <DashboardMetricCard label="Taxa de Conversão" value={`${analytics.conversionRate || 0}%`} />
               </div>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Engajamento por Dia</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={analytics.engagementChart || []}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="applications" stroke="#3b82f6" name="Candidaturas" />
-                      <Line type="monotone" dataKey="deliveries" stroke="#10b981" name="Entregas" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+              <DashboardEngagementChart data={analytics.engagementChart} />
             </TabsContent>
 
-            {/* Marketplace Tab */}
             <TabsContent value="marketplace" className="space-y-6">
-              <div className="grid md:grid-cols-3 gap-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Entregas Completas</p>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {analytics.completedDeliveries || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Disputas Pendentes</p>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {analytics.pendingDisputes || 0}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Valor Total Transacionado</p>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      R$ {analytics.totalTransactionValue?.toLocaleString('pt-BR') || '0'}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Distribuição de Categorias</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={analytics.categoryDistribution || []}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, value }) => `${name}: ${value}`}
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {(analytics.categoryDistribution || []).map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+              <DashboardMarketplace analytics={analytics} />
             </TabsContent>
           </Tabs>
         </>
