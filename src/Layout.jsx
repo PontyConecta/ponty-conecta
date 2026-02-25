@@ -46,21 +46,13 @@ function LayoutContent({ children, currentPageName }) {
     trackPageView(currentPageName);
   }, [currentPageName]);
 
-  // Listen for sidebar collapse changes - using custom event + polling as backup
-  useEffect(() => {
-    const syncCollapse = () => {
-      const val = localStorage.getItem('sidebar-collapsed') === 'true';
-      setSidebarCollapsed(val);
-    };
-    window.addEventListener('storage', syncCollapse);
-    window.addEventListener('sidebar-toggle', syncCollapse);
-    const interval = setInterval(syncCollapse, 300);
-    return () => { 
-      window.removeEventListener('storage', syncCollapse); 
-      window.removeEventListener('sidebar-toggle', syncCollapse);
-      clearInterval(interval); 
-    };
-  }, []);
+  const handleToggleSidebar = () => {
+    setSidebarCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('sidebar-collapsed', next);
+      return next;
+    });
+  };
 
   // Redirect to login if not authenticated (except special pages)
   if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
@@ -301,6 +293,8 @@ function LayoutContent({ children, currentPageName }) {
         profileType={profileType} 
         currentPageName={currentPageName}
         isSubscribed={isSubscribed}
+        isCollapsed={sidebarCollapsed}
+        onToggleCollapse={handleToggleSidebar}
       />
 
       {/* Main Content */}
