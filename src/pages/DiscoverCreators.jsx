@@ -241,7 +241,7 @@ export default function DiscoverCreators() {
                     <img src={selectedCreator.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
                 </div>
-                <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-card shadow-lg">
+                <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-background shadow-lg">
                   <AvatarImage src={selectedCreator.avatar_url} />
                   <AvatarFallback className="bg-primary/10 text-primary text-2xl">
                     {selectedCreator.display_name?.[0]}
@@ -349,13 +349,13 @@ export default function DiscoverCreators() {
 
                 {/* Rates */}
                 {(selectedCreator.rate_cash_min || selectedCreator.rate_cash_max) && (
-                  <div className="p-4 rounded-xl bg-emerald-50">
-                    <h4 className="font-medium text-emerald-900 mb-1">Faixa de Valores</h4>
-                    <p className="text-emerald-700">
+                  <div className="p-4 rounded-xl bg-emerald-500/10">
+                    <h4 className="font-medium text-emerald-600 mb-1">Faixa de Valores</h4>
+                    <p className="text-emerald-500">
                       R$ {selectedCreator.rate_cash_min || 0} - R$ {selectedCreator.rate_cash_max || 0}
                     </p>
                     {selectedCreator.accepts_barter && (
-                      <Badge className="mt-2 bg-emerald-100 text-emerald-700 border-0">
+                      <Badge className="mt-2 bg-emerald-500/15 text-emerald-600 border-0">
                         Aceita permutas
                       </Badge>
                     )}
@@ -388,7 +388,7 @@ export default function DiscoverCreators() {
                 ) : (
                   <div className="p-4 rounded-xl text-center bg-muted">
                     <p className="mb-3 text-muted-foreground">Assine para ver informações de contato</p>
-                    <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm">
+                    <Button onClick={() => setShowPaywall(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm">
                       Desbloquear Contato
                     </Button>
                   </div>
