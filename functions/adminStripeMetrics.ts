@@ -92,6 +92,9 @@ Deno.serve(async (req) => {
     const brandActiveSubs = activeSubs.filter(s => getProductId(s) === BRAND_PRODUCT);
     const creatorActiveSubs = activeSubs.filter(s => getProductId(s) === CREATOR_PRODUCT);
 
+    const brandCancelledSubs = cancelledSubs.filter(s => getProductId(s) === BRAND_PRODUCT);
+    const creatorCancelledSubs = cancelledSubs.filter(s => getProductId(s) === CREATOR_PRODUCT);
+
     const calcSubMRR = (sub) => {
       const item = sub.items?.data?.[0];
       if (!item) return 0;
@@ -113,11 +116,34 @@ Deno.serve(async (req) => {
 
     const thirtyDaysAgo = now - (30 * 24 * 60 * 60);
     const recentlyCancelled = cancelledSubs.filter(s => s.canceled_at && s.canceled_at >= thirtyDaysAgo);
-    const totalSubsAtStart = activeSubs.length + recentlyCancelled.length;
-    const monthlyChurnRate = totalSubsAtStart > 0 ? (recentlyCancelled.length / totalSubsAtStart * 100) : 0;
+    const brandRecentlyCancelled = recentlyCancelled.filter(s => getProductId(s) === BRAND_PRODUCT);
+    const creatorRecentlyCancelled = recentlyCancelled.filter(s => getProductId(s) === CREATOR_PRODUCT);
+
+    // Churn calculations per segment
+    const calcChurn = (active, cancelled) => {
+      const total = active.length + cancelled.length;
+      return total > 0 ? (cancelled.length / total * 100) : 0;
+    };
+    const calcLtv = (mrrVal, activeCount, churnPct) => {
+      const segArpu = activeCount > 0 ? mrrVal / activeCount : 0;
+      const churnDecimal = churnPct / 100;
+      return churnDecimal > 0 ? segArpu / churnDecimal : segArpu * 24;
+    };
+
+    const monthlyChurnRate = calcChurn(activeSubs, recentlyCancelled);
+    const brandChurnRate = calcChurn(brandActiveSubs, brandRecentlyCancelled);
+    const creatorChurnRate = calcChurn(creatorActiveSubs, creatorRecentlyCancelled);
+
     const retentionRate = 100 - monthlyChurnRate;
-    const monthlyChurnDecimal = monthlyChurnRate / 100;
-    const ltv = monthlyChurnDecimal > 0 ? arpu / monthlyChurnDecimal : arpu * 24;
+    const brandRetentionRate = 100 - brandChurnRate;
+    const creatorRetentionRate = 100 - creatorChurnRate;
+
+    const ltv = calcLtv(totalMRR, activeSubs.length, monthlyChurnRate);
+    const brandLtv = calcLtv(brandMRR, brandActiveSubs.length, brandChurnRate);
+    const creatorLtv = calcLtv(creatorMRR, creatorActiveSubs.length, creatorChurnRate);
+
+    const brandArpu = brandActiveSubs.length > 0 ? brandMRR / brandActiveSubs.length : 0;
+    const creatorArpu = creatorActiveSubs.length > 0 ? creatorMRR / creatorActiveSubs.length : 0;
 
     const revenueByMonth = {};
     for (let i = 11; i >= 0; i--) {
@@ -128,10 +154,11 @@ Deno.serve(async (req) => {
     }
 
     for (const inv of filteredInvoices) {
+      const amount = (inv.amount_paid || 0) / 100;
+      if (amount <= 0) continue; // Skip zero-value invoices
       const d = new Date(inv.created * 1000);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       if (!revenueByMonth[key]) continue;
-      const amount = (inv.amount_paid || 0) / 100;
       revenueByMonth[key].total += amount;
       const lineProduct = inv.lines?.data?.[0]?.price?.product;
       const prodId = typeof lineProduct === 'string' ? lineProduct : lineProduct?.id;
@@ -166,18 +193,51 @@ Deno.serve(async (req) => {
       else monthlyCount++;
     });
 
+    // Brand/Creator revenue for this/last month
+    const thisMonthBrandRevenue = Math.round((revenueByMonth[thisMonthKey]?.brand || 0) * 100) / 100;
+    const thisMonthCreatorRevenue = Math.round((revenueByMonth[thisMonthKey]?.creator || 0) * 100) / 100;
+    const lastMonthBrandRevenue = Math.round((revenueByMonth[lastMonthKey]?.brand || 0) * 100) / 100;
+    const lastMonthCreatorRevenue = Math.round((revenueByMonth[lastMonthKey]?.creator || 0) * 100) / 100;
+
+    const brandTotalRevenue = filteredInvoices
+      .filter(inv => {
+        const lp = inv.lines?.data?.[0]?.price?.product;
+        return (typeof lp === 'string' ? lp : lp?.id) === BRAND_PRODUCT;
+      })
+      .reduce((sum, inv) => sum + ((inv.amount_paid || 0) / 100), 0);
+    const creatorTotalRevenue = filteredInvoices
+      .filter(inv => {
+        const lp = inv.lines?.data?.[0]?.price?.product;
+        return (typeof lp === 'string' ? lp : lp?.id) === CREATOR_PRODUCT;
+      })
+      .reduce((sum, inv) => sum + ((inv.amount_paid || 0) / 100), 0);
+
     return Response.json({
       mrr: Math.round(totalMRR * 100) / 100,
       brandMRR: Math.round(brandMRR * 100) / 100,
       creatorMRR: Math.round(creatorMRR * 100) / 100,
       arr: Math.round(arr * 100) / 100,
       arpu: Math.round(arpu * 100) / 100,
+      brandArpu: Math.round(brandArpu * 100) / 100,
+      creatorArpu: Math.round(creatorArpu * 100) / 100,
       ltv: Math.round(ltv * 100) / 100,
+      brandLtv: Math.round(brandLtv * 100) / 100,
+      creatorLtv: Math.round(creatorLtv * 100) / 100,
       churnRate: Math.round(monthlyChurnRate * 10) / 10,
+      brandChurnRate: Math.round(brandChurnRate * 10) / 10,
+      creatorChurnRate: Math.round(creatorChurnRate * 10) / 10,
       retentionRate: Math.round(retentionRate * 10) / 10,
+      brandRetentionRate: Math.round(brandRetentionRate * 10) / 10,
+      creatorRetentionRate: Math.round(creatorRetentionRate * 10) / 10,
       totalRevenue: Math.round(totalRevenue * 100) / 100,
+      brandTotalRevenue: Math.round(brandTotalRevenue * 100) / 100,
+      creatorTotalRevenue: Math.round(creatorTotalRevenue * 100) / 100,
       thisMonthRevenue: Math.round((revenueByMonth[thisMonthKey]?.total || 0) * 100) / 100,
       lastMonthRevenue: Math.round((revenueByMonth[lastMonthKey]?.total || 0) * 100) / 100,
+      thisMonthBrandRevenue,
+      thisMonthCreatorRevenue,
+      lastMonthBrandRevenue,
+      lastMonthCreatorRevenue,
       totalActiveSubscribers: activeSubs.length,
       brandSubscribers: brandActiveSubs.length,
       creatorSubscribers: creatorActiveSubs.length,
@@ -186,6 +246,9 @@ Deno.serve(async (req) => {
       pastDueSubscribers: pastDueSubs.length,
       totalSubscriptions: subscriptions.filter(s => validSub(s)).length,
       excludedCount: excludedCustomerIds.size,
+      recentlyCancelledCount: recentlyCancelled.length,
+      brandRecentlyCancelledCount: brandRecentlyCancelled.length,
+      creatorRecentlyCancelledCount: creatorRecentlyCancelled.length,
       revenueChart,
       subDistribution,
       planTypeDistribution: [
@@ -194,7 +257,6 @@ Deno.serve(async (req) => {
       ].filter(d => d.value > 0),
       monthlySubscribers: monthlyCount,
       annualSubscribers: annualCount,
-      recentlyCancelledCount: recentlyCancelled.length,
     });
 
   } catch (error) {
