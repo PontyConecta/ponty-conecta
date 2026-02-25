@@ -8,7 +8,6 @@ import { useAuth } from '@/components/contexts/AuthContext';
 import { toast } from 'sonner';
 
 import DashboardMetricCard from '../components/admin/DashboardMetricCard';
-import DashboardProfileFilter from '../components/admin/DashboardProfileFilter';
 import DashboardUserStats from '../components/admin/DashboardUserStats';
 import DashboardRevenueChart from '../components/admin/DashboardRevenueChart';
 import DashboardEngagementChart from '../components/admin/DashboardEngagementChart';
@@ -21,7 +20,6 @@ export default function AdminDashboard() {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState('month');
-  const [profileFilter, setProfileFilter] = useState('all');
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
   const isAdmin = user?.role === 'admin';
@@ -30,12 +28,12 @@ export default function AdminDashboard() {
     if (isAdmin) {
       loadAnalytics();
     }
-  }, [isAdmin, dateRange, profileFilter]);
+  }, [isAdmin, dateRange]);
 
   const loadAnalytics = async () => {
     try {
       setLoading(true);
-      const response = await base44.functions.invoke('adminAnalytics', { dateRange, profileTypeFilter: profileFilter });
+      const response = await base44.functions.invoke('adminAnalytics', { dateRange });
       if (response.data.error) throw new Error(response.data.error);
       setAnalytics(response.data);
       setLastRefresh(new Date());
@@ -80,7 +78,6 @@ export default function AdminDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <DashboardProfileFilter value={profileFilter} onChange={setProfileFilter} />
           <Button onClick={loadAnalytics} variant="outline" size="sm" disabled={loading}>
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Atualizar
@@ -164,7 +161,7 @@ export default function AdminDashboard() {
             </TabsContent>
 
             <TabsContent value="financials" className="space-y-6">
-              <DashboardFinancials profileFilter={profileFilter} />
+              <DashboardFinancials />
             </TabsContent>
 
             <TabsContent value="users" className="space-y-6">
