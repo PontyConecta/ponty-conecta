@@ -718,7 +718,7 @@ export default function Profile() {
                   <div>
                     <Label>Email de Contato</Label>
                     <div className="relative mt-2">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
                         type="email"
                         value={formData.contact_email}
@@ -734,7 +734,7 @@ export default function Profile() {
                   <div>
                     <Label>WhatsApp</Label>
                     <div className="relative mt-2">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
                         value={formData.contact_whatsapp}
                         onChange={(e) => handleChange('contact_whatsapp', formatPhoneNumber(e.target.value))}
