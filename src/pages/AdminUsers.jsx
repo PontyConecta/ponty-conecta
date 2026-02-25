@@ -28,6 +28,8 @@ export default function AdminUsers() {
   const [nicheFilter, setNicheFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [verifiedFilter, setVerifiedFilter] = useState('all');
+  const [tagFilter, setTagFilter] = useState('all');
+  const [excludeFinancialsFilter, setExcludeFinancialsFilter] = useState('all');
 
   // Table state
   const [selectedUser, setSelectedUser] = useState(null);
@@ -132,6 +134,22 @@ export default function AdminUsers() {
         if (verifiedFilter === 'not_verified' && profile?.is_verified) return false;
       }
 
+      // Tag filter
+      if (tagFilter && tagFilter !== 'all') {
+        const userTags = user.tags || [];
+        if (tagFilter === 'no_tags') {
+          if (userTags.length > 0) return false;
+        } else {
+          if (!userTags.includes(tagFilter)) return false;
+        }
+      }
+
+      // Exclude from financials filter
+      if (excludeFinancialsFilter && excludeFinancialsFilter !== 'all') {
+        if (excludeFinancialsFilter === 'excluded' && !user.exclude_from_financials) return false;
+        if (excludeFinancialsFilter === 'included' && user.exclude_from_financials) return false;
+      }
+
       // Date filter
       if (dateFilter && dateFilter !== 'all') {
         const created = new Date(user.created_date);
@@ -144,7 +162,7 @@ export default function AdminUsers() {
       
       return true;
     });
-  }, [users, brands, creators, searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter]);
+  }, [users, brands, creators, searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter]);
 
   // Sorting
   const sortedUsers = useMemo(() => {
@@ -177,7 +195,14 @@ export default function AdminUsers() {
   const totalPages = Math.ceil(sortedUsers.length / PAGE_SIZE);
   const paginatedUsers = sortedUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, sortField, sortDir]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, sortField, sortDir]);
+
+  // Collect all unique tags from users
+  const availableTags = useMemo(() => {
+    const tagSet = new Set();
+    users.forEach(u => (u.tags || []).forEach(t => tagSet.add(t)));
+    return Array.from(tagSet).sort();
+  }, [users]);
 
   const handleSort = (field) => {
     if (sortField === field) setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
@@ -250,6 +275,9 @@ export default function AdminUsers() {
         nicheFilter={nicheFilter} onNicheChange={setNicheFilter}
         dateFilter={dateFilter} onDateChange={setDateFilter}
         verifiedFilter={verifiedFilter} onVerifiedChange={setVerifiedFilter}
+        tagFilter={tagFilter} onTagChange={setTagFilter}
+        excludeFinancialsFilter={excludeFinancialsFilter} onExcludeFinancialsChange={setExcludeFinancialsFilter}
+        availableTags={availableTags}
       />
 
       {/* Bulk Actions */}
