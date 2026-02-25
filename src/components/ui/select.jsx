@@ -86,12 +86,9 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-3 pr-8 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors hover:bg-[var(--accent-primary)]",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-3 pr-8 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors hover:bg-accent/10 focus:bg-accent/10",
       className
     )}
-    style={{ color: 'var(--text-primary)' }}
-    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-primary)'; e.currentTarget.style.color = 'white'; }}
-    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-primary)'; }}
     {...props}>
     <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
