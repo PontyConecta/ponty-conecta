@@ -145,6 +145,64 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case 'set_tags': {
+        const newTags = data?.tags || [];
+        await base44.asServiceRole.entities.User.update(userId, { tags: newTags });
+        auditAction = 'user_flagged';
+        auditDetails = `User tags updated to: ${newTags.join(', ') || 'none'}`;
+        result = { tags: newTags };
+        break;
+      }
+
+      case 'bulk_set_exclude_financials': {
+        const excludeVal = data?.exclude_from_financials;
+        await base44.asServiceRole.entities.User.update(userId, { 
+          exclude_from_financials: !!excludeVal 
+        });
+        auditAction = 'subscription_override';
+        auditDetails = excludeVal 
+          ? 'User excluded from financial calculations (bulk)' 
+          : 'User included in financial calculations (bulk)';
+        result = { exclude_from_financials: !!excludeVal };
+        break;
+      }
+
+      case 'bulk_add_tag': {
+        const tagToAdd = data?.tag;
+        if (!tagToAdd) {
+          return Response.json({ error: 'tag is required' }, { status: 400 });
+        }
+        const allUsersTag = await base44.asServiceRole.entities.User.filter({});
+        const targetForTag = allUsersTag.find(u => u.id === userId);
+        const currentTagsAdd = targetForTag?.tags || [];
+        if (!currentTagsAdd.includes(tagToAdd)) {
+          await base44.asServiceRole.entities.User.update(userId, { 
+            tags: [...currentTagsAdd, tagToAdd] 
+          });
+        }
+        auditAction = 'user_flagged';
+        auditDetails = `Tag "${tagToAdd}" added (bulk)`;
+        result = { tag: tagToAdd };
+        break;
+      }
+
+      case 'bulk_remove_tag': {
+        const tagToRemove = data?.tag;
+        if (!tagToRemove) {
+          return Response.json({ error: 'tag is required' }, { status: 400 });
+        }
+        const allUsersRemTag = await base44.asServiceRole.entities.User.filter({});
+        const targetForRemTag = allUsersRemTag.find(u => u.id === userId);
+        const currentTagsRem = targetForRemTag?.tags || [];
+        await base44.asServiceRole.entities.User.update(userId, { 
+          tags: currentTagsRem.filter(t => t !== tagToRemove) 
+        });
+        auditAction = 'user_flagged';
+        auditDetails = `Tag "${tagToRemove}" removed (bulk)`;
+        result = { tag: tagToRemove };
+        break;
+      }
+
       case 'flag_review': {
         auditAction = 'user_flagged';
         auditDetails = `User flagged for review`;
