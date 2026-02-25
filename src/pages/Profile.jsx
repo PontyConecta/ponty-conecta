@@ -614,7 +614,7 @@ export default function Profile() {
         {/* Portfolio Tab (Creator Only) */}
         {!isBrand && (
           <TabsContent value="portfolio">
-            <Card>
+            <Card className="border bg-card shadow-sm">
               <CardHeader>
                 <CardTitle className="text-lg">Portfólio</CardTitle>
               </CardHeader>
@@ -622,7 +622,7 @@ export default function Profile() {
                 <div>
                   <Label>Link do Media Kit / Portfólio</Label>
                   <div className="relative mt-2">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       value={formData.portfolio_url}
                       onChange={(e) => handleChange('portfolio_url', e.target.value)}
@@ -634,7 +634,7 @@ export default function Profile() {
 
                 <div>
                   <Label>Imagens do Portfólio</Label>
-                  <p className="text-sm mt-1 mb-3" className="text-muted-foreground">Adicione exemplos do seu trabalho</p>
+                  <p className="text-sm mt-1 mb-3 text-muted-foreground">Adicione exemplos do seu trabalho</p>
                   
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {formData.portfolio_images?.map((url, index) => (
@@ -649,10 +649,10 @@ export default function Profile() {
                       </div>
                     ))}
                     
-                    <label className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:border-[#9038fa] transition-colors" >
+                    <label className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors">
                       <input type="file" accept="image/*" className="hidden" onChange={handlePortfolioImageUpload} />
-                      <Plus className="w-8 h-8 mb-2" className="text-muted-foreground" />
-                      <span className="text-sm" className="text-muted-foreground">Adicionar</span>
+                      <Plus className="w-8 h-8 mb-2 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Adicionar</span>
                     </label>
                   </div>
                 </div>
@@ -663,7 +663,7 @@ export default function Profile() {
 
         {/* Contact Tab */}
         <TabsContent value="contact">
-          <Card>
+          <Card className="border bg-card shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">Informações de Contato</CardTitle>
             </CardHeader>
@@ -680,7 +680,7 @@ export default function Profile() {
                     <div>
                       <Label>Email de Contato</Label>
                       <div className="relative mt-2">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input
                           type="email"
                           value={formData.contact_email}
@@ -695,7 +695,7 @@ export default function Profile() {
                     <div>
                       <Label>Telefone</Label>
                       <div className="relative mt-2">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input
                           value={formData.contact_phone}
                           onChange={(e) => handleChange('contact_phone', formatPhoneNumber(e.target.value))}
@@ -709,8 +709,8 @@ export default function Profile() {
                 </>
               ) : (
                 <>
-                  <div className="p-4 rounded-xl" className="bg-blue-50 border border-blue-200 dark:bg-blue-950/20 dark:border-blue-900">
-                   <p className="text-sm" className="text-blue-600">
+                  <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+                   <p className="text-sm text-primary">
                       <strong>Nota:</strong> Suas informações de contato serão visíveis apenas para assinantes ativos.
                     </p>
                   </div>
@@ -754,7 +754,7 @@ export default function Profile() {
         <TabsContent value="account">
           <div className="space-y-6">
             {/* Subscription */}
-            <Card>
+            <Card className="border bg-card shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <CreditCard className="w-5 h-5" />
@@ -764,16 +764,16 @@ export default function Profile() {
               <CardContent>
                 {isSubscribed ? (
                   <div className="space-y-4">
-                    <div className="p-4 rounded-xl" className="bg-emerald-50 dark:bg-emerald-950/20">
+                    <div className="p-4 rounded-xl bg-emerald-50">
                          <div className="flex items-center justify-between">
                            <div>
-                             <Badge className="border-0 mb-2" className="bg-emerald-100 text-emerald-700">Ativa</Badge>
-                             <h4 className="font-semibold" >Plano Premium</h4>
-                             <p className="text-sm" className="text-muted-foreground">Acesso completo a todas as funcionalidades</p>
-                           </div>
-                           <div className="text-right">
-                             <p className="text-2xl font-bold" >R$ 45</p>
-                             <p className="text-sm" className="text-muted-foreground">/mês</p>
+                             <Badge className="border-0 mb-2 bg-emerald-100 text-emerald-700">Ativa</Badge>
+                             <h4 className="font-semibold">Plano Premium</h4>
+                              <p className="text-sm text-muted-foreground">Acesso completo a todas as funcionalidades</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-2xl font-bold">R$ 45</p>
+                              <p className="text-sm text-muted-foreground">/mês</p>
                         </div>
                       </div>
                     </div>
@@ -783,9 +783,9 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                       <CreditCard className="w-12 h-12 mx-auto mb-4" className="text-muted-foreground" />
-                       <h4 className="font-semibold mb-2" >Sem assinatura ativa</h4>
-                       <p className="mb-4 text-sm" className="text-muted-foreground">Assine para acessar todas as funcionalidades</p>
+                       <CreditCard className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                       <h4 className="font-semibold mb-2">Sem assinatura ativa</h4>
+                       <p className="mb-4 text-sm text-muted-foreground">Assine para acessar todas as funcionalidades</p>
                     <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Ver Planos
                     </Button>
@@ -795,7 +795,7 @@ export default function Profile() {
             </Card>
 
             {/* Security */}
-            <Card>
+            <Card className="border bg-card shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Shield className="w-5 h-5" />
@@ -803,11 +803,11 @@ export default function Profile() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-xl" className="bg-muted">
+                <div className="p-4 rounded-xl bg-muted">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium" >Email</h4>
-                      <p className="text-sm" className="text-muted-foreground">{user?.email}</p>
+                      <h4 className="font-medium">Email</h4>
+                      <p className="text-sm text-muted-foreground">{user?.email}</p>
                     </div>
                     <Badge variant="outline">Verificado</Badge>
                   </div>
@@ -816,7 +816,7 @@ export default function Profile() {
                 <Button
                   variant="outline"
                   onClick={handleLogout}
-                  className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                  className="w-full text-destructive border-destructive/20 hover:bg-destructive/5"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Sair da Conta
@@ -861,7 +861,7 @@ export default function Profile() {
         <Button 
           onClick={handleSave} 
           disabled={saving} 
-          className="w-full lg:w-auto bg-[#9038fa] hover:bg-[#7a2de0] h-12 shadow-lg"
+          className="w-full lg:w-auto bg-[#9038fa] hover:bg-[#7a2de0] text-white h-12 shadow-sm"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
           Salvar Alterações
