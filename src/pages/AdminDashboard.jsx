@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,6 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { toast } from 'sonner';
 
+import DashboardMetricCard from '../components/admin/DashboardMetricCard';
 import DashboardUserStats from '../components/admin/DashboardUserStats';
 import DashboardRevenueChart from '../components/admin/DashboardRevenueChart';
 import DashboardEngagementChart from '../components/admin/DashboardEngagementChart';
@@ -69,47 +70,78 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6" style={{ color: 'var(--text-primary)' }}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1 p-1 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-            {[
-              { key: 'day', label: 'Hoje' },
-              { key: 'week', label: '7d' },
-              { key: 'month', label: '30d' },
-              { key: 'year', label: '12m' },
-            ].map(range => (
-              <button
-                key={range.key}
-                onClick={() => setDateRange(range.key)}
-                className={`h-7 px-3 text-xs font-medium rounded-md transition-all ${
-                  dateRange === range.key ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
-                }`}
-                style={dateRange === range.key 
-                  ? { backgroundColor: 'var(--bg-secondary)', color: '#9038fa' } 
-                  : { color: 'var(--text-secondary)' }}
-              >
-                {range.label}
-              </button>
-            ))}
-          </div>
-          <Button onClick={loadAnalytics} variant="ghost" size="icon" disabled={loading} className="h-8 w-8">
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </Button>
-          <span className="text-[10px] hidden sm:block" style={{ color: 'var(--text-secondary)' }}>
-            {lastRefresh.toLocaleTimeString('pt-BR')}
-          </span>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
+          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+            Atualizado: {lastRefresh.toLocaleTimeString('pt-BR')}
+          </p>
         </div>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button onClick={loadAnalytics} variant="outline" size="sm" disabled={loading}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Atualizar
+          </Button>
+        </div>
+      </div>
+
+      {/* Date Range */}
+      <div className="flex gap-2 flex-wrap">
+        {[
+          { key: 'day', label: 'Hoje' },
+          { key: 'week', label: '7 dias' },
+          { key: 'month', label: '30 dias' },
+          { key: 'year', label: '12 meses' },
+        ].map(range => (
+          <Button
+            key={range.key}
+            variant={dateRange === range.key ? 'default' : 'outline'}
+            onClick={() => setDateRange(range.key)}
+            size="sm"
+            className={dateRange === range.key ? 'bg-[#9038fa] hover:bg-[#7a2de0] text-white' : ''}
+          >
+            {range.label}
+          </Button>
+        ))}
       </div>
 
       {analytics && (
         <>
-          {/* Overview Metrics - compact row */}
-          <div className="grid grid-cols-4 gap-3">
-            <MiniStat label="Usuários" value={analytics.totalUsers || 0} detail={`${analytics.totalBrands || 0}M · ${analytics.totalCreators || 0}C`} />
-            <MiniStat label="Novos" value={analytics.newUsers || 0} detail={`${analytics.growthRate > 0 ? '+' : ''}${analytics.growthRate || 0}%`} highlight={analytics.growthRate > 0} />
-            <MiniStat label="Conversão" value={`${analytics.conversionRate || 0}%`} detail={`${analytics.acceptedApplications || 0}/${analytics.totalApplications || 0}`} />
-            <MiniStat label="Sucesso" value={`${analytics.successRate || 0}%`} detail={`${analytics.completedDeliveries || 0} entregas`} />
+          {/* Overview Metrics (non-financial) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <DashboardMetricCard
+              label="Total Usuários"
+              value={analytics.totalUsers || 0}
+              subtitle={`${analytics.totalBrands || 0} marcas · ${analytics.totalCreators || 0} criadores`}
+              icon={Users}
+              iconColor="text-indigo-600"
+              tooltip="Número total de usuários cadastrados na plataforma."
+            />
+            <DashboardMetricCard
+              label="Novos no Período"
+              value={analytics.newUsers || 0}
+              previousValue={analytics.previousNewUsers}
+              subtitle={`Crescimento ${analytics.growthRate || 0}%`}
+              icon={TrendingUp}
+              iconColor="text-emerald-600"
+              tooltip="Novos cadastros no período selecionado, comparado com o período anterior."
+            />
+            <DashboardMetricCard
+              label="Conversão"
+              value={`${analytics.conversionRate || 0}%`}
+              subtitle={`${analytics.acceptedApplications || 0} de ${analytics.totalApplications || 0} aceitas`}
+              icon={Activity}
+              iconColor="text-cyan-600"
+              tooltip="Taxa de candidaturas aceitas sobre o total de candidaturas recebidas."
+            />
+            <DashboardMetricCard
+              label="Taxa de Sucesso"
+              value={`${analytics.successRate || 0}%`}
+              subtitle={`${analytics.completedDeliveries || 0} entregas aprovadas`}
+              icon={Shield}
+              iconColor="text-green-600"
+              tooltip="Percentual de entregas aprovadas sobre o total de entregas finalizadas."
+            />
           </div>
 
           {/* Tabs */}
@@ -155,20 +187,6 @@ export default function AdminDashboard() {
             </TabsContent>
           </Tabs>
         </>
-      )}
-    </div>
-  );
-}
-
-function MiniStat({ label, value, detail, highlight }) {
-  return (
-    <div className="p-3 rounded-xl border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      <p className="text-[10px] font-medium uppercase tracking-wide mb-1" style={{ color: 'var(--text-secondary)' }}>{label}</p>
-      <p className="text-lg sm:text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{value}</p>
-      {detail && (
-        <p className={`text-[10px] mt-0.5 ${highlight ? 'text-emerald-600 font-semibold' : ''}`} style={!highlight ? { color: 'var(--text-secondary)' } : {}}>
-          {detail}
-        </p>
       )}
     </div>
   );
