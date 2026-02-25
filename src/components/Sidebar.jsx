@@ -59,7 +59,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, co
 
   return (
     <TooltipProvider delayDuration={0}>
-      <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 ${sidebarWidth} flex-col transition-all duration-200`} style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 ${sidebarWidth} flex-col transition-all duration-200 overflow-hidden`} style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         {/* Collapse toggle */}
         <div className={`flex ${isCollapsed ? 'justify-center' : 'justify-end'} px-2 pt-3`}>
           <Button
@@ -101,8 +101,8 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, co
               return (
                 <Tooltip key={item.page}>
                   <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-                  <TooltipContent side="right" sideOffset={8}>
-                    <p>{item.name}</p>
+                  <TooltipContent side="right" sideOffset={8} className="z-[100]">
+                   <p>{item.name}</p>
                   </TooltipContent>
                 </Tooltip>
               );
