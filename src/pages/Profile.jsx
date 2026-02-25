@@ -857,7 +857,7 @@ export default function Profile() {
       </Tabs>
 
       {/* Save Button - Fixed on Mobile */}
-      <div className="fixed bottom-20 lg:bottom-8 left-4 right-4 lg:left-auto lg:right-8 lg:w-auto z-40">
+      <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+80px)] lg:bottom-8 left-4 right-4 lg:left-auto lg:right-8 lg:w-auto z-40">
         <Button 
           onClick={handleSave} 
           disabled={saving} 

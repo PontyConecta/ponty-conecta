@@ -9,7 +9,6 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
-// BackButton removed
 import { Toaster } from 'sonner';
 import { 
         Crown,
@@ -74,49 +73,6 @@ function LayoutContent({ children, currentPageName }) {
             src="https://www.facebook.com/tr?id=${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}&ev=PageView&noscript=1"
           />
         </noscript>
-
-        <style>{`
-          [data-theme="light"] {
-            --bg-primary: #f6f6f6;
-            --bg-secondary: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --border-color: #ffffff;
-            --accent-primary: #9038fa;
-            --accent-light: #b77aff;
-          }
-
-          [data-theme="dark"] {
-            --bg-primary: #0f1419;
-            --bg-secondary: #1a2332;
-            --text-primary: #e8ecf1;
-            --text-secondary: #9ba8b8;
-            --border-color: #2a3a52;
-            --accent-primary: #b77aff;
-            --accent-light: #9038fa;
-            --card-bg: #1a2332;
-          }
-
-          [data-theme="musk"] {
-            --bg-primary: #17101e;
-            --bg-secondary: #2a1c38;
-            --text-primary: #f3eef8;
-            --text-secondary: #94a3b8;
-            --border-color: #5a3a75;
-            --accent-primary: #b77aff;
-            --accent-light: #9038fa;
-            --card-bg: #2a1c38;
-          }
-
-          :root {
-            --primary: 144 56 250;
-            --primary-foreground: 255 255 255;
-            --accent: 183 122 255;
-          }
-          .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-          }
-        `}</style>
         {children}
       </div>
     );
@@ -134,75 +90,12 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       <Toaster position="top-right" richColors closeButton />
-      <style>{`
-      :root {
-      --primary: 144 56 250;
-      --primary-foreground: 255 255 255;
-      --accent: 183 122 255;
-      --bg-primary: #f6f6f6;
-      --bg-secondary: #ffffff;
-      --text-primary: #0f172a;
-      --text-secondary: #64748b;
-      --text-input: #0f172a;
-      --border-color: #e2e8f0;
-      --accent-primary: #9038fa;
-      --accent-light: #b77aff;
-      }
-
-      [data-theme="light"] {
-      --bg-primary: #f6f6f6;
-      --bg-secondary: #ffffff;
-      --text-primary: #0f172a;
-      --text-secondary: #64748b;
-      --text-input: #0f172a;
-      --border-color: #e2e8f0;
-      --accent-primary: #9038fa;
-      --accent-light: #b77aff;
-      }
-
-      [data-theme="dark"] {
-      --bg-primary: #0a0e27;
-      --bg-secondary: #1a1f3a;
-      --text-primary: #f0f4f8;
-      --text-secondary: #8a96aa;
-      --text-input: #f0f4f8;
-      --border-color: #2a3a52;
-      --accent-primary: #b77aff;
-      --accent-light: #9038fa;
-      }
-
-      [data-theme="musk"] {
-      --bg-primary: #1a1624;
-      --bg-secondary: #2d1f3a;
-      --text-primary: #f5f1f8;
-      --text-secondary: #94a3b8;
-      --text-input: #f5f1f8;
-      --border-color: #5a4577;
-      --accent-primary: #b77aff;
-      --accent-light: #9038fa;
-      }
-
-        .safe-area-bottom {
-          padding-bottom: env(safe-area-inset-bottom);
-        }
-        @supports (padding-bottom: env(safe-area-inset-bottom)) {
-          .pb-safe {
-            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
-          }
-        }
-        @media (max-width: 1024px) {
-          .pb-safe {
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
-          }
-        }
-      `}</style>
 
       {/* Top Navigation */}
        <header className="fixed top-0 left-0 right-0 z-50 transition-colors border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
           {/* Back Button + Logo */}
           <div className="flex items-center gap-2">
-            {/* BackButton removed */}
             <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
             <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform" style={{ backgroundColor: '#9038fa' }}>
               <span className="text-white font-bold text-base lg:text-lg">P</span>
@@ -292,15 +185,7 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 pb-20 lg:pb-6 min-h-screen transition-[margin-left] duration-200 ease-in-out" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <style>{`
-          @media (min-width: 1024px) {
-            main { margin-left: ${sidebarCollapsed ? '64px' : '256px'}; }
-          }
-          @media (max-width: 1023px) {
-            main { margin-left: 0; }
-          }
-        `}</style>
+      <main className={`pt-14 lg:pt-16 pb-mobile-safe lg:pb-6 min-h-screen transition-[margin-left] duration-200 ease-in-out ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`} style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
           {children}
         </div>
