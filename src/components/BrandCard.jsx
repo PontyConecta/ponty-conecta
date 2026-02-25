@@ -40,31 +40,31 @@ export default function BrandCard({
 
   if (compact) {
     return (
-      <Card className="hover:shadow-lg transition-all cursor-pointer group" style={{ borderColor: 'var(--border-color)' }} onClick={onViewProfile}>
+      <Card className="hover:shadow-lg transition-all cursor-pointer group border" onClick={onViewProfile}>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             {brand.logo_url ? (
               <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
             ) : (
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#9038fa' }}>
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-primary">
                 <Building2 className="w-6 h-6 text-white" />
               </div>
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h4 className="font-semibold truncate transition-colors" style={{ color: 'var(--text-primary)' }}>
+                <h4 className="font-semibold truncate transition-colors text-foreground">
                   {brand.company_name}
                 </h4>
                 {brand.verified && (
                   <CheckCircle2 className="w-4 h-4 text-blue-500 flex-shrink-0" />
                 )}
               </div>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-sm text-muted-foreground">
                 {industryLabels[brand.industry] || brand.industry}
               </p>
             </div>
             {!isSubscribed && (
-              <Lock className="w-4 h-4 text-slate-300" />
+              <Lock className="w-4 h-4 text-muted-foreground" />
             )}
           </div>
         </CardContent>
@@ -73,9 +73,9 @@ export default function BrandCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02] flex flex-col" style={{ borderColor: 'var(--border-color)' }}>
+    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02] flex flex-col border">
       {/* Cover Image */}
-      <div className="h-24 relative flex-shrink-0" style={{ backgroundColor: '#9038fa' }}>
+      <div className="h-24 relative flex-shrink-0 bg-primary">
         {brand.cover_image_url && (
           <img 
             src={brand.cover_image_url} 
@@ -92,16 +92,15 @@ export default function BrandCard({
             <img 
               src={brand.logo_url} 
               alt={brand.company_name} 
-              className="w-20 h-20 rounded-xl border-4 shadow-xl transition-all object-cover" 
-              style={{ borderColor: 'var(--bg-secondary)', backgroundColor: 'var(--bg-secondary)' }}
+              className="w-20 h-20 rounded-xl border-4 border-card bg-card shadow-xl transition-all object-cover"
             />
           ) : (
-            <div className="w-20 h-20 rounded-xl border-4 shadow-xl transition-all flex items-center justify-center" style={{ borderColor: 'var(--bg-secondary)', backgroundColor: '#9038fa' }}>
+            <div className="w-20 h-20 rounded-xl border-4 border-card bg-primary shadow-xl transition-all flex items-center justify-center">
               <Building2 className="w-10 h-10 text-white" />
             </div>
           )}
           {brand.industry && (
-            <Badge variant="outline" className="bg-white">
+            <Badge variant="outline" className="bg-card">
               {industryLabels[brand.industry] || brand.industry}
             </Badge>
           )}
@@ -111,14 +110,14 @@ export default function BrandCard({
         <div className="space-y-3 flex flex-col flex-1">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg transition-colors truncate" style={{ color: 'var(--text-primary)' }}>
+              <h3 className="font-semibold text-lg transition-colors truncate text-foreground">
                 {brand.company_name}
               </h3>
               {brand.verified && (
                 <CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0" />
               )}
             </div>
-            <div className="flex flex-wrap gap-x-2 gap-y-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <div className="flex flex-wrap gap-x-2 gap-y-1 text-sm text-muted-foreground">
               {brand.state && (
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
@@ -130,7 +129,7 @@ export default function BrandCard({
                   <a key={i}
                     href={getPresenceUrl(p)}
                     target="_blank" rel="noopener noreferrer"
-                    className="text-[#9038fa] hover:underline flex items-center gap-1"
+                    className="text-primary hover:underline flex items-center gap-1"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Globe className="w-3 h-3" />
@@ -141,7 +140,7 @@ export default function BrandCard({
                 <>
                   {brand.website && (
                     <a href={brand.website.startsWith('http') ? brand.website : `https://${brand.website}`} target="_blank" rel="noopener noreferrer"
-                      className="text-[#9038fa] hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                      className="text-primary hover:underline flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                       <Globe className="w-3 h-3" /> Website
                     </a>
                   )}
@@ -157,7 +156,7 @@ export default function BrandCard({
           </div>
 
           {brand.description && (
-            <p className="text-sm line-clamp-2 min-h-[2.5rem]" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm line-clamp-2 min-h-[2.5rem] text-muted-foreground">
               {isSubscribed ? brand.description : brand.description.slice(0, 50) + '...'}
             </p>
           )}
@@ -186,8 +185,7 @@ export default function BrandCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 text-white shadow-lg hover:shadow-xl transition-all"
-                style={{ backgroundColor: '#9038fa' }}
+                className="flex-1 text-white shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90"
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />
@@ -197,7 +195,7 @@ export default function BrandCard({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="flex-1 border-purple-200 text-[#9038fa] bg-purple-50 cursor-not-allowed"
+                className="flex-1 border-primary/20 text-primary bg-primary/5 cursor-not-allowed"
                 disabled
               >
                 <Lock className="w-4 h-4 mr-1" />

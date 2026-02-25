@@ -149,8 +149,8 @@ export default function Home() {
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
                       <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-3">
-                          <Shield className="w-8 h-8 text-[#9038fa]" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-card rounded-2xl shadow-lg mb-3">
+                          <Shield className="w-8 h-8 text-primary" />
                         </div>
                         <h3 className="text-xl sm:text-2xl font-black leading-tight mb-2">
                           Ferramentas profissionais para marcas
@@ -195,8 +195,8 @@ export default function Home() {
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
                       <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-3">
-                          <Sparkles className="w-8 h-8 text-[#b77aff]" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-card rounded-2xl shadow-lg mb-3">
+                          <Sparkles className="w-8 h-8 text-primary" />
                         </div>
                         <h3 className="text-xl sm:text-2xl font-black leading-tight mb-2">
                           Oportunidades profissionais para criadores

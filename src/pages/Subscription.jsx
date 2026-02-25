@@ -122,7 +122,7 @@ export default function Subscription() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#9038fa]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -178,7 +178,7 @@ export default function Subscription() {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg" style={{ backgroundColor: '#9038fa' }}>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg bg-primary">
             <Crown className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold mb-2 text-foreground">Sua Assinatura</h1>
@@ -343,8 +343,7 @@ export default function Subscription() {
           size="lg"
           onClick={handleSubscribe}
           disabled={subscribing}
-          className="w-full sm:w-auto px-12 h-14 text-lg shadow-xl text-white"
-          style={{ backgroundColor: '#9038fa' }}
+          className="w-full sm:w-auto px-12 h-14 text-lg shadow-xl text-white bg-primary hover:bg-primary/90"
         >
           {subscribing ? (
             <Loader2 className="w-5 h-5 animate-spin" />
