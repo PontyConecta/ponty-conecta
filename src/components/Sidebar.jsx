@@ -74,13 +74,16 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                 key={item.page}
                 to={createPageUrl(item.page)}
                 className={cn(
-                   "flex items-center gap-3 rounded-xl text-sm font-medium transition-all",
+                   "flex items-center gap-3 rounded-xl text-sm font-medium transition-colors duration-150",
                    isCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3',
-                   isActive 
-                     ? 'shadow-sm' 
-                     : ''
+                   isActive ? 'shadow-sm' : ''
                  )}
-                 style={isActive ? { backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' } : { color: 'var(--text-secondary)' }}
+                 style={isActive 
+                   ? { backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' } 
+                   : { color: 'var(--text-secondary)' }
+                 }
+                 onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(144, 56, 250, 0.05)'; }}
+                 onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 {!isCollapsed && <span>{item.name}</span>}

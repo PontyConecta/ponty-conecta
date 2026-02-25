@@ -25,15 +25,21 @@ export default function DashboardFinancials() {
   }, []);
 
   const loadStripeData = async () => {
-    setLoading(true);
-    const response = await base44.functions.invoke('adminStripeMetrics', {});
-    if (response.data?.error) {
-      console.error('Stripe metrics error:', response.data.error);
+    try {
+      setLoading(true);
+      const response = await base44.functions.invoke('adminStripeMetrics', {});
+      if (response.data?.error) {
+        console.error('Stripe metrics error:', response.data.error);
+        setStripeData(null);
+      } else {
+        setStripeData(response.data);
+      }
+    } catch (error) {
+      console.error('Stripe metrics fetch error:', error);
       setStripeData(null);
-    } else {
-      setStripeData(response.data);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (loading) {

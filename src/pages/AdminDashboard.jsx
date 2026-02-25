@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,20 +22,15 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState('month');
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [activeTab, setActiveTab] = useState('overview');
 
   const isAdmin = user?.role === 'admin';
 
-  useEffect(() => {
-    if (isAdmin) {
-      loadAnalytics();
-    }
-  }, [isAdmin, dateRange]);
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       const response = await base44.functions.invoke('adminAnalytics', { dateRange });
-      if (response.data.error) throw new Error(response.data.error);
+      if (response.data?.error) throw new Error(response.data.error);
       setAnalytics(response.data);
       setLastRefresh(new Date());
     } catch (error) {
@@ -44,7 +39,13 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadAnalytics();
+    }
+  }, [isAdmin, loadAnalytics]);
 
   if (!isAdmin) {
     return (
@@ -92,21 +93,17 @@ export default function AdminDashboard() {
       {analytics && (
         <>
           {/* Tabs */}
-          <Tabs defaultValue="overview" className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList className="flex-wrap h-auto gap-1 p-1" style={{ backgroundColor: 'var(--bg-primary)' }}>
               <TabsTrigger value="overview" className="text-xs">Visão Geral</TabsTrigger>
               <TabsTrigger value="financials" className="text-xs">Financeiro</TabsTrigger>
               <TabsTrigger value="users" className="text-xs">Usuários</TabsTrigger>
               <TabsTrigger value="engagement" className="text-xs">Engajamento</TabsTrigger>
-              <TabsTrigger value="pipeline" className="text-xs">Pipeline</TabsTrigger>
               <TabsTrigger value="marketplace" className="text-xs">Marketplace</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
-              {/* Date Range Filter */}
               <DashboardDateFilter value={dateRange} onChange={setDateRange} />
-
-              {/* Overview Metrics */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <DashboardMetricCard
                   label="Total Usuários"
@@ -142,13 +139,12 @@ export default function AdminDashboard() {
                   tooltip="Percentual de entregas aprovadas sobre o total de entregas finalizadas."
                 />
               </div>
-
               <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
               <DashboardEngagementChart data={analytics.engagementChart} />
             </TabsContent>
 
             <TabsContent value="financials" className="space-y-6">
-              <DashboardFinancials />
+              {activeTab === 'financials' && <DashboardFinancials />}
             </TabsContent>
 
             <TabsContent value="users" className="space-y-6">
@@ -164,10 +160,6 @@ export default function AdminDashboard() {
                 <DashboardMetricCard label="Cumprimento" value={`${analytics.fulfillmentRate || 0}%`} tooltip="Percentual de entregas feitas sobre candidaturas aceitas." />
               </div>
               <DashboardEngagementChart data={analytics.engagementChart} />
-            </TabsContent>
-
-            <TabsContent value="pipeline" className="space-y-6">
-              <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
             </TabsContent>
 
             <TabsContent value="marketplace" className="space-y-6">

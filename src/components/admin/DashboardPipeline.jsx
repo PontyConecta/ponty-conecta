@@ -25,7 +25,7 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
   const maxVal = Math.max(...pipelineData.map(d => d.value), 1);
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Pipeline */}
       <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardContent className="p-4">

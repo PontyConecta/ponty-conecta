@@ -292,10 +292,13 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 pb-20 lg:pb-6 min-h-screen transition-[margin-left] duration-200 ease-in-out" style={{ backgroundColor: 'var(--bg-primary)', marginLeft: undefined }}>
+      <main className="pt-14 lg:pt-16 pb-20 lg:pb-6 min-h-screen transition-[margin-left] duration-200 ease-in-out" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <style>{`
           @media (min-width: 1024px) {
-            main { margin-left: ${sidebarCollapsed ? '64px' : '256px'} !important; }
+            main { margin-left: ${sidebarCollapsed ? '64px' : '256px'}; }
+          }
+          @media (max-width: 1023px) {
+            main { margin-left: 0; }
           }
         `}</style>
         <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
