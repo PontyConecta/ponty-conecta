@@ -125,9 +125,6 @@ function LayoutContent({ children, currentPageName }) {
               }
             }
 
-  // Check if user is admin
-  const isAdmin = user?.role === 'admin';
-  
   // Pages that don't need back button
   const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
 
