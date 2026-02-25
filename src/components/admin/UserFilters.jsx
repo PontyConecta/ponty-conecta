@@ -30,6 +30,9 @@ export default function UserFilters({
   nicheFilter, onNicheChange,
   dateFilter, onDateChange,
   verifiedFilter, onVerifiedChange,
+  tagFilter, onTagChange,
+  excludeFinancialsFilter, onExcludeFinancialsChange,
+  availableTags = [],
 }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -40,6 +43,8 @@ export default function UserFilters({
     nicheFilter && nicheFilter !== 'all' ? 1 : 0,
     dateFilter && dateFilter !== 'all' ? 1 : 0,
     verifiedFilter && verifiedFilter !== 'all' ? 1 : 0,
+    tagFilter && tagFilter !== 'all' ? 1 : 0,
+    excludeFinancialsFilter && excludeFinancialsFilter !== 'all' ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
 
   const handleClearAll = () => {
@@ -49,6 +54,8 @@ export default function UserFilters({
     onNicheChange?.('all');
     onDateChange?.('all');
     onVerifiedChange?.('all');
+    onTagChange?.('all');
+    onExcludeFinancialsChange?.('all');
     onSearchChange('');
   };
 
@@ -170,6 +177,36 @@ export default function UserFilters({
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              {/* Second row: Tag + Exclude financials */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                {/* Tag filter */}
+                <div className="flex items-center gap-2 flex-1">
+                  <Tag className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+                  <Select value={tagFilter || 'all'} onValueChange={onTagChange}>
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Tag" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as Tags</SelectItem>
+                      <SelectItem value="no_tags">Sem Tags</SelectItem>
+                      {availableTags.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Exclude from financials filter */}
+                <Select value={excludeFinancialsFilter || 'all'} onValueChange={onExcludeFinancialsChange}>
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue placeholder="Financeiros" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos (Financeiro)</SelectItem>
+                    <SelectItem value="excluded">Excluídos</SelectItem>
+                    <SelectItem value="included">Incluídos</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Active filters + clear */}
