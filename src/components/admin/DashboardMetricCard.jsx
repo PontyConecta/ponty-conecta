@@ -1,21 +1,52 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
-export default function DashboardMetricCard({ label, value, subtitle, icon: Icon, iconColor = 'text-blue-600' }) {
+function TrendBadge({ current, previous }) {
+  if (previous === undefined || previous === null) return null;
+  const prev = Number(previous) || 0;
+  const curr = Number(current) || 0;
+  if (prev === 0 && curr === 0) return null;
+
+  const pct = prev > 0 ? Math.round(((curr - prev) / prev) * 100) : (curr > 0 ? 100 : 0);
+  const isPositive = pct > 0;
+  const isNeutral = pct === 0;
+
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      <CardContent className="p-4 sm:p-6">
-        <div className="flex items-center justify-between">
-          <div className="min-w-0">
-            <p className="text-xs sm:text-sm mb-1 truncate" style={{ color: 'var(--text-secondary)' }}>{label}</p>
-            <p className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-              {value}
-            </p>
+    <span className={`inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+      isNeutral ? 'bg-slate-100 text-slate-500' :
+      isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+    }`}>
+      {isNeutral ? <Minus className="w-2.5 h-2.5" /> : isPositive ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
+      {Math.abs(pct)}%
+    </span>
+  );
+}
+
+export default function DashboardMetricCard({ label, value, subtitle, icon: Icon, iconColor = 'text-blue-600', trend, previousValue }) {
+  return (
+    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} className="hover:shadow-md transition-shadow">
+      <CardContent className="p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] sm:text-xs font-medium mb-1.5 uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>{label}</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-xl sm:text-2xl font-bold tabular-nums" style={{ color: 'var(--text-primary)' }}>
+                {value}
+              </p>
+              {(trend !== undefined || previousValue !== undefined) && (
+                <TrendBadge current={typeof value === 'string' ? parseFloat(value.replace(/[^\d.-]/g, '')) : value} previous={previousValue} />
+              )}
+            </div>
             {subtitle && (
-              <p className="text-[10px] sm:text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{subtitle}</p>
+              <p className="text-[10px] sm:text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{subtitle}</p>
             )}
           </div>
-          {Icon && <Icon className={`w-7 h-7 sm:w-8 sm:h-8 ${iconColor} flex-shrink-0`} />}
+          {Icon && (
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconColor.replace('text-', 'bg-').replace('-600', '-100').replace('-500', '-100')}`}>
+              <Icon className={`w-5 h-5 ${iconColor}`} />
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
