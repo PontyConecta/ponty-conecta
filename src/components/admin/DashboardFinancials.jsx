@@ -75,7 +75,7 @@ export default function DashboardFinancials() {
           {d.excludedCount > 0 && (
             <Badge variant="outline" className="gap-1 text-xs" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
               <EyeOff className="w-3 h-3" />
-              {d.excludedCount} excluído(s)
+              {d.excludedCount} excluído(s){d.excludedPremiumCount > 0 ? ` (${d.excludedPremiumCount} premium)` : ''}
             </Badge>
           )}
         </div>
