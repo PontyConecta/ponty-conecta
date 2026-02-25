@@ -183,7 +183,7 @@ export default function ApplicationsManager() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -194,18 +194,18 @@ export default function ApplicationsManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Candidaturas</h1>
-        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Candidaturas</h1>
+        <p className="text-sm mt-1 text-muted-foreground">
           {filteredApplications.length} candidaturas encontradas
         </p>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -255,20 +255,20 @@ export default function ApplicationsManager() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="hover:shadow-md transition-shadow">
+                <Card className="border bg-card shadow-sm hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                       {/* Creator Info */}
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <Avatar className="w-12 h-12">
                           <AvatarImage src={creator?.avatar_url} />
-                          <AvatarFallback className="bg-orange-100 text-orange-700">
+                          <AvatarFallback className="bg-primary/10 text-primary">
                             {creator?.display_name?.[0] || 'C'}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-slate-900 truncate">
+                            <h3 className="font-semibold truncate">
                               {creator?.display_name || 'Criador'}
                             </h3>
                             {creator?.verified && (
@@ -277,7 +277,7 @@ export default function ApplicationsManager() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-slate-500 truncate">
+                          <p className="text-sm text-muted-foreground truncate">
                             Campanha: {campaign?.title || '-'}
                           </p>
                           <div className="flex flex-wrap gap-2 mt-1">
@@ -296,12 +296,12 @@ export default function ApplicationsManager() {
                       {/* Application Details */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         {application.proposed_rate && (
-                          <div className="flex items-center gap-1 text-slate-600">
+                          <div className="flex items-center gap-1 text-muted-foreground">
                             <DollarSign className="w-4 h-4" />
                             R$ {application.proposed_rate}
                           </div>
                         )}
-                        <div className="text-slate-500">
+                        <div className="text-muted-foreground">
                           {new Date(application.created_date).toLocaleDateString('pt-BR')}
                         </div>
                         {getStatusBadge(application.status)}
@@ -340,8 +340,8 @@ export default function ApplicationsManager() {
                     {application.message && (
                       <div className="mt-4 pt-4 border-t">
                         <div className="flex items-start gap-2">
-                          <MessageSquare className="w-4 h-4 text-slate-400 mt-0.5" />
-                          <p className="text-sm text-slate-600 line-clamp-2">
+                          <MessageSquare className="w-4 h-4 text-muted-foreground mt-0.5" />
+                          <p className="text-sm text-muted-foreground line-clamp-2">
                             {application.message}
                           </p>
                         </div>
@@ -354,13 +354,13 @@ export default function ApplicationsManager() {
           })}
         </div>
       ) : (
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardContent className="p-12 text-center">
-            <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <Users className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
               Nenhuma candidatura encontrada
             </h3>
-            <p className="text-slate-500">
+            <p className="text-muted-foreground">
               {searchTerm || filterStatus !== 'all' || filterCampaign !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'As candidaturas aparecerão aqui quando criadores se aplicarem às suas campanhas'}
@@ -379,18 +379,18 @@ export default function ApplicationsManager() {
           {selectedApplication && (
             <div className="space-y-6 py-4">
               {/* Creator Profile */}
-              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+              <div className="flex items-center gap-4 p-4 bg-muted rounded-xl">
                 <Avatar className="w-16 h-16">
                   <AvatarImage src={creators[selectedApplication.creator_id]?.avatar_url} />
-                  <AvatarFallback className="bg-orange-100 text-orange-700 text-lg">
+                  <AvatarFallback className="bg-primary/10 text-primary text-lg">
                     {creators[selectedApplication.creator_id]?.display_name?.[0] || 'C'}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="font-semibold text-slate-900">
+                  <h4 className="font-semibold">
                     {creators[selectedApplication.creator_id]?.display_name || 'Criador'}
                   </h4>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-muted-foreground">
                     {creators[selectedApplication.creator_id]?.bio?.slice(0, 100)}...
                   </p>
                   <div className="flex gap-1 mt-2">
@@ -403,8 +403,8 @@ export default function ApplicationsManager() {
 
               {/* Campaign */}
               <div>
-                <Label className="text-sm text-slate-500">Campanha</Label>
-                <p className="font-medium text-slate-900">
+                <Label className="text-sm text-muted-foreground">Campanha</Label>
+                <p className="font-medium">
                   {campaigns[selectedApplication.campaign_id]?.title}
                 </p>
               </div>
@@ -412,8 +412,8 @@ export default function ApplicationsManager() {
               {/* Message */}
               {selectedApplication.message && (
                 <div>
-                  <Label className="text-sm text-slate-500">Mensagem</Label>
-                  <p className="text-slate-700 mt-1 whitespace-pre-wrap">
+                  <Label className="text-sm text-muted-foreground">Mensagem</Label>
+                  <p className="mt-1 whitespace-pre-wrap">
                     {selectedApplication.message}
                   </p>
                 </div>
@@ -422,7 +422,7 @@ export default function ApplicationsManager() {
               {/* Proposed Rate */}
               {selectedApplication.proposed_rate && (
                 <div>
-                  <Label className="text-sm text-slate-500">Valor Proposto</Label>
+                  <Label className="text-sm text-muted-foreground">Valor Proposto</Label>
                   <p className="text-lg font-semibold text-emerald-600">
                     R$ {selectedApplication.proposed_rate}
                   </p>
