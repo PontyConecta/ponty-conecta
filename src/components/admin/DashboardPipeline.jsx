@@ -15,19 +15,18 @@ const PIPELINE_CONFIG = {
 export default function DashboardPipeline({ pipeline, funnelData }) {
   if (!pipeline) return null;
 
-  const pipelineData = Object.entries(PIPELINE_CONFIG)
-    .map(([key, cfg]) => ({
-      stage: cfg.label,
-      value: pipeline[key] || 0,
-      color: cfg.color,
-    }))
-    .filter(d => d.value > 0);
+  // Show ALL stages, even with 0 count
+  const pipelineData = Object.entries(PIPELINE_CONFIG).map(([key, cfg]) => ({
+    stage: cfg.label,
+    value: pipeline[key] || 0,
+    color: cfg.color,
+  }));
 
-  const totalCampaigns = Object.values(pipeline).reduce((s, v) => s + (v || 0), 0);
+  const totalCampaigns = pipelineData.reduce((s, d) => s + d.value, 0);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Pipeline - compact horizontal bars */}
+      {/* Pipeline - compact horizontal bars showing ALL stages */}
       <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
@@ -36,14 +35,14 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
               {totalCampaigns} total
             </span>
           </div>
-          {pipelineData.length > 0 ? (
-            <div className="space-y-1.5">
-              {pipelineData.map(item => {
-                const pct = totalCampaigns > 0 ? Math.round((item.value / totalCampaigns) * 100) : 0;
-                return (
-                  <div key={item.stage} className="flex items-center gap-2">
-                    <span className="text-[11px] w-24 truncate text-right flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>{item.stage}</span>
-                    <div className="flex-1 h-5 rounded overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
+          <div className="space-y-1.5">
+            {pipelineData.map(item => {
+              const pct = totalCampaigns > 0 ? Math.round((item.value / totalCampaigns) * 100) : 0;
+              return (
+                <div key={item.stage} className="flex items-center gap-2">
+                  <span className="text-[11px] w-28 truncate text-right flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>{item.stage}</span>
+                  <div className="flex-1 h-5 rounded overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    {item.value > 0 ? (
                       <div 
                         className="h-full rounded flex items-center px-1.5 transition-all"
                         style={{ 
@@ -53,19 +52,21 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
                       >
                         <span className="text-[10px] font-bold text-white">{item.value}</span>
                       </div>
-                    </div>
-                    <span className="text-[10px] w-8 text-right flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>{pct}%</span>
+                    ) : (
+                      <div className="h-full flex items-center px-1.5">
+                        <span className="text-[10px]" style={{ color: 'var(--text-secondary)', opacity: 0.5 }}>0</span>
+                      </div>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-xs text-center py-6" style={{ color: 'var(--text-secondary)' }}>Sem dados de pipeline</p>
-          )}
+                  <span className="text-[10px] w-8 text-right flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>{pct}%</span>
+                </div>
+              );
+            })}
+          </div>
         </CardContent>
       </Card>
 
-      {/* Funnel - step-based vertical flow */}
+      {/* Funnel - vertical flow with correct percentages */}
       {funnelData && funnelData.length > 0 && (
         <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-4">
@@ -73,9 +74,12 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
             <div className="space-y-0">
               {funnelData.map((item, i) => {
                 const firstVal = funnelData[0]?.value || 1;
-                const widthPct = Math.max((item.value / firstVal) * 100, 20);
-                const dropRate = i > 0 && funnelData[i - 1].value > 0 
-                  ? Math.round((item.value / funnelData[i - 1].value) * 100) 
+                // Width relative to first stage for visual funnel shape
+                const widthPct = firstVal > 0 ? Math.max((item.value / firstVal) * 100, 18) : 18;
+                // Drop rate relative to PREVIOUS stage
+                const prevVal = i > 0 ? funnelData[i - 1].value : 0;
+                const dropRate = i > 0 && prevVal > 0 
+                  ? Math.round((item.value / prevVal) * 100) 
                   : null;
                 return (
                   <React.Fragment key={item.stage}>
@@ -89,12 +93,13 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
                         )}
                       </div>
                     )}
-                    <div className="flex items-center mx-auto" style={{ width: `${widthPct}%`, minWidth: '100%' }}>
+                    <div className="flex justify-center">
                       <div 
-                        className="h-8 rounded-lg flex items-center justify-between px-3 transition-all mx-auto"
+                        className="h-8 rounded-lg flex items-center justify-between px-3 transition-all"
                         style={{ 
                           width: `${widthPct}%`,
                           minWidth: '120px',
+                          maxWidth: '100%',
                           backgroundColor: item.color,
                           opacity: 0.9
                         }}
@@ -108,17 +113,24 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
               })}
             </div>
             {/* Conversion summary */}
-            <div className="mt-3 pt-2 border-t flex justify-between items-center" style={{ borderColor: 'var(--border-color)' }}>
-              <span className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>Taxa geral (início → fim)</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ 
-                color: 'white',
-                backgroundColor: funnelData[0]?.value > 0 && Math.round((funnelData[funnelData.length - 1].value / funnelData[0].value) * 100) >= 50 ? '#10b981' : '#f59e0b'
-              }}>
-                {funnelData[0]?.value > 0 
-                  ? `${Math.round((funnelData[funnelData.length - 1].value / funnelData[0].value) * 100)}%` 
-                  : '0%'}
-              </span>
-            </div>
+            {funnelData.length >= 2 && (
+              <div className="mt-3 pt-2 border-t flex justify-between items-center" style={{ borderColor: 'var(--border-color)' }}>
+                <span className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>Taxa geral (início → fim)</span>
+                {(() => {
+                  const rate = funnelData[0]?.value > 0 
+                    ? Math.round((funnelData[funnelData.length - 1].value / funnelData[0].value) * 100) 
+                    : 0;
+                  return (
+                    <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ 
+                      color: 'white',
+                      backgroundColor: rate >= 50 ? '#10b981' : rate >= 20 ? '#f59e0b' : '#ef4444'
+                    }}>
+                      {rate}%
+                    </span>
+                  );
+                })()}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

@@ -33,9 +33,7 @@ function LayoutContent({ children, currentPageName }) {
   const { isSubscribed } = useSubscription();
   const navigate = useNavigate();
   const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    return localStorage.getItem('sidebar-collapsed') === 'true';
-  });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
@@ -47,11 +45,7 @@ function LayoutContent({ children, currentPageName }) {
   }, [currentPageName]);
 
   const handleToggleSidebar = () => {
-    setSidebarCollapsed(prev => {
-      const next = !prev;
-      localStorage.setItem('sidebar-collapsed', next);
-      return next;
-    });
+    setSidebarCollapsed(prev => !prev);
   };
 
   // Redirect to login if not authenticated (except special pages)
@@ -298,12 +292,7 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className={`pt-14 lg:pt-16 pb-20 lg:pb-6 min-h-screen transition-all duration-200`} style={{ backgroundColor: 'var(--bg-primary)', paddingLeft: sidebarCollapsed ? '4rem' : '16rem' }}>
-        <style>{`
-          @media (max-width: 1023px) {
-            main { padding-left: 0 !important; }
-          }
-        `}</style>
+      <main className={`pt-14 lg:pt-16 pb-20 lg:pb-6 min-h-screen transition-all duration-200 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`} style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
           {children}
         </div>

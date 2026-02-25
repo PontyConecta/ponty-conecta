@@ -4,6 +4,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { DollarSign, TrendingUp, Target, Repeat, Users, CreditCard, EyeOff, RefreshCw } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import DashboardMetricCard from './DashboardMetricCard';
@@ -73,15 +78,28 @@ export default function DashboardFinancials() {
         <div className="flex items-center gap-3 flex-wrap">
           <DashboardProfileFilter value={profileFilter} onChange={setProfileFilter} />
           {d.excludedCount > 0 && (
-            <Badge variant="outline" className="gap-1.5 text-xs py-1 px-2.5" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
-              <EyeOff className="w-3 h-3 flex-shrink-0" />
-              <span>
-                {d.excludedCount} excluído(s)
-                <span className="text-[10px] opacity-70 ml-1">
-                  ({d.excludedManualCount > 0 ? `${d.excludedManualCount} manual` : ''}{d.excludedManualCount > 0 && d.excludedOrphanCount > 0 ? ' · ' : ''}{d.excludedOrphanCount > 0 ? `${d.excludedOrphanCount} Stripe órfão` : ''}{d.excludedPremiumCount > 0 ? ` · ${d.excludedPremiumCount} premium` : ''})
-                </span>
-              </span>
-            </Badge>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Badge variant="outline" className="gap-1.5 text-xs py-1 px-2.5 cursor-pointer hover:opacity-80 transition-opacity" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
+                  <EyeOff className="w-3 h-3 flex-shrink-0" />
+                  <span>{d.excludedCount} excluído(s)</span>
+                </Badge>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-56 p-3 text-xs" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+                <p className="font-semibold mb-2">Excluídos das métricas:</p>
+                <ul className="space-y-1">
+                  {d.excludedManualCount > 0 && (
+                    <li className="flex justify-between"><span style={{ color: 'var(--text-secondary)' }}>Marcados manualmente</span><span className="font-medium">{d.excludedManualCount}</span></li>
+                  )}
+                  {d.excludedOrphanCount > 0 && (
+                    <li className="flex justify-between"><span style={{ color: 'var(--text-secondary)' }}>Sem perfil vinculado</span><span className="font-medium">{d.excludedOrphanCount}</span></li>
+                  )}
+                  {d.excludedPremiumCount > 0 && (
+                    <li className="flex justify-between"><span style={{ color: 'var(--text-secondary)' }}>Premium (outras fontes)</span><span className="font-medium">{d.excludedPremiumCount}</span></li>
+                  )}
+                </ul>
+              </PopoverContent>
+            </Popover>
           )}
         </div>
         <Button onClick={loadStripeData} variant="outline" size="sm" disabled={loading}>
