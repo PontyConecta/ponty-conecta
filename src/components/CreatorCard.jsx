@@ -71,7 +71,7 @@ export default function CreatorCard({
               </div>
             </div>
             {!isSubscribed && (
-              <Lock className="w-4 h-4 text-slate-300" />
+              <Lock className="w-4 h-4 text-muted-foreground" />
             )}
           </div>
         </CardContent>
@@ -80,7 +80,7 @@ export default function CreatorCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group hover:scale-[1.02] flex flex-col" >
+    <Card className="overflow-hidden hover:shadow-md transition-all duration-300 group flex flex-col">
       {/* Cover Image */}
       <div className="h-24 relative flex-shrink-0" className="bg-[#9038fa]">
         {creator.cover_image_url && (
@@ -209,7 +209,7 @@ export default function CreatorCard({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="flex-1 border-purple-200 text-[#9038fa] bg-purple-50 cursor-not-allowed"
+                className="flex-1 border-primary/20 text-primary bg-primary/5 cursor-not-allowed"
                 disabled
               >
                 <Lock className="w-4 h-4 mr-1" />
