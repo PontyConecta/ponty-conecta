@@ -36,11 +36,11 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {/* Campanhas ao Longo do Tempo */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card >
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Campanhas Criadas</CardTitle>
-            <span className="text-sm font-bold" style={{ color: 'var(--accent-primary)' }}>{campaigns.length} total</span>
+            <CardTitle className="text-lg font-semibold" >Campanhas Criadas</CardTitle>
+            <span className="text-sm font-bold" className="text-primary">{campaigns.length} total</span>
           </div>
         </CardHeader>
         <CardContent>
@@ -58,36 +58,36 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[220px] flex items-center justify-center" style={{ color: 'var(--text-secondary)' }}>
+            <div className="h-[220px] flex items-center justify-center" className="text-muted-foreground">
               Nenhuma campanha criada ainda
             </div>
           )}
           {/* Summary stats below chart */}
-          <div className="grid grid-cols-4 gap-2 mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
+          <div className="grid grid-cols-4 gap-2 mt-4 pt-4" className="border-t">
             <div className="text-center">
-              <div className="text-lg font-bold" style={{ color: '#9038fa' }}>{activeCampaigns}</div>
-              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Ativas</div>
+              <div className="text-lg font-bold" className="text-primary">{activeCampaigns}</div>
+              <div className="text-[10px]" className="text-muted-foreground">Ativas</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold" style={{ color: 'var(--text-secondary)' }}>{draftCampaigns}</div>
-              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Rascunhos</div>
+              <div className="text-lg font-bold" className="text-muted-foreground">{draftCampaigns}</div>
+              <div className="text-[10px]" className="text-muted-foreground">Rascunhos</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-emerald-600">{completedCampaigns}</div>
-              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Concluídas</div>
+              <div className="text-[10px]" className="text-muted-foreground">Concluídas</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-amber-600">{otherCampaigns}</div>
-              <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Outras</div>
+              <div className="text-[10px]" className="text-muted-foreground">Outras</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Taxa de Aceitação */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card >
         <CardHeader>
-          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Taxa de Aceitação</CardTitle>
+          <CardTitle className="text-lg font-semibold" >Taxa de Aceitação</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -108,24 +108,24 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                   <span className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{acceptanceRate}%</span>
-                   <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>aprovação</span>
+                   <span className="text-3xl font-bold" >{acceptanceRate}%</span>
+                   <span className="text-xs" className="text-muted-foreground">aprovação</span>
                 </div>
               </div>
             </div>
             
-            <div className="grid grid-cols-3 gap-3 text-center pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
+            <div className="grid grid-cols-3 gap-3 text-center pt-4" className="border-t">
               <div>
-                <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalApps}</div>
-                <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Total de candidatos</div>
+                <div className="text-2xl font-bold" >{totalApps}</div>
+                <div className="text-[10px]" className="text-muted-foreground">Total de candidatos</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-emerald-600">{acceptedApps}</div>
-                <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Aceitos</div>
+                <div className="text-[10px]" className="text-muted-foreground">Aceitos</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-amber-600">{pendingApps}</div>
-                <div className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>Pendentes</div>
+                <div className="text-[10px]" className="text-muted-foreground">Pendentes</div>
               </div>
             </div>
           </div>
