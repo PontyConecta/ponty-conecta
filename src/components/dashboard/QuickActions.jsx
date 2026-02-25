@@ -23,8 +23,9 @@ export default function QuickActions({ profileType, isSubscribed }) {
             transition={{ duration: 0.3, delay: index * 0.05 }}
           >
             <Link to={createPageUrl(targetPage)}>
-              <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer" 
-                style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+              <Card className="transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-md)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-sm)'}>
                 <CardContent className="p-4 flex flex-col items-center text-center gap-3">
                   <div 
                     className="w-12 h-12 rounded-xl flex items-center justify-center relative shadow-sm"

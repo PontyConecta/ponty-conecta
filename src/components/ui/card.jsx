@@ -3,11 +3,11 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const Card = React.forwardRef(({ className, style, ...props }, ref) => (
+const Card = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("rounded-xl border bg-card text-card-foreground shadow", className)}
-    style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)', ...style }}
+    className={cn("rounded-xl border bg-card text-card-foreground", className)}
+    style={{ boxShadow: 'var(--shadow-sm)' }}
     {...props} />
 ))
 Card.displayName = "Card"
@@ -28,11 +28,10 @@ const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
 ))
 CardTitle.displayName = "CardTitle"
 
-const CardDescription = React.forwardRef(({ className, style, ...props }, ref) => (
+const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
-    style={{ color: 'var(--text-secondary)', ...style }}
     {...props} />
 ))
 CardDescription.displayName = "CardDescription"
