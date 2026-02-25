@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
 
     const { dateRange, type } = await req.json();
 
-    // Users list request
+    // Users list request - lightweight, only fetches user data
     if (type === 'list_users') {
       const [allUsers, allBrands, allCreators] = await Promise.all([
         base44.asServiceRole.entities.User.list(),
@@ -19,6 +19,47 @@ Deno.serve(async (req) => {
         base44.asServiceRole.entities.Creator.list()
       ]);
       return Response.json({ users: allUsers, brands: allBrands, creators: allCreators });
+    }
+
+    // Lightweight overview - only basic counts, no heavy chart computation
+    if (type === 'overview_only') {
+      const [allUsers, brands, creators, campaigns, applications, deliveries] = await Promise.all([
+        base44.asServiceRole.entities.User.list(),
+        base44.asServiceRole.entities.Brand.list(),
+        base44.asServiceRole.entities.Creator.list(),
+        base44.asServiceRole.entities.Campaign.list(),
+        base44.asServiceRole.entities.Application.list(),
+        base44.asServiceRole.entities.Delivery.list(),
+      ]);
+
+      const now = new Date();
+      let startDate = new Date();
+      if (dateRange === 'day') startDate.setDate(now.getDate() - 1);
+      else if (dateRange === 'week') startDate.setDate(now.getDate() - 7);
+      else if (dateRange === 'month') startDate.setMonth(now.getMonth() - 1);
+      else if (dateRange === 'year') startDate.setFullYear(now.getFullYear() - 1);
+
+      const filterByDate = (items, start) => items.filter(i => new Date(i.created_date) >= start);
+
+      const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
+      const totalApps = applications.length;
+      const acceptedApps = applications.filter(a => a.status === 'accepted').length;
+      const approvedDeliveries = deliveries.filter(d => d.status === 'approved').length;
+      const totalFinished = deliveries.filter(d => ['approved', 'contested', 'closed', 'resolved'].includes(d.status)).length;
+
+      return Response.json({
+        totalUsers: allUsers.length,
+        totalBrands: brands.length,
+        totalCreators: creators.length,
+        newUsers: filterByDate(brands, startDate).length + filterByDate(creators, startDate).length,
+        activeCampaigns,
+        totalApplications: totalApps,
+        acceptedApplications: acceptedApps,
+        completedDeliveries: approvedDeliveries,
+        conversionRate: totalApps > 0 ? Math.round((acceptedApps / totalApps * 100) * 10) / 10 : 0,
+        successRate: totalFinished > 0 ? Math.round((approvedDeliveries / totalFinished * 100) * 10) / 10 : 100,
+        growthRate: 0,
+      });
     }
 
     // Date range calculation
