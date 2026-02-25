@@ -73,7 +73,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                 to={createPageUrl(item.page)}
                 className={cn(
                   "flex items-center gap-3 rounded-xl text-sm font-medium transition-colors duration-150",
-                  isCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3',
+                  isCollapsed ? 'justify-center px-2 py-3 min-h-[44px]' : 'px-4 py-3 min-h-[44px]',
                   isActive 
                     ? 'bg-primary/10 text-primary shadow-sm' 
                     : 'text-muted-foreground hover:bg-accent/10 hover:text-foreground'

@@ -119,7 +119,7 @@ export default function CampaignManager() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">
             {editingCampaign ? 'Editar Campanha' : 'Nova Campanha'}
           </h1>
           <p className="mt-1 text-muted-foreground">
@@ -141,12 +141,12 @@ export default function CampaignManager() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Campanhas</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Campanhas</h1>
           <p className="mt-1 text-muted-foreground">Gerencie suas campanhas</p>
         </div>
         
         <Button 
-          className="bg-[#9038fa] hover:bg-[#7a2de0]"
+          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm min-h-[44px]"
           onClick={() => { 
             if (!profileValidation.isComplete) {
               toast.error('Complete seu perfil antes de criar campanhas');
@@ -174,7 +174,7 @@ export default function CampaignManager() {
       )}
 
       {/* Filters */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <SearchFilter
@@ -213,7 +213,7 @@ export default function CampaignManager() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="hover:shadow-md transition-shadow">
+                <Card className="border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
                   <CardContent className="p-4 lg:p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                       {/* Cover Image */}
@@ -235,7 +235,7 @@ export default function CampaignManager() {
                           {/* Actions Dropdown */}
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Button variant="ghost" size="icon" className="h-9 w-9 min-h-[44px] min-w-[44px]">
                                 <MoreVertical className="w-4 h-4" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -332,7 +332,7 @@ export default function CampaignManager() {
           })}
         </div>
       ) : (
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardContent className="p-12 text-center">
             <Megaphone className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
@@ -358,7 +358,7 @@ export default function CampaignManager() {
                   setIsCreateOpen(true);
                 }
               }} 
-              className="bg-[#9038fa] hover:bg-[#7a2de0]"
+              className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Campanha
