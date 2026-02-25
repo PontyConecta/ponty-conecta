@@ -126,6 +126,19 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case 'set_exclude_financials': {
+        const excludeValue = data?.exclude_from_financials;
+        await base44.asServiceRole.entities.User.update(userId, { 
+          exclude_from_financials: !!excludeValue 
+        });
+        auditAction = 'subscription_override';
+        auditDetails = excludeValue 
+          ? 'User excluded from financial calculations' 
+          : 'User included back in financial calculations';
+        result = { exclude_from_financials: !!excludeValue };
+        break;
+      }
+
       case 'flag_review': {
         auditAction = 'user_flagged';
         auditDetails = `User flagged for review`;
