@@ -104,29 +104,29 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                       {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500 flex-shrink-0" />}
                       {profile?.is_verified && <CheckCircle2 className="w-3 h-3 text-blue-500 flex-shrink-0" />}
                     </div>
-                    <p className="text-[10px] truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
+                    <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
                   </div>
                 </div>
                 <div>
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
+                  <Badge variant="outline" className="text-xs px-2 py-0.5 capitalize" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
                     {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                   </Badge>
                 </div>
                 <div>{renderSubBadge(profile?.subscription_status)}</div>
                 <div>
-                  <Badge className={`border-0 text-[10px] px-1.5 py-0 ${profile?.account_state === 'ready' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  <Badge className={`border-0 text-xs px-2 py-0.5 ${profile?.account_state === 'ready' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                     {profile?.account_state === 'ready' ? 'Pronta' : 'Incompleta'}
                   </Badge>
                 </div>
                 <div>
                   {location && (
-                    <span className="text-[10px] flex items-center gap-0.5" style={{ color: 'var(--text-secondary)' }}>
-                      <MapPin className="w-2.5 h-2.5" />{location}
+                    <span className="text-xs flex items-center gap-0.5" style={{ color: 'var(--text-secondary)' }}>
+                      <MapPin className="w-3 h-3" />{location}
                     </span>
                   )}
                 </div>
                 <div>
-                  <span className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                     {new Date(user.created_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                   </span>
                 </div>
