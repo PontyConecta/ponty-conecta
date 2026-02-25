@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
     const thisMonthKey = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; })();
     const lastMonthKey = (() => { const d = new Date(); d.setMonth(d.getMonth()-1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; })();
 
-    const trialingSubs = subscriptions.filter(s => s.status === 'trialing');
+    const trialingSubs = subscriptions.filter(s => s.status === 'trialing' && hasValue(s));
 
     const subDistribution = [
       { name: 'Ativas', value: activeSubs.length, color: '#10b981' },
