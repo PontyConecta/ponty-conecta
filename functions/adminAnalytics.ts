@@ -26,7 +26,12 @@ Deno.serve(async (req) => {
     let startDate = new Date();
     let previousStartDate = new Date();
     
-    if (dateRange === 'day') {
+    if (typeof dateRange === 'object' && dateRange?.type === 'custom') {
+      startDate = new Date(dateRange.from);
+      const rangeDays = Math.ceil((new Date(dateRange.to) - startDate) / (1000 * 60 * 60 * 24));
+      previousStartDate = new Date(startDate);
+      previousStartDate.setDate(previousStartDate.getDate() - rangeDays);
+    } else if (dateRange === 'day') {
       startDate.setDate(now.getDate() - 1);
       previousStartDate.setDate(now.getDate() - 2);
     } else if (dateRange === 'week') {

@@ -7,6 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { toast } from 'sonner';
 
+import AdminHeader from '../components/admin/AdminHeader';
 import DashboardMetricCard from '../components/admin/DashboardMetricCard';
 import DashboardDateFilter from '../components/admin/DashboardDateFilter';
 import DashboardUserStats from '../components/admin/DashboardUserStats';
@@ -69,10 +70,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6" style={{ color: 'var(--text-primary)' }}>
-      {/* Header */}
+      {/* Admin Navigation Header */}
+      <AdminHeader currentPageName="AdminDashboard" />
+
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboards</h1>
           <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
             Atualizado: {lastRefresh.toLocaleTimeString('pt-BR')}
           </p>
