@@ -23,15 +23,24 @@ export const ThemeProvider = ({ children }) => {
     const safe = VALID_THEMES.includes(normalized) ? normalized : 'light';
     // Persist canonical name if it was legacy
     if (raw !== safe) localStorage.setItem('ponty-theme', safe);
-    setTheme(safe);
-    document.documentElement.setAttribute('data-theme', safe);
+    applyTheme(safe);
   }, []);
+
+  const applyTheme = (themeName) => {
+    setTheme(themeName);
+    document.documentElement.setAttribute('data-theme', themeName);
+    
+    // Debug log for verification
+    requestAnimationFrame(() => {
+      const cs = getComputedStyle(document.documentElement);
+      console.log(`[Theme] Applied: "${themeName}" | --background: "${cs.getPropertyValue('--background').trim()}" | --card: "${cs.getPropertyValue('--card').trim()}" | --foreground: "${cs.getPropertyValue('--foreground').trim()}"`);
+    });
+  };
 
   const changeTheme = (newTheme) => {
     const safe = normalizeTheme(newTheme);
-    setTheme(safe);
     localStorage.setItem('ponty-theme', safe);
-    document.documentElement.setAttribute('data-theme', safe);
+    applyTheme(safe);
   };
 
   return (
