@@ -9,7 +9,6 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
-import AdminMenu from '@/components/AdminMenu';
 // BackButton removed
 import { Toaster } from 'sonner';
 import { 
@@ -245,8 +244,6 @@ function LayoutContent({ children, currentPageName }) {
 
             {/* Notifications */}
             <NotificationDropdown />
-
-            {isAdmin && <AdminMenu currentPageName={currentPageName} />}
 
                 {/* Subscription Button */}
                 {!isSubscribed && (
