@@ -13,18 +13,17 @@ export default function ThemeSelector() {
   const { theme, changeTheme } = useTheme();
 
   const themes = [
-    { value: 'light', icon: Sun },
-    { value: 'dark', icon: Moon },
-    { value: 'neon', icon: Zap },
+    { value: 'light', label: 'Light', icon: Sun },
+    { value: 'dark', label: 'Dark', icon: Moon },
+    { value: 'neon', label: 'Neon', icon: Zap },
   ];
 
-  const currentThemeIcon = themes.find(t => t.value === theme)?.icon || Sun;
-  const CurrentIcon = currentThemeIcon;
+  const CurrentIcon = themes.find(t => t.value === theme)?.icon || Sun;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-indigo-500/10" style={{ color: 'var(--text-primary)' }}>
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
           <CurrentIcon className="w-5 h-5" />
         </Button>
       </DropdownMenuTrigger>
@@ -34,7 +33,7 @@ export default function ThemeSelector() {
           return (
             <DropdownMenuItem key={t.value} onClick={() => changeTheme(t.value)}>
               <Icon className="w-4 h-4 mr-2" />
-              <span className="capitalize">{t.value}</span>
+              <span>{t.label}</span>
             </DropdownMenuItem>
           );
         })}
