@@ -140,7 +140,7 @@ export default function BrandDashboard() {
   const isNewUser = campaigns.length === 0 && pendingApplications.length === 0;
 
   return (
-    <div className="space-y-4 lg:space-y-6">
+    <div className="space-y-5 lg:space-y-6">
       {/* Welcome Banner for new users */}
       {isNewUser ? (
         <WelcomeBanner 
@@ -151,7 +151,7 @@ export default function BrandDashboard() {
       ) : (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold">
+            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">
               Olá, {brand?.company_name?.split(' ')[0]} 👋
             </h1>
             <p className="text-sm mt-1 text-muted-foreground">
@@ -159,7 +159,7 @@ export default function BrandDashboard() {
             </p>
           </div>
           <Link to={createPageUrl(isSubscribed ? 'CampaignManager' : 'Subscription')}>
-            <Button className={isSubscribed ? 'bg-[#9038fa] hover:bg-[#7a2de0]' : 'bg-gradient-to-r from-[#9038fa] to-[#b77aff]'}>
+            <Button className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm">
               {isSubscribed ? <><Plus className="w-4 h-4 mr-2" />Nova Campanha</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
             </Button>
           </Link>
@@ -192,7 +192,7 @@ export default function BrandDashboard() {
 
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Campaigns */}
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-semibold">Campanhas Recentes</CardTitle>
             <Link to={createPageUrl('CampaignManager')}>
@@ -235,7 +235,7 @@ export default function BrandDashboard() {
         </Card>
 
         {/* Pending Applications */}
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-semibold">Candidaturas Pendentes</CardTitle>
             <Link to={createPageUrl('ApplicationsManager')}>
@@ -276,11 +276,11 @@ export default function BrandDashboard() {
       </div>
 
       {/* Recent Deliveries */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold">Entregas de Criadores</CardTitle>
           <Link to={createPageUrl('DeliveriesManager')}>
-            <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
+            <Button variant="ghost" size="sm" className="text-primary">
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
