@@ -234,7 +234,7 @@ export default function OpportunityFeed() {
   }
 
   return (
-    <div className="space-y-4 lg:space-y-6">
+    <div className="space-y-5 lg:space-y-6">
       {/* Pull to Refresh Indicator */}
       {refreshing && (
         <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg bg-card">
@@ -245,8 +245,8 @@ export default function OpportunityFeed() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2">
-            <Megaphone className="w-7 h-7 lg:w-8 lg:h-8 text-primary" />
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Megaphone className="w-6 h-6 lg:w-7 lg:h-7 text-primary" />
             Campanhas
           </h1>
           <p className="mt-1 text-muted-foreground">
@@ -265,7 +265,7 @@ export default function OpportunityFeed() {
 
       {/* Subscription Banner */}
       {!isSubscribed && profileValidation.isComplete && (
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -278,7 +278,7 @@ export default function OpportunityFeed() {
                 </p>
               </div>
               <Button 
-                className="bg-[#9038fa] hover:bg-[#7a2de0]"
+                className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm min-h-[44px]"
                 onClick={() => setShowPaywall(true)}
               >
                 Assinar
@@ -289,7 +289,7 @@ export default function OpportunityFeed() {
       )}
 
       {/* Filters */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
@@ -345,7 +345,7 @@ export default function OpportunityFeed() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="hover:shadow-md transition-all duration-300 group cursor-pointer overflow-hidden" onClick={() => openCampaignDetails(campaign)}>
+                <Card className="border bg-card shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer overflow-hidden" onClick={() => openCampaignDetails(campaign)}>
                   {/* Cover */}
                   {campaign.cover_image_url && (
                     <div className="h-36 overflow-hidden">
@@ -420,9 +420,9 @@ export default function OpportunityFeed() {
                         </Badge>
                       ) : (
                         <Button
-                          size="sm"
-                          onClick={(e) => { e.stopPropagation(); openCampaignDetails(campaign); }}
-                          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white text-xs h-8 px-3"
+                        size="sm"
+                        onClick={(e) => { e.stopPropagation(); openCampaignDetails(campaign); }}
+                        className="bg-[#9038fa] hover:bg-[#7a2de0] text-white text-xs h-9 px-3 min-h-[44px]"
                         >
                           <Eye className="w-3.5 h-3.5 mr-1" />
                           Ver
@@ -436,7 +436,7 @@ export default function OpportunityFeed() {
           })}
         </div>
       ) : (
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardContent className="p-12 text-center">
             <Megaphone className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
             <h3 className="text-lg font-semibold mb-2">
@@ -477,34 +477,34 @@ export default function OpportunityFeed() {
                             {brands[selectedCampaign.brand_id]?.logo_url ? (
                               <img src={brands[selectedCampaign.brand_id].logo_url} alt="" className="w-14 h-14 rounded-lg object-cover" />
                             ) : (
-                              <div className="w-14 h-14 rounded-lg flex items-center justify-center" className="bg-muted">
-                                <Building2 className="w-7 h-7" className="text-muted-foreground" />
+                              <div className="w-14 h-14 rounded-lg flex items-center justify-center bg-muted">
+                                <Building2 className="w-7 h-7 text-muted-foreground" />
                               </div>
                             )}
                             <div>
-                              <h2 className="text-xl font-bold" >{selectedCampaign.title}</h2>
+                              <h2 className="text-xl font-bold">{selectedCampaign.title}</h2>
                               <p className="text-muted-foreground">{brands[selectedCampaign.brand_id]?.company_name}</p>
                             </div>
                           </div>
 
                           {/* Description */}
                           <div>
-                            <h4 className="font-medium mb-2" >Descrição</h4>
+                            <h4 className="font-medium mb-2">Descrição</h4>
                             <p className="text-muted-foreground">{selectedCampaign.description}</p>
                           </div>
 
                           {/* Target Audience */}
                           {selectedCampaign.target_audience && (
                             <div>
-                              <h4 className="font-medium mb-2" >Público-Alvo</h4>
+                              <h4 className="font-medium mb-2">Público-Alvo</h4>
                               <p className="text-muted-foreground">{selectedCampaign.target_audience}</p>
                             </div>
                           )}
 
                           {/* Requirements */}
                           {selectedCampaign.requirements && (
-                            <div className="p-4 rounded-xl" className="bg-muted">
-                              <h4 className="font-medium mb-2" >Requisitos e Entregas</h4>
+                           <div className="p-4 rounded-xl bg-muted">
+                             <h4 className="font-medium mb-2">Requisitos e Entregas</h4>
                               <p className="text-muted-foreground">{selectedCampaign.requirements}</p>
                             </div>
                           )}
@@ -512,7 +512,7 @@ export default function OpportunityFeed() {
                           {/* Content Guidelines */}
                           {selectedCampaign.content_guidelines && (
                             <div>
-                              <h4 className="font-medium mb-2" >Diretrizes de Conteúdo</h4>
+                              <h4 className="font-medium mb-2">Diretrizes de Conteúdo</h4>
                               <p className="text-muted-foreground">{selectedCampaign.content_guidelines}</p>
                             </div>
                           )}
@@ -579,15 +579,15 @@ export default function OpportunityFeed() {
                       <Badge key={i} variant="outline">{p}</Badge>
                     ))}
                     {selectedCampaign.content_type?.map((ct, i) => (
-                      <Badge key={i} variant="outline" className="bg-slate-50">{ct}</Badge>
+                      <Badge key={i} variant="outline" className="bg-muted">{ct}</Badge>
                     ))}
                   </div>
 
                   {/* Remuneration */}
-                  <div className="p-4 rounded-xl" className="bg-muted">
-                    <h4 className="font-medium mb-2" >Remuneração</h4>
+                  <div className="p-4 rounded-xl bg-muted">
+                    <h4 className="font-medium mb-2">Remuneração</h4>
                     {selectedCampaign.remuneration_type === 'cash' && (
-                       <p className="text-lg font-semibold" >
+                       <p className="text-lg font-semibold">
                          R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
                        </p>
                      )}
@@ -598,7 +598,7 @@ export default function OpportunityFeed() {
                           <p className="text-muted-foreground">{selectedCampaign.barter_description}</p>
                         )}
                         {selectedCampaign.barter_value && (
-                          <p className="text-sm mt-1" className="text-muted-foreground">Valor estimado: R$ {selectedCampaign.barter_value}</p>
+                          <p className="text-sm mt-1 text-muted-foreground">Valor estimado: R$ {selectedCampaign.barter_value}</p>
                         )}
                       </div>
                     )}
@@ -609,7 +609,7 @@ export default function OpportunityFeed() {
                           R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0} + Permuta
                         </p>
                         {selectedCampaign.barter_description && (
-                          <p className="text-sm mt-1" className="text-muted-foreground">{selectedCampaign.barter_description}</p>
+                          <p className="text-sm mt-1 text-muted-foreground">{selectedCampaign.barter_description}</p>
                         )}
                       </div>
                     )}
@@ -621,7 +621,7 @@ export default function OpportunityFeed() {
                       Fechar
                     </Button>
                     {!hasApplied(selectedCampaign.id) && (
-                      <Button onClick={startApplication} className="flex-1 bg-[#9038fa] hover:bg-[#7a2de0]">
+                      <Button onClick={startApplication} className="flex-1 bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm min-h-[44px]">
                         <Send className="w-4 h-4 mr-2" />
                         Candidatar-se
                       </Button>
@@ -632,30 +632,30 @@ export default function OpportunityFeed() {
                 // Application Form View
                   <>
                     {/* Campaign Summary */}
-                    <div className="p-4 rounded-xl" className="bg-muted">
-                      <h4 className="font-semibold mb-1" >{selectedCampaign.title}</h4>
-                      <p className="text-sm" className="text-muted-foreground">
+                    <div className="p-4 rounded-xl bg-muted">
+                      <h4 className="font-semibold mb-1">{selectedCampaign.title}</h4>
+                      <p className="text-sm text-muted-foreground">
                         {brands[selectedCampaign.brand_id]?.company_name || 'Marca'}
                       </p>
                     </div>
 
                   {/* Application Form */}
                   <div>
-                    <Label >Sua Mensagem *</Label>
+                    <Label>Sua Mensagem *</Label>
                     <Textarea
                       value={applicationMessage}
                       onChange={(e) => setApplicationMessage(e.target.value)}
                       placeholder="Conte por que você é ideal para esta campanha..."
                       className="mt-2 min-h-[120px]"
                     />
-                    <p className="text-xs mt-1" className="text-muted-foreground">
+                    <p className="text-xs mt-1 text-muted-foreground">
                       Dica: Mencione trabalhos anteriores relevantes e por que você se identifica com a marca.
                     </p>
                   </div>
 
                   {selectedCampaign.remuneration_type !== 'barter' && (
                     <div>
-                      <Label >Sua Proposta de Valor (R$)</Label>
+                      <Label>Sua Proposta de Valor (R$)</Label>
                       <Input
                         type="number"
                         value={proposedRate}
@@ -663,21 +663,21 @@ export default function OpportunityFeed() {
                         placeholder={`Ex: ${selectedCampaign.budget_min || 500}`}
                         className="mt-2"
                       />
-                      <p className="text-xs mt-1" className="text-muted-foreground">
+                      <p className="text-xs mt-1 text-muted-foreground">
                         Orçamento da marca: R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
                       </p>
                     </div>
                   )}
 
                   {/* Actions */}
-                  <div className="flex justify-end gap-3 pt-4" className="border-t">
+                  <div className="flex justify-end gap-3 pt-4 border-t">
                     <Button variant="outline" onClick={() => setViewingDetails(true)}>
                       Voltar
                     </Button>
                     <Button
                       onClick={handleApply}
                       disabled={applying || !applicationMessage}
-                      className="bg-[#9038fa] hover:bg-[#7a2de0]"
+                      className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm min-h-[44px]"
                     >
                       {applying ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
