@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, RefreshCw } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Download, Loader2, RefreshCw, LayoutGrid, List } from 'lucide-react';
 import { toast } from 'sonner';
 
 import UserFilters from '../components/admin/UserFilters';
@@ -17,27 +18,34 @@ export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [brands, setBrands] = useState([]);
   const [creators, setCreators] = useState([]);
+
+  // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [stateFilter, setStateFilter] = useState('all');
+  const [nicheFilter, setNicheFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all');
+  const [verifiedFilter, setVerifiedFilter] = useState('all');
+
+  // Table state
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
+  const [density, setDensity] = useState('default');
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  useEffect(() => { loadUsers(); }, []);
 
   const loadUsers = async () => {
     try {
       setLoading(true);
       const response = await base44.functions.invoke('adminAnalytics', { type: 'list_users' });
-      const { users: usersData, brands: brandsData, creators: creatorsData } = response.data;
-      setUsers(usersData || []);
-      setBrands(brandsData || []);
-      setCreators(creatorsData || []);
+      const { users: u, brands: b, creators: c } = response.data;
+      setUsers(u || []);
+      setBrands(b || []);
+      setCreators(c || []);
     } catch (error) {
       console.error('Error loading users:', error);
       toast.error('Erro ao carregar usuários');
@@ -59,10 +67,10 @@ export default function AdminUsers() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-      toast.success('Dados exportados com sucesso');
+      toast.success('Exportado com sucesso');
     } catch (error) {
       console.error('Export error:', error);
-      toast.error('Erro ao exportar dados');
+      toast.error('Erro ao exportar');
     }
   };
 
@@ -74,29 +82,68 @@ export default function AdminUsers() {
 
   // Filtering
   const filteredUsers = useMemo(() => {
+    const now = new Date();
     return users.filter(user => {
       const { profile, type } = getUserProfile(user.id);
       
-      const matchesSearch = !searchTerm || 
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        profile?.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        profile?.display_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      // Search (name, email, company, display name, handles)
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        const searchFields = [
+          user.email, user.full_name, 
+          profile?.company_name, profile?.display_name,
+          profile?.contact_email, profile?.contact_whatsapp,
+          ...(profile?.platforms?.map(p => p.handle) || []),
+        ].filter(Boolean);
+        if (!searchFields.some(f => f.toLowerCase().includes(term))) return false;
+      }
       
-      const matchesRole = roleFilter === 'all' || type === roleFilter;
+      // Role filter
+      if (roleFilter === 'admin') {
+        if (user.role !== 'admin') return false;
+      } else if (roleFilter !== 'all' && type !== roleFilter) return false;
       
-      let matchesStatus = true;
-      if (statusFilter === 'premium') matchesStatus = profile?.subscription_status === 'premium';
-      else if (statusFilter === 'starter') matchesStatus = profile?.subscription_status === 'starter';
-      else if (statusFilter === 'trial') matchesStatus = profile?.subscription_status === 'trial';
-      else if (statusFilter === 'legacy') matchesStatus = profile?.subscription_status === 'legacy';
-      else if (statusFilter === 'verified') matchesStatus = profile?.is_verified === true;
-      else if (statusFilter === 'incomplete') matchesStatus = profile?.account_state === 'incomplete';
-      else if (statusFilter === 'ready') matchesStatus = profile?.account_state === 'ready';
+      // Status filter
+      if (statusFilter !== 'all') {
+        if (statusFilter === 'premium' && profile?.subscription_status !== 'premium') return false;
+        if (statusFilter === 'starter' && profile?.subscription_status !== 'starter') return false;
+        if (statusFilter === 'trial' && profile?.subscription_status !== 'trial') return false;
+        if (statusFilter === 'legacy' && profile?.subscription_status !== 'legacy') return false;
+        if (statusFilter === 'ready' && profile?.account_state !== 'ready') return false;
+        if (statusFilter === 'incomplete' && profile?.account_state !== 'incomplete') return false;
+      }
+
+      // State filter
+      if (stateFilter && stateFilter !== 'all') {
+        if (profile?.state !== stateFilter) return false;
+      }
+
+      // Niche filter (creators only)
+      if (nicheFilter && nicheFilter !== 'all') {
+        if (type !== 'creator') return false;
+        const niches = profile?.niche || [];
+        if (!niches.some(n => n.toLowerCase().includes(nicheFilter.toLowerCase()))) return false;
+      }
+
+      // Verified filter
+      if (verifiedFilter && verifiedFilter !== 'all') {
+        if (verifiedFilter === 'verified' && !profile?.is_verified) return false;
+        if (verifiedFilter === 'not_verified' && profile?.is_verified) return false;
+      }
+
+      // Date filter
+      if (dateFilter && dateFilter !== 'all') {
+        const created = new Date(user.created_date);
+        const dayMs = 24 * 60 * 60 * 1000;
+        if (dateFilter === 'today' && (now - created) > dayMs) return false;
+        if (dateFilter === 'week' && (now - created) > 7 * dayMs) return false;
+        if (dateFilter === 'month' && (now - created) > 30 * dayMs) return false;
+        if (dateFilter === 'quarter' && (now - created) > 90 * dayMs) return false;
+      }
       
-      return matchesSearch && matchesRole && matchesStatus;
+      return true;
     });
-  }, [users, brands, creators, searchTerm, roleFilter, statusFilter]);
+  }, [users, brands, creators, searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter]);
 
   // Sorting
   const sortedUsers = useMemo(() => {
@@ -113,23 +160,12 @@ export default function AdminUsers() {
           cmp = nameA.localeCompare(nameB, 'pt-BR');
           break;
         }
-        case 'type': {
-          cmp = (pA.type || '').localeCompare(pB.type || '');
-          break;
-        }
-        case 'subscription': {
-          cmp = (pA.profile?.subscription_status || '').localeCompare(pB.profile?.subscription_status || '');
-          break;
-        }
-        case 'state': {
-          cmp = (pA.profile?.account_state || '').localeCompare(pB.profile?.account_state || '');
-          break;
-        }
+        case 'type': cmp = (pA.type || '').localeCompare(pB.type || ''); break;
+        case 'subscription': cmp = (pA.profile?.subscription_status || '').localeCompare(pB.profile?.subscription_status || ''); break;
+        case 'state': cmp = (pA.profile?.account_state || '').localeCompare(pB.profile?.account_state || ''); break;
+        case 'location': cmp = (pA.profile?.state || '').localeCompare(pB.profile?.state || ''); break;
         case 'date':
-        default: {
-          cmp = new Date(a.created_date) - new Date(b.created_date);
-          break;
-        }
+        default: cmp = new Date(a.created_date) - new Date(b.created_date); break;
       }
       return sortDir === 'asc' ? cmp : -cmp;
     });
@@ -140,18 +176,11 @@ export default function AdminUsers() {
   const totalPages = Math.ceil(sortedUsers.length / PAGE_SIZE);
   const paginatedUsers = sortedUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, roleFilter, statusFilter, sortField, sortDir]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, sortField, sortDir]);
 
   const handleSort = (field) => {
-    if (sortField === field) {
-      setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDir('asc');
-    }
+    if (sortField === field) setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
+    else { setSortField(field); setSortDir('asc'); }
   };
 
   const selectedUserProfile = selectedUser ? getUserProfile(selectedUser.id) : null;
@@ -169,14 +198,36 @@ export default function AdminUsers() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-            Usuários
-          </h1>
-          <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            {filteredUsers.length} de {users.length} usuários
-          </p>
+          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Gerenciamento de Usuários</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              {filteredUsers.length} de {users.length} usuários
+            </p>
+            {filteredUsers.length !== users.length && (
+              <Badge variant="outline" className="text-[10px]" style={{ borderColor: '#9038fa', color: '#9038fa' }}>
+                filtrado
+              </Badge>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          {/* Density toggle */}
+          <div className="flex items-center gap-0.5 p-0.5 rounded-md" style={{ backgroundColor: 'var(--bg-primary)' }}>
+            <Button 
+              variant="ghost" size="icon" className={`h-8 w-8 ${density === 'default' ? 'shadow-sm' : 'opacity-50'}`}
+              style={density === 'default' ? { backgroundColor: 'var(--bg-secondary)' } : {}}
+              onClick={() => setDensity('default')}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+            </Button>
+            <Button 
+              variant="ghost" size="icon" className={`h-8 w-8 ${density === 'compact' ? 'shadow-sm' : 'opacity-50'}`}
+              style={density === 'compact' ? { backgroundColor: 'var(--bg-secondary)' } : {}}
+              onClick={() => setDensity('compact')}
+            >
+              <List className="w-3.5 h-3.5" />
+            </Button>
+          </div>
           <Button onClick={loadUsers} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-1" /> Atualizar
           </Button>
@@ -188,43 +239,34 @@ export default function AdminUsers() {
 
       {/* Filters */}
       <UserFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        roleFilter={roleFilter}
-        onRoleChange={setRoleFilter}
-        statusFilter={statusFilter}
-        onStatusChange={setStatusFilter}
+        searchTerm={searchTerm} onSearchChange={setSearchTerm}
+        roleFilter={roleFilter} onRoleChange={setRoleFilter}
+        statusFilter={statusFilter} onStatusChange={setStatusFilter}
+        stateFilter={stateFilter} onStateChange={setStateFilter}
+        nicheFilter={nicheFilter} onNicheChange={setNicheFilter}
+        dateFilter={dateFilter} onDateChange={setDateFilter}
+        verifiedFilter={verifiedFilter} onVerifiedChange={setVerifiedFilter}
       />
 
       {/* Bulk Actions */}
       <UserBulkActions
-        selectedIds={selectedIds}
-        users={users}
-        brands={brands}
-        creators={creators}
-        onClear={() => setSelectedIds([])}
-        onComplete={loadUsers}
+        selectedIds={selectedIds} users={users} brands={brands} creators={creators}
+        onClear={() => setSelectedIds([])} onComplete={loadUsers}
       />
 
       {/* Table */}
       <UserTable
-        users={paginatedUsers}
-        brands={brands}
-        creators={creators}
-        selectedIds={selectedIds}
-        onSelectIds={setSelectedIds}
+        users={paginatedUsers} brands={brands} creators={creators}
+        selectedIds={selectedIds} onSelectIds={setSelectedIds}
         onUserClick={setSelectedUser}
-        sortField={sortField}
-        sortDir={sortDir}
-        onSort={handleSort}
+        sortField={sortField} sortDir={sortDir} onSort={handleSort}
+        density={density}
       />
 
       {/* Pagination */}
       <UserPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalItems={sortedUsers.length}
-        pageSize={PAGE_SIZE}
+        currentPage={currentPage} totalPages={totalPages}
+        totalItems={sortedUsers.length} pageSize={PAGE_SIZE}
         onPageChange={setCurrentPage}
       />
 
@@ -236,10 +278,7 @@ export default function AdminUsers() {
           user={selectedUser}
           profile={selectedUserProfile.profile}
           profileType={selectedUserProfile.type}
-          onActionComplete={() => {
-            loadUsers();
-            setSelectedUser(null);
-          }}
+          onActionComplete={() => { loadUsers(); setSelectedUser(null); }}
         />
       )}
     </div>

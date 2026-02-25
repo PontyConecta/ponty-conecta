@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Building2, Star, Shield, CheckCircle2, Crown, Gift, Eye,
-  ChevronUp, ChevronDown, ChevronsUpDown, Mail, Calendar
+  Building2, Star, Shield, CheckCircle2, Crown, Eye,
+  ChevronUp, ChevronDown, ChevronsUpDown, MapPin
 } from 'lucide-react';
 
 function SortHeader({ label, field, sortField, sortDir, onSort }) {
   const active = sortField === field;
   return (
     <button 
-      className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
+      className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
       style={{ color: active ? '#9038fa' : 'var(--text-secondary)' }}
       onClick={() => onSort(field)}
     >
@@ -23,7 +23,15 @@ function SortHeader({ label, field, sortField, sortDir, onSort }) {
   );
 }
 
-export default function UserTable({ users, brands, creators, selectedIds, onSelectIds, onUserClick, sortField, sortDir, onSort }) {
+const SUB_BADGE = {
+  starter: { label: 'Starter', cls: 'bg-slate-100 text-slate-600' },
+  premium: { label: 'Premium', cls: 'bg-emerald-100 text-emerald-700' },
+  trial: { label: 'Trial', cls: 'bg-blue-100 text-blue-700' },
+  legacy: { label: 'Legacy', cls: 'bg-amber-100 text-amber-700' },
+  pending: { label: 'Pendente', cls: 'bg-red-100 text-red-700' },
+};
+
+export default function UserTable({ users, brands, creators, selectedIds, onSelectIds, onUserClick, sortField, sortDir, onSort, density = 'default' }) {
   const getUserProfile = (userId) => {
     const brand = brands.find(b => b.user_id === userId);
     const creator = creators.find(c => c.user_id === userId);
@@ -31,32 +39,20 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
   };
 
   const toggleAll = () => {
-    if (selectedIds.length === users.length) {
-      onSelectIds([]);
-    } else {
-      onSelectIds(users.map(u => u.id));
-    }
+    onSelectIds(selectedIds.length === users.length ? [] : users.map(u => u.id));
   };
 
   const toggleOne = (id) => {
-    if (selectedIds.includes(id)) {
-      onSelectIds(selectedIds.filter(i => i !== id));
-    } else {
-      onSelectIds([...selectedIds, id]);
-    }
+    onSelectIds(selectedIds.includes(id) ? selectedIds.filter(i => i !== id) : [...selectedIds, id]);
   };
 
-  const subscriptionBadge = (status) => {
-    const configs = {
-      starter: { label: 'Starter', cls: 'bg-slate-100 text-slate-600' },
-      premium: { label: 'Premium', cls: 'bg-emerald-100 text-emerald-700' },
-      trial: { label: 'Trial', cls: 'bg-blue-100 text-blue-700' },
-      legacy: { label: 'Legacy', cls: 'bg-amber-100 text-amber-700' },
-      pending: { label: 'Pendente', cls: 'bg-red-100 text-red-700' },
-    };
-    const c = configs[status] || configs.starter;
+  const renderSubBadge = (status) => {
+    const c = SUB_BADGE[status] || SUB_BADGE.starter;
     return <Badge className={`${c.cls} border-0 text-[10px] px-1.5 py-0`}>{c.label}</Badge>;
   };
+
+  const compact = density === 'compact';
+  const rowPadding = compact ? 'py-2 px-3' : 'py-3 px-4';
 
   if (users.length === 0) {
     return (
@@ -70,51 +66,45 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
 
   return (
     <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      {/* Desktop Table Header */}
-      <div className="hidden lg:grid lg:grid-cols-[40px_1fr_120px_100px_100px_100px_80px] gap-4 px-4 py-3 border-b items-center" style={{ borderColor: 'var(--border-color)' }}>
-        <div>
-          <Checkbox checked={selectedIds.length === users.length && users.length > 0} onCheckedChange={toggleAll} />
-        </div>
+      {/* Desktop Header */}
+      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_70px_60px] gap-3 px-4 py-2.5 border-b items-center" style={{ borderColor: 'var(--border-color)' }}>
+        <div><Checkbox checked={selectedIds.length === users.length && users.length > 0} onCheckedChange={toggleAll} /></div>
         <SortHeader label="Usuário" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Tipo" field="type" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Plano" field="subscription" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Estado" field="state" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-        <SortHeader label="Criado em" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Ação</span>
+        <SortHeader label="UF" field="location" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+        <SortHeader label="Data" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+        <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Ação</span>
       </div>
 
-      {/* Rows */}
       <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
         {users.map((user) => {
           const { profile, type } = getUserProfile(user.id);
           const isSelected = selectedIds.includes(user.id);
+          const location = profile?.state || '';
 
           return (
-            <div 
-              key={user.id}
-              className={`px-4 py-3 transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-purple-50/50' : ''}`}
-            >
+            <div key={user.id} className={`${rowPadding} transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-purple-50/50' : ''}`}>
               {/* Desktop Row */}
-              <div className="hidden lg:grid lg:grid-cols-[40px_1fr_120px_100px_100px_100px_80px] gap-4 items-center">
-                <div>
-                  <Checkbox checked={isSelected} onCheckedChange={() => toggleOne(user.id)} />
-                </div>
-                <div className="flex items-center gap-3 min-w-0">
-                  <Avatar className="w-9 h-9 flex-shrink-0">
+              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_70px_60px] gap-3 items-center">
+                <div><Checkbox checked={isSelected} onCheckedChange={() => toggleOne(user.id)} /></div>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Avatar className={`${compact ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                    <AvatarFallback className={type === 'brand' ? 'bg-indigo-100 text-indigo-700 text-xs' : 'bg-orange-100 text-orange-700 text-xs'}>
-                      {type === 'brand' ? <Building2 className="w-4 h-4" /> : <Star className="w-4 h-4" />}
+                    <AvatarFallback className={`text-[10px] ${type === 'brand' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}`}>
+                      {type === 'brand' ? <Building2 className="w-3.5 h-3.5" /> : <Star className="w-3.5 h-3.5" />}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="font-medium text-sm truncate" style={{ color: 'var(--text-primary)' }}>
+                    <div className="flex items-center gap-1">
+                      <p className={`font-medium ${compact ? 'text-xs' : 'text-sm'} truncate`} style={{ color: 'var(--text-primary)' }}>
                         {type === 'brand' ? profile?.company_name : profile?.display_name || user.full_name || 'Sem nome'}
                       </p>
                       {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500 flex-shrink-0" />}
                       {profile?.is_verified && <CheckCircle2 className="w-3 h-3 text-blue-500 flex-shrink-0" />}
                     </div>
-                    <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
+                    <p className="text-[10px] truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
                   </div>
                 </div>
                 <div>
@@ -122,20 +112,27 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                     {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                   </Badge>
                 </div>
-                <div>{subscriptionBadge(profile?.subscription_status)}</div>
+                <div>{renderSubBadge(profile?.subscription_status)}</div>
                 <div>
                   <Badge className={`border-0 text-[10px] px-1.5 py-0 ${profile?.account_state === 'ready' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                     {profile?.account_state === 'ready' ? 'Pronta' : 'Incompleta'}
                   </Badge>
                 </div>
                 <div>
-                  <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  {location && (
+                    <span className="text-[10px] flex items-center gap-0.5" style={{ color: 'var(--text-secondary)' }}>
+                      <MapPin className="w-2.5 h-2.5" />{location}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <span className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>
                     {new Date(user.created_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                   </span>
                 </div>
                 <div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onUserClick(user)}>
-                    <Eye className="w-4 h-4" />
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onUserClick(user)}>
+                    <Eye className="w-3.5 h-3.5" />
                   </Button>
                 </div>
               </div>
@@ -150,7 +147,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <p className="font-medium text-sm truncate" style={{ color: 'var(--text-primary)' }}>
                       {type === 'brand' ? profile?.company_name : profile?.display_name || user.full_name || 'Sem nome'}
                     </p>
@@ -161,11 +158,16 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
                       {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                     </Badge>
-                    {subscriptionBadge(profile?.subscription_status)}
+                    {renderSubBadge(profile?.subscription_status)}
                     {profile?.is_verified && (
                       <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
                         <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> Verificado
                       </Badge>
+                    )}
+                    {location && (
+                      <span className="text-[10px] flex items-center gap-0.5" style={{ color: 'var(--text-secondary)' }}>
+                        <MapPin className="w-2.5 h-2.5" />{location}
+                      </span>
                     )}
                   </div>
                 </div>
