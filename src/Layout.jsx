@@ -320,6 +320,7 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Mobile Bottom Navigation */}
       <BottomNav profileType={profileType} currentPageName={currentPageName} />
+      </div>
       );
       }
 
