@@ -10,20 +10,28 @@ export const useTheme = () => {
   return context;
 };
 
+// Migrate legacy theme name "musk" → canonical "neon"
+const normalizeTheme = (t) => (t === 'musk' ? 'neon' : t);
+const VALID_THEMES = ['light', 'dark', 'neon'];
+
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    // Carregar tema salvo do localStorage
-    const savedTheme = localStorage.getItem('ponty-theme') || 'light';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    const raw = localStorage.getItem('ponty-theme') || 'light';
+    const normalized = normalizeTheme(raw);
+    const safe = VALID_THEMES.includes(normalized) ? normalized : 'light';
+    // Persist canonical name if it was legacy
+    if (raw !== safe) localStorage.setItem('ponty-theme', safe);
+    setTheme(safe);
+    document.documentElement.setAttribute('data-theme', safe);
   }, []);
 
   const changeTheme = (newTheme) => {
-    setTheme(newTheme);
-    localStorage.setItem('ponty-theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
+    const safe = normalizeTheme(newTheme);
+    setTheme(safe);
+    localStorage.setItem('ponty-theme', safe);
+    document.documentElement.setAttribute('data-theme', safe);
   };
 
   return (

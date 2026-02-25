@@ -1,84 +1,177 @@
-css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  overscroll-behavior: none;
+/* ═══════════════════════════════════════════════
+   PONTY DESIGN TOKENS — SINGLE SOURCE OF TRUTH
+   ═══════════════════════════════════════════════ */
+
+@layer base {
+
+  /* ── Light (default) ── */
+  :root {
+    /* Platform tokens */
+    --bg-primary: #f6f6f6;
+    --bg-secondary: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-input: #0f172a;
+    --border-color: #e2e8f0;
+
+    /* Accent */
+    --accent-primary: #9038fa;
+    --accent-light: #b77aff;
+    --accent-hover: #7a2de0;
+    --accent-primary-rgb: 144, 56, 250;
+
+    /* Layout metrics */
+    --header-height: 56px;
+    --header-height-lg: 64px;
+    --bottom-nav-height: 80px;
+
+    /* ── shadcn mapping ── */
+    --background: var(--bg-primary);
+    --foreground: var(--text-primary);
+
+    --card: var(--bg-secondary);
+    --card-foreground: var(--text-primary);
+
+    --popover: var(--bg-secondary);
+    --popover-foreground: var(--text-primary);
+
+    --primary: var(--accent-primary);
+    --primary-foreground: #ffffff;
+
+    --secondary: var(--bg-secondary);
+    --secondary-foreground: var(--text-primary);
+
+    --muted: rgba(15, 23, 42, 0.06);
+    --muted-foreground: var(--text-secondary);
+
+    --accent: rgba(var(--accent-primary-rgb), 0.12);
+    --accent-foreground: var(--text-primary);
+
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: var(--border-color);
+    --input: var(--border-color);
+    --ring: var(--accent-primary);
+
+    --radius: 12px;
+
+    /* Chart colors */
+    --chart-1: #ef6c47;
+    --chart-2: #2ea89e;
+    --chart-3: #2e5f80;
+    --chart-4: #d4a843;
+    --chart-5: #e08544;
+
+    /* Sidebar */
+    --sidebar-background: var(--bg-secondary);
+    --sidebar-foreground: var(--text-primary);
+    --sidebar-primary: var(--accent-primary);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: rgba(var(--accent-primary-rgb), 0.08);
+    --sidebar-accent-foreground: var(--text-primary);
+    --sidebar-border: var(--border-color);
+    --sidebar-ring: var(--accent-primary);
+  }
+
+  /* ── Light (explicit) ── */
+  [data-theme="light"] {
+    --bg-primary: #f6f6f6;
+    --bg-secondary: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-input: #0f172a;
+    --border-color: #e2e8f0;
+    --accent-primary: #9038fa;
+    --accent-light: #b77aff;
+    --accent-hover: #7a2de0;
+    --accent-primary-rgb: 144, 56, 250;
+  }
+
+  /* ── Dark ── */
+  [data-theme="dark"] {
+    --bg-primary: #0a0e27;
+    --bg-secondary: #1a1f3a;
+    --text-primary: #f0f4f8;
+    --text-secondary: #a0aac0;
+    --text-input: #f0f4f8;
+    --border-color: #2a3a52;
+    --accent-primary: #b77aff;
+    --accent-light: #9038fa;
+    --accent-hover: #a055ff;
+    --accent-primary-rgb: 183, 122, 255;
+
+    --muted: rgba(226, 232, 240, 0.06);
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+  }
+
+  /* ── Neon (canonical name) ── */
+  [data-theme="neon"] {
+    --bg-primary: #1a1624;
+    --bg-secondary: #2d1f3a;
+    --text-primary: #f5f1f8;
+    --text-secondary: #c0b9d0;
+    --text-input: #f5f1f8;
+    --border-color: #6b4a8a;
+    --accent-primary: #b77aff;
+    --accent-light: #9038fa;
+    --accent-hover: #a055ff;
+    --accent-primary-rgb: 183, 122, 255;
+
+    --muted: rgba(245, 241, 248, 0.06);
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+  }
+
+  /* ── Musk (TEMPORARY ALIAS for backward compat) ── */
+  [data-theme="musk"] {
+    --bg-primary: #1a1624;
+    --bg-secondary: #2d1f3a;
+    --text-primary: #f5f1f8;
+    --text-secondary: #c0b9d0;
+    --text-input: #f5f1f8;
+    --border-color: #6b4a8a;
+    --accent-primary: #b77aff;
+    --accent-light: #9038fa;
+    --accent-hover: #a055ff;
+    --accent-primary-rgb: 183, 122, 255;
+
+    --muted: rgba(245, 241, 248, 0.06);
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+  }
+
+  /* ── Global resets ── */
+  * {
+    @apply border-border;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overscroll-behavior: none;
+  }
 }
 
+/* ── Utility classes ── */
 .select-none {
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
 
-/* Color Themes - CSS Variables */
-:root {
-  --bg-primary: #f6f6f6;
-  --bg-secondary: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --border-color: #e2e8f0;
-  --accent-primary: #9038fa;
-  --accent-light: #b77aff;
-  --foreground: #0f172a;
-  --muted-foreground: #64748b;
-  --input: #e2e8f0;
-}
-
-[data-theme="light"] {
-  --bg-primary: #f6f6f6;
-  --bg-secondary: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --border-color: #e2e8f0;
-  --accent-primary: #9038fa;
-  --accent-light: #b77aff;
-  --foreground: #0f172a;
-  --muted-foreground: #64748b;
-  --input: #e2e8f0;
-}
-
-[data-theme="dark"] {
-  --bg-primary: #0a0e27;
-  --bg-secondary: #1a1f3a;
-  --text-primary: #f0f4f8;
-  --text-secondary: #a0aac0;
-  --border-color: #4a5f7f;
-  --accent-primary: #b77aff;
-  --accent-light: #9038fa;
-  --foreground: #f0f4f8;
-  --muted-foreground: #a0aac0;
-  --input: #4a5f7f;
-}
-
-[data-theme="musk"] {
-  --bg-primary: #1a1624;
-  --bg-secondary: #2d1f3a;
-  --text-primary: #f5f1f8;
-  --text-secondary: #c0b9d0;
-  --border-color: #6b4a8a;
-  --accent-primary: #b77aff;
-  --accent-light: #9038fa;
-  --foreground: #f5f1f8;
-  --muted-foreground: #c0b9d0;
-  --input: #6b4a8a;
-}
-
-/* Safe Area for Mobile */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .pb-safe {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
-  }
-}
-
-@media (max-width: 1024px) {
-  .pb-safe {
+/* Mobile bottom nav safe area */
+@media (max-width: 1023px) {
+  .pb-mobile-safe {
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
   }
 }

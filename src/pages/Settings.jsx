@@ -43,7 +43,7 @@ export default function Settings() {
   const themes = [
     { value: 'light', label: 'Claro', icon: Sun },
     { value: 'dark', label: 'Escuro', icon: Moon },
-    { value: 'musk', label: 'Neon', icon: Zap },
+    { value: 'neon', label: 'Neon', icon: Zap },
   ];
 
   const statusLabels = {
