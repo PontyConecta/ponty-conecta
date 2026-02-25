@@ -6,7 +6,7 @@ const PIPELINE_CONFIG = {
   draft: { label: 'Rascunho', color: '#94a3b8' },
   under_review: { label: 'Em Revisão', color: '#f59e0b' },
   active: { label: 'Ativas', color: '#10b981' },
-  applications_closed: { label: 'Inscrições Fechadas', color: '#6366f1' },
+  applications_closed: { label: 'Inscr. Fechadas', color: '#6366f1' },
   completed: { label: 'Concluídas', color: '#3b82f6' },
   paused: { label: 'Pausadas', color: '#fb923c' },
   cancelled: { label: 'Canceladas', color: '#ef4444' },
@@ -15,7 +15,6 @@ const PIPELINE_CONFIG = {
 export default function DashboardPipeline({ pipeline, funnelData }) {
   if (!pipeline) return null;
 
-  // Show ALL stages, even with 0 count
   const pipelineData = Object.entries(PIPELINE_CONFIG).map(([key, cfg]) => ({
     stage: cfg.label,
     value: pipeline[key] || 0,
@@ -23,10 +22,11 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
   }));
 
   const totalCampaigns = pipelineData.reduce((s, d) => s + d.value, 0);
+  const maxVal = Math.max(...pipelineData.map(d => d.value), 1);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Pipeline - compact horizontal bars showing ALL stages */}
+      {/* Pipeline */}
       <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
@@ -35,38 +35,56 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
               {totalCampaigns} total
             </span>
           </div>
-          <div className="space-y-1.5">
+
+          {/* Compact table-style layout */}
+          <div className="space-y-1">
             {pipelineData.map(item => {
               const pct = totalCampaigns > 0 ? Math.round((item.value / totalCampaigns) * 100) : 0;
+              const barWidth = maxVal > 0 ? Math.max((item.value / maxVal) * 100, 0) : 0;
               return (
-                <div key={item.stage} className="flex items-center gap-2">
-                  <span className="text-[11px] w-28 truncate text-right flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>{item.stage}</span>
-                  <div className="flex-1 h-5 rounded overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                    {item.value > 0 ? (
+                <div key={item.stage} className="flex items-center gap-2 group">
+                  {/* Color dot + label */}
+                  <div className="flex items-center gap-1.5 w-32 flex-shrink-0">
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="text-[11px] truncate" style={{ color: 'var(--text-secondary)' }}>{item.stage}</span>
+                  </div>
+                  {/* Bar */}
+                  <div className="flex-1 h-4 rounded overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    {item.value > 0 && (
                       <div 
-                        className="h-full rounded flex items-center px-1.5 transition-all"
-                        style={{ 
-                          width: `${Math.max(pct, 12)}%`,
-                          backgroundColor: item.color 
-                        }}
+                        className="h-full rounded flex items-center px-1.5"
+                        style={{ width: `${Math.max(barWidth, 8)}%`, backgroundColor: item.color, opacity: 0.85 }}
                       >
-                        <span className="text-[10px] font-bold text-white">{item.value}</span>
-                      </div>
-                    ) : (
-                      <div className="h-full flex items-center px-1.5">
-                        <span className="text-[10px]" style={{ color: 'var(--text-secondary)', opacity: 0.5 }}>0</span>
+                        <span className="text-[9px] font-bold text-white leading-none">{item.value}</span>
                       </div>
                     )}
                   </div>
-                  <span className="text-[10px] w-8 text-right flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>{pct}%</span>
+                  {/* Percentage */}
+                  <span className="text-[10px] w-8 text-right flex-shrink-0 font-medium" style={{ color: item.value > 0 ? 'var(--text-primary)' : 'var(--text-secondary)', opacity: item.value > 0 ? 1 : 0.4 }}>
+                    {pct}%
+                  </span>
                 </div>
               );
             })}
           </div>
+
+          {/* Summary row */}
+          {totalCampaigns > 0 && (
+            <div className="mt-3 pt-2 border-t flex items-center justify-between" style={{ borderColor: 'var(--border-color)' }}>
+              <div className="flex gap-3">
+                {pipelineData.filter(d => d.value > 0).map(d => (
+                  <span key={d.stage} className="text-[10px] flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
+                    {d.value}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Funnel - vertical flow with correct percentages */}
+      {/* Funnel */}
       {funnelData && funnelData.length > 0 && (
         <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-4">
@@ -74,9 +92,7 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
             <div className="space-y-0">
               {funnelData.map((item, i) => {
                 const firstVal = funnelData[0]?.value || 1;
-                // Width relative to first stage for visual funnel shape
                 const widthPct = firstVal > 0 ? Math.max((item.value / firstVal) * 100, 18) : 18;
-                // Drop rate relative to PREVIOUS stage
                 const prevVal = i > 0 ? funnelData[i - 1].value : 0;
                 const dropRate = i > 0 && prevVal > 0 
                   ? Math.round((item.value / prevVal) * 100) 
@@ -112,7 +128,6 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
                 );
               })}
             </div>
-            {/* Conversion summary */}
             {funnelData.length >= 2 && (
               <div className="mt-3 pt-2 border-t flex justify-between items-center" style={{ borderColor: 'var(--border-color)' }}>
                 <span className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>Taxa geral (início → fim)</span>

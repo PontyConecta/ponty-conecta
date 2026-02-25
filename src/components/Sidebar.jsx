@@ -49,7 +49,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
 
   return (
     <TooltipProvider delayDuration={0}>
-      <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 flex-col transition-all duration-200 border-r z-40 overflow-hidden`} style={{ width: isCollapsed ? '4rem' : '16rem', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 flex-col border-r z-40 overflow-hidden transition-[width] duration-200 ease-in-out`} style={{ width: isCollapsed ? '64px' : '256px', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         {/* Collapse toggle */}
         <div className={`flex ${isCollapsed ? 'justify-center' : 'justify-end'} px-2 pt-3 flex-shrink-0`}>
           <Button
@@ -80,7 +80,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                      ? 'shadow-sm' 
                      : 'hover:opacity-70'
                  )}
-                 style={isActive ? { backgroundColor: 'rgba(var(--accent-primary), 0.1)', color: 'var(--accent-primary)' } : { color: 'var(--text-secondary)' }}
+                 style={isActive ? { backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' } : { color: 'var(--text-secondary)' }}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 {!isCollapsed && <span>{item.name}</span>}
