@@ -3,7 +3,6 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { CheckCircle2, Circle, Flame, Loader2, ArrowRight } from 'lucide-react';
@@ -30,9 +29,9 @@ export default function DashboardMissions({ userId, profileType }) {
 
   if (loading) {
     return (
-      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-6 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--text-secondary)' }} />
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );
@@ -42,18 +41,16 @@ export default function DashboardMissions({ userId, profileType }) {
 
   const completedCount = missions.filter(m => m.status === 'completed').length;
   const totalCount = missions.length;
-
-  // Hide the missions card when all missions are completed
   if (completedCount === totalCount) return null;
 
   const overallProgress = Math.round((completedCount / totalCount) * 100);
 
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+    <Card className="border bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Flame className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
+          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <Flame className="w-5 h-5 text-primary" />
             Primeiros Passos
           </CardTitle>
           <Badge variant="outline" className="font-medium">
@@ -62,7 +59,7 @@ export default function DashboardMissions({ userId, profileType }) {
         </div>
         <div className="mt-2">
           <Progress value={overallProgress} className="h-2" />
-          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-xs mt-1 text-muted-foreground">
             {overallProgress}% concluído
           </p>
         </div>
@@ -84,27 +81,28 @@ export default function DashboardMissions({ userId, profileType }) {
             >
               <Wrapper
                 {...wrapperProps}
-                className={`flex items-center gap-3 p-3 rounded-lg transition-all ${isCompleted ? 'opacity-60' : 'cursor-pointer hover:opacity-80'}`}
-                style={{ backgroundColor: isCompleted ? 'transparent' : 'var(--bg-primary)' }}
+                className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                  isCompleted ? 'opacity-60' : 'cursor-pointer hover:bg-muted/60 bg-muted/30'
+                }`}
               >
                 {isCompleted ? (
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
                 ) : (
-                  <Circle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--border-color)' }} />
+                  <Circle className="w-5 h-5 flex-shrink-0 text-border" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${isCompleted ? 'line-through' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                  <p className={`text-sm font-medium ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
                     {mission.title}
                   </p>
-                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  <p className="text-xs text-muted-foreground">
                     {mission.description}
                   </p>
                 </div>
                 {!isCompleted && mission.target_action_url && (
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--accent-primary)' }} />
+                  <ArrowRight className="w-4 h-4 flex-shrink-0 text-primary" />
                 )}
                 {mission.reward_points > 0 && (
-                  <Badge className={`text-xs flex-shrink-0 ${isCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'} border-0`}>
+                  <Badge className={`text-xs flex-shrink-0 border-0 ${isCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                     +{mission.reward_points}pts
                   </Badge>
                 )}
