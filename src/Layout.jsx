@@ -96,7 +96,7 @@ function LayoutContent({ children, currentPageName }) {
             {/* Support */}
             <AlertDialog open={isWhatsAppDialogOpen} onOpenChange={setIsWhatsAppDialogOpen}>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+                <Button variant="ghost" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full">
                   <HelpCircle className="w-5 h-5" />
                 </Button>
               </AlertDialogTrigger>
@@ -123,8 +123,8 @@ function LayoutContent({ children, currentPageName }) {
             {/* Admin Link */}
             {isAdmin && (
               <Link to={createPageUrl('AdminDashboard')}>
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
-                  <Shield className="w-5 h-5 text-[#9038fa]" />
+                <Button variant="ghost" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full">
+                  <Shield className="w-5 h-5 text-primary" />
                 </Button>
               </Link>
             )}
@@ -133,7 +133,7 @@ function LayoutContent({ children, currentPageName }) {
             {!isSubscribed && (
               <Button 
                 onClick={() => window.location.href = createPageUrl('Subscription')}
-                className="h-9 px-4 font-bold rounded-lg shadow-sm bg-[#9038fa] hover:bg-[#7a2de0] text-white"
+                className="h-10 px-4 font-bold rounded-lg shadow-sm bg-[#9038fa] hover:bg-[#7a2de0] text-white min-h-[44px]"
               >
                 <Crown className="w-4 h-4" />
                 <span className="hidden sm:inline">Assinar</span>
@@ -141,7 +141,7 @@ function LayoutContent({ children, currentPageName }) {
             )}
 
             {/* User Avatar */}
-            <Link to={createPageUrl('Settings')} className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-border hover:opacity-80 transition-opacity">
+            <Link to={createPageUrl('Settings')} className="relative h-11 w-11 min-h-[44px] min-w-[44px] rounded-full overflow-hidden border-2 border-border hover:opacity-80 transition-opacity duration-150">
               <Avatar className="h-full w-full">
                 <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
                 <AvatarFallback className="font-bold bg-primary/10 text-primary">
