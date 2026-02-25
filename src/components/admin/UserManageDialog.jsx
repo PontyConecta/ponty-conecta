@@ -23,6 +23,8 @@ import {
   Gift, AlertTriangle, Eye, Calendar, Mail, Globe, EyeOff
 } from 'lucide-react';
 import { toast } from 'sonner';
+import UserTagManager from './UserTagManager';
+import { UserTagBadges } from './UserTagManager';
 
 export default function UserManageDialog({ open, onOpenChange, user, profile, profileType, onActionComplete }) {
   const [actionLoading, setActionLoading] = useState(false);
@@ -341,6 +343,13 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                 : 'Ative para que as assinaturas deste usuário não sejam contabilizadas nas métricas financeiras (útil para contas de teste).'}
             </p>
           </div>
+
+          {/* Tags */}
+          <UserTagManager
+            tags={user?.tags || []}
+            loading={actionLoading}
+            onSave={(tags) => handleAction('set_tags', { tags })}
+          />
 
           {/* Audit Note */}
           <div className="space-y-2">
