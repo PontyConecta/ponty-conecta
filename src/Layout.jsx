@@ -242,6 +242,15 @@ function LayoutContent({ children, currentPageName }) {
               </AlertDialogContent>
             </AlertDialog>
 
+            {/* Admin Link */}
+            {isAdmin && (
+              <Link to={createPageUrl('AdminDashboard')}>
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-purple-500/10">
+                  <Shield className="w-5 h-5" style={{ color: '#9038fa' }} />
+                </Button>
+              </Link>
+            )}
+
             {/* Notifications */}
             <NotificationDropdown />
 
