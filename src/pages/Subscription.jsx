@@ -181,8 +181,8 @@ export default function Subscription() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg" style={{ backgroundColor: '#9038fa' }}>
             <Crown className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Sua Assinatura</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Você tem acesso completo à plataforma</p>
+          <h1 className="text-3xl font-bold mb-2 text-foreground">Sua Assinatura</h1>
+          <p className="text-muted-foreground">Você tem acesso completo à plataforma</p>
         </div>
 
         <Card className="border-emerald-200 bg-emerald-50/50">
@@ -193,12 +193,12 @@ export default function Subscription() {
                   <CheckCircle2 className="w-3 h-3 mr-1" />
                   Ativa
                 </Badge>
-                <h3 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>Plano {planName}</h3>
-                <p style={{ color: 'var(--text-secondary)' }}>Acesso ilimitado a todas as funcionalidades</p>
+                <h3 className="text-xl font-semibold text-foreground">Plano {planName}</h3>
+                <p className="text-muted-foreground">Acesso ilimitado a todas as funcionalidades</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ 45</p>
-                <p style={{ color: 'var(--text-secondary)' }}>/mês</p>
+                <p className="text-3xl font-bold text-foreground">R$ 45</p>
+                <p className="text-muted-foreground">/mês</p>
               </div>
             </div>
           </CardContent>
@@ -213,7 +213,7 @@ export default function Subscription() {
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{feature}</span>
+                  <span className="text-sm text-foreground">{feature}</span>
                 </div>
               ))}
             </div>
@@ -223,10 +223,10 @@ export default function Subscription() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <CreditCard className="w-8 h-8" style={{ color: 'var(--text-secondary)' }} />
+              <CreditCard className="w-8 h-8 text-muted-foreground" />
               <div className="flex-1">
-                <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Gerenciar Assinatura</h4>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Atualize forma de pagamento, cancele ou altere seu plano</p>
+                <h4 className="font-medium text-foreground">Gerenciar Assinatura</h4>
+                <p className="text-sm text-muted-foreground">Atualize forma de pagamento, cancele ou altere seu plano</p>
               </div>
               <Button variant="outline" onClick={handleManageSubscription}>
                 <ExternalLink className="w-4 h-4 mr-2" />
@@ -248,10 +248,10 @@ export default function Subscription() {
           {isBrand ? 'Plano para Marcas' : 'Plano para Criadores'}
         </Badge>
 
-        <h1 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+        <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-foreground">
           Desbloqueie todo o potencial
         </h1>
-        <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-lg max-w-xl mx-auto text-muted-foreground">
           {isBrand 
             ? 'Crie campanhas e conecte-se com os melhores criadores' 
             : 'Acesse oportunidades e trabalhe com grandes marcas'}
@@ -284,8 +284,8 @@ export default function Subscription() {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>{plan.name}</h3>
-                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{plan.description}</p>
+                    <h3 className="text-xl font-semibold text-foreground">{plan.name}</h3>
+                    <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </div>
                   {plan.discount && (
                     <Badge className="bg-emerald-100 text-emerald-700 border-0">
@@ -294,11 +294,10 @@ export default function Subscription() {
                   )}
                 </div>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ {plan.price}</span>
-                  <span style={{ color: 'var(--text-secondary)' }}>{plan.period}</span>
+                  <span className="text-4xl font-bold text-foreground">R$ {plan.price}</span>
+                  <span className="text-muted-foreground">{plan.period}</span>
                 </div>
-                <div className="w-full h-1 rounded-full transition-colors"
-                  style={{ backgroundColor: selectedPlan === plan.id ? '#9038fa' : 'var(--border-color)' }} />
+                <div className={`w-full h-1 rounded-full transition-colors ${selectedPlan === plan.id ? 'bg-[#9038fa]' : 'bg-border'}`} />
               </CardContent>
             </Card>
           </motion.div>
@@ -317,7 +316,7 @@ export default function Subscription() {
             {features.map((feature, index) => (
               <div key={index} className="flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <span style={{ color: 'var(--text-primary)' }}>{feature}</span>
+                <span className="text-foreground">{feature}</span>
               </div>
             ))}
           </div>
@@ -330,11 +329,11 @@ export default function Subscription() {
           { icon: Zap, label: 'Acesso Imediato' },
           { icon: Users, label: 'Suporte Humano' }
         ].map((item, index) => (
-          <div key={index} className="flex flex-col items-center gap-2 text-center p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm" style={{ backgroundColor: 'var(--bg-primary)' }}>
-              <item.icon className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+          <div key={index} className="flex flex-col items-center gap-2 text-center p-4 rounded-xl bg-muted">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-card">
+              <item.icon className="w-5 h-5 text-muted-foreground" />
             </div>
-            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+            <span className="text-sm text-muted-foreground">{item.label}</span>
           </div>
         ))}
       </div>
@@ -359,18 +358,17 @@ export default function Subscription() {
         </Button>
         
         <Button
-          variant="ghost"
-          size="lg"
-          onClick={() => navigate(createPageUrl(isBrand ? 'BrandDashboard' : 'CreatorDashboard'))}
-          style={{ color: 'var(--text-secondary)' }}
-          className="hover:opacity-70"
+        variant="ghost"
+        size="lg"
+        onClick={() => navigate(createPageUrl(isBrand ? 'BrandDashboard' : 'CreatorDashboard'))}
+        className="text-muted-foreground hover:opacity-70"
         >
           Continuar explorando gratuitamente
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
 
-      <p className="text-center text-sm mt-6" style={{ color: 'var(--text-secondary)' }}>
+      <p className="text-center text-sm mt-6 text-muted-foreground">
         Ao assinar, você concorda com nossos Termos de Uso e Política de Privacidade.
         <br />Cancele a qualquer momento pelo portal de assinatura.
       </p>

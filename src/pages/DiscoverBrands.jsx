@@ -143,17 +143,17 @@ export default function DiscoverBrands() {
       {/* Header */}
       <div>
         <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Descobrir Marcas</h1>
-        <p className="mt-1">
+        <p className="mt-1 text-muted-foreground">
           {filteredBrands.length} {filteredBrands.length === 1 ? 'marca encontrada' : 'marcas encontradas'}
         </p>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -209,13 +209,13 @@ export default function DiscoverBrands() {
           ))}
         </div>
       ) : (
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardContent className="p-12 text-center">
             <Building2 className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
               Nenhuma marca encontrada
             </h3>
-            <p>
+            <p className="text-muted-foreground">
               Tente ajustar seus filtros
             </p>
           </CardContent>
@@ -240,9 +240,9 @@ export default function DiscoverBrands() {
                 </div>
                 <div className="absolute -bottom-12 left-6">
                   {selectedBrand.logo_url ? (
-                    <img src={selectedBrand.logo_url} alt={selectedBrand.company_name} className="w-24 h-24 rounded-xl border-4 border-white shadow-lg object-cover bg-white" />
+                    <img src={selectedBrand.logo_url} alt={selectedBrand.company_name} className="w-24 h-24 rounded-xl border-4 border-card shadow-lg object-cover bg-card" />
                   ) : (
-                    <div className="w-24 h-24 rounded-xl border-4 border-white shadow-lg bg-[#9038fa]/10 flex items-center justify-center">
+                    <div className="w-24 h-24 rounded-xl border-4 border-card shadow-lg bg-primary/10 flex items-center justify-center">
                       <Building2 className="w-12 h-12 text-[#9038fa]" />
                     </div>
                   )}
@@ -274,7 +274,7 @@ export default function DiscoverBrands() {
                 </div>
 
                 {selectedBrand.description && (
-                  <p>{selectedBrand.description}</p>
+                  <p className="text-muted-foreground">{selectedBrand.description}</p>
                 )}
 
                 {/* Stats */}
@@ -283,13 +283,13 @@ export default function DiscoverBrands() {
                     <div className="text-2xl font-bold">
                       {selectedBrand.total_campaigns || 0}
                     </div>
-                    <div className="text-sm">Campanhas</div>
+                    <div className="text-sm text-muted-foreground">Campanhas</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-emerald-600">
                       {selectedBrand.active_campaigns || 0}
                     </div>
-                    <div className="text-sm">Ativas</div>
+                    <div className="text-sm text-muted-foreground">Ativas</div>
                   </div>
                 </div>
 
@@ -297,7 +297,7 @@ export default function DiscoverBrands() {
                 {selectedBrand.target_audience && (
                   <div>
                     <h4 className="font-medium mb-2">Público-Alvo</h4>
-                    <p>{selectedBrand.target_audience}</p>
+                    <p className="text-muted-foreground">{selectedBrand.target_audience}</p>
                   </div>
                 )}
 
@@ -305,14 +305,14 @@ export default function DiscoverBrands() {
                 {selectedBrand.content_guidelines && (
                   <div>
                     <h4 className="font-medium mb-2">Diretrizes de Conteúdo</h4>
-                    <p>{selectedBrand.content_guidelines}</p>
+                    <p className="text-muted-foreground">{selectedBrand.content_guidelines}</p>
                   </div>
                 )}
 
                 {/* Contact - Only for Subscribers */}
                 {isSubscribed ? (
-                  <div className="p-4 bg-purple-50 rounded-xl space-y-3">
-                    <h4 className="font-medium text-purple-900">Contato</h4>
+                  <div className="p-4 bg-primary/5 rounded-xl space-y-3">
+                    <h4 className="font-medium text-primary">Contato</h4>
                     {selectedBrand.contact_email && (
                       <a href={`mailto:${selectedBrand.contact_email}`} className="flex items-center gap-2 text-[#9038fa] hover:underline">
                         <Mail className="w-4 h-4" />
@@ -357,8 +357,8 @@ export default function DiscoverBrands() {
                     )}
                   </div>
                 ) : (
-                  <div className="p-4 rounded-xl text-center">
-                    <p className="mb-3">Assine para ver informações de contato</p>
+                  <div className="p-4 rounded-xl text-center bg-muted">
+                    <p className="mb-3 text-muted-foreground">Assine para ver informações de contato</p>
                     <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Desbloquear Contato
                     </Button>
