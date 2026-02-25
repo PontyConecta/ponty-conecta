@@ -192,9 +192,9 @@ export default function BrandDashboard() {
 
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Campaigns */}
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Campanhas Recentes</CardTitle>
+            <CardTitle className="text-lg font-semibold">Campanhas Recentes</CardTitle>
             <Link to={createPageUrl('CampaignManager')}>
               <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
@@ -236,9 +236,9 @@ export default function BrandDashboard() {
         </Card>
 
         {/* Pending Applications */}
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Candidaturas Pendentes</CardTitle>
+            <CardTitle className="text-lg font-semibold">Candidaturas Pendentes</CardTitle>
             <Link to={createPageUrl('ApplicationsManager')}>
                   <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
@@ -278,9 +278,9 @@ export default function BrandDashboard() {
       </div>
 
       {/* Recent Deliveries */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Entregas de Criadores</CardTitle>
+          <CardTitle className="text-lg font-semibold">Entregas de Criadores</CardTitle>
           <Link to={createPageUrl('DeliveriesManager')}>
             <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />

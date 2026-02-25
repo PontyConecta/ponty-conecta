@@ -190,9 +190,9 @@ export default function CreatorDashboard() {
       <CreatorReputationSection reputation={reputation} deliveries={deliveries} />
 
       {/* My Applications */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Candidaturas</CardTitle>
+          <CardTitle className="text-lg font-semibold">Minhas Candidaturas</CardTitle>
           <Link to={createPageUrl('MyApplications')}>
             <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
@@ -238,9 +238,9 @@ export default function CreatorDashboard() {
       </Card>
 
       {/* My Deliveries */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Minhas Entregas</CardTitle>
+          <CardTitle className="text-lg font-semibold">Minhas Entregas</CardTitle>
           <Link to={createPageUrl('MyDeliveries')}>
             <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
