@@ -119,10 +119,10 @@ export default function CampaignManager() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+          <h1 className="text-2xl lg:text-3xl font-bold">
             {editingCampaign ? 'Editar Campanha' : 'Nova Campanha'}
           </h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+          <p className="mt-1 text-muted-foreground">
             {editingCampaign ? 'Atualize os dados da campanha' : 'Preencha os dados para criar sua campanha'}
           </p>
         </div>
@@ -141,8 +141,8 @@ export default function CampaignManager() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Campanhas</h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>Gerencie suas campanhas</p>
+          <h1 className="text-2xl lg:text-3xl font-bold">Campanhas</h1>
+          <p className="mt-1 text-muted-foreground">Gerencie suas campanhas</p>
         </div>
         
         <Button 
@@ -226,7 +226,7 @@ export default function CampaignManager() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-lg font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                            <h3 className="text-lg font-semibold truncate">
                               {campaign.title}
                             </h3>
                             <StatusBadge type="campaign" status={campaign.status} />
@@ -297,11 +297,11 @@ export default function CampaignManager() {
                           </DropdownMenu>
                         </div>
                         
-                        <p className="text-sm line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>
+                        <p className="text-sm line-clamp-2 mb-3 text-muted-foreground">
                           {campaign.description}
                         </p>
                         
-                        <div className="flex flex-wrap items-center gap-3 lg:gap-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        <div className="flex flex-wrap items-center gap-3 lg:gap-4 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Users className="w-4 h-4" />
                             {campaign.slots_filled || 0}/{campaign.slots_total || 1}
@@ -334,13 +334,13 @@ export default function CampaignManager() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Megaphone className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <Megaphone className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
               {searchTerm || filterStatus !== 'all' 
                 ? 'Nenhuma campanha encontrada' 
                 : 'Nenhuma campanha criada'}
             </h3>
-            <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
+            <p className="mb-6 text-muted-foreground">
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'Crie sua primeira campanha para conectar com criadores'}

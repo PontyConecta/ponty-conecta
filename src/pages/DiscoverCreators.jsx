@@ -112,7 +112,7 @@ export default function DiscoverCreators() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -132,8 +132,8 @@ export default function DiscoverCreators() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Descobrir Creators</h1>
-        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <h1 className="text-2xl lg:text-3xl font-bold">Descobrir Creators</h1>
+        <p className="mt-1 text-muted-foreground">
           {filteredCreators.length} {filteredCreators.length === 1 ? 'creator encontrado' : 'creators encontrados'}
         </p>
       </div>
@@ -143,7 +143,7 @@ export default function DiscoverCreators() {
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -214,11 +214,11 @@ export default function DiscoverCreators() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <Users className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
               Nenhum creator encontrado
             </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-muted-foreground">
               Tente ajustar seus filtros
             </p>
           </CardContent>
