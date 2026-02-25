@@ -137,7 +137,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, co
                   </div>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">
+              <TooltipContent side="right" className="z-[100]">
                 <p>Plano Premium</p>
               </TooltipContent>
             </Tooltip>
