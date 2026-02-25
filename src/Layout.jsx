@@ -307,13 +307,12 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 pb-20 lg:pb-6 min-h-screen transition-all duration-200" style={{ backgroundColor: 'var(--bg-primary)', paddingLeft: undefined }} >
-      <style>{`
-        @media (min-width: 1024px) {
-          .main-content-area { padding-left: ${sidebarCollapsed ? '4rem' : '16rem'} !important; }
-        }
-      `}</style>
-      <div className="main-content-area transition-all duration-200" style={{ paddingLeft: 0 }}>
+      <main className={`pt-14 lg:pt-16 pb-20 lg:pb-6 min-h-screen transition-all duration-200`} style={{ backgroundColor: 'var(--bg-primary)', paddingLeft: sidebarCollapsed ? '4rem' : '16rem' }}>
+        <style>{`
+          @media (max-width: 1023px) {
+            main { padding-left: 0 !important; }
+          }
+        `}</style>
         <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
           {children}
         </div>
@@ -321,7 +320,6 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Mobile Bottom Navigation */}
       <BottomNav profileType={profileType} currentPageName={currentPageName} />
-      </div>
       );
       }
 
