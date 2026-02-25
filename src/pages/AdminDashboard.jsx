@@ -55,22 +55,22 @@ export default function AdminDashboard() {
     return (
       <div className="p-6 text-center">
         <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Acesso Negado</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>Você não tem permissão para acessar este painel.</p>
+        <h2 className="text-2xl font-bold mb-2">Acesso Negado</h2>
+        <p className="text-muted-foreground">Você não tem permissão para acessar este painel.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6" style={{ color: 'var(--text-primary)' }}>
+    <div className="space-y-6">
       {/* Admin Navigation Header */}
       <AdminHeader currentPageName="AdminDashboard" />
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboards</h1>
-          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Dashboards</h1>
+          <p className="text-xs mt-1 text-muted-foreground">
             Atualizado: {lastRefresh.toLocaleTimeString('pt-BR')}
           </p>
         </div>
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
 
       {/* Tabs - always visible so Financeiro works even if analytics fails */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="flex-wrap h-auto gap-1 p-1" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <TabsList className="flex-wrap h-auto gap-1 p-1 bg-muted">
           <TabsTrigger value="overview" className="text-xs">Visão Geral</TabsTrigger>
           <TabsTrigger value="financials" className="text-xs">Financeiro</TabsTrigger>
           <TabsTrigger value="users" className="text-xs">Usuários</TabsTrigger>
@@ -102,8 +102,8 @@ export default function AdminDashboard() {
             </div>
           ) : analyticsError && !analytics ? (
             <div className="text-center py-12">
-              <AlertCircle className="w-10 h-10 mx-auto mb-3" style={{ color: 'var(--text-secondary)' }} />
-              <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Erro ao carregar dados gerais.</p>
+              <AlertCircle className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-sm mb-3 text-muted-foreground">Erro ao carregar dados gerais.</p>
               <Button onClick={loadAnalytics} variant="outline" size="sm">Tentar novamente</Button>
             </div>
           ) : analytics ? (
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
             <DashboardUserStats analytics={analytics} />
           ) : (
             <div className="text-center py-12">
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Carregando dados de usuários...</p>
+              <p className="text-sm text-muted-foreground">Carregando dados de usuários...</p>
             </div>
           )}
         </TabsContent>
@@ -178,7 +178,7 @@ export default function AdminDashboard() {
             </>
           ) : (
             <div className="text-center py-12">
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Carregando dados de engajamento...</p>
+              <p className="text-sm text-muted-foreground">Carregando dados de engajamento...</p>
             </div>
           )}
         </TabsContent>
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
             <DashboardMarketplace analytics={analytics} />
           ) : (
             <div className="text-center py-12">
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Carregando dados do marketplace...</p>
+              <p className="text-sm text-muted-foreground">Carregando dados do marketplace...</p>
             </div>
           )}
         </TabsContent>
