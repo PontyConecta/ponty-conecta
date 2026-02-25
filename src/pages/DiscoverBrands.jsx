@@ -243,7 +243,7 @@ export default function DiscoverBrands() {
                     <img src={selectedBrand.logo_url} alt={selectedBrand.company_name} className="w-24 h-24 rounded-xl border-4 border-card shadow-lg object-cover bg-card" />
                   ) : (
                     <div className="w-24 h-24 rounded-xl border-4 border-card shadow-lg bg-primary/10 flex items-center justify-center">
-                      <Building2 className="w-12 h-12 text-[#9038fa]" />
+                      <Building2 className="w-12 h-12 text-primary" />
                     </div>
                   )}
                 </div>
@@ -314,13 +314,13 @@ export default function DiscoverBrands() {
                   <div className="p-4 bg-primary/5 rounded-xl space-y-3">
                     <h4 className="font-medium text-primary">Contato</h4>
                     {selectedBrand.contact_email && (
-                      <a href={`mailto:${selectedBrand.contact_email}`} className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                      <a href={`mailto:${selectedBrand.contact_email}`} className="flex items-center gap-2 text-primary hover:underline">
                         <Mail className="w-4 h-4" />
                         {selectedBrand.contact_email}
                       </a>
                     )}
                     {selectedBrand.contact_phone && (
-                      <a href={`tel:${selectedBrand.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                      <a href={`tel:${selectedBrand.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-primary hover:underline">
                         <Phone className="w-4 h-4" />
                         {selectedBrand.contact_phone}
                       </a>
@@ -328,7 +328,7 @@ export default function DiscoverBrands() {
                     {/* Online presences (new format) */}
                     {selectedBrand.online_presences?.length > 0 ? (
                       selectedBrand.online_presences.map((p, idx) => (
-                        <a key={idx} href={getPresenceUrl(p)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                        <a key={idx} href={getPresenceUrl(p)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
                           <Globe className="w-4 h-4" />
                           {getPresenceLabel(p)}
                         </a>
@@ -336,19 +336,19 @@ export default function DiscoverBrands() {
                     ) : (
                       <>
                         {selectedBrand.website && (
-                          <a href={selectedBrand.website.startsWith('http') ? selectedBrand.website : `https://${selectedBrand.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                          <a href={selectedBrand.website.startsWith('http') ? selectedBrand.website : `https://${selectedBrand.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
                             <Globe className="w-4 h-4" />
                             Website
                           </a>
                         )}
                         {selectedBrand.social_instagram && (
-                          <a href={`https://instagram.com/${selectedBrand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                          <a href={`https://instagram.com/${selectedBrand.social_instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
                             <Instagram className="w-4 h-4" />
                             {selectedBrand.social_instagram.replace('@', '')}
                           </a>
                         )}
                         {selectedBrand.social_linkedin && (
-                          <a href={selectedBrand.social_linkedin.startsWith('http') ? selectedBrand.social_linkedin : `https://${selectedBrand.social_linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                          <a href={selectedBrand.social_linkedin.startsWith('http') ? selectedBrand.social_linkedin : `https://${selectedBrand.social_linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
                             <Linkedin className="w-4 h-4" />
                             LinkedIn
                           </a>
@@ -359,7 +359,7 @@ export default function DiscoverBrands() {
                 ) : (
                   <div className="p-4 rounded-xl text-center bg-muted">
                     <p className="mb-3 text-muted-foreground">Assine para ver informações de contato</p>
-                    <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
+                    <Button onClick={() => setShowPaywall(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground">
                       Desbloquear Contato
                     </Button>
                   </div>
