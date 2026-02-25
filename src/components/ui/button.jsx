@@ -5,20 +5,20 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "text-white shadow transition-all hover:opacity-90",
+          "bg-primary text-primary-foreground shadow-sm hover:opacity-90",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border shadow-sm hover:bg-[var(--accent-primary)]/10 transition-colors",
+          "border border-input bg-background shadow-sm hover:bg-accent/10",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-[var(--accent-primary)]/10 transition-colors",
-        link: "underline-offset-4 hover:underline hover:opacity-80 transition-opacity",
+        ghost: "hover:bg-accent/10",
+        link: "underline-offset-4 hover:underline hover:opacity-80",
       },
       size: {
         default: "h-9 px-4 py-2",
@@ -36,11 +36,9 @@ const buttonVariants = cva(
 
 const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "button"
-  const styles = variant === 'outline' || variant === 'ghost' || variant === 'link' ? { color: 'var(--text-primary)', borderColor: 'var(--border-color)' } : {}
   return (
     (<Comp
       className={cn(buttonVariants({ variant, size, className }), 'select-none')}
-      style={styles}
       ref={ref}
       {...props} />)
   );
