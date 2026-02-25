@@ -29,107 +29,22 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function LayoutContent({ children, currentPageName }) {
-                const { user, profile, profileType, loading, logout } = useAuth();
-                const { isSubscribed } = useSubscription();
-              const navigate = useNavigate();
-              const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
-
-              // Rastrear página visualizada
-              useEffect(() => {
-                trackPageView(currentPageName);
-              }, [currentPageName]);
-
-  // Pages que não precisam de layout completo
-        const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
-
-        // Redirect to login if not authenticated (except special pages)
-        if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
-          navigate(createPageUrl('Home'));
-          return null;
-        }
-
-        // Pages without full layout (Home, SelectProfile, Onboarding)
-        if (noLayoutPages.includes(currentPageName)) {
-          return (
-                      <div className="min-h-screen">
-                          {/* Facebook Pixel */}
-                          <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
-                          <script>{`
-                            window.fbq = window.fbq || function() { (window.fbq.q = window.fbq.q || []).push(arguments); };
-                            window.fbq('init', '${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}');
-                            window.fbq('setTestEventCode', 'TEST9662');
-                            window.fbq('track', 'PageView');
-                          `}</script>
-                          <noscript>
-                            <img 
-                              height="1" 
-                              width="1" 
-                              style={{display: 'none'}}
-                              src="https://www.facebook.com/tr?id=${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}&ev=PageView&noscript=1"
-                            />
-                          </noscript>
-
-
-                          <style>{`
-                  [data-theme="light"] {
-                    --bg-primary: #f6f6f6;
-                    --bg-secondary: #ffffff;
-                    --text-primary: #0f172a;
-                    --text-secondary: #64748b;
-                    --border-color: #ffffff;
-                    --accent-primary: #9038fa;
-                    --accent-light: #b77aff;
-                  }
-
-                  [data-theme="dark"] {
-                    --bg-primary: #0f1419;
-                    --bg-secondary: #1a2332;
-                    --text-primary: #e8ecf1;
-                    --text-secondary: #9ba8b8;
-                    --border-color: #2a3a52;
-                    --accent-primary: #b77aff;
-                    --accent-light: #9038fa;
-                    --card-bg: #1a2332;
-                  }
-
-                  [data-theme="musk"] {
-                    --bg-primary: #17101e;
-                    --bg-secondary: #2a1c38;
-                    --text-primary: #f3eef8;
-                    --text-secondary: #94a3b8;
-                    --border-color: #5a3a75;
-                    --accent-primary: #b77aff;
-                    --accent-light: #9038fa;
-                    --card-bg: #2a1c38;
-                  }
-
-                  :root {
-                  --primary: 144 56 250;
-                  --primary-foreground: 255 255 255;
-                  --accent: 183 122 255;
-                  }
-                  .safe-area-bottom {
-                    padding-bottom: env(safe-area-inset-bottom);
-                  }
-                `}</style>
-                {children}
-              </div>
-            );
-          }
-
-        // Se usuário está autenticado mas não tem perfil completo, redireciona
-            if (!loading && user && profile && profile.account_state !== 'ready') {
-              const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
-              if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
-                navigate(createPageUrl(onboardingPage));
-                return null;
-              }
-            }
-
-  const isAdmin = user?.role === 'admin';
+  const { user, profile, profileType, loading, logout } = useAuth();
+  const { isSubscribed } = useSubscription();
+  const navigate = useNavigate();
+  const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     return localStorage.getItem('sidebar-collapsed') === 'true';
   });
+
+  const isAdmin = user?.role === 'admin';
+  const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
+  const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
+
+  // Rastrear página visualizada
+  useEffect(() => {
+    trackPageView(currentPageName);
+  }, [currentPageName]);
 
   // Listen for sidebar collapse changes - using custom event + polling as backup
   useEffect(() => {
@@ -139,7 +54,6 @@ function LayoutContent({ children, currentPageName }) {
     };
     window.addEventListener('storage', syncCollapse);
     window.addEventListener('sidebar-toggle', syncCollapse);
-    // Polling as backup for same-tab localStorage changes
     const interval = setInterval(syncCollapse, 300);
     return () => { 
       window.removeEventListener('storage', syncCollapse); 
@@ -148,8 +62,88 @@ function LayoutContent({ children, currentPageName }) {
     };
   }, []);
 
-  // Pages that don't need back button
-  const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
+  // Redirect to login if not authenticated (except special pages)
+  if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
+    navigate(createPageUrl('Home'));
+    return null;
+  }
+
+  // Pages without full layout (Home, SelectProfile, Onboarding)
+  if (noLayoutPages.includes(currentPageName)) {
+    return (
+      <div className="min-h-screen">
+        {/* Facebook Pixel */}
+        <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
+        <script>{`
+          window.fbq = window.fbq || function() { (window.fbq.q = window.fbq.q || []).push(arguments); };
+          window.fbq('init', '${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}');
+          window.fbq('setTestEventCode', 'TEST9662');
+          window.fbq('track', 'PageView');
+        `}</script>
+        <noscript>
+          <img 
+            height="1" 
+            width="1" 
+            style={{display: 'none'}}
+            src="https://www.facebook.com/tr?id=${import.meta.env.VITE_FACEBOOK_PIXEL_ID || ''}&ev=PageView&noscript=1"
+          />
+        </noscript>
+
+        <style>{`
+          [data-theme="light"] {
+            --bg-primary: #f6f6f6;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #ffffff;
+            --accent-primary: #9038fa;
+            --accent-light: #b77aff;
+          }
+
+          [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a2332;
+            --text-primary: #e8ecf1;
+            --text-secondary: #9ba8b8;
+            --border-color: #2a3a52;
+            --accent-primary: #b77aff;
+            --accent-light: #9038fa;
+            --card-bg: #1a2332;
+          }
+
+          [data-theme="musk"] {
+            --bg-primary: #17101e;
+            --bg-secondary: #2a1c38;
+            --text-primary: #f3eef8;
+            --text-secondary: #94a3b8;
+            --border-color: #5a3a75;
+            --accent-primary: #b77aff;
+            --accent-light: #9038fa;
+            --card-bg: #2a1c38;
+          }
+
+          :root {
+            --primary: 144 56 250;
+            --primary-foreground: 255 255 255;
+            --accent: 183 122 255;
+          }
+          .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+          }
+        `}</style>
+        {children}
+      </div>
+    );
+  }
+
+  // Se usuário está autenticado mas não tem perfil completo, redireciona
+  if (!loading && user && profile && profile.account_state !== 'ready') {
+    const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
+    if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
+      navigate(createPageUrl(onboardingPage));
+      return null;
+    }
+  }
 
   return (
     <div className="min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
