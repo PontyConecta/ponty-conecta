@@ -6,8 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Building2, Star, Shield, CheckCircle2, Crown, Eye,
-  ChevronUp, ChevronDown, ChevronsUpDown, MapPin
+  ChevronUp, ChevronDown, ChevronsUpDown, MapPin, EyeOff
 } from 'lucide-react';
+import { UserTagBadges } from './UserTagManager';
 
 function SortHeader({ label, field, sortField, sortDir, onSort }) {
   const active = sortField === field;
@@ -67,13 +68,14 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
   return (
     <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
       {/* Desktop Header */}
-      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_80px_60px] gap-3 px-4 py-2.5 border-b items-center" style={{ borderColor: 'var(--border-color)' }}>
+      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 px-4 py-2.5 border-b items-center" style={{ borderColor: 'var(--border-color)' }}>
         <div><Checkbox checked={selectedIds.length === users.length && users.length > 0} onCheckedChange={toggleAll} /></div>
         <SortHeader label="Usuário" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Tipo" field="type" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Plano" field="subscription" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Estado" field="state" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="UF" field="location" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Tags</span>
         <SortHeader label="Data" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Ação</span>
       </div>
@@ -87,7 +89,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
           return (
             <div key={user.id} className={`${rowPadding} transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-purple-50/50' : ''}`}>
               {/* Desktop Row */}
-              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_80px_60px] gap-3 items-center">
+              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 items-center">
                 <div><Checkbox checked={isSelected} onCheckedChange={() => toggleOne(user.id)} /></div>
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Avatar className={`${compact ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>
@@ -103,6 +105,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                       </p>
                       {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500 flex-shrink-0" />}
                       {profile?.is_verified && <CheckCircle2 className="w-3 h-3 text-blue-500 flex-shrink-0" />}
+                      {user.exclude_from_financials && <EyeOff className="w-3 h-3 text-orange-500 flex-shrink-0" title="Excluído dos financeiros" />}
                     </div>
                     <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
                   </div>
@@ -124,6 +127,9 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                       <MapPin className="w-3 h-3" />{location}
                     </span>
                   )}
+                </div>
+                <div>
+                  <UserTagBadges tags={user.tags} size="xs" maxShow={2} />
                 </div>
                 <div>
                   <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
