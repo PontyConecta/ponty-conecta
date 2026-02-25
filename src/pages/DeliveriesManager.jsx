@@ -184,7 +184,7 @@ export default function DeliveriesManager() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -193,18 +193,18 @@ export default function DeliveriesManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Entregas de Criadores</h1>
-        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Entregas de Criadores</h1>
+        <p className="text-sm mt-1 text-muted-foreground">
           {filteredDeliveries.length} entregas encontradas
         </p>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -244,22 +244,22 @@ export default function DeliveriesManager() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="hover:shadow-md transition-shadow">
+                <Card className="border bg-card shadow-sm hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                       {/* Creator Info */}
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <Avatar className="w-12 h-12">
                           <AvatarImage src={creator?.avatar_url} />
-                          <AvatarFallback className="bg-orange-100 text-orange-700">
+                          <AvatarFallback className="bg-primary/10 text-primary">
                             {creator?.display_name?.[0] || 'C'}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-900 truncate">
+                          <h3 className="font-semibold truncate">
                             {creator?.display_name || 'Criador'}
                           </h3>
-                          <p className="text-sm text-slate-500 truncate">
+                          <p className="text-sm text-muted-foreground truncate">
                             {campaign?.title || '-'}
                           </p>
                         </div>
@@ -267,12 +267,12 @@ export default function DeliveriesManager() {
 
                       {/* Delivery Details */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1 text-slate-600">
+                        <div className="flex items-center gap-1 text-muted-foreground">
                           <Calendar className="w-4 h-4" />
                           {delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}
                         </div>
                         {delivery.proof_urls?.length > 0 && (
-                          <div className="flex items-center gap-1 text-slate-600">
+                          <div className="flex items-center gap-1 text-muted-foreground">
                             <ImageIcon className="w-4 h-4" />
                             {delivery.proof_urls.length} arquivo(s)
                           </div>
@@ -315,13 +315,13 @@ export default function DeliveriesManager() {
           })}
         </div>
       ) : (
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardContent className="p-12 text-center">
-            <FileCheck className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <FileCheck className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
               Nenhuma entrega encontrada
             </h3>
-            <p className="text-slate-500">
+            <p className="text-muted-foreground">
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'As entregas aparecerão aqui quando criadores submeterem seus trabalhos'}
@@ -341,15 +341,15 @@ export default function DeliveriesManager() {
             <div className="space-y-6 py-4">
               {/* Campaign & Creator */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-slate-50 rounded-xl">
-                  <Label className="text-sm text-slate-500">Campanha</Label>
-                  <p className="font-medium text-slate-900">
+                <div className="p-4 bg-muted rounded-xl">
+                  <Label className="text-sm text-muted-foreground">Campanha</Label>
+                  <p className="font-medium">
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </p>
                 </div>
-                <div className="p-4 bg-slate-50 rounded-xl">
-                  <Label className="text-sm text-slate-500">Criador</Label>
-                  <p className="font-medium text-slate-900">
+                <div className="p-4 bg-muted rounded-xl">
+                  <Label className="text-sm text-muted-foreground">Criador</Label>
+                  <p className="font-medium">
                     {creators[selectedDelivery.creator_id]?.display_name}
                   </p>
                 </div>
@@ -368,7 +368,7 @@ export default function DeliveriesManager() {
               {/* Proof Files */}
               {selectedDelivery.proof_urls?.length > 0 && (
                 <div>
-                  <Label className="text-sm text-slate-500">Arquivos de Prova</Label>
+                  <Label className="text-sm text-muted-foreground">Arquivos de Prova</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     {selectedDelivery.proof_urls.map((url, i) => (
                       <a
@@ -376,11 +376,11 @@ export default function DeliveriesManager() {
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+                        className="flex items-center gap-2 p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
                       >
-                        <ImageIcon className="w-5 h-5 text-slate-400" />
-                        <span className="text-sm text-slate-700 truncate">Arquivo {i + 1}</span>
-                        <ExternalLink className="w-4 h-4 text-slate-400 ml-auto" />
+                        <ImageIcon className="w-5 h-5 text-muted-foreground" />
+                        <span className="text-sm truncate">Arquivo {i + 1}</span>
+                        <ExternalLink className="w-4 h-4 text-muted-foreground ml-auto" />
                       </a>
                     ))}
                   </div>
@@ -390,7 +390,7 @@ export default function DeliveriesManager() {
               {/* Content URLs */}
               {selectedDelivery.content_urls?.length > 0 && (
                 <div>
-                  <Label className="text-sm text-slate-500">Links do Conteúdo</Label>
+                  <Label className="text-sm text-muted-foreground">Links do Conteúdo</Label>
                   <div className="space-y-2 mt-2">
                     {selectedDelivery.content_urls.map((url, i) => (
                       <a
@@ -411,19 +411,19 @@ export default function DeliveriesManager() {
               {/* Proof Notes */}
               {selectedDelivery.proof_notes && (
                 <div>
-                  <Label className="text-sm text-slate-500">Observações do Criador</Label>
-                  <p className="text-slate-700 mt-1 whitespace-pre-wrap">
+                  <Label className="text-sm text-muted-foreground">Observações do Criador</Label>
+                  <p className="mt-1 whitespace-pre-wrap">
                     {selectedDelivery.proof_notes}
                   </p>
                 </div>
               )}
 
               {/* Deadline Status */}
-              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
-                <Calendar className="w-5 h-5 text-slate-400" />
+              <div className="flex items-center gap-4 p-4 bg-muted rounded-xl">
+                <Calendar className="w-5 h-5 text-muted-foreground" />
                 <div>
-                  <Label className="text-sm text-slate-500">Prazo de Entrega</Label>
-                  <p className="font-medium text-slate-900">
+                  <Label className="text-sm text-muted-foreground">Prazo de Entrega</Label>
+                  <p className="font-medium">
                     {selectedDelivery.deadline 
                       ? new Date(selectedDelivery.deadline).toLocaleDateString('pt-BR', { 
                           day: '2-digit', month: 'long', year: 'numeric' 
@@ -448,7 +448,7 @@ export default function DeliveriesManager() {
               {/* Actions for Submitted Deliveries */}
               {selectedDelivery.status === 'submitted' && (
                 <div className="space-y-4 pt-4 border-t">
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-muted-foreground">
                     Avalie a entrega com base nos <strong>critérios definidos na campanha</strong>. 
                     Contestações só devem ser feitas quando a entrega não cumpre os requisitos objetivos.
                   </p>
@@ -485,7 +485,7 @@ export default function DeliveriesManager() {
                       placeholder="Descreva objetivamente por que a entrega não atende aos requisitos..."
                       className="mt-2"
                     />
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       A contestação abrirá uma disputa que será analisada pela plataforma.
                     </p>
                   </div>
