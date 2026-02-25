@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, TrendingUp, Target, Repeat, Users, CreditCard, Building2, Star, EyeOff } from 'lucide-react';
+import { DollarSign, TrendingUp, Target, Repeat, Users, CreditCard, EyeOff, RefreshCw } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import DashboardMetricCard from './DashboardMetricCard';
 import DashboardProfileFilter from './DashboardProfileFilter';
@@ -51,23 +51,38 @@ export default function DashboardFinancials() {
     </Card>
   );
 
-  const filter = profileFilter;
-  const mrr = filter === 'brand' ? stripeData.brandMRR : filter === 'creator' ? stripeData.creatorMRR : stripeData.mrr;
+  const f = profileFilter;
+  const d = stripeData;
+
+  // All metrics now respect the filter with real per-segment backend data
+  const mrr = f === 'brand' ? d.brandMRR : f === 'creator' ? d.creatorMRR : d.mrr;
   const arr = mrr * 12;
-  const subscribers = filter === 'brand' ? stripeData.brandSubscribers : filter === 'creator' ? stripeData.creatorSubscribers : stripeData.totalActiveSubscribers;
-  const arpu = subscribers > 0 ? mrr / subscribers : 0;
+  const subscribers = f === 'brand' ? d.brandSubscribers : f === 'creator' ? d.creatorSubscribers : d.totalActiveSubscribers;
+  const arpu = f === 'brand' ? d.brandArpu : f === 'creator' ? d.creatorArpu : d.arpu;
+  const ltv = f === 'brand' ? d.brandLtv : f === 'creator' ? d.creatorLtv : d.ltv;
+  const churnRate = f === 'brand' ? d.brandChurnRate : f === 'creator' ? d.creatorChurnRate : d.churnRate;
+  const retentionRate = f === 'brand' ? d.brandRetentionRate : f === 'creator' ? d.creatorRetentionRate : d.retentionRate;
+  const thisMonthRevenue = f === 'brand' ? d.thisMonthBrandRevenue : f === 'creator' ? d.thisMonthCreatorRevenue : d.thisMonthRevenue;
+  const lastMonthRevenue = f === 'brand' ? d.lastMonthBrandRevenue : f === 'creator' ? d.lastMonthCreatorRevenue : d.lastMonthRevenue;
+  const cancelledCount = f === 'brand' ? d.brandRecentlyCancelledCount : f === 'creator' ? d.creatorRecentlyCancelledCount : d.recentlyCancelledCount;
 
   return (
     <div className="space-y-6">
-      {/* Filter + Info */}
+      {/* Filter + Info + Refresh */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <DashboardProfileFilter value={profileFilter} onChange={setProfileFilter} />
-        {stripeData.excludedCount > 0 && (
-          <Badge variant="outline" className="gap-1 text-xs" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
-            <EyeOff className="w-3 h-3" />
-            {stripeData.excludedCount} usuário(s) excluído(s) dos cálculos
-          </Badge>
-        )}
+        <div className="flex items-center gap-3 flex-wrap">
+          <DashboardProfileFilter value={profileFilter} onChange={setProfileFilter} />
+          {d.excludedCount > 0 && (
+            <Badge variant="outline" className="gap-1 text-xs" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
+              <EyeOff className="w-3 h-3" />
+              {d.excludedCount} excluído(s)
+            </Badge>
+          )}
+        </div>
+        <Button onClick={loadStripeData} variant="outline" size="sm" disabled={loading}>
+          <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
+          Atualizar Stripe
+        </Button>
       </div>
 
       {/* Primary Financial Metrics */}
@@ -75,7 +90,7 @@ export default function DashboardFinancials() {
         <DashboardMetricCard
           label="MRR"
           value={`R$ ${mrr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          subtitle={filter === 'all' ? `Marcas R$${stripeData.brandMRR} · Creators R$${stripeData.creatorMRR}` : undefined}
+          subtitle={f === 'all' ? `Marcas R$${d.brandMRR.toFixed(2)} · Creators R$${d.creatorMRR.toFixed(2)}` : `ARPU R$ ${arpu.toFixed(2)}`}
           icon={DollarSign}
           iconColor="text-green-600"
           tooltip="Monthly Recurring Revenue — receita recorrente mensal das assinaturas ativas no Stripe."
@@ -83,23 +98,23 @@ export default function DashboardFinancials() {
         <DashboardMetricCard
           label="ARR"
           value={`R$ ${arr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          subtitle={`ARPU R$ ${arpu.toFixed(2)}`}
+          subtitle={f === 'all' ? `ARPU R$ ${arpu.toFixed(2)}` : undefined}
           icon={TrendingUp}
           iconColor="text-blue-600"
           tooltip="Annual Recurring Revenue — projeção anual da receita (MRR × 12). ARPU é a receita média por assinante."
         />
         <DashboardMetricCard
           label="LTV Estimado"
-          value={`R$ ${stripeData.ltv.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          subtitle={`Retenção ${stripeData.retentionRate}%`}
+          value={`R$ ${ltv.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+          subtitle={`Retenção ${retentionRate}%`}
           icon={Target}
           iconColor="text-purple-600"
           tooltip="Lifetime Value — valor estimado que cada assinante gera durante o tempo de vida na plataforma."
         />
         <DashboardMetricCard
           label="Churn Rate"
-          value={`${stripeData.churnRate}%`}
-          subtitle={`${subscribers} assinantes ativos`}
+          value={`${churnRate}%`}
+          subtitle={`${subscribers} assinante(s) ativo(s)`}
           icon={Repeat}
           iconColor="text-orange-600"
           tooltip="Taxa de cancelamento mensal — percentual de assinantes que cancelaram nos últimos 30 dias."
@@ -110,59 +125,59 @@ export default function DashboardFinancials() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <DashboardMetricCard
           label="Assinantes Ativos"
-          value={stripeData.totalActiveSubscribers}
-          subtitle={`${stripeData.brandSubscribers} marcas · ${stripeData.creatorSubscribers} creators`}
+          value={subscribers}
+          subtitle={f === 'all' ? `${d.brandSubscribers} marcas · ${d.creatorSubscribers} creators` : undefined}
           icon={Users}
           iconColor="text-indigo-600"
           tooltip="Número total de assinaturas ativas (pagas) no Stripe."
         />
         <DashboardMetricCard
           label="Receita Este Mês"
-          value={`R$ ${stripeData.thisMonthRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          previousValue={stripeData.lastMonthRevenue}
+          value={`R$ ${thisMonthRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+          previousValue={lastMonthRevenue}
           icon={CreditCard}
           iconColor="text-emerald-600"
-          tooltip="Receita faturada neste mês (invoices pagas no Stripe)."
+          tooltip="Receita faturada neste mês (invoices pagas no Stripe) vs mês anterior."
         />
         <DashboardMetricCard
           label="Planos Mensais"
-          value={stripeData.monthlySubscribers}
-          subtitle={`${stripeData.annualSubscribers} anuais`}
+          value={d.monthlySubscribers}
+          subtitle={`${d.annualSubscribers} anuais`}
           icon={CreditCard}
           iconColor="text-cyan-600"
           tooltip="Distribuição dos assinantes entre planos mensais e anuais."
         />
         <DashboardMetricCard
           label="Cancelados (30d)"
-          value={stripeData.recentlyCancelledCount}
-          subtitle={`${stripeData.pastDueSubscribers} vencidas`}
+          value={cancelledCount}
+          subtitle={f === 'all' ? `${d.pastDueSubscribers} vencida(s)` : undefined}
           icon={Repeat}
           iconColor="text-red-600"
-          tooltip="Assinaturas canceladas nos últimos 30 dias e assinaturas com pagamento vencido."
+          tooltip="Assinaturas canceladas nos últimos 30 dias."
         />
       </div>
 
       {/* Revenue Chart from Stripe */}
-      <DashboardRevenueChart data={stripeData.revenueChart} profileFilter={profileFilter} />
+      <DashboardRevenueChart data={d.revenueChart} profileFilter={profileFilter} />
 
       {/* Distribution Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {stripeData.subDistribution?.length > 0 && (
+        {d.subDistribution?.length > 0 && (
           <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
             <CardContent className="p-4">
               <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Status das Assinaturas</h3>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={stripeData.subDistribution} cx="50%" cy="50%" innerRadius={30} outerRadius={60} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
-                      {stripeData.subDistribution.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                    <Pie data={d.subDistribution} cx="50%" cy="50%" innerRadius={30} outerRadius={60} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                      {d.subDistribution.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                     </Pie>
                     <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '11px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
               <div className="flex flex-wrap gap-2 mt-2 justify-center">
-                {stripeData.subDistribution.map((p) => (
+                {d.subDistribution.map((p) => (
                   <span key={p.name} className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--text-secondary)' }}>
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
                     {p.name} ({p.value})
@@ -173,22 +188,22 @@ export default function DashboardFinancials() {
           </Card>
         )}
 
-        {stripeData.planTypeDistribution?.length > 0 && (
+        {d.planTypeDistribution?.length > 0 && (
           <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
             <CardContent className="p-4">
               <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Tipo de Plano</h3>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={stripeData.planTypeDistribution} cx="50%" cy="50%" innerRadius={30} outerRadius={60} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
-                      {stripeData.planTypeDistribution.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                    <Pie data={d.planTypeDistribution} cx="50%" cy="50%" innerRadius={30} outerRadius={60} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                      {d.planTypeDistribution.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                     </Pie>
                     <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '11px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
               <div className="flex flex-wrap gap-2 mt-2 justify-center">
-                {stripeData.planTypeDistribution.map((p) => (
+                {d.planTypeDistribution.map((p) => (
                   <span key={p.name} className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--text-secondary)' }}>
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
                     {p.name} ({p.value})
