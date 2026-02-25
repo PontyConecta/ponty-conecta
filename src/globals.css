@@ -10,7 +10,7 @@
 
   /* ── Light (default) ── */
   :root {
-    /* Platform tokens */
+    /* Platform tokens (used via var() in inline styles) */
     --bg-primary: #f6f6f6;
     --bg-secondary: #ffffff;
     --text-primary: #0f172a;
@@ -29,53 +29,53 @@
     --header-height-lg: 64px;
     --bottom-nav-height: 80px;
 
-    /* ── shadcn mapping ── */
-    --background: var(--bg-primary);
-    --foreground: var(--text-primary);
+    /* ── shadcn HSL tokens (consumed by tailwind.config via hsl()) ── */
+    --background: 0 0% 96.5%;
+    --foreground: 222.2 47.4% 11.2%;
 
-    --card: var(--bg-secondary);
-    --card-foreground: var(--text-primary);
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
 
-    --popover: var(--bg-secondary);
-    --popover-foreground: var(--text-primary);
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
 
-    --primary: var(--accent-primary);
-    --primary-foreground: #ffffff;
+    --primary: 268 94% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: var(--bg-secondary);
-    --secondary-foreground: var(--text-primary);
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: rgba(15, 23, 42, 0.06);
-    --muted-foreground: var(--text-secondary);
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: rgba(var(--accent-primary-rgb), 0.12);
-    --accent-foreground: var(--text-primary);
+    --accent: 268 94% 60%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: var(--border-color);
-    --input: var(--border-color);
-    --ring: var(--accent-primary);
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 268 94% 60%;
 
-    --radius: 12px;
+    --radius: 0.75rem;
 
     /* Chart colors */
-    --chart-1: #ef6c47;
-    --chart-2: #2ea89e;
-    --chart-3: #2e5f80;
-    --chart-4: #d4a843;
-    --chart-5: #e08544;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
 
     /* Sidebar */
-    --sidebar-background: var(--bg-secondary);
-    --sidebar-foreground: var(--text-primary);
-    --sidebar-primary: var(--accent-primary);
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: rgba(var(--accent-primary-rgb), 0.08);
-    --sidebar-accent-foreground: var(--text-primary);
-    --sidebar-border: var(--border-color);
-    --sidebar-ring: var(--accent-primary);
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222.2 47.4% 11.2%;
+    --sidebar-primary: 268 94% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 268 94% 60% / 0.08;
+    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 268 94% 60%;
   }
 
   /* ── Light (explicit) ── */
@@ -105,9 +105,43 @@
     --accent-hover: #a055ff;
     --accent-primary-rgb: 183, 122, 255;
 
-    --muted: rgba(226, 232, 240, 0.06);
-    --destructive: #dc2626;
-    --destructive-foreground: #ffffff;
+    /* shadcn HSL overrides for dark */
+    --background: 230 62% 10%;
+    --foreground: 213 33% 96%;
+
+    --card: 228 38% 16%;
+    --card-foreground: 213 33% 96%;
+
+    --popover: 228 38% 16%;
+    --popover-foreground: 213 33% 96%;
+
+    --primary: 268 100% 74%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 228 38% 16%;
+    --secondary-foreground: 213 33% 96%;
+
+    --muted: 228 38% 16%;
+    --muted-foreground: 218 18% 69%;
+
+    --accent: 268 100% 74%;
+    --accent-foreground: 213 33% 96%;
+
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 215 32% 24%;
+    --input: 215 32% 24%;
+    --ring: 268 100% 74%;
+
+    --sidebar-background: 228 38% 16%;
+    --sidebar-foreground: 213 33% 96%;
+    --sidebar-primary: 268 100% 74%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 228 38% 20%;
+    --sidebar-accent-foreground: 213 33% 96%;
+    --sidebar-border: 215 32% 24%;
+    --sidebar-ring: 268 100% 74%;
   }
 
   /* ── Neon (canonical name) ── */
@@ -123,12 +157,46 @@
     --accent-hover: #a055ff;
     --accent-primary-rgb: 183, 122, 255;
 
-    --muted: rgba(245, 241, 248, 0.06);
-    --destructive: #dc2626;
-    --destructive-foreground: #ffffff;
+    /* shadcn HSL overrides for neon */
+    --background: 270 22% 11%;
+    --foreground: 274 32% 96%;
+
+    --card: 272 31% 17%;
+    --card-foreground: 274 32% 96%;
+
+    --popover: 272 31% 17%;
+    --popover-foreground: 274 32% 96%;
+
+    --primary: 268 100% 74%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 272 31% 17%;
+    --secondary-foreground: 274 32% 96%;
+
+    --muted: 272 31% 17%;
+    --muted-foreground: 255 12% 77%;
+
+    --accent: 268 100% 74%;
+    --accent-foreground: 274 32% 96%;
+
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 272 30% 41%;
+    --input: 272 30% 41%;
+    --ring: 268 100% 74%;
+
+    --sidebar-background: 272 31% 17%;
+    --sidebar-foreground: 274 32% 96%;
+    --sidebar-primary: 268 100% 74%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 272 31% 22%;
+    --sidebar-accent-foreground: 274 32% 96%;
+    --sidebar-border: 272 30% 41%;
+    --sidebar-ring: 268 100% 74%;
   }
 
-  /* ── Musk (TEMPORARY ALIAS for backward compat) ── */
+  /* ── Musk (TEMPORARY ALIAS for backward compat — identical to neon) ── */
   [data-theme="musk"] {
     --bg-primary: #1a1624;
     --bg-secondary: #2d1f3a;
@@ -141,9 +209,33 @@
     --accent-hover: #a055ff;
     --accent-primary-rgb: 183, 122, 255;
 
-    --muted: rgba(245, 241, 248, 0.06);
-    --destructive: #dc2626;
-    --destructive-foreground: #ffffff;
+    --background: 270 22% 11%;
+    --foreground: 274 32% 96%;
+    --card: 272 31% 17%;
+    --card-foreground: 274 32% 96%;
+    --popover: 272 31% 17%;
+    --popover-foreground: 274 32% 96%;
+    --primary: 268 100% 74%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 272 31% 17%;
+    --secondary-foreground: 274 32% 96%;
+    --muted: 272 31% 17%;
+    --muted-foreground: 255 12% 77%;
+    --accent: 268 100% 74%;
+    --accent-foreground: 274 32% 96%;
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 272 30% 41%;
+    --input: 272 30% 41%;
+    --ring: 268 100% 74%;
+    --sidebar-background: 272 31% 17%;
+    --sidebar-foreground: 274 32% 96%;
+    --sidebar-primary: 268 100% 74%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 272 31% 22%;
+    --sidebar-accent-foreground: 274 32% 96%;
+    --sidebar-border: 272 30% 41%;
+    --sidebar-ring: 268 100% 74%;
   }
 
   /* ── Global resets ── */
