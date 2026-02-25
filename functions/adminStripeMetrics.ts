@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     let startingAfter = undefined;
     
     while (hasMore) {
-      const params = { limit: 100, status: 'all', expand: ['data.items.data.price.product'] };
+      const params = { limit: 100, status: 'all', expand: ['data.plan.product'] };
       if (startingAfter) params.starting_after = startingAfter;
       const batch = await stripe.subscriptions.list(params);
       subscriptions.push(...batch.data);
