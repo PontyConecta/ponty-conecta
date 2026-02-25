@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -9,18 +10,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, CheckCircle2, Crown, X, Users } from 'lucide-react';
+import { Loader2, X, Users, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function UserBulkActions({ selectedIds, users, brands, creators, onClear, onComplete }) {
   const [action, setAction] = useState('');
   const [loading, setLoading] = useState(false);
+  const [bulkTag, setBulkTag] = useState('');
 
   if (selectedIds.length === 0) return null;
+
+  const needsTag = action === 'add_tag' || action === 'remove_tag';
 
   const handleExecute = async () => {
     if (!action) {
       toast.error('Selecione uma ação');
+      return;
+    }
+    if (needsTag && !bulkTag.trim()) {
+      toast.error('Digite o nome da tag');
       return;
     }
 
@@ -53,6 +61,22 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
             actionName = 'set_account_state';
             data = { account_state: 'ready' };
             break;
+          case 'exclude_financials':
+            actionName = 'bulk_set_exclude_financials';
+            data = { exclude_from_financials: true };
+            break;
+          case 'include_financials':
+            actionName = 'bulk_set_exclude_financials';
+            data = { exclude_from_financials: false };
+            break;
+          case 'add_tag':
+            actionName = 'bulk_add_tag';
+            data = { tag: bulkTag.trim() };
+            break;
+          case 'remove_tag':
+            actionName = 'bulk_remove_tag';
+            data = { tag: bulkTag.trim() };
+            break;
           default:
             continue;
         }
@@ -75,6 +99,7 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
     }
     
     setAction('');
+    setBulkTag('');
     onClear();
     onComplete();
   };
@@ -86,8 +111,8 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
         <Badge className="bg-[#9038fa] text-white border-0">{selectedIds.length} selecionado(s)</Badge>
       </div>
       
-      <Select value={action} onValueChange={setAction}>
-        <SelectTrigger className="w-48">
+      <Select value={action} onValueChange={(v) => { setAction(v); setBulkTag(''); }}>
+        <SelectTrigger className="w-56">
           <SelectValue placeholder="Ação em massa..." />
         </SelectTrigger>
         <SelectContent>
@@ -96,12 +121,29 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
           <SelectItem value="set_starter">Definir como Starter</SelectItem>
           <SelectItem value="set_trial_30">Conceder Trial 30 dias</SelectItem>
           <SelectItem value="set_ready">Marcar conta como Pronta</SelectItem>
+          <SelectItem value="exclude_financials">Excluir dos Financeiros</SelectItem>
+          <SelectItem value="include_financials">Incluir nos Financeiros</SelectItem>
+          <SelectItem value="add_tag">Adicionar Tag</SelectItem>
+          <SelectItem value="remove_tag">Remover Tag</SelectItem>
         </SelectContent>
       </Select>
 
+      {needsTag && (
+        <div className="flex items-center gap-1">
+          <Tag className="w-3.5 h-3.5" style={{ color: 'var(--text-secondary)' }} />
+          <Input
+            placeholder="Nome da tag..."
+            value={bulkTag}
+            onChange={(e) => setBulkTag(e.target.value)}
+            className="w-36 h-8 text-sm"
+            style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+          />
+        </div>
+      )}
+
       <Button 
         onClick={handleExecute} 
-        disabled={loading || !action}
+        disabled={loading || !action || (needsTag && !bulkTag.trim())}
         className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
         size="sm"
       >
