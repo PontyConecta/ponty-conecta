@@ -25,7 +25,7 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
   const maxVal = Math.max(...pipelineData.map(d => d.value), 1);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
       {/* Pipeline */}
       <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <CardContent className="p-4">
@@ -68,19 +68,7 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
             })}
           </div>
 
-          {/* Summary row */}
-          {totalCampaigns > 0 && (
-            <div className="mt-3 pt-2 border-t flex items-center justify-between" style={{ borderColor: 'var(--border-color)' }}>
-              <div className="flex gap-3">
-                {pipelineData.filter(d => d.value > 0).map(d => (
-                  <span key={d.stage} className="text-[10px] flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
-                    {d.value}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
+
         </CardContent>
       </Card>
 

@@ -78,7 +78,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                    isCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3',
                    isActive 
                      ? 'shadow-sm' 
-                     : 'hover:opacity-70'
+                     : ''
                  )}
                  style={isActive ? { backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' } : { color: 'var(--text-secondary)' }}
               >
