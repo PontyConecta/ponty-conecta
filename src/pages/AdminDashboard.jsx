@@ -8,6 +8,7 @@ import { useAuth } from '@/components/contexts/AuthContext';
 import { toast } from 'sonner';
 
 import DashboardMetricCard from '../components/admin/DashboardMetricCard';
+import DashboardDateFilter from '../components/admin/DashboardDateFilter';
 import DashboardUserStats from '../components/admin/DashboardUserStats';
 import DashboardRevenueChart from '../components/admin/DashboardRevenueChart';
 import DashboardEngagementChart from '../components/admin/DashboardEngagementChart';
@@ -85,65 +86,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Date Range */}
-      <div className="flex gap-2 flex-wrap">
-        {[
-          { key: 'day', label: 'Hoje' },
-          { key: 'week', label: '7 dias' },
-          { key: 'month', label: '30 dias' },
-          { key: 'year', label: '12 meses' },
-        ].map(range => (
-          <Button
-            key={range.key}
-            variant={dateRange === range.key ? 'default' : 'outline'}
-            onClick={() => setDateRange(range.key)}
-            size="sm"
-            className={dateRange === range.key ? 'bg-[#9038fa] hover:bg-[#7a2de0] text-white' : ''}
-          >
-            {range.label}
-          </Button>
-        ))}
-      </div>
-
       {analytics && (
         <>
-          {/* Overview Metrics (non-financial) */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <DashboardMetricCard
-              label="Total Usuários"
-              value={analytics.totalUsers || 0}
-              subtitle={`${analytics.totalBrands || 0} marcas · ${analytics.totalCreators || 0} criadores`}
-              icon={Users}
-              iconColor="text-indigo-600"
-              tooltip="Número total de usuários cadastrados na plataforma."
-            />
-            <DashboardMetricCard
-              label="Novos no Período"
-              value={analytics.newUsers || 0}
-              previousValue={analytics.previousNewUsers}
-              subtitle={`Crescimento ${analytics.growthRate || 0}%`}
-              icon={TrendingUp}
-              iconColor="text-emerald-600"
-              tooltip="Novos cadastros no período selecionado, comparado com o período anterior."
-            />
-            <DashboardMetricCard
-              label="Conversão"
-              value={`${analytics.conversionRate || 0}%`}
-              subtitle={`${analytics.acceptedApplications || 0} de ${analytics.totalApplications || 0} aceitas`}
-              icon={Activity}
-              iconColor="text-cyan-600"
-              tooltip="Taxa de candidaturas aceitas sobre o total de candidaturas recebidas."
-            />
-            <DashboardMetricCard
-              label="Taxa de Sucesso"
-              value={`${analytics.successRate || 0}%`}
-              subtitle={`${analytics.completedDeliveries || 0} entregas aprovadas`}
-              icon={Shield}
-              iconColor="text-green-600"
-              tooltip="Percentual de entregas aprovadas sobre o total de entregas finalizadas."
-            />
-          </div>
-
           {/* Tabs */}
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="flex-wrap h-auto gap-1 p-1" style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -156,6 +100,46 @@ export default function AdminDashboard() {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
+              {/* Date Range Filter */}
+              <DashboardDateFilter value={dateRange} onChange={setDateRange} />
+
+              {/* Overview Metrics */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <DashboardMetricCard
+                  label="Total Usuários"
+                  value={analytics.totalUsers || 0}
+                  subtitle={`${analytics.totalBrands || 0} marcas · ${analytics.totalCreators || 0} criadores`}
+                  icon={Users}
+                  iconColor="text-indigo-600"
+                  tooltip="Número total de usuários cadastrados na plataforma."
+                />
+                <DashboardMetricCard
+                  label="Novos no Período"
+                  value={analytics.newUsers || 0}
+                  previousValue={analytics.previousNewUsers}
+                  subtitle={`Crescimento ${analytics.growthRate || 0}%`}
+                  icon={TrendingUp}
+                  iconColor="text-emerald-600"
+                  tooltip="Novos cadastros no período selecionado, comparado com o período anterior."
+                />
+                <DashboardMetricCard
+                  label="Conversão"
+                  value={`${analytics.conversionRate || 0}%`}
+                  subtitle={`${analytics.acceptedApplications || 0} de ${analytics.totalApplications || 0} aceitas`}
+                  icon={Activity}
+                  iconColor="text-cyan-600"
+                  tooltip="Taxa de candidaturas aceitas sobre o total de candidaturas recebidas."
+                />
+                <DashboardMetricCard
+                  label="Taxa de Sucesso"
+                  value={`${analytics.successRate || 0}%`}
+                  subtitle={`${analytics.completedDeliveries || 0} entregas aprovadas`}
+                  icon={Shield}
+                  iconColor="text-green-600"
+                  tooltip="Percentual de entregas aprovadas sobre o total de entregas finalizadas."
+                />
+              </div>
+
               <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
               <DashboardEngagementChart data={analytics.engagementChart} />
             </TabsContent>
