@@ -10,7 +10,6 @@ import { toast } from 'sonner';
 import DashboardMetricCard from '../components/admin/DashboardMetricCard';
 import DashboardDateFilter from '../components/admin/DashboardDateFilter';
 import DashboardUserStats from '../components/admin/DashboardUserStats';
-import DashboardRevenueChart from '../components/admin/DashboardRevenueChart';
 import DashboardEngagementChart from '../components/admin/DashboardEngagementChart';
 import DashboardMarketplace from '../components/admin/DashboardMarketplace';
 import DashboardPipeline from '../components/admin/DashboardPipeline';

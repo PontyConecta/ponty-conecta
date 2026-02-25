@@ -11,27 +11,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
-    // Fetch excluded users (those flagged to be excluded from financials)
-    const allUsers = await base44.asServiceRole.entities.User.filter({ exclude_from_financials: true });
-    const excludedEmails = new Set(allUsers.map(u => u.email?.toLowerCase()).filter(Boolean));
-
-    // Also fetch Brand/Creator profiles to map stripe_customer_id to user email
-    const [allBrands, allCreators] = await Promise.all([
+    // Fetch all users, brands, creators in parallel
+    const [allUsers, allBrands, allCreators] = await Promise.all([
+      base44.asServiceRole.entities.User.list(),
       base44.asServiceRole.entities.Brand.list(),
       base44.asServiceRole.entities.Creator.list(),
     ]);
 
-    // Build set of excluded Stripe customer IDs
+    // Build set of excluded Stripe customer IDs from users flagged exclude_from_financials
     const excludedCustomerIds = new Set();
-    const allUsersForMapping = await base44.asServiceRole.entities.User.list();
-    const emailToUserId = {};
-    allUsersForMapping.forEach(u => { emailToUserId[u.email?.toLowerCase()] = u.id; });
+    const excludedUsers = allUsers.filter(u => u.exclude_from_financials);
     
-    for (const email of excludedEmails) {
-      const uid = emailToUserId[email];
-      if (!uid) continue;
-      const brand = allBrands.find(b => b.user_id === uid);
-      const creator = allCreators.find(c => c.user_id === uid);
+    for (const u of excludedUsers) {
+      const brand = allBrands.find(b => b.user_id === u.id);
+      const creator = allCreators.find(c => c.user_id === u.id);
       if (brand?.stripe_customer_id) excludedCustomerIds.add(brand.stripe_customer_id);
       if (creator?.stripe_customer_id) excludedCustomerIds.add(creator.stripe_customer_id);
     }

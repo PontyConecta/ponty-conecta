@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
-    const { dateRange, type, profileTypeFilter } = await req.json();
+    const { dateRange, type } = await req.json();
 
     // Users list request
     if (type === 'list_users') {
@@ -52,8 +52,6 @@ Deno.serve(async (req) => {
       base44.asServiceRole.entities.Dispute.list()
     ]);
 
-    const filter = profileTypeFilter || 'all';
-
     // Helper: filter by date range
     const filterByDate = (items, start, end, dateField = 'created_date') => {
       return items.filter(item => {
@@ -86,12 +84,12 @@ Deno.serve(async (req) => {
     const brandMRR = calcMRR(brandSubs);
     const creatorMRR = calcMRR(creatorSubs);
 
-    const filteredMRR = filter === 'brand' ? brandMRR : filter === 'creator' ? creatorMRR : totalMRR;
+    const filteredMRR = totalMRR;
 
     const totalActiveUsers = brands.filter(b => b.account_state === 'ready').length + creators.filter(c => c.account_state === 'ready').length;
     const brandActiveUsers = brands.filter(b => b.account_state === 'ready').length;
     const creatorActiveUsers = creators.filter(c => c.account_state === 'ready').length;
-    const filteredActiveUsers = filter === 'brand' ? brandActiveUsers : filter === 'creator' ? creatorActiveUsers : totalActiveUsers;
+    const filteredActiveUsers = totalActiveUsers;
 
     const arpu = filteredActiveUsers > 0 ? filteredMRR / filteredActiveUsers : 0;
     const arr = filteredMRR * 12;

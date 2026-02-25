@@ -22,7 +22,12 @@ export default function DashboardFinancials() {
   const loadStripeData = async () => {
     setLoading(true);
     const response = await base44.functions.invoke('adminStripeMetrics', {});
-    setStripeData(response.data);
+    if (response.data?.error) {
+      console.error('Stripe metrics error:', response.data.error);
+      setStripeData(null);
+    } else {
+      setStripeData(response.data);
+    }
     setLoading(false);
   };
 
@@ -37,7 +42,14 @@ export default function DashboardFinancials() {
     );
   }
 
-  if (!stripeData) return null;
+  if (!stripeData) return (
+    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <CardContent className="p-6 text-center">
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Não foi possível carregar as métricas financeiras do Stripe.</p>
+        <Button onClick={loadStripeData} variant="outline" size="sm" className="mt-3">Tentar novamente</Button>
+      </CardContent>
+    </Card>
+  );
 
   const filter = profileFilter;
   const mrr = filter === 'brand' ? stripeData.brandMRR : filter === 'creator' ? stripeData.creatorMRR : stripeData.mrr;

@@ -34,6 +34,19 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [newRole, setNewRole] = useState(user?.role || 'user');
   const [excludeFromFinancials, setExcludeFromFinancials] = useState(user?.exclude_from_financials || false);
 
+  // Reset state when user/profile changes
+  React.useEffect(() => {
+    if (user && profile) {
+      setNewSubscriptionStatus(profile.subscription_status || 'starter');
+      setNewAccountState(profile.account_state || 'incomplete');
+      setNewVerified(profile.is_verified || false);
+      setNewRole(user.role || 'user');
+      setExcludeFromFinancials(user.exclude_from_financials || false);
+      setAuditNote('');
+      setTrialDays(30);
+    }
+  }, [user?.id, profile?.id]);
+
   if (!user || !profile) return null;
 
   const handleAction = async (action, data = {}) => {
@@ -309,17 +322,9 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
               </div>
               <Button 
                 onClick={async () => {
-                  setActionLoading(true);
                   const newVal = !excludeFromFinancials;
-                  await base44.functions.invoke('adminManageUser', { 
-                    userId: user.id, 
-                    action: 'set_exclude_financials', 
-                    data: { exclude_from_financials: newVal, auditNote } 
-                  });
+                  await handleAction('set_exclude_financials', { exclude_from_financials: newVal });
                   setExcludeFromFinancials(newVal);
-                  toast.success(newVal ? 'Usuário excluído dos cálculos financeiros' : 'Usuário incluído nos cálculos financeiros');
-                  setActionLoading(false);
-                  onActionComplete?.();
                 }} 
                 disabled={actionLoading}
                 variant={excludeFromFinancials ? 'default' : 'outline'}
