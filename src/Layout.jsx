@@ -127,6 +127,23 @@ function LayoutContent({ children, currentPageName }) {
             }
 
   const isAdmin = user?.role === 'admin';
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('sidebar-collapsed') === 'true';
+  });
+
+  // Listen for sidebar collapse changes
+  useEffect(() => {
+    const handleStorage = () => {
+      setSidebarCollapsed(localStorage.getItem('sidebar-collapsed') === 'true');
+    };
+    window.addEventListener('storage', handleStorage);
+    // Also poll since same-tab storage events don't fire
+    const interval = setInterval(() => {
+      const val = localStorage.getItem('sidebar-collapsed') === 'true';
+      setSidebarCollapsed(prev => prev !== val ? val : prev);
+    }, 200);
+    return () => { window.removeEventListener('storage', handleStorage); clearInterval(interval); };
+  }, []);
 
   // Pages that don't need back button
   const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
@@ -290,7 +307,7 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className="pt-14 lg:pt-16 lg:pl-64 pb-20 lg:pb-6 min-h-screen transition-colors" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <main className={`pt-14 lg:pt-16 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'} pb-20 lg:pb-6 min-h-screen transition-all duration-200`} style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
           {children}
         </div>
