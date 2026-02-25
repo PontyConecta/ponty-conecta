@@ -184,7 +184,7 @@ export default function MyDeliveries() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -193,8 +193,8 @@ export default function MyDeliveries() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Minhas Entregas</h1>
-        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Minhas Entregas</h1>
+        <p className="text-sm mt-1 text-muted-foreground">
           {filteredDeliveries.length} entregas encontradas
         </p>
       </div>
@@ -204,7 +204,7 @@ export default function MyDeliveries() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -252,15 +252,15 @@ export default function MyDeliveries() {
                         {brand?.logo_url ? (
                           <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
                         ) : (
-                          <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                            <Building2 className="w-6 h-6" style={{ color: 'var(--text-secondary)' }} />
+                          <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+                            <Building2 className="w-6 h-6" />
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                          <h3 className="font-semibold truncate">
                             {campaign?.title || 'Campanha'}
                           </h3>
-                          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                          <p className="text-sm">
                             {brand?.company_name || 'Marca'}
                           </p>
                           <div className="flex flex-wrap gap-3 mt-2 text-sm">
@@ -329,11 +329,11 @@ export default function MyDeliveries() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <FileText className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <FileText className="w-16 h-16 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
               Nenhuma entrega encontrada
             </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
+            <p>
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'Suas entregas aparecerão aqui quando suas candidaturas forem aceitas'}
@@ -354,11 +354,11 @@ export default function MyDeliveries() {
           {selectedDelivery && (
             <div className="space-y-6 py-4">
               {/* Campaign Info */}
-              <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+              <div className="p-4 rounded-xl">
+                <h4 className="font-semibold">
                   {campaigns[selectedDelivery.campaign_id]?.title}
                 </h4>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm">
                   {brands[selectedDelivery.brand_id]?.company_name}
                 </p>
               </div>
@@ -378,8 +378,8 @@ export default function MyDeliveries() {
                 <Label>Arquivos de Prova (Screenshots, etc.)</Label>
                 <div className="mt-2 space-y-2">
                   {proofUrls.map((url, i) => (
-                    <div key={i} className="flex items-center gap-2 p-2 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                      <span className="text-sm truncate flex-1" style={{ color: 'var(--text-secondary)' }}>Arquivo {i + 1}</span>
+                    <div key={i} className="flex items-center gap-2 p-2 rounded-lg">
+                      <span className="text-sm truncate flex-1">Arquivo {i + 1}</span>
                       {selectedDelivery.status === 'pending' && (
                         <Button
                           variant="ghost"
@@ -405,9 +405,9 @@ export default function MyDeliveries() {
                         className="hidden"
                         onChange={handleFileUpload}
                       />
-                      <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg hover:border-[#9038fa] transition-colors" style={{ borderColor: 'var(--border-color)' }}>
-                        <Upload className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
-                        <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Clique para fazer upload</span>
+                      <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg hover:border-[#9038fa] transition-colors">
+                        <Upload className="w-5 h-5" />
+                        <span className="text-sm">Clique para fazer upload</span>
                       </div>
                     </label>
                   )}
@@ -421,7 +421,7 @@ export default function MyDeliveries() {
                   {contentUrls.map((url, i) => (
                     <div key={i} className="flex gap-2">
                       <div className="relative flex-1">
-                        <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                        <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
                         <Input
                           value={url}
                           onChange={(e) => {
@@ -495,7 +495,7 @@ export default function MyDeliveries() {
                       </>
                     )}
                   </Button>
-                  <p className="text-xs text-center mt-2" style={{ color: 'var(--text-secondary)' }}>
+                  <p className="text-xs text-center mt-2">
                     Certifique-se de que a entrega atende todos os requisitos antes de enviar.
                   </p>
                 </div>

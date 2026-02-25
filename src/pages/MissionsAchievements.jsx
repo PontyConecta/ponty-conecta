@@ -31,7 +31,7 @@ export default function MissionsAchievements() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -44,19 +44,19 @@ export default function MissionsAchievements() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Missões</h1>
-        <p style={{ color: 'var(--text-secondary)' }}>Complete missões e ganhe pontos de reputação</p>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight mb-2">Missões</h1>
+        <p>Complete missões e ganhe pontos de reputação</p>
       </div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+          <Card className="border bg-card shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Missões Ativas</p>
-                  <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{activeMissions.length}</p>
+                  <p className="text-sm mb-1">Missões Ativas</p>
+                  <p className="text-3xl font-bold">{activeMissions.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
                   <Flame className="w-6 h-6 text-orange-600" />
@@ -67,12 +67,12 @@ export default function MissionsAchievements() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+          <Card className="border bg-card shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Concluídas</p>
-                  <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{completedMissions.length}</p>
+                  <p className="text-sm mb-1">Concluídas</p>
+                  <p className="text-3xl font-bold">{completedMissions.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
                   <CheckCircle2 className="w-6 h-6 text-emerald-600" />
@@ -83,12 +83,12 @@ export default function MissionsAchievements() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+          <Card className="border bg-card shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Pontos Totais</p>
-                  <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalRewardPoints}</p>
+                  <p className="text-sm mb-1">Pontos Totais</p>
+                  <p className="text-3xl font-bold">{totalRewardPoints}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center">
                   <Star className="w-6 h-6 text-yellow-600" />
@@ -102,7 +102,7 @@ export default function MissionsAchievements() {
       {/* Active Missions */}
       {activeMissions.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Missões Ativas</h2>
+          <h2 className="text-lg font-semibold">Missões Ativas</h2>
           {activeMissions.map((mission, index) => {
             const progress = mission.target_value > 0 
               ? Math.min((mission.current_progress / mission.target_value) * 100, 100)
@@ -115,15 +115,15 @@ export default function MissionsAchievements() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <Card className="border bg-card shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4 mb-4">
                       <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
                         <Flame className="w-6 h-6 text-orange-600" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>{mission.title}</h3>
-                        <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{mission.description}</p>
+                        <h3 className="font-semibold text-lg">{mission.title}</h3>
+                        <p className="text-sm mt-1">{mission.description}</p>
                       </div>
                       <Badge className="bg-yellow-100 text-yellow-800 border-0 flex-shrink-0">
                         +{mission.reward_points} pts
@@ -131,8 +131,8 @@ export default function MissionsAchievements() {
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span style={{ color: 'var(--text-secondary)' }}>Progresso</span>
-                        <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                        <span>Progresso</span>
+                        <span className="font-semibold">
                           {mission.current_progress}/{mission.target_value}
                         </span>
                       </div>
@@ -149,10 +149,10 @@ export default function MissionsAchievements() {
       {/* Completed Missions */}
       {completedMissions.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Missões Concluídas</h2>
+          <h2 className="text-lg font-semibold">Missões Concluídas</h2>
           {completedMissions.map((mission) => (
             <motion.div key={mission.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <Card className="border-emerald-200" style={{ backgroundColor: 'rgba(16, 185, 129, 0.05)' }}>
+              <Card className="border-emerald-200">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
@@ -177,8 +177,8 @@ export default function MissionsAchievements() {
 
       {activeMissions.length === 0 && completedMissions.length === 0 && (
         <div className="text-center py-12">
-          <Flame className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
-          <p style={{ color: 'var(--text-secondary)' }}>Nenhuma missão disponível</p>
+          <Flame className="w-16 h-16 mx-auto mb-4" />
+          <p>Nenhuma missão disponível</p>
         </div>
       )}
     </div>

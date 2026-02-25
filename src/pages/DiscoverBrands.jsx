@@ -133,7 +133,7 @@ export default function DiscoverBrands() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -142,8 +142,8 @@ export default function DiscoverBrands() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Descobrir Marcas</h1>
-        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Descobrir Marcas</h1>
+        <p className="mt-1">
           {filteredBrands.length} {filteredBrands.length === 1 ? 'marca encontrada' : 'marcas encontradas'}
         </p>
       </div>
@@ -153,7 +153,7 @@ export default function DiscoverBrands() {
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -211,11 +211,11 @@ export default function DiscoverBrands() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <Building2 className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">
               Nenhuma marca encontrada
             </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
+            <p>
               Tente ajustar seus filtros
             </p>
           </CardContent>
@@ -233,7 +233,7 @@ export default function DiscoverBrands() {
             <div className="space-y-6 py-4">
               {/* Cover & Logo */}
               <div className="relative">
-                <div className="h-32 rounded-xl overflow-hidden" style={{ backgroundColor: '#9038fa' }}>
+                <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
                   {selectedBrand.cover_image_url && (
                     <img src={selectedBrand.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -253,7 +253,7 @@ export default function DiscoverBrands() {
               <div className="pt-10 space-y-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{selectedBrand.company_name}</h2>
+                    <h2 className="text-2xl font-bold">{selectedBrand.company_name}</h2>
                     {selectedBrand.verified && (
                       <CheckCircle2 className="w-6 h-6 text-blue-500" />
                     )}
@@ -274,38 +274,38 @@ export default function DiscoverBrands() {
                 </div>
 
                 {selectedBrand.description && (
-                  <p style={{ color: 'var(--text-secondary)' }}>{selectedBrand.description}</p>
+                  <p>{selectedBrand.description}</p>
                 )}
 
                 {/* Stats */}
                 <div className="flex items-center gap-6">
                   <div>
-                    <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                    <div className="text-2xl font-bold">
                       {selectedBrand.total_campaigns || 0}
                     </div>
-                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Campanhas</div>
+                    <div className="text-sm">Campanhas</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-emerald-600">
                       {selectedBrand.active_campaigns || 0}
                     </div>
-                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Ativas</div>
+                    <div className="text-sm">Ativas</div>
                   </div>
                 </div>
 
                 {/* Target Audience */}
                 {selectedBrand.target_audience && (
                   <div>
-                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Público-Alvo</h4>
-                    <p style={{ color: 'var(--text-secondary)' }}>{selectedBrand.target_audience}</p>
+                    <h4 className="font-medium mb-2">Público-Alvo</h4>
+                    <p>{selectedBrand.target_audience}</p>
                   </div>
                 )}
 
                 {/* Content Guidelines */}
                 {selectedBrand.content_guidelines && (
                   <div>
-                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Diretrizes de Conteúdo</h4>
-                    <p style={{ color: 'var(--text-secondary)' }}>{selectedBrand.content_guidelines}</p>
+                    <h4 className="font-medium mb-2">Diretrizes de Conteúdo</h4>
+                    <p>{selectedBrand.content_guidelines}</p>
                   </div>
                 )}
 
@@ -357,8 +357,8 @@ export default function DiscoverBrands() {
                     )}
                   </div>
                 ) : (
-                  <div className="p-4 rounded-xl text-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                    <p className="mb-3" style={{ color: 'var(--text-secondary)' }}>Assine para ver informações de contato</p>
+                  <div className="p-4 rounded-xl text-center">
+                    <p className="mb-3">Assine para ver informações de contato</p>
                     <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Desbloquear Contato
                     </Button>
