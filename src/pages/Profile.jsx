@@ -268,7 +268,7 @@ export default function Profile() {
   if (!profile) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -280,8 +280,8 @@ export default function Profile() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Editar Perfil</h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>Atualize suas informações</p>
+          <h1 className="text-2xl lg:text-3xl font-bold">Editar Perfil</h1>
+          <p className="mt-1 text-muted-foreground">Atualize suas informações</p>
         </div>
         <div className="flex items-center gap-2">
           <ThemeSelector />
@@ -292,7 +292,7 @@ export default function Profile() {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="w-full lg:w-auto flex overflow-x-auto" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <TabsList className="w-full lg:w-auto flex overflow-x-auto">
           <TabsTrigger value="profile" className="flex-1 lg:flex-none">Perfil</TabsTrigger>
           {!isBrand && <TabsTrigger value="portfolio" className="flex-1 lg:flex-none">Portfólio</TabsTrigger>}
           <TabsTrigger value="contact" className="flex-1 lg:flex-none">Contato</TabsTrigger>
@@ -397,7 +397,7 @@ export default function Profile() {
                       <div>
                         <Label>Cidade</Label>
                         <div className="relative mt-2">
-                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
                           <Input
                             value={formData.city}
                             onChange={(e) => handleChange('city', e.target.value)}
@@ -459,7 +459,7 @@ export default function Profile() {
                     <div>
                       <Label>Cidade</Label>
                       <div className="relative mt-2">
-                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
                         <Input
                           value={formData.city}
                           onChange={(e) => handleChange('city', e.target.value)}
@@ -534,8 +534,8 @@ export default function Profile() {
                         {formData.platforms?.map((platform, index) => (
                           <div key={index} className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
                             <div className="flex-1">
-                              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{platform.name}</span>
-                              <span className="ml-2" style={{ color: 'var(--text-secondary)' }}>@{platform.handle}</span>
+                              <span className="font-medium" >{platform.name}</span>
+                              <span className="ml-2" className="text-muted-foreground">@{platform.handle}</span>
                             </div>
                             <Badge variant="outline">{platform.followers?.toLocaleString() || 0}</Badge>
                             <Button variant="ghost" size="icon" onClick={() => removePlatform(index)} className="h-8 w-8">
@@ -600,7 +600,7 @@ export default function Profile() {
                          checked={formData.accepts_barter}
                          onCheckedChange={(checked) => handleChange('accepts_barter', checked)}
                        />
-                       <Label htmlFor="accepts_barter" className="cursor-pointer" style={{ color: 'var(--text-primary)' }}>
+                       <Label htmlFor="accepts_barter" className="cursor-pointer" >
                          Aceito permutas (produtos/serviços)
                        </Label>
                      </div>
@@ -622,7 +622,7 @@ export default function Profile() {
                 <div>
                   <Label>Link do Media Kit / Portfólio</Label>
                   <div className="relative mt-2">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
                     <Input
                       value={formData.portfolio_url}
                       onChange={(e) => handleChange('portfolio_url', e.target.value)}
@@ -634,7 +634,7 @@ export default function Profile() {
 
                 <div>
                   <Label>Imagens do Portfólio</Label>
-                  <p className="text-sm mt-1 mb-3" style={{ color: 'var(--text-secondary)' }}>Adicione exemplos do seu trabalho</p>
+                  <p className="text-sm mt-1 mb-3" className="text-muted-foreground">Adicione exemplos do seu trabalho</p>
                   
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {formData.portfolio_images?.map((url, index) => (
@@ -651,8 +651,8 @@ export default function Profile() {
                     
                     <label className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:border-[#9038fa] transition-colors" style={{ borderColor: 'var(--border-color)' }}>
                       <input type="file" accept="image/*" className="hidden" onChange={handlePortfolioImageUpload} />
-                      <Plus className="w-8 h-8 mb-2" style={{ color: 'var(--text-secondary)' }} />
-                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Adicionar</span>
+                      <Plus className="w-8 h-8 mb-2" className="text-muted-foreground" />
+                      <span className="text-sm" className="text-muted-foreground">Adicionar</span>
                     </label>
                   </div>
                 </div>
@@ -680,7 +680,7 @@ export default function Profile() {
                     <div>
                       <Label>Email de Contato</Label>
                       <div className="relative mt-2">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
                         <Input
                           type="email"
                           value={formData.contact_email}
@@ -695,7 +695,7 @@ export default function Profile() {
                     <div>
                       <Label>Telefone</Label>
                       <div className="relative mt-2">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
                         <Input
                           value={formData.contact_phone}
                           onChange={(e) => handleChange('contact_phone', formatPhoneNumber(e.target.value))}
@@ -768,12 +768,12 @@ export default function Profile() {
                          <div className="flex items-center justify-between">
                            <div>
                              <Badge className="border-0 mb-2" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'rgb(5, 150, 105)' }}>Ativa</Badge>
-                             <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Plano Premium</h4>
-                             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Acesso completo a todas as funcionalidades</p>
+                             <h4 className="font-semibold" >Plano Premium</h4>
+                             <p className="text-sm" className="text-muted-foreground">Acesso completo a todas as funcionalidades</p>
                            </div>
                            <div className="text-right">
-                             <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>R$ 45</p>
-                             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>/mês</p>
+                             <p className="text-2xl font-bold" >R$ 45</p>
+                             <p className="text-sm" className="text-muted-foreground">/mês</p>
                         </div>
                       </div>
                     </div>
@@ -783,9 +783,9 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                       <CreditCard className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-secondary)' }} />
-                       <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Sem assinatura ativa</h4>
-                       <p className="mb-4 text-sm" style={{ color: 'var(--text-secondary)' }}>Assine para acessar todas as funcionalidades</p>
+                       <CreditCard className="w-12 h-12 mx-auto mb-4" className="text-muted-foreground" />
+                       <h4 className="font-semibold mb-2" >Sem assinatura ativa</h4>
+                       <p className="mb-4 text-sm" className="text-muted-foreground">Assine para acessar todas as funcionalidades</p>
                     <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-[#9038fa] hover:bg-[#7a2de0]">
                       Ver Planos
                     </Button>
@@ -806,8 +806,8 @@ export default function Profile() {
                 <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>Email</h4>
-                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{user?.email}</p>
+                      <h4 className="font-medium" >Email</h4>
+                      <p className="text-sm" className="text-muted-foreground">{user?.email}</p>
                     </div>
                     <Badge variant="outline">Verificado</Badge>
                   </div>
@@ -832,15 +832,15 @@ export default function Profile() {
                       Excluir Conta
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                  <AlertDialogContent >
                     <AlertDialogHeader>
-                      <AlertDialogTitle style={{ color: 'var(--text-primary)' }}>Tem certeza?</AlertDialogTitle>
-                      <AlertDialogDescription style={{ color: 'var(--text-secondary)' }}>
+                      <AlertDialogTitle >Tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription className="text-muted-foreground">
                         Esta ação não pode ser desfeita. Sua conta e todos os dados associados serão permanentemente excluídos.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel style={{ color: 'var(--text-primary)' }}>Cancelar</AlertDialogCancel>
+                      <AlertDialogCancel >Cancelar</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDeleteAccount}
                         className="bg-red-600 hover:bg-red-700 text-white"
