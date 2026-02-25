@@ -49,7 +49,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
 
   return (
     <TooltipProvider delayDuration={0}>
-      <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 flex-col border-r z-40 overflow-hidden transition-[width] duration-200 ease-in-out`} style={{ width: isCollapsed ? '64px' : '256px', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 flex-col border-r z-40 overflow-hidden transition-[width] duration-200 ease-in-out`} style={{ width: isCollapsed ? '64px' : '256px', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', boxShadow: 'var(--shadow-xs)' }}>
         {/* Collapse toggle */}
         <div className={`flex ${isCollapsed ? 'justify-center' : 'justify-end'} px-2 pt-3 flex-shrink-0`}>
           <Button

@@ -92,7 +92,7 @@ function LayoutContent({ children, currentPageName }) {
       <Toaster position="top-right" richColors closeButton />
 
       {/* Top Navigation */}
-       <header className="fixed top-0 left-0 right-0 z-50 transition-colors border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+       <header className="fixed top-0 left-0 right-0 z-50 transition-colors border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', boxShadow: 'var(--shadow-xs)' }}>
         <div className="flex items-center justify-between px-4 lg:px-8 h-14 lg:h-16">
           {/* Back Button + Logo */}
           <div className="flex items-center gap-2">
