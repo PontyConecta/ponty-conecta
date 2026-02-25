@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Clock, User, FileText } from 'lucide-react';
+import AdminHeader from '../components/admin/AdminHeader';
 import {
   Select,
   SelectContent,
@@ -64,6 +65,9 @@ export default function AdminAuditLogs() {
 
   return (
     <div className="space-y-6">
+      {/* Admin Navigation Header */}
+      <AdminHeader currentPageName="AdminAuditLogs" />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Logs de Auditoria</h1>

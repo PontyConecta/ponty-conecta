@@ -31,6 +31,7 @@ import {
   Gavel,
   Eye
 } from 'lucide-react';
+import AdminHeader from '../components/admin/AdminHeader';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDate } from '../components/utils/formatters';
@@ -218,6 +219,9 @@ export default function AdminDisputes() {
 
   return (
     <div className="space-y-6">
+      {/* Admin Navigation Header */}
+      <AdminHeader currentPageName="AdminDisputes" />
+
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">

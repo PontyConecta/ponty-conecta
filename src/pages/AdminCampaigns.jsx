@@ -15,6 +15,7 @@ import {
   Clock,
   Eye
 } from 'lucide-react';
+import AdminHeader from '../components/admin/AdminHeader';
 import {
   Select,
   SelectContent,
@@ -120,6 +121,9 @@ export default function AdminCampaigns() {
 
   return (
     <div className="space-y-6">
+      {/* Admin Navigation Header */}
+      <AdminHeader currentPageName="AdminCampaigns" />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

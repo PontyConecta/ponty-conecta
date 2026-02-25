@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Download, Loader2, RefreshCw, LayoutGrid, List } from 'lucide-react';
 import { toast } from 'sonner';
 
+import AdminHeader from '../components/admin/AdminHeader';
 import UserFilters from '../components/admin/UserFilters';
 import UserBulkActions from '../components/admin/UserBulkActions';
 import UserTable from '../components/admin/UserTable';
@@ -195,6 +196,9 @@ export default function AdminUsers() {
 
   return (
     <div className="space-y-4">
+      {/* Admin Navigation Header */}
+      <AdminHeader currentPageName="AdminUsers" />
+
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
