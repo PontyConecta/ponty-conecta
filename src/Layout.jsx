@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ThemeSelector from '@/components/ThemeSelector';
 
 function LayoutContent({ children, currentPageName }) {
   const { user, profile, profileType, loading, logout } = useAuth();
@@ -116,6 +117,9 @@ function LayoutContent({ children, currentPageName }) {
                 </div>
               </AlertDialogContent>
             </AlertDialog>
+
+            {/* Theme Toggle */}
+            <ThemeSelector />
 
             {/* Notifications */}
             <NotificationDropdown />
