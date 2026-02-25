@@ -1,6 +1,12 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function TrendBadge({ current, previous }) {
   if (previous === undefined || previous === null) return null;
@@ -23,13 +29,27 @@ function TrendBadge({ current, previous }) {
   );
 }
 
-export default function DashboardMetricCard({ label, value, subtitle, icon: Icon, iconColor = 'text-blue-600', trend, previousValue }) {
+export default function DashboardMetricCard({ label, value, subtitle, icon: Icon, iconColor = 'text-blue-600', trend, previousValue, tooltip }) {
   return (
     <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} className="hover:shadow-md transition-shadow">
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] sm:text-xs font-medium mb-1.5 uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>{label}</p>
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <p className="text-[11px] sm:text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>{label}</p>
+              {tooltip && (
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="w-3 h-3 cursor-help flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px] text-xs" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+                      <p>{tooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
             <div className="flex items-baseline gap-2">
               <p className="text-xl sm:text-2xl font-bold tabular-nums" style={{ color: 'var(--text-primary)' }}>
                 {value}
