@@ -147,10 +147,10 @@ export default function CreatorDashboard() {
       ) : (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+            <h1 className="text-2xl lg:text-3xl font-bold">
               Olá, {creator?.display_name?.split(' ')[0]} ✨
             </h1>
-            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm mt-1 text-muted-foreground">
               {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
             </p>
           </div>
@@ -205,14 +205,13 @@ export default function CreatorDashboard() {
               {applications.slice(0, 5).map((app) => (
                 <div
                   key={app.id}
-                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors"
-                  style={{ backgroundColor: 'var(--bg-primary)' }}
+                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors bg-muted/50"
                 >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                    <h4 className="font-medium truncate">
                       {campaignsMap[app.campaign_id]?.title || `Campanha #${app.campaign_id?.slice(-6)}`}
                     </h4>
-                    <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-sm truncate text-muted-foreground">
                       {app.message?.slice(0, 50) || 'Sem mensagem'}
                     </p>
                   </div>
@@ -222,8 +221,8 @@ export default function CreatorDashboard() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <Target className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border-color)' }} />
-              <p className="mb-3" style={{ color: 'var(--text-secondary)' }}>Você ainda não se candidatou a nenhuma campanha</p>
+              <Target className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+              <p className="mb-3 text-muted-foreground">Você ainda não se candidatou a nenhuma campanha</p>
               {isSubscribed && (
                 <Link to={createPageUrl('OpportunityFeed')}>
                   <Button variant="outline" size="sm">
@@ -253,14 +252,13 @@ export default function CreatorDashboard() {
               {deliveries.slice(0, 5).map((delivery) => (
                 <div
                   key={delivery.id}
-                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors"
-                  style={{ backgroundColor: 'var(--bg-primary)' }}
+                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors bg-muted/50"
                 >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                    <h4 className="font-medium truncate">
                       {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
                     </h4>
-                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-sm text-muted-foreground">
                       {brandsMap[delivery.brand_id]?.company_name || ''}
                       {delivery.submitted_at 
                         ? ` · Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
@@ -274,8 +272,8 @@ export default function CreatorDashboard() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <FileText className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border-color)' }} />
-              <p style={{ color: 'var(--text-secondary)' }}>Nenhuma entrega registrada</p>
+              <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-muted-foreground">Nenhuma entrega registrada</p>
             </div>
           )}
         </CardContent>
