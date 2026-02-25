@@ -107,7 +107,7 @@ export default function CreatorDashboard() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -194,8 +194,8 @@ export default function CreatorDashboard() {
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold">Minhas Candidaturas</CardTitle>
           <Link to={createPageUrl('MyApplications')}>
-            <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
-              Ver todas <ArrowRight className="w-4 h-4 ml-1" />
+            <Button variant="ghost" size="sm" className="text-primary">
+            Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </CardHeader>
@@ -241,8 +241,8 @@ export default function CreatorDashboard() {
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-lg font-semibold">Minhas Entregas</CardTitle>
           <Link to={createPageUrl('MyDeliveries')}>
-            <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
-              Ver todas <ArrowRight className="w-4 h-4 ml-1" />
+            <Button variant="ghost" size="sm" className="text-primary">
+            Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </CardHeader>

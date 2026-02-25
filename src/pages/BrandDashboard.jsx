@@ -95,7 +95,7 @@ export default function BrandDashboard() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -196,7 +196,7 @@ export default function BrandDashboard() {
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-semibold">Campanhas Recentes</CardTitle>
             <Link to={createPageUrl('CampaignManager')}>
-              <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
+              <Button variant="ghost" size="sm" className="text-primary">
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
@@ -239,7 +239,7 @@ export default function BrandDashboard() {
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-semibold">Candidaturas Pendentes</CardTitle>
             <Link to={createPageUrl('ApplicationsManager')}>
-                  <Button variant="ghost" size="sm" style={{ color: 'var(--accent-primary)' }}>
+                  <Button variant="ghost" size="sm" className="text-primary">
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
