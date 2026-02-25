@@ -228,7 +228,7 @@ export default function OpportunityFeed() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -237,19 +237,19 @@ export default function OpportunityFeed() {
     <div className="space-y-4 lg:space-y-6">
       {/* Pull to Refresh Indicator */}
       {refreshing && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-          <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg bg-card">
+          <Loader2 className="w-5 h-5 animate-spin text-primary" />
         </div>
       )}
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Megaphone className="w-7 h-7 lg:w-8 lg:h-8" style={{ color: 'var(--accent-primary)' }} />
+          <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2">
+            <Megaphone className="w-7 h-7 lg:w-8 lg:h-8 text-primary" />
             Campanhas
           </h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+          <p className="mt-1 text-muted-foreground">
             {filteredCampaigns.length} campanhas disponíveis
           </p>
         </div>
@@ -265,15 +265,15 @@ export default function OpportunityFeed() {
 
       {/* Subscription Banner */}
       {!isSubscribed && profileValidation.isComplete && (
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                <Crown className="w-6 h-6 text-[#9038fa]" />
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Crown className="w-6 h-6 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Modo Exploração</h3>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <h3 className="font-semibold">Modo Exploração</h3>
+                <p className="text-sm text-muted-foreground">
                   Você pode ver as campanhas, mas precisa assinar para se candidatar.
                 </p>
               </div>
@@ -289,11 +289,11 @@ export default function OpportunityFeed() {
       )}
 
       {/* Filters */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card>
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -345,7 +345,7 @@ export default function OpportunityFeed() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Card className="hover:shadow-lg transition-all duration-300 group cursor-pointer overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} onClick={() => openCampaignDetails(campaign)}>
+                <Card className="hover:shadow-md transition-all duration-300 group cursor-pointer overflow-hidden" onClick={() => openCampaignDetails(campaign)}>
                   {/* Cover */}
                   {campaign.cover_image_url && (
                     <div className="h-36 overflow-hidden">
@@ -357,20 +357,20 @@ export default function OpportunityFeed() {
                     {/* Brand Info */}
                     <div className="flex items-center gap-2.5 mb-3">
                       {brand?.logo_url ? (
-                        <img src={brand.logo_url} alt={brand.company_name} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+                       <img src={brand.logo_url} alt={brand.company_name} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
                       ) : (
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                          <Building2 className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                        </div>
+                       <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-muted">
+                         <Building2 className="w-4 h-4 text-muted-foreground" />
+                       </div>
                       )}
-                      <h4 className="font-medium text-sm truncate" style={{ color: 'var(--text-primary)' }}>{brand?.company_name || 'Marca'}</h4>
+                      <h4 className="font-medium text-sm truncate">{brand?.company_name || 'Marca'}</h4>
                     </div>
 
                     {/* Campaign Title & Description */}
-                    <h3 className="text-base font-semibold mb-1 line-clamp-2" style={{ color: 'var(--text-primary)' }}>
+                    <h3 className="text-base font-semibold mb-1 line-clamp-2">
                       {campaign.title}
                     </h3>
-                    <p className="text-xs line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-xs line-clamp-2 mb-3 text-muted-foreground">
                       {campaign.description}
                     </p>
 
@@ -389,7 +389,7 @@ export default function OpportunityFeed() {
                     </div>
 
                     {/* Meta Info */}
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs mb-3 text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
                         {campaign.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '-'}
@@ -407,7 +407,7 @@ export default function OpportunityFeed() {
                     </div>
 
                     {/* Remuneration & Action */}
-                    <div className="flex items-center justify-between pt-3" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
+                    <div className="flex items-center justify-between pt-3 border-t">
                       <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${remuneration.color}`}>
                         <remuneration.icon className="w-3.5 h-3.5" />
                         {remuneration.label}
@@ -436,10 +436,10 @@ export default function OpportunityFeed() {
           })}
         </div>
       ) : (
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <Card>
           <CardContent className="p-12 text-center">
-            <Megaphone className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <Megaphone className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+            <h3 className="text-lg font-semibold mb-2">
               Nenhuma campanha encontrada
             </h3>
             <p style={{ color: 'var(--text-secondary)' }}>
@@ -453,9 +453,9 @@ export default function OpportunityFeed() {
 
       {/* Campaign Details / Application Dialog */}
       <Dialog open={!!selectedCampaign} onOpenChange={() => { setSelectedCampaign(null); setViewingDetails(false); }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto pb-safe" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto pb-safe">
           <DialogHeader>
-            <DialogTitle style={{ color: 'var(--text-primary)' }}>
+            <DialogTitle>
               {viewingDetails ? 'Detalhes da Campanha' : 'Candidatar-se à Campanha'}
             </DialogTitle>
           </DialogHeader>
