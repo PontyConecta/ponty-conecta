@@ -31,10 +31,8 @@ Deno.serve(async (req) => {
       if (creator?.stripe_customer_id) excludedCustomerIds.add(creator.stripe_customer_id);
     }
 
-    // Hardcoded orphan test customers (no matching profile in platform)
-    const orphanTestCustomers = ['cus_U0hgFkIXfbehSJ'];
-    const orphanExcludedCount = orphanTestCustomers.length;
-    orphanTestCustomers.forEach(id => excludedCustomerIds.add(id));
+    // No hardcoded orphan exclusions
+    const orphanExcludedCount = 0;
 
     console.log(`Excluding ${excludedUsers.length} user(s) + ${orphanExcludedCount} orphan(s) (${excludedCustomerIds.size} Stripe customer(s)) from financials`);
     console.log(`Excluded Stripe IDs: ${[...excludedCustomerIds].join(', ')}`);
