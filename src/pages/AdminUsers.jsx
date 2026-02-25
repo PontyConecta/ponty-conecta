@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Search, Download, Loader2, Building2, Star, Shield, 
-  CheckCircle2, Crown, Gift, Calendar, Users, Eye, RefreshCw
-} from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Download, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+
+import UserStatsCards from '../components/admin/UserStatsCards';
+import UserGrowthChart from '../components/admin/UserGrowthChart';
+import UserFilters from '../components/admin/UserFilters';
+import UserBulkActions from '../components/admin/UserBulkActions';
+import UserTable from '../components/admin/UserTable';
+import UserPagination from '../components/admin/UserPagination';
 import UserManageDialog from '../components/admin/UserManageDialog';
+
+const PAGE_SIZE = 20;
 
 export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
@@ -28,6 +23,11 @@ export default function AdminUsers() {
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState('date');
+  const [sortDir, setSortDir] = useState('desc');
+  const [showCharts, setShowCharts] = useState(true);
 
   useEffect(() => {
     loadUsers();
@@ -72,40 +72,95 @@ export default function AdminUsers() {
   const getUserProfile = (userId) => {
     const brand = brands.find(b => b.user_id === userId);
     const creator = creators.find(c => c.user_id === userId);
-    return {
-      profile: brand || creator,
-      type: brand ? 'brand' : creator ? 'creator' : 'unknown'
-    };
+    return { profile: brand || creator, type: brand ? 'brand' : creator ? 'creator' : 'unknown' };
   };
 
-  const filteredUsers = users.filter(user => {
-    const { profile, type } = getUserProfile(user.id);
-    
-    const matchesSearch = 
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile?.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile?.display_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesRole = roleFilter === 'all' || type === roleFilter;
-    
-    let matchesStatus = true;
-    if (statusFilter === 'premium') matchesStatus = profile?.subscription_status === 'premium';
-    else if (statusFilter === 'starter') matchesStatus = profile?.subscription_status === 'starter';
-    else if (statusFilter === 'trial') matchesStatus = profile?.subscription_status === 'trial';
-    else if (statusFilter === 'legacy') matchesStatus = profile?.subscription_status === 'legacy';
-    else if (statusFilter === 'verified') matchesStatus = profile?.is_verified === true;
-    else if (statusFilter === 'incomplete') matchesStatus = profile?.account_state === 'incomplete';
-    else if (statusFilter === 'ready') matchesStatus = profile?.account_state === 'ready';
-    
-    return matchesSearch && matchesRole && matchesStatus;
-  });
+  // Filtering
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      const { profile, type } = getUserProfile(user.id);
+      
+      const matchesSearch = !searchTerm || 
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        profile?.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        profile?.display_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesRole = roleFilter === 'all' || type === roleFilter;
+      
+      let matchesStatus = true;
+      if (statusFilter === 'premium') matchesStatus = profile?.subscription_status === 'premium';
+      else if (statusFilter === 'starter') matchesStatus = profile?.subscription_status === 'starter';
+      else if (statusFilter === 'trial') matchesStatus = profile?.subscription_status === 'trial';
+      else if (statusFilter === 'legacy') matchesStatus = profile?.subscription_status === 'legacy';
+      else if (statusFilter === 'verified') matchesStatus = profile?.is_verified === true;
+      else if (statusFilter === 'incomplete') matchesStatus = profile?.account_state === 'incomplete';
+      else if (statusFilter === 'ready') matchesStatus = profile?.account_state === 'ready';
+      
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+  }, [users, brands, creators, searchTerm, roleFilter, statusFilter]);
 
-  // Stats
-  const totalBrands = brands.length;
-  const totalCreators = creators.length;
-  const totalPremium = [...brands, ...creators].filter(p => p.subscription_status === 'premium').length;
-  const totalVerified = [...brands, ...creators].filter(p => p.is_verified).length;
+  // Sorting
+  const sortedUsers = useMemo(() => {
+    const sorted = [...filteredUsers];
+    sorted.sort((a, b) => {
+      const pA = getUserProfile(a.id);
+      const pB = getUserProfile(b.id);
+      let cmp = 0;
+
+      switch (sortField) {
+        case 'name': {
+          const nameA = (pA.type === 'brand' ? pA.profile?.company_name : pA.profile?.display_name || a.full_name) || '';
+          const nameB = (pB.type === 'brand' ? pB.profile?.company_name : pB.profile?.display_name || b.full_name) || '';
+          cmp = nameA.localeCompare(nameB, 'pt-BR');
+          break;
+        }
+        case 'type': {
+          cmp = (pA.type || '').localeCompare(pB.type || '');
+          break;
+        }
+        case 'subscription': {
+          cmp = (pA.profile?.subscription_status || '').localeCompare(pB.profile?.subscription_status || '');
+          break;
+        }
+        case 'state': {
+          cmp = (pA.profile?.account_state || '').localeCompare(pB.profile?.account_state || '');
+          break;
+        }
+        case 'date':
+        default: {
+          cmp = new Date(a.created_date) - new Date(b.created_date);
+          break;
+        }
+      }
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+    return sorted;
+  }, [filteredUsers, sortField, sortDir]);
+
+  // Pagination
+  const totalPages = Math.ceil(sortedUsers.length / PAGE_SIZE);
+  const paginatedUsers = sortedUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, roleFilter, statusFilter, sortField, sortDir]);
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDir('asc');
+    }
+  };
+
+  const handleStatClick = (filter) => {
+    setRoleFilter(filter.role);
+    setStatusFilter(filter.status);
+  };
 
   const selectedUserProfile = selectedUser ? getUserProfile(selectedUser.id) : null;
 
@@ -118,223 +173,77 @@ export default function AdminUsers() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
             Gerenciamento de Usuários
           </h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+          <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
             {filteredUsers.length} de {users.length} usuários
           </p>
         </div>
         <div className="flex gap-2">
+          <Button onClick={() => setShowCharts(v => !v)} variant="outline" size="sm">
+            {showCharts ? 'Ocultar Gráficos' : 'Mostrar Gráficos'}
+          </Button>
           <Button onClick={loadUsers} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-1" />
-            Atualizar
+            <RefreshCw className="w-4 h-4 mr-1" /> Atualizar
           </Button>
           <Button onClick={handleExport} variant="outline" size="sm">
-            <Download className="w-4 h-4 mr-1" />
-            Exportar
+            <Download className="w-4 h-4 mr-1" /> Exportar
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-indigo-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalBrands}</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Marcas</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                <Star className="w-5 h-5 text-orange-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalCreators}</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Criadores</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                <Crown className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalPremium}</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Premium</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <CheckCircle2 className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalVerified}</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Verificados</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <UserStatsCards brands={brands} creators={creators} onStatClick={handleStatClick} />
+
+      {/* Charts */}
+      {showCharts && <UserGrowthChart brands={brands} creators={creators} />}
 
       {/* Filters */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-              <Input
-                placeholder="Buscar por email, nome ou empresa..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-                style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
-              />
-            </div>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Perfil" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="brand">Marcas</SelectItem>
-                <SelectItem value="creator">Criadores</SelectItem>
-                <SelectItem value="unknown">Sem Perfil</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-44">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os Status</SelectItem>
-                <SelectItem value="premium">Premium</SelectItem>
-                <SelectItem value="starter">Starter</SelectItem>
-                <SelectItem value="trial">Trial</SelectItem>
-                <SelectItem value="legacy">Legacy</SelectItem>
-                <SelectItem value="verified">Verificados</SelectItem>
-                <SelectItem value="ready">Conta Pronta</SelectItem>
-                <SelectItem value="incomplete">Conta Incompleta</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+      <UserFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        roleFilter={roleFilter}
+        onRoleChange={setRoleFilter}
+        statusFilter={statusFilter}
+        onStatusChange={setStatusFilter}
+      />
 
-      {/* Users List */}
-      <div className="space-y-2">
-        {filteredUsers.map((user) => {
-          const { profile, type } = getUserProfile(user.id);
-          
-          return (
-            <Card 
-              key={user.id} 
-              className="hover:shadow-md transition-all cursor-pointer"
-              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
-              onClick={() => setSelectedUser(user)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  {/* Avatar */}
-                  <Avatar className="w-12 h-12 flex-shrink-0">
-                    <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                    <AvatarFallback className={type === 'brand' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}>
-                      {type === 'brand' ? <Building2 className="w-5 h-5" /> : <Star className="w-5 h-5" />}
-                    </AvatarFallback>
-                  </Avatar>
-                  
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
-                        {type === 'brand' ? profile?.company_name : profile?.display_name || user.full_name || 'Sem nome'}
-                      </h3>
-                      {user.role === 'admin' && (
-                        <Badge className="bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0">
-                          <Shield className="w-2.5 h-2.5 mr-0.5" /> Admin
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
-                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
-                        {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
-                      </Badge>
-                      {profile?.is_verified && (
-                        <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
-                          <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> Verificado
-                        </Badge>
-                      )}
-                      {profile?.subscription_status === 'premium' && (
-                        <Badge className="bg-emerald-100 text-emerald-700 border-0 text-[10px] px-1.5 py-0">
-                          <Crown className="w-2.5 h-2.5 mr-0.5" /> Premium
-                        </Badge>
-                      )}
-                      {profile?.subscription_status === 'trial' && (
-                        <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
-                          <Gift className="w-2.5 h-2.5 mr-0.5" /> Trial
-                        </Badge>
-                      )}
-                      {profile?.subscription_status === 'legacy' && (
-                        <Badge className="bg-amber-100 text-amber-700 border-0 text-[10px] px-1.5 py-0">Legacy</Badge>
-                      )}
-                      {profile?.subscription_status === 'starter' && (
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>Starter</Badge>
-                      )}
-                      {profile?.account_state === 'incomplete' && (
-                        <Badge className="bg-yellow-100 text-yellow-700 border-0 text-[10px] px-1.5 py-0">Incompleta</Badge>
-                      )}
-                      <span className="text-[10px] hidden sm:inline" style={{ color: 'var(--text-secondary)' }}>
-                        {new Date(user.created_date).toLocaleDateString('pt-BR')}
-                      </span>
-                    </div>
-                  </div>
+      {/* Bulk Actions */}
+      <UserBulkActions
+        selectedIds={selectedIds}
+        users={users}
+        brands={brands}
+        creators={creators}
+        onClear={() => setSelectedIds([])}
+        onComplete={loadUsers}
+      />
 
-                  {/* Action Button */}
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-shrink-0"
-                    onClick={(e) => { e.stopPropagation(); setSelectedUser(user); }}
-                  >
-                    <Eye className="w-4 h-4 mr-1" />
-                    <span className="hidden sm:inline">Gerenciar</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+      {/* Table */}
+      <UserTable
+        users={paginatedUsers}
+        brands={brands}
+        creators={creators}
+        selectedIds={selectedIds}
+        onSelectIds={setSelectedIds}
+        onUserClick={setSelectedUser}
+        sortField={sortField}
+        sortDir={sortDir}
+        onSort={handleSort}
+      />
 
-        {filteredUsers.length === 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
-            <CardContent className="p-12 text-center">
-              <Users className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--border-color)' }} />
-              <p style={{ color: 'var(--text-secondary)' }}>Nenhum usuário encontrado</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      {/* Pagination */}
+      <UserPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={sortedUsers.length}
+        pageSize={PAGE_SIZE}
+        onPageChange={setCurrentPage}
+      />
 
       {/* Manage Dialog */}
       {selectedUser && selectedUserProfile && (
