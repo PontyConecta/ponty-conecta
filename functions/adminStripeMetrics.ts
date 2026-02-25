@@ -11,7 +11,6 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
-    // Fetch active subscriptions from Stripe
     const subscriptions = [];
     let hasMore = true;
     let startingAfter = undefined;
@@ -28,7 +27,6 @@ Deno.serve(async (req) => {
     const now = Math.floor(Date.now() / 1000);
     const oneYearAgo = now - (365 * 24 * 60 * 60);
 
-    // Fetch invoices for revenue tracking
     const invoices = [];
     hasMore = true;
     startingAfter = undefined;
@@ -42,11 +40,9 @@ Deno.serve(async (req) => {
       if (batch.data.length > 0) startingAfter = batch.data[batch.data.length - 1].id;
     }
 
-    // Product IDs
     const BRAND_PRODUCT = 'prod_U0gIiVNyRmWGIs';
     const CREATOR_PRODUCT = 'prod_U0gCi96g4grdc0';
 
-    // Classify subscriptions
     const activeSubs = subscriptions.filter(s => s.status === 'active' || s.status === 'trialing');
     const cancelledSubs = subscriptions.filter(s => s.status === 'canceled');
     const pastDueSubs = subscriptions.filter(s => s.status === 'past_due');
@@ -62,14 +58,12 @@ Deno.serve(async (req) => {
     const brandActiveSubs = activeSubs.filter(s => getProductId(s) === BRAND_PRODUCT);
     const creatorActiveSubs = activeSubs.filter(s => getProductId(s) === CREATOR_PRODUCT);
 
-    // Calculate MRR from active subscriptions
     const calcSubMRR = (sub) => {
       const item = sub.items?.data?.[0];
       if (!item) return 0;
       const amount = (item.price?.unit_amount || 0) / 100;
       const interval = item.price?.recurring?.interval;
       const intervalCount = item.price?.recurring?.interval_count || 1;
-      
       if (interval === 'month') return amount / intervalCount;
       if (interval === 'year') return amount / (12 * intervalCount);
       if (interval === 'week') return (amount * 52) / (12 * intervalCount);
@@ -81,21 +75,16 @@ Deno.serve(async (req) => {
     const brandMRR = brandActiveSubs.reduce((sum, s) => sum + calcSubMRR(s), 0);
     const creatorMRR = creatorActiveSubs.reduce((sum, s) => sum + calcSubMRR(s), 0);
     const arr = totalMRR * 12;
+    const arpu = activeSubs.length > 0 ? totalMRR / activeSubs.length : 0;
 
-    const totalActiveSubscribers = activeSubs.length;
-    const arpu = totalActiveSubscribers > 0 ? totalMRR / totalActiveSubscribers : 0;
-
-    // Churn
     const thirtyDaysAgo = now - (30 * 24 * 60 * 60);
     const recentlyCancelled = cancelledSubs.filter(s => s.canceled_at && s.canceled_at >= thirtyDaysAgo);
     const totalSubsAtStart = activeSubs.length + recentlyCancelled.length;
     const monthlyChurnRate = totalSubsAtStart > 0 ? (recentlyCancelled.length / totalSubsAtStart * 100) : 0;
     const retentionRate = 100 - monthlyChurnRate;
-
     const monthlyChurnDecimal = monthlyChurnRate / 100;
     const ltv = monthlyChurnDecimal > 0 ? arpu / monthlyChurnDecimal : arpu * 24;
 
-    // Revenue by month
     const revenueByMonth = {};
     for (let i = 11; i >= 0; i--) {
       const d = new Date();
@@ -108,20 +97,13 @@ Deno.serve(async (req) => {
       const d = new Date(inv.created * 1000);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       if (!revenueByMonth[key]) continue;
-      
       const amount = (inv.amount_paid || 0) / 100;
       revenueByMonth[key].total += amount;
-
       const lineProduct = inv.lines?.data?.[0]?.price?.product;
       const prodId = typeof lineProduct === 'string' ? lineProduct : lineProduct?.id;
-      if (prodId === BRAND_PRODUCT) {
-        revenueByMonth[key].brand += amount;
-      } else if (prodId === CREATOR_PRODUCT) {
-        revenueByMonth[key].creator += amount;
-      } else {
-        revenueByMonth[key].brand += amount / 2;
-        revenueByMonth[key].creator += amount / 2;
-      }
+      if (prodId === BRAND_PRODUCT) revenueByMonth[key].brand += amount;
+      else if (prodId === CREATOR_PRODUCT) revenueByMonth[key].creator += amount;
+      else { revenueByMonth[key].brand += amount / 2; revenueByMonth[key].creator += amount / 2; }
     }
 
     const revenueChart = Object.values(revenueByMonth).map(m => ({
@@ -132,15 +114,8 @@ Deno.serve(async (req) => {
     }));
 
     const totalRevenue = invoices.reduce((sum, inv) => sum + ((inv.amount_paid || 0) / 100), 0);
-
-    const thisMonth = new Date();
-    const thisMonthKey = `${thisMonth.getFullYear()}-${String(thisMonth.getMonth() + 1).padStart(2, '0')}`;
-    const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 1);
-    const lastMonthKey = `${lastMonth.getFullYear()}-${String(lastMonth.getMonth() + 1).padStart(2, '0')}`;
-    
-    const thisMonthRevenue = revenueByMonth[thisMonthKey]?.total || 0;
-    const lastMonthRevenue = revenueByMonth[lastMonthKey]?.total || 0;
+    const thisMonthKey = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; })();
+    const lastMonthKey = (() => { const d = new Date(); d.setMonth(d.getMonth()-1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; })();
 
     const trialingSubs = subscriptions.filter(s => s.status === 'trialing');
 
@@ -151,18 +126,11 @@ Deno.serve(async (req) => {
       { name: 'Vencidas', value: pastDueSubs.length, color: '#f59e0b' },
     ].filter(d => d.value > 0);
 
-    let monthlyCount = 0;
-    let annualCount = 0;
+    let monthlyCount = 0, annualCount = 0;
     activeSubs.forEach(s => {
-      const interval = s.items?.data?.[0]?.price?.recurring?.interval;
-      if (interval === 'year') annualCount++;
+      if (s.items?.data?.[0]?.price?.recurring?.interval === 'year') annualCount++;
       else monthlyCount++;
     });
-
-    const planTypeDistribution = [
-      { name: 'Mensal', value: monthlyCount, color: '#818cf8' },
-      { name: 'Anual', value: annualCount, color: '#f59e0b' },
-    ].filter(d => d.value > 0);
 
     return Response.json({
       mrr: Math.round(totalMRR * 100) / 100,
@@ -174,8 +142,8 @@ Deno.serve(async (req) => {
       churnRate: Math.round(monthlyChurnRate * 10) / 10,
       retentionRate: Math.round(retentionRate * 10) / 10,
       totalRevenue: Math.round(totalRevenue * 100) / 100,
-      thisMonthRevenue: Math.round(thisMonthRevenue * 100) / 100,
-      lastMonthRevenue: Math.round(lastMonthRevenue * 100) / 100,
+      thisMonthRevenue: Math.round((revenueByMonth[thisMonthKey]?.total || 0) * 100) / 100,
+      lastMonthRevenue: Math.round((revenueByMonth[lastMonthKey]?.total || 0) * 100) / 100,
       totalActiveSubscribers: activeSubs.length,
       brandSubscribers: brandActiveSubs.length,
       creatorSubscribers: creatorActiveSubs.length,
@@ -185,7 +153,10 @@ Deno.serve(async (req) => {
       totalSubscriptions: subscriptions.length,
       revenueChart,
       subDistribution,
-      planTypeDistribution,
+      planTypeDistribution: [
+        { name: 'Mensal', value: monthlyCount, color: '#818cf8' },
+        { name: 'Anual', value: annualCount, color: '#f59e0b' },
+      ].filter(d => d.value > 0),
       monthlySubscribers: monthlyCount,
       annualSubscribers: annualCount,
       recentlyCancelledCount: recentlyCancelled.length,
