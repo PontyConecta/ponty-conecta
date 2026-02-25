@@ -198,8 +198,7 @@ export default function CreatorCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 text-white shadow-lg hover:shadow-xl transition-all"
-                className="bg-[#9038fa]"
+                className="flex-1 bg-[#9038fa] hover:bg-[#9038fa]/90 text-white shadow-sm transition-all"
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />
