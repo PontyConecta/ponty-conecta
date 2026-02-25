@@ -13,7 +13,7 @@ function SortHeader({ label, field, sortField, sortDir, onSort }) {
   const active = sortField === field;
   return (
     <button 
-      className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
+      className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
       style={{ color: active ? '#9038fa' : 'var(--text-secondary)' }}
       onClick={() => onSort(field)}
     >
@@ -48,7 +48,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
 
   const renderSubBadge = (status) => {
     const c = SUB_BADGE[status] || SUB_BADGE.starter;
-    return <Badge className={`${c.cls} border-0 text-[10px] px-1.5 py-0`}>{c.label}</Badge>;
+    return <Badge className={`${c.cls} border-0 text-xs px-2 py-0.5`}>{c.label}</Badge>;
   };
 
   const compact = density === 'compact';
@@ -67,7 +67,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
   return (
     <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
       {/* Desktop Header */}
-      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_70px_60px] gap-3 px-4 py-2.5 border-b items-center" style={{ borderColor: 'var(--border-color)' }}>
+      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_80px_60px] gap-3 px-4 py-2.5 border-b items-center" style={{ borderColor: 'var(--border-color)' }}>
         <div><Checkbox checked={selectedIds.length === users.length && users.length > 0} onCheckedChange={toggleAll} /></div>
         <SortHeader label="Usuário" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Tipo" field="type" sortField={sortField} sortDir={sortDir} onSort={onSort} />
@@ -75,7 +75,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
         <SortHeader label="Estado" field="state" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="UF" field="location" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Data" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-        <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Ação</span>
+        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Ação</span>
       </div>
 
       <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
@@ -87,7 +87,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
           return (
             <div key={user.id} className={`${rowPadding} transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-purple-50/50' : ''}`}>
               {/* Desktop Row */}
-              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_70px_60px] gap-3 items-center">
+              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_80px_60px] gap-3 items-center">
                 <div><Checkbox checked={isSelected} onCheckedChange={() => toggleOne(user.id)} /></div>
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Avatar className={`${compact ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>

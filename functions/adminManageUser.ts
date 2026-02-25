@@ -128,6 +128,12 @@ Deno.serve(async (req) => {
 
       case 'set_exclude_financials': {
         const excludeValue = data?.exclude_from_financials;
+        // User entity has special security - use admin-level update
+        const allUsersForExclude = await base44.asServiceRole.entities.User.filter({});
+        const targetUserForExclude = allUsersForExclude.find(u => u.id === userId);
+        if (!targetUserForExclude) {
+          return Response.json({ error: 'User not found' }, { status: 404 });
+        }
         await base44.asServiceRole.entities.User.update(userId, { 
           exclude_from_financials: !!excludeValue 
         });
