@@ -31,12 +31,26 @@ export const ThemeProvider = ({ children }) => {
 
   const applyTheme = (themeName) => {
     setTheme(themeName);
-    document.documentElement.setAttribute('data-theme', themeName);
+    const el = document.documentElement;
+    el.setAttribute('data-theme', themeName);
     
-    // Debug log for verification
+    // Force browser to recompute styles synchronously
+    // This ensures CSS specificity battle is resolved immediately
+    void el.offsetHeight;
+    
+    // Debug proof — runs after paint
     requestAnimationFrame(() => {
-      const cs = getComputedStyle(document.documentElement);
-      console.log(`[Theme] Applied: "${themeName}" | --background: "${cs.getPropertyValue('--background').trim()}" | --card: "${cs.getPropertyValue('--card').trim()}" | --foreground: "${cs.getPropertyValue('--foreground').trim()}"`);
+      const cs = getComputedStyle(el);
+      const bg = cs.getPropertyValue('--background').trim();
+      const fg = cs.getPropertyValue('--foreground').trim();
+      const card = cs.getPropertyValue('--card').trim();
+      const muted = cs.getPropertyValue('--muted').trim();
+      console.log(`[Theme PROOF] data-theme="${el.dataset.theme}" on <${el.tagName.toLowerCase()}>`);
+      console.log(`[Theme PROOF] --background: "${bg}"`);
+      console.log(`[Theme PROOF] --foreground: "${fg}"`);
+      console.log(`[Theme PROOF] --card: "${card}"`);
+      console.log(`[Theme PROOF] --muted: "${muted}"`);
+      console.log(`[Theme PROOF] body bg computed: "${getComputedStyle(document.body).backgroundColor}"`);
     });
   };
 
