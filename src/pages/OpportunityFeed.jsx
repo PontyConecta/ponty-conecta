@@ -521,14 +521,14 @@ export default function OpportunityFeed() {
                   {(selectedCampaign.dos?.length > 0 || selectedCampaign.donts?.length > 0) && (
                     <div className="grid sm:grid-cols-2 gap-4">
                       {selectedCampaign.dos?.filter(d => d).length > 0 && (
-                        <div className="p-4 bg-emerald-50 rounded-xl">
-                          <h4 className="font-medium text-emerald-900 mb-2 flex items-center gap-2">
+                       <div className="p-4 bg-emerald-500/10 rounded-xl">
+                         <h4 className="font-medium text-emerald-600 mb-2 flex items-center gap-2">
                             <ListChecks className="w-4 h-4" />
                             O que FAZER
                           </h4>
                           <ul className="space-y-1">
                             {selectedCampaign.dos.filter(d => d).map((item, i) => (
-                              <li key={i} className="text-sm text-emerald-800 flex items-start gap-2">
+                              <li key={i} className="text-sm text-emerald-600 flex items-start gap-2">
                                 <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
                                 {item}
                               </li>
@@ -537,14 +537,14 @@ export default function OpportunityFeed() {
                         </div>
                       )}
                       {selectedCampaign.donts?.filter(d => d).length > 0 && (
-                        <div className="p-4 bg-red-50 rounded-xl">
-                          <h4 className="font-medium text-red-900 mb-2 flex items-center gap-2">
+                        <div className="p-4 bg-red-500/10 rounded-xl">
+                          <h4 className="font-medium text-red-500 mb-2 flex items-center gap-2">
                             <Ban className="w-4 h-4" />
                             O que NÃO FAZER
                           </h4>
                           <ul className="space-y-1">
                             {selectedCampaign.donts.filter(d => d).map((item, i) => (
-                              <li key={i} className="text-sm text-red-800 flex items-start gap-2">
+                              <li key={i} className="text-sm text-red-500 flex items-start gap-2">
                                 <Ban className="w-4 h-4 mt-0.5 flex-shrink-0" />
                                 {item}
                               </li>

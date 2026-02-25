@@ -312,7 +312,7 @@ export default function Profile() {
               {/* Cover & Avatar/Logo */}
               <div className="relative">
                 {/* Cover Image */}
-                <div className="h-32 lg:h-40 rounded-xl relative overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
+                <div className="h-32 lg:h-40 rounded-xl relative overflow-hidden bg-gradient-to-r from-primary to-primary/60">
                   {formData.cover_image_url && (
                     <img src={formData.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -764,10 +764,10 @@ export default function Profile() {
               <CardContent>
                 {isSubscribed ? (
                   <div className="space-y-4">
-                    <div className="p-4 rounded-xl bg-emerald-50">
+                    <div className="p-4 rounded-xl bg-emerald-500/10">
                          <div className="flex items-center justify-between">
                            <div>
-                             <Badge className="border-0 mb-2 bg-emerald-100 text-emerald-700">Ativa</Badge>
+                             <Badge className="border-0 mb-2 bg-emerald-500/15 text-emerald-600">Ativa</Badge>
                              <h4 className="font-semibold">Plano Premium</h4>
                               <p className="text-sm text-muted-foreground">Acesso completo a todas as funcionalidades</p>
                             </div>
