@@ -43,9 +43,15 @@ Deno.serve(async (req) => {
     const BRAND_PRODUCT = 'prod_U0gIiVNyRmWGIs';
     const CREATOR_PRODUCT = 'prod_U0gCi96g4grdc0';
 
-    const activeSubs = subscriptions.filter(s => s.status === 'active' || s.status === 'trialing');
-    const cancelledSubs = subscriptions.filter(s => s.status === 'canceled');
-    const pastDueSubs = subscriptions.filter(s => s.status === 'past_due');
+    // Filter out subscriptions with 0 value (test/free subs)
+    const hasValue = (sub) => {
+      const item = sub.items?.data?.[0];
+      return item?.price?.unit_amount > 0;
+    };
+
+    const activeSubs = subscriptions.filter(s => (s.status === 'active' || s.status === 'trialing') && hasValue(s));
+    const cancelledSubs = subscriptions.filter(s => s.status === 'canceled' && hasValue(s));
+    const pastDueSubs = subscriptions.filter(s => s.status === 'past_due' && hasValue(s));
 
     const getProductId = (sub) => {
       const item = sub.items?.data?.[0];
