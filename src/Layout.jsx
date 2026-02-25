@@ -131,18 +131,21 @@ function LayoutContent({ children, currentPageName }) {
     return localStorage.getItem('sidebar-collapsed') === 'true';
   });
 
-  // Listen for sidebar collapse changes
+  // Listen for sidebar collapse changes - using custom event + polling as backup
   useEffect(() => {
-    const handleStorage = () => {
-      setSidebarCollapsed(localStorage.getItem('sidebar-collapsed') === 'true');
-    };
-    window.addEventListener('storage', handleStorage);
-    // Also poll since same-tab storage events don't fire
-    const interval = setInterval(() => {
+    const syncCollapse = () => {
       const val = localStorage.getItem('sidebar-collapsed') === 'true';
-      setSidebarCollapsed(prev => prev !== val ? val : prev);
-    }, 200);
-    return () => { window.removeEventListener('storage', handleStorage); clearInterval(interval); };
+      setSidebarCollapsed(val);
+    };
+    window.addEventListener('storage', syncCollapse);
+    window.addEventListener('sidebar-toggle', syncCollapse);
+    // Polling as backup for same-tab localStorage changes
+    const interval = setInterval(syncCollapse, 300);
+    return () => { 
+      window.removeEventListener('storage', syncCollapse); 
+      window.removeEventListener('sidebar-toggle', syncCollapse);
+      clearInterval(interval); 
+    };
   }, []);
 
   // Pages that don't need back button
