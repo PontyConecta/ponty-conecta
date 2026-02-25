@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
   Megaphone, 
   FileText, 
-  Sparkles,
   Search,
   Building2
 } from 'lucide-react';
@@ -39,7 +39,8 @@ export default function BottomNav({ profileType, currentPageName }) {
       : guestNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden transition-colors" style={{ backgroundColor: 'var(--bg-secondary)', borderTopColor: 'var(--border-color)', borderTopWidth: '1px', paddingBottom: 'env(safe-area-inset-bottom, 8px)', boxShadow: '0 -2px 8px rgba(0,0,0,0.06)' }}>
+    /* fixed bottom, HIDDEN at lg+ (desktop uses sidebar) */
+    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t shadow-[0_-2px_8px_rgba(0,0,0,0.06)]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 8px)' }}>
       <div className="flex items-center justify-around px-2 h-16">
         {navItems.map((item) => {
           const isActive = currentPageName === item.page;
@@ -47,19 +48,15 @@ export default function BottomNav({ profileType, currentPageName }) {
             <Link
               key={item.page}
               to={createPageUrl(item.page)}
-              className={`
-                flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[64px]
-                transition-all active:scale-95 select-none
-                ${isActive 
-                  ? 'stroke-[2.5px]' 
-                  : 'hover:opacity-70'}
-              `}
-              style={isActive ? { color: 'var(--accent-primary)' } : { color: 'var(--text-secondary)' }}
+              className={cn(
+                "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[64px] transition-all active:scale-95 select-none",
+                isActive 
+                  ? 'text-primary' 
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
             >
-              <item.icon className={`w-5 h-5`} />
-              <span className={`text-[10px] font-medium`}>
-                {item.name}
-              </span>
+              <item.icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium">{item.name}</span>
             </Link>
           );
         })}

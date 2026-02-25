@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
@@ -49,15 +48,14 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
 
   return (
     <TooltipProvider delayDuration={0}>
-      <aside className={`hidden lg:flex fixed left-0 top-16 bottom-0 flex-col border-r z-40 overflow-hidden transition-[width] duration-200 ease-in-out`} style={{ width: isCollapsed ? '64px' : '256px', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', boxShadow: 'var(--shadow-xs)' }}>
+      {/* hidden below lg, flex at lg+ */}
+      <aside 
+        className="hidden lg:flex fixed left-0 top-16 bottom-0 flex-col border-r bg-card z-40 overflow-hidden transition-[width] duration-200 ease-in-out"
+        style={{ width: isCollapsed ? '64px' : '256px' }}
+      >
         {/* Collapse toggle */}
         <div className={`flex ${isCollapsed ? 'justify-center' : 'justify-end'} px-2 pt-3 flex-shrink-0`}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 rounded-md"
-            onClick={onToggleCollapse}
-          >
+          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-md" onClick={onToggleCollapse}>
             {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </Button>
         </div>
@@ -66,7 +64,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
         <nav className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} py-3 space-y-1 overflow-y-auto overflow-x-hidden`}>
           {navItems.map((item, index) => {
             if (item.type === 'divider') {
-              return <div key={`divider-${index}`} className="my-3 border-t" style={{ borderColor: 'var(--border-color)' }} />;
+              return <div key={`divider-${index}`} className="my-3 border-t" />;
             }
             const isActive = currentPageName === item.page;
             const linkContent = (
@@ -74,16 +72,12 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                 key={item.page}
                 to={createPageUrl(item.page)}
                 className={cn(
-                   "flex items-center gap-3 rounded-xl text-sm font-medium transition-colors duration-150",
-                   isCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3',
-                   isActive ? 'shadow-sm' : ''
-                 )}
-                 style={isActive 
-                   ? { backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' } 
-                   : { color: 'var(--text-secondary)' }
-                 }
-                 onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(144, 56, 250, 0.05)'; }}
-                 onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                  "flex items-center gap-3 rounded-xl text-sm font-medium transition-colors duration-150",
+                  isCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-3',
+                  isActive 
+                    ? 'bg-primary/10 text-primary shadow-sm' 
+                    : 'text-muted-foreground hover:bg-accent/10 hover:text-foreground'
+                )}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 {!isCollapsed && <span>{item.name}</span>}
@@ -95,7 +89,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                 <Tooltip key={item.page}>
                   <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
                   <TooltipContent side="right" sideOffset={8} className="z-[100]">
-                   <p>{item.name}</p>
+                    <p>{item.name}</p>
                   </TooltipContent>
                 </Tooltip>
               );
@@ -106,9 +100,9 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
 
         {/* Premium CTA */}
         {!isSubscribed && !isCollapsed && (
-          <div className="p-4 transition-colors" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
+          <div className="p-4 border-t">
             <Link to={createPageUrl('Subscription')}>
-              <div className="p-4 rounded-xl text-white cursor-pointer hover:shadow-lg transition-shadow" style={{ backgroundColor: '#9038fa' }}>
+              <div className="p-4 rounded-xl text-white cursor-pointer hover:shadow-lg transition-shadow bg-[#9038fa]">
                 <div className="flex items-center gap-2 mb-2">
                   <Crown className="w-5 h-5" />
                   <span className="font-semibold text-sm">Plano Premium</span>
@@ -125,7 +119,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link to={createPageUrl('Subscription')} className="flex justify-center">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white" style={{ backgroundColor: '#9038fa' }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white bg-[#9038fa]">
                     <Crown className="w-5 h-5" />
                   </div>
                 </Link>
