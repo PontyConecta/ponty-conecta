@@ -269,10 +269,10 @@ export default function Applications() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">
           {profileType === 'brand' ? 'Candidaturas' : 'Minhas Candidaturas'}
         </h1>
-        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <p className="mt-1">
           {filteredApplications.length} candidaturas encontradas
         </p>
       </div>
@@ -348,10 +348,10 @@ export default function Applications() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                              <h3 className="font-semibold truncate">
                                 {creator?.display_name || 'Criador'}
                               </h3>
-                              <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
+                              <p className="text-sm truncate">
                                 Campanha: {campaign?.title || '-'}
                               </p>
                               <div className="flex flex-wrap gap-2 mt-1">
@@ -371,13 +371,13 @@ export default function Applications() {
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                              <h3 className="font-semibold truncate">
                                 {campaign?.title || 'Campanha'}
                               </h3>
-                              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                              <p className="text-sm">
                                 {brand?.company_name || 'Marca'}
                               </p>
-                              <div className="flex flex-wrap gap-3 mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                              <div className="flex flex-wrap gap-3 mt-2 text-sm">
                                 <span className="flex items-center gap-1">
                                  <Calendar className="w-4 h-4" />
                                  {formatDate(campaign?.deadline)}
@@ -397,12 +397,12 @@ export default function Applications() {
                       {/* Application Details */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         {profileType === 'brand' && application.proposed_rate && (
-                          <div className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                          <div className="flex items-center gap-1">
                             <DollarSign className="w-4 h-4" />
                             R$ {application.proposed_rate}
                           </div>
                         )}
-                        <div style={{ color: 'var(--text-secondary)' }}>
+                        <div>
                           {formatDate(application.created_date)}
                         </div>
                         <StatusBadge type="application" status={application.status} />
@@ -507,10 +507,10 @@ export default function Applications() {
             ) : (
               <Target className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             )}
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="text-lg font-semibold mb-2">
               Nenhuma candidatura encontrada
             </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
+            <p>
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : profileType === 'brand'
@@ -539,26 +539,26 @@ export default function Applications() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    <h4 className="font-semibold">
                       {creators[selectedApplication.creator_id]?.display_name || 'Criador'}
                     </h4>
-                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-sm">
                       {creators[selectedApplication.creator_id]?.bio?.slice(0, 100)}...
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Campanha</Label>
-                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                  <Label className="text-sm">Campanha</Label>
+                  <p className="font-medium">
                     {campaigns[selectedApplication.campaign_id]?.title}
                   </p>
                 </div>
 
                 {selectedApplication.message && (
                   <div>
-                    <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Mensagem</Label>
-                    <p className="mt-1 whitespace-pre-wrap" style={{ color: 'var(--text-primary)' }}>
+                    <Label className="text-sm">Mensagem</Label>
+                    <p className="mt-1 whitespace-pre-wrap">
                       {selectedApplication.message}
                     </p>
                   </div>
@@ -566,7 +566,7 @@ export default function Applications() {
 
                 {selectedApplication.proposed_rate && (
                   <div>
-                    <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Valor Proposto</Label>
+                    <Label className="text-sm">Valor Proposto</Label>
                     <p className="text-lg font-semibold text-emerald-600">
                       R$ {selectedApplication.proposed_rate}
                     </p>
@@ -646,19 +646,19 @@ export default function Applications() {
             </DialogHeader>
             
             <div className="space-y-4 py-4">
-              <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+              <div className="p-4 rounded-xl">
+                <h4 className="font-semibold">
                   {campaigns[selectedApplication.campaign_id]?.title}
                 </h4>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm">
                   {brands[selectedApplication.brand_id]?.company_name}
                 </p>
               </div>
 
               {selectedApplication.message && (
                 <div>
-                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Sua Mensagem</Label>
-                  <p className="mt-1" style={{ color: 'var(--text-primary)' }}>
+                  <Label className="text-sm">Sua Mensagem</Label>
+                  <p className="mt-1">
                     {selectedApplication.message}
                   </p>
                 </div>

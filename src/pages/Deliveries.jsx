@@ -366,17 +366,17 @@ export default function Deliveries() {
     <div className="space-y-6">
       {/* Pull to Refresh Indicator */}
       {refreshing && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-          <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg">
+          <Loader2 className="w-5 h-5 animate-spin" />
         </div>
       )}
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">
           {profileType === 'brand' ? 'Entregas' : 'Minhas Entregas'}
         </h1>
-        <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <p className="mt-1">
           {filteredDeliveries.length} entregas encontradas
         </p>
       </div>
@@ -438,10 +438,10 @@ export default function Deliveries() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                              <h3 className="font-semibold truncate">
                                 {creator?.display_name || 'Criador'}
                               </h3>
-                              <p className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>
+                              <p className="text-sm truncate">
                                 {campaign?.title || '-'}
                               </p>
                             </div>
@@ -451,15 +451,15 @@ export default function Deliveries() {
                             {brand?.logo_url ? (
                               <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
                             ) : (
-                              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                                <Building2 className="w-6 h-6" style={{ color: 'var(--text-secondary)' }} />
+                              <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+                                <Building2 className="w-6 h-6" />
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                              <h3 className="font-semibold truncate">
                                 {campaign?.title || 'Campanha'}
                               </h3>
-                              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                              <p className="text-sm">
                                 {brand?.company_name || 'Marca'}
                               </p>
                               <div className="flex flex-wrap gap-3 mt-2 text-sm">
@@ -478,12 +478,12 @@ export default function Deliveries() {
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         {profileType === 'brand' && (
                           <>
-                            <div className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                            <div className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
                               {formatDate(delivery.deadline)}
                             </div>
                             {delivery.proof_urls?.length > 0 && (
-                              <div className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                              <div className="flex items-center gap-1">
                                 <ImageIcon className="w-4 h-4" />
                                 {delivery.proof_urls.length} arquivo(s)
                               </div>
@@ -585,14 +585,14 @@ export default function Deliveries() {
         <Card>
           <CardContent className="p-12 text-center">
             {profileType === 'brand' ? (
-              <FileCheck className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
+              <FileCheck className="w-16 h-16 mx-auto mb-4" />
             ) : (
-              <FileText className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
+              <FileText className="w-16 h-16 mx-auto mb-4" />
             )}
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="text-lg font-semibold mb-2">
               Nenhuma entrega encontrada
             </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
+            <p>
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : profileType === 'brand'
@@ -614,15 +614,15 @@ export default function Deliveries() {
             <div className="space-y-6 py-4">
               {/* Campaign & Creator */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Campanha</Label>
-                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                <div className="p-4 rounded-xl">
+                  <Label className="text-sm">Campanha</Label>
+                  <p className="font-medium">
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </p>
                 </div>
-                <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Criador</Label>
-                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                <div className="p-4 rounded-xl">
+                  <Label className="text-sm">Criador</Label>
+                  <p className="font-medium">
                     {creators[selectedDelivery.creator_id]?.display_name}
                   </p>
                 </div>
@@ -692,11 +692,11 @@ export default function Deliveries() {
               )}
 
               {/* Deadline Status */}
-              <div className="flex items-center gap-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                <Calendar className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+              <div className="flex items-center gap-4 p-4 rounded-xl">
+                <Calendar className="w-5 h-5" />
                 <div>
-                  <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Prazo de Entrega</Label>
-                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                  <Label className="text-sm">Prazo de Entrega</Label>
+                  <p className="font-medium">
                     {selectedDelivery.deadline 
                       ? new Date(selectedDelivery.deadline).toLocaleDateString('pt-BR', { 
                           day: '2-digit', month: 'long', year: 'numeric' 
@@ -721,7 +721,7 @@ export default function Deliveries() {
               {/* Actions for Submitted Deliveries */}
               {selectedDelivery.status === 'submitted' && (
                 <div className="space-y-4 pt-4 border-t">
-                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  <p className="text-sm">
                     Avalie a entrega com base nos <strong>critérios definidos na campanha</strong>. 
                     Contestações só devem ser feitas quando a entrega não cumpre os requisitos objetivos.
                   </p>
@@ -813,11 +813,11 @@ export default function Deliveries() {
             {selectedDelivery && (
               <div className="space-y-6 py-4">
                 {/* Campaign Info */}
-                <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                  <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                <div className="p-4 rounded-xl">
+                  <h4 className="font-semibold">
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </h4>
-                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  <p className="text-sm">
                     {brands[selectedDelivery.brand_id]?.company_name}
                   </p>
                 </div>
