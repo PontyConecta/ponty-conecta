@@ -132,14 +132,14 @@ export default function DiscoverCreators() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold">Descobrir Creators</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Descobrir Creators</h1>
         <p className="mt-1 text-muted-foreground">
           {filteredCreators.length} {filteredCreators.length === 1 ? 'creator encontrado' : 'creators encontrados'}
         </p>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border bg-card shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
@@ -212,7 +212,7 @@ export default function DiscoverCreators() {
           ))}
         </div>
       ) : (
-        <Card>
+        <Card className="border bg-card shadow-sm">
           <CardContent className="p-12 text-center">
             <Users className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
@@ -236,14 +236,14 @@ export default function DiscoverCreators() {
             <div className="space-y-6 py-4">
               {/* Cover & Avatar */}
               <div className="relative">
-                <div className="h-32 rounded-xl overflow-hidden" style={{ backgroundColor: '#9038fa' }}>
+                <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
                   {selectedCreator.cover_image_url && (
                     <img src={selectedCreator.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
                 </div>
-                <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-white shadow-lg">
+                <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-card shadow-lg">
                   <AvatarImage src={selectedCreator.avatar_url} />
-                  <AvatarFallback className="bg-[#9038fa]/10 text-[#9038fa] text-2xl">
+                  <AvatarFallback className="bg-primary/10 text-primary text-2xl">
                     {selectedCreator.display_name?.[0]}
                   </AvatarFallback>
                 </Avatar>
@@ -325,7 +325,7 @@ export default function DiscoverCreators() {
                           <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 rounded-lg hover:opacity-80 transition-opacity bg-muted">
                             <div className="flex items-center gap-2">
                               <span className="font-medium">{p.name}</span>
-                              <span className="text-[#9038fa]">@{p.handle}</span>
+                              <span className="text-primary">@{p.handle}</span>
                             </div>
                             <Badge variant="outline">{formatFollowers(p.followers || 0)}</Badge>
                           </a>
@@ -349,7 +349,7 @@ export default function DiscoverCreators() {
 
                 {/* Rates */}
                 {(selectedCreator.rate_cash_min || selectedCreator.rate_cash_max) && (
-                  <div className="p-4 bg-emerald-50 rounded-xl">
+                  <div className="p-4 rounded-xl bg-emerald-50">
                     <h4 className="font-medium text-emerald-900 mb-1">Faixa de Valores</h4>
                     <p className="text-emerald-700">
                       R$ {selectedCreator.rate_cash_min || 0} - R$ {selectedCreator.rate_cash_max || 0}
@@ -364,22 +364,22 @@ export default function DiscoverCreators() {
 
                 {/* Contact - Only for Subscribers */}
                 {isSubscribed ? (
-                  <div className="p-4 bg-purple-50 rounded-xl space-y-3">
-                    <h4 className="font-medium text-purple-900">Contato</h4>
+                  <div className="p-4 rounded-xl space-y-3 bg-primary/5">
+                    <h4 className="font-medium text-primary">Contato</h4>
                     {selectedCreator.contact_email && (
-                      <a href={`mailto:${selectedCreator.contact_email}`} className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                      <a href={`mailto:${selectedCreator.contact_email}`} className="flex items-center gap-2 text-primary hover:underline">
                         <Mail className="w-4 h-4" />
                         {selectedCreator.contact_email}
                       </a>
                     )}
                     {selectedCreator.contact_whatsapp && (
-                      <a href={`https://wa.me/${selectedCreator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                      <a href={`https://wa.me/${selectedCreator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
                         <Phone className="w-4 h-4" />
                         {selectedCreator.contact_whatsapp}
                       </a>
                     )}
                     {selectedCreator.portfolio_url && (
-                      <a href={selectedCreator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#9038fa] hover:underline">
+                      <a href={selectedCreator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
                         <ExternalLink className="w-4 h-4" />
                         Ver Media Kit
                       </a>
@@ -388,7 +388,7 @@ export default function DiscoverCreators() {
                 ) : (
                   <div className="p-4 rounded-xl text-center bg-muted">
                     <p className="mb-3 text-muted-foreground">Assine para ver informações de contato</p>
-                    <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0]">
+                    <Button onClick={() => setShowPaywall(true)} className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm">
                       Desbloquear Contato
                     </Button>
                   </div>
