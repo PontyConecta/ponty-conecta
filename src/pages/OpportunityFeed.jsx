@@ -442,7 +442,7 @@ export default function OpportunityFeed() {
             <h3 className="text-lg font-semibold mb-2">
               Nenhuma campanha encontrada
             </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-muted-foreground">
               {searchTerm || filterPlatform !== 'all' || filterRemuneration !== 'all'
                 ? 'Tente ajustar seus filtros'
                 : 'Novas campanhas serão adicionadas em breve'}
@@ -477,43 +477,43 @@ export default function OpportunityFeed() {
                             {brands[selectedCampaign.brand_id]?.logo_url ? (
                               <img src={brands[selectedCampaign.brand_id].logo_url} alt="" className="w-14 h-14 rounded-lg object-cover" />
                             ) : (
-                              <div className="w-14 h-14 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                                <Building2 className="w-7 h-7" style={{ color: 'var(--text-secondary)' }} />
+                              <div className="w-14 h-14 rounded-lg flex items-center justify-center" className="bg-muted">
+                                <Building2 className="w-7 h-7" className="text-muted-foreground" />
                               </div>
                             )}
                             <div>
-                              <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{selectedCampaign.title}</h2>
-                              <p style={{ color: 'var(--text-secondary)' }}>{brands[selectedCampaign.brand_id]?.company_name}</p>
+                              <h2 className="text-xl font-bold" >{selectedCampaign.title}</h2>
+                              <p className="text-muted-foreground">{brands[selectedCampaign.brand_id]?.company_name}</p>
                             </div>
                           </div>
 
                           {/* Description */}
                           <div>
-                            <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Descrição</h4>
-                            <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.description}</p>
+                            <h4 className="font-medium mb-2" >Descrição</h4>
+                            <p className="text-muted-foreground">{selectedCampaign.description}</p>
                           </div>
 
                           {/* Target Audience */}
                           {selectedCampaign.target_audience && (
                             <div>
-                              <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Público-Alvo</h4>
-                              <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.target_audience}</p>
+                              <h4 className="font-medium mb-2" >Público-Alvo</h4>
+                              <p className="text-muted-foreground">{selectedCampaign.target_audience}</p>
                             </div>
                           )}
 
                           {/* Requirements */}
                           {selectedCampaign.requirements && (
-                            <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                              <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Requisitos e Entregas</h4>
-                              <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.requirements}</p>
+                            <div className="p-4 rounded-xl" className="bg-muted">
+                              <h4 className="font-medium mb-2" >Requisitos e Entregas</h4>
+                              <p className="text-muted-foreground">{selectedCampaign.requirements}</p>
                             </div>
                           )}
 
                           {/* Content Guidelines */}
                           {selectedCampaign.content_guidelines && (
                             <div>
-                              <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Diretrizes de Conteúdo</h4>
-                              <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.content_guidelines}</p>
+                              <h4 className="font-medium mb-2" >Diretrizes de Conteúdo</h4>
+                              <p className="text-muted-foreground">{selectedCampaign.content_guidelines}</p>
                             </div>
                           )}
 
@@ -584,10 +584,10 @@ export default function OpportunityFeed() {
                   </div>
 
                   {/* Remuneration */}
-                  <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                    <h4 className="font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Remuneração</h4>
+                  <div className="p-4 rounded-xl" className="bg-muted">
+                    <h4 className="font-medium mb-2" >Remuneração</h4>
                     {selectedCampaign.remuneration_type === 'cash' && (
-                       <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                       <p className="text-lg font-semibold" >
                          R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
                        </p>
                      )}
@@ -595,21 +595,21 @@ export default function OpportunityFeed() {
                       <div>
                         <Badge className="bg-pink-100 text-pink-700 border-0 mb-2">Permuta</Badge>
                         {selectedCampaign.barter_description && (
-                          <p style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.barter_description}</p>
+                          <p className="text-muted-foreground">{selectedCampaign.barter_description}</p>
                         )}
                         {selectedCampaign.barter_value && (
-                          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Valor estimado: R$ {selectedCampaign.barter_value}</p>
+                          <p className="text-sm mt-1" className="text-muted-foreground">Valor estimado: R$ {selectedCampaign.barter_value}</p>
                         )}
                       </div>
                     )}
                     {selectedCampaign.remuneration_type === 'mixed' && (
                       <div>
                         <Badge className="bg-violet-100 text-violet-700 border-0 mb-2">Misto</Badge>
-                        <p style={{ color: 'var(--text-secondary)' }}>
+                        <p className="text-muted-foreground">
                           R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0} + Permuta
                         </p>
                         {selectedCampaign.barter_description && (
-                          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{selectedCampaign.barter_description}</p>
+                          <p className="text-sm mt-1" className="text-muted-foreground">{selectedCampaign.barter_description}</p>
                         )}
                       </div>
                     )}
@@ -632,30 +632,30 @@ export default function OpportunityFeed() {
                 // Application Form View
                   <>
                     {/* Campaign Summary */}
-                    <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                      <h4 className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{selectedCampaign.title}</h4>
-                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    <div className="p-4 rounded-xl" className="bg-muted">
+                      <h4 className="font-semibold mb-1" >{selectedCampaign.title}</h4>
+                      <p className="text-sm" className="text-muted-foreground">
                         {brands[selectedCampaign.brand_id]?.company_name || 'Marca'}
                       </p>
                     </div>
 
                   {/* Application Form */}
                   <div>
-                    <Label style={{ color: 'var(--text-primary)' }}>Sua Mensagem *</Label>
+                    <Label >Sua Mensagem *</Label>
                     <Textarea
                       value={applicationMessage}
                       onChange={(e) => setApplicationMessage(e.target.value)}
                       placeholder="Conte por que você é ideal para esta campanha..."
                       className="mt-2 min-h-[120px]"
                     />
-                    <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-xs mt-1" className="text-muted-foreground">
                       Dica: Mencione trabalhos anteriores relevantes e por que você se identifica com a marca.
                     </p>
                   </div>
 
                   {selectedCampaign.remuneration_type !== 'barter' && (
                     <div>
-                      <Label style={{ color: 'var(--text-primary)' }}>Sua Proposta de Valor (R$)</Label>
+                      <Label >Sua Proposta de Valor (R$)</Label>
                       <Input
                         type="number"
                         value={proposedRate}
@@ -663,14 +663,14 @@ export default function OpportunityFeed() {
                         placeholder={`Ex: ${selectedCampaign.budget_min || 500}`}
                         className="mt-2"
                       />
-                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+                      <p className="text-xs mt-1" className="text-muted-foreground">
                         Orçamento da marca: R$ {selectedCampaign.budget_min || 0} - {selectedCampaign.budget_max || 0}
                       </p>
                     </div>
                   )}
 
                   {/* Actions */}
-                  <div className="flex justify-end gap-3 pt-4" style={{ borderTopColor: 'var(--border-color)', borderTopWidth: '1px' }}>
+                  <div className="flex justify-end gap-3 pt-4" className="border-t">
                     <Button variant="outline" onClick={() => setViewingDetails(true)}>
                       Voltar
                     </Button>
