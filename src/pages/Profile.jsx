@@ -280,7 +280,7 @@ export default function Profile() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Editar Perfil</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Editar Perfil</h1>
           <p className="mt-1 text-muted-foreground">Atualize suas informações</p>
         </div>
         <div className="flex items-center gap-2">
@@ -301,7 +301,7 @@ export default function Profile() {
 
         {/* Profile Tab */}
         <TabsContent value="profile">
-          <Card>
+          <Card className="border bg-card shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 {isBrand ? <Building2 className="w-5 h-5" /> : <User className="w-5 h-5" />}
@@ -312,7 +312,7 @@ export default function Profile() {
               {/* Cover & Avatar/Logo */}
               <div className="relative">
                 {/* Cover Image */}
-                <div className="h-32 lg:h-40 rounded-xl relative overflow-hidden" style={{ backgroundColor: '#9038fa' }}>
+                <div className="h-32 lg:h-40 rounded-xl relative overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
                   {formData.cover_image_url && (
                     <img src={formData.cover_image_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -327,16 +327,16 @@ export default function Profile() {
                   <div className="relative">
                     {isBrand ? (
                       formData.logo_url ? (
-                        <img src={formData.logo_url} alt="Logo" className="w-20 h-20 lg:w-24 lg:h-24 rounded-xl object-cover border-4 border-white shadow-lg bg-white" />
+                        <img src={formData.logo_url} alt="Logo" className="w-20 h-20 lg:w-24 lg:h-24 rounded-xl object-cover border-4 border-card shadow-lg bg-card" />
                       ) : (
-                        <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-xl bg-[#9038fa]/10 flex items-center justify-center border-4 border-white shadow-lg">
-                          <Building2 className="w-10 h-10 text-[#9038fa]" />
+                        <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-xl bg-primary/10 flex items-center justify-center border-4 border-card shadow-lg">
+                          <Building2 className="w-10 h-10 text-primary" />
                         </div>
                       )
                     ) : (
-                      <Avatar className="w-20 h-20 lg:w-24 lg:h-24 border-4 border-white shadow-lg">
+                      <Avatar className="w-20 h-20 lg:w-24 lg:h-24 border-4 border-card shadow-lg">
                         <AvatarImage src={formData.avatar_url} />
-                        <AvatarFallback className="bg-[#9038fa]/10 text-[#9038fa] text-2xl">
+                        <AvatarFallback className="bg-primary/10 text-primary text-2xl">
                           {formData.display_name?.[0] || 'C'}
                         </AvatarFallback>
                       </Avatar>
@@ -397,7 +397,7 @@ export default function Profile() {
                       <div>
                         <Label>Cidade</Label>
                         <div className="relative mt-2">
-                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
+                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                           <Input
                             value={formData.city}
                             onChange={(e) => handleChange('city', e.target.value)}
@@ -459,7 +459,7 @@ export default function Profile() {
                     <div>
                       <Label>Cidade</Label>
                       <div className="relative mt-2">
-                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" className="text-muted-foreground" />
+                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input
                           value={formData.city}
                           onChange={(e) => handleChange('city', e.target.value)}
@@ -486,7 +486,7 @@ export default function Profile() {
                           <Badge
                             key={niche}
                             variant={formData.niche?.includes(niche) ? "default" : "outline"}
-                            className={`cursor-pointer ${formData.niche?.includes(niche) ? 'bg-[#9038fa]' : ''}`}
+                            className={`cursor-pointer ${formData.niche?.includes(niche) ? 'bg-primary' : ''}`}
                             onClick={() => toggleArrayItem('niche', niche)}
                           >
                             {niche}
@@ -502,7 +502,7 @@ export default function Profile() {
                           <Badge
                             key={type}
                             variant={formData.content_types?.includes(type) ? "default" : "outline"}
-                            className={`cursor-pointer ${formData.content_types?.includes(type) ? 'bg-[#b77aff]' : ''}`}
+                            className={`cursor-pointer ${formData.content_types?.includes(type) ? 'bg-primary/80' : ''}`}
                             onClick={() => toggleArrayItem('content_types', type)}
                           >
                             {type}
@@ -532,10 +532,10 @@ export default function Profile() {
                       <Label>Plataformas</Label>
                       <div className="space-y-2 mt-2">
                         {formData.platforms?.map((platform, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 rounded-lg" className="bg-muted">
+                          <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted">
                             <div className="flex-1">
-                              <span className="font-medium" >{platform.name}</span>
-                              <span className="ml-2" className="text-muted-foreground">@{platform.handle}</span>
+                              <span className="font-medium">{platform.name}</span>
+                              <span className="ml-2 text-muted-foreground">@{platform.handle}</span>
                             </div>
                             <Badge variant="outline">{platform.followers?.toLocaleString() || 0}</Badge>
                             <Button variant="ghost" size="icon" onClick={() => removePlatform(index)} className="h-8 w-8">
@@ -594,13 +594,13 @@ export default function Profile() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-4 rounded-xl" className="bg-muted">
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-muted">
                        <Checkbox
                          id="accepts_barter"
                          checked={formData.accepts_barter}
                          onCheckedChange={(checked) => handleChange('accepts_barter', checked)}
                        />
-                       <Label htmlFor="accepts_barter" className="cursor-pointer" >
+                       <Label htmlFor="accepts_barter" className="cursor-pointer">
                          Aceito permutas (produtos/serviços)
                        </Label>
                      </div>
