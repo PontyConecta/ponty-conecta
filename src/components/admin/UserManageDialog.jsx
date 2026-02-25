@@ -144,7 +144,18 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                     <CheckCircle2 className="w-3 h-3 mr-1" /> Verificado
                   </Badge>
                 )}
+                {user.exclude_from_financials && (
+                  <Badge className="bg-orange-100 text-orange-700 border-0">
+                    <EyeOff className="w-3 h-3 mr-1" /> Excl. Financeiro
+                  </Badge>
+                )}
               </div>
+              {/* Tags display */}
+              {user.tags && user.tags.length > 0 && (
+                <div className="mt-2">
+                  <UserTagBadges tags={user.tags} maxShow={6} />
+                </div>
+              )}
             </div>
           </div>
 
