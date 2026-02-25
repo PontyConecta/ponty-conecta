@@ -532,7 +532,7 @@ export default function Profile() {
                       <Label>Plataformas</Label>
                       <div className="space-y-2 mt-2">
                         {formData.platforms?.map((platform, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
+                          <div key={index} className="flex items-center gap-3 p-3 rounded-lg" className="bg-muted">
                             <div className="flex-1">
                               <span className="font-medium" >{platform.name}</span>
                               <span className="ml-2" className="text-muted-foreground">@{platform.handle}</span>
@@ -594,7 +594,7 @@ export default function Profile() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
+                    <div className="flex items-center gap-3 p-4 rounded-xl" className="bg-muted">
                        <Checkbox
                          id="accepts_barter"
                          checked={formData.accepts_barter}
@@ -649,7 +649,7 @@ export default function Profile() {
                       </div>
                     ))}
                     
-                    <label className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:border-[#9038fa] transition-colors" style={{ borderColor: 'var(--border-color)' }}>
+                    <label className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:border-[#9038fa] transition-colors" >
                       <input type="file" accept="image/*" className="hidden" onChange={handlePortfolioImageUpload} />
                       <Plus className="w-8 h-8 mb-2" className="text-muted-foreground" />
                       <span className="text-sm" className="text-muted-foreground">Adicionar</span>
@@ -709,8 +709,8 @@ export default function Profile() {
                 </>
               ) : (
                 <>
-                  <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.3)', borderWidth: '1px' }}>
-                   <p className="text-sm" style={{ color: 'rgb(37, 99, 235)' }}>
+                  <div className="p-4 rounded-xl" className="bg-blue-50 border border-blue-200 dark:bg-blue-950/20 dark:border-blue-900">
+                   <p className="text-sm" className="text-blue-600">
                       <strong>Nota:</strong> Suas informações de contato serão visíveis apenas para assinantes ativos.
                     </p>
                   </div>
@@ -764,10 +764,10 @@ export default function Profile() {
               <CardContent>
                 {isSubscribed ? (
                   <div className="space-y-4">
-                    <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                    <div className="p-4 rounded-xl" className="bg-emerald-50 dark:bg-emerald-950/20">
                          <div className="flex items-center justify-between">
                            <div>
-                             <Badge className="border-0 mb-2" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'rgb(5, 150, 105)' }}>Ativa</Badge>
+                             <Badge className="border-0 mb-2" className="bg-emerald-100 text-emerald-700">Ativa</Badge>
                              <h4 className="font-semibold" >Plano Premium</h4>
                              <p className="text-sm" className="text-muted-foreground">Acesso completo a todas as funcionalidades</p>
                            </div>
@@ -803,7 +803,7 @@ export default function Profile() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
+                <div className="p-4 rounded-xl" className="bg-muted">
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium" >Email</h4>
