@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, TrendingUp, Target, Repeat, Users, CreditCard } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { DollarSign, TrendingUp, Target, Repeat, Users, CreditCard, Building2, Star, EyeOff } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import DashboardMetricCard from './DashboardMetricCard';
+import DashboardProfileFilter from './DashboardProfileFilter';
 import DashboardRevenueChart from './DashboardRevenueChart';
 
-export default function DashboardFinancials({ profileFilter }) {
+export default function DashboardFinancials() {
   const [stripeData, setStripeData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [profileFilter, setProfileFilter] = useState('all');
 
   useEffect(() => {
     loadStripeData();
@@ -35,7 +39,7 @@ export default function DashboardFinancials({ profileFilter }) {
 
   if (!stripeData) return null;
 
-  const filter = profileFilter || 'all';
+  const filter = profileFilter;
   const mrr = filter === 'brand' ? stripeData.brandMRR : filter === 'creator' ? stripeData.creatorMRR : stripeData.mrr;
   const arr = mrr * 12;
   const subscribers = filter === 'brand' ? stripeData.brandSubscribers : filter === 'creator' ? stripeData.creatorSubscribers : stripeData.totalActiveSubscribers;
@@ -43,6 +47,17 @@ export default function DashboardFinancials({ profileFilter }) {
 
   return (
     <div className="space-y-6">
+      {/* Filter + Info */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <DashboardProfileFilter value={profileFilter} onChange={setProfileFilter} />
+        {stripeData.excludedCount > 0 && (
+          <Badge variant="outline" className="gap-1 text-xs" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
+            <EyeOff className="w-3 h-3" />
+            {stripeData.excludedCount} usuário(s) excluído(s) dos cálculos
+          </Badge>
+        )}
+      </div>
+
       {/* Primary Financial Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <DashboardMetricCard

@@ -11,6 +11,33 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
+    // Fetch excluded users (those flagged to be excluded from financials)
+    const allUsers = await base44.asServiceRole.entities.User.filter({ exclude_from_financials: true });
+    const excludedEmails = new Set(allUsers.map(u => u.email?.toLowerCase()).filter(Boolean));
+
+    // Also fetch Brand/Creator profiles to map stripe_customer_id to user email
+    const [allBrands, allCreators] = await Promise.all([
+      base44.asServiceRole.entities.Brand.list(),
+      base44.asServiceRole.entities.Creator.list(),
+    ]);
+
+    // Build set of excluded Stripe customer IDs
+    const excludedCustomerIds = new Set();
+    const allUsersForMapping = await base44.asServiceRole.entities.User.list();
+    const emailToUserId = {};
+    allUsersForMapping.forEach(u => { emailToUserId[u.email?.toLowerCase()] = u.id; });
+    
+    for (const email of excludedEmails) {
+      const uid = emailToUserId[email];
+      if (!uid) continue;
+      const brand = allBrands.find(b => b.user_id === uid);
+      const creator = allCreators.find(c => c.user_id === uid);
+      if (brand?.stripe_customer_id) excludedCustomerIds.add(brand.stripe_customer_id);
+      if (creator?.stripe_customer_id) excludedCustomerIds.add(creator.stripe_customer_id);
+    }
+
+    console.log(`Excluding ${excludedCustomerIds.size} Stripe customer(s) from financials`);
+
     const subscriptions = [];
     let hasMore = true;
     let startingAfter = undefined;
@@ -43,15 +70,23 @@ Deno.serve(async (req) => {
     const BRAND_PRODUCT = 'prod_U0gIiVNyRmWGIs';
     const CREATOR_PRODUCT = 'prod_U0gCi96g4grdc0';
 
-    // Filter out subscriptions with 0 value (test/free subs)
+    // Filter: must have value AND not be an excluded customer
     const hasValue = (sub) => {
       const item = sub.items?.data?.[0];
       return item?.price?.unit_amount > 0;
     };
 
-    const activeSubs = subscriptions.filter(s => (s.status === 'active' || s.status === 'trialing') && hasValue(s));
-    const cancelledSubs = subscriptions.filter(s => s.status === 'canceled' && hasValue(s));
-    const pastDueSubs = subscriptions.filter(s => s.status === 'past_due' && hasValue(s));
+    const isNotExcluded = (sub) => {
+      return !excludedCustomerIds.has(sub.customer);
+    };
+
+    const validSub = (sub) => hasValue(sub) && isNotExcluded(sub);
+    const validInvoice = (inv) => !excludedCustomerIds.has(inv.customer);
+
+    const activeSubs = subscriptions.filter(s => (s.status === 'active' || s.status === 'trialing') && validSub(s));
+    const cancelledSubs = subscriptions.filter(s => s.status === 'canceled' && validSub(s));
+    const pastDueSubs = subscriptions.filter(s => s.status === 'past_due' && validSub(s));
+    const filteredInvoices = invoices.filter(validInvoice);
 
     const getProductId = (sub) => {
       const item = sub.items?.data?.[0];
@@ -99,7 +134,7 @@ Deno.serve(async (req) => {
       revenueByMonth[key] = { total: 0, brand: 0, creator: 0, label: d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }) };
     }
 
-    for (const inv of invoices) {
+    for (const inv of filteredInvoices) {
       const d = new Date(inv.created * 1000);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       if (!revenueByMonth[key]) continue;
@@ -119,11 +154,11 @@ Deno.serve(async (req) => {
       criadores: Math.round(m.creator * 100) / 100,
     }));
 
-    const totalRevenue = invoices.reduce((sum, inv) => sum + ((inv.amount_paid || 0) / 100), 0);
+    const totalRevenue = filteredInvoices.reduce((sum, inv) => sum + ((inv.amount_paid || 0) / 100), 0);
     const thisMonthKey = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; })();
     const lastMonthKey = (() => { const d = new Date(); d.setMonth(d.getMonth()-1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; })();
 
-    const trialingSubs = subscriptions.filter(s => s.status === 'trialing' && hasValue(s));
+    const trialingSubs = subscriptions.filter(s => s.status === 'trialing' && validSub(s));
 
     const subDistribution = [
       { name: 'Ativas', value: activeSubs.length, color: '#10b981' },
@@ -156,7 +191,8 @@ Deno.serve(async (req) => {
       trialingSubscribers: trialingSubs.length,
       cancelledSubscribers: cancelledSubs.length,
       pastDueSubscribers: pastDueSubs.length,
-      totalSubscriptions: subscriptions.length,
+      totalSubscriptions: subscriptions.filter(s => validSub(s)).length,
+      excludedCount: excludedCustomerIds.size,
       revenueChart,
       subDistribution,
       planTypeDistribution: [

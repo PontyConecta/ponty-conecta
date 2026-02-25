@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { 
   Loader2, Building2, Star, Shield, CheckCircle2, Crown, 
-  Gift, AlertTriangle, Eye, Calendar, Mail, Globe
+  Gift, AlertTriangle, Eye, Calendar, Mail, Globe, EyeOff
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -32,6 +32,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [auditNote, setAuditNote] = useState('');
   const [trialDays, setTrialDays] = useState(30);
   const [newRole, setNewRole] = useState(user?.role || 'user');
+  const [excludeFromFinancials, setExcludeFromFinancials] = useState(user?.exclude_from_financials || false);
 
   if (!user || !profile) return null;
 
@@ -296,6 +297,43 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
               {profile.is_verified 
                 ? 'Este perfil está verificado e exibe o selo de verificação.' 
                 : 'Este perfil ainda não foi verificado.'}
+            </p>
+          </div>
+
+          {/* Exclude from Financials */}
+          <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <EyeOff className="w-4 h-4" style={{ color: '#9038fa' }} />
+                <Label className="font-semibold" style={{ color: 'var(--text-primary)' }}>Excluir dos Cálculos Financeiros</Label>
+              </div>
+              <Button 
+                onClick={async () => {
+                  setActionLoading(true);
+                  const newVal = !excludeFromFinancials;
+                  await base44.functions.invoke('adminManageUser', { 
+                    userId: user.id, 
+                    action: 'set_exclude_financials', 
+                    data: { exclude_from_financials: newVal, auditNote } 
+                  });
+                  setExcludeFromFinancials(newVal);
+                  toast.success(newVal ? 'Usuário excluído dos cálculos financeiros' : 'Usuário incluído nos cálculos financeiros');
+                  setActionLoading(false);
+                  onActionComplete?.();
+                }} 
+                disabled={actionLoading}
+                variant={excludeFromFinancials ? 'default' : 'outline'}
+                size="sm"
+                className={excludeFromFinancials ? 'bg-red-600 hover:bg-red-700 text-white' : ''}
+              >
+                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 
+                  excludeFromFinancials ? 'Excluído ✓' : 'Excluir'}
+              </Button>
+            </div>
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+              {excludeFromFinancials 
+                ? 'Este usuário está sendo excluído dos cálculos de MRR, receita e métricas financeiras do Stripe.' 
+                : 'Ative para que as assinaturas deste usuário não sejam contabilizadas nas métricas financeiras (útil para contas de teste).'}
             </p>
           </div>
 
