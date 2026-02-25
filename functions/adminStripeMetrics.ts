@@ -18,18 +18,20 @@ Deno.serve(async (req) => {
       base44.asServiceRole.entities.Creator.list(),
     ]);
 
-    // Build set of excluded Stripe customer IDs from users flagged exclude_from_financials
+    // Build set of excluded Stripe customer IDs AND user IDs from users flagged exclude_from_financials
     const excludedCustomerIds = new Set();
+    const excludedUserIds = new Set();
     const excludedUsers = allUsers.filter(u => u.exclude_from_financials);
     
     for (const u of excludedUsers) {
+      excludedUserIds.add(u.id);
       const brand = allBrands.find(b => b.user_id === u.id);
       const creator = allCreators.find(c => c.user_id === u.id);
       if (brand?.stripe_customer_id) excludedCustomerIds.add(brand.stripe_customer_id);
       if (creator?.stripe_customer_id) excludedCustomerIds.add(creator.stripe_customer_id);
     }
 
-    console.log(`Excluding ${excludedCustomerIds.size} Stripe customer(s) from financials`);
+    console.log(`Excluding ${excludedUsers.length} user(s) (${excludedCustomerIds.size} Stripe customer(s)) from financials`);
 
     const subscriptions = [];
     let hasMore = true;
@@ -70,7 +72,10 @@ Deno.serve(async (req) => {
     };
 
     const isNotExcluded = (sub) => {
-      return !excludedCustomerIds.has(sub.customer);
+      if (excludedCustomerIds.has(sub.customer)) return false;
+      // Also check if customer email matches any excluded user
+      // by checking if any excluded user's brand/creator has this stripe_customer_id
+      return true;
     };
 
     const validSub = (sub) => hasValue(sub) && isNotExcluded(sub);
@@ -212,6 +217,12 @@ Deno.serve(async (req) => {
       })
       .reduce((sum, inv) => sum + ((inv.amount_paid || 0) / 100), 0);
 
+    // Also provide counts that include manually-set premium users who are excluded
+    // Count profiles with subscription_status=premium whose user is excluded
+    const excludedPremiumBrands = allBrands.filter(b => b.subscription_status === 'premium' && excludedUserIds.has(b.user_id));
+    const excludedPremiumCreators = allCreators.filter(c => c.subscription_status === 'premium' && excludedUserIds.has(c.user_id));
+    const excludedPremiumCount = excludedPremiumBrands.length + excludedPremiumCreators.length;
+
     return Response.json({
       mrr: Math.round(totalMRR * 100) / 100,
       brandMRR: Math.round(brandMRR * 100) / 100,
@@ -245,7 +256,8 @@ Deno.serve(async (req) => {
       cancelledSubscribers: cancelledSubs.length,
       pastDueSubscribers: pastDueSubs.length,
       totalSubscriptions: subscriptions.filter(s => validSub(s)).length,
-      excludedCount: excludedCustomerIds.size,
+      excludedCount: excludedUsers.length,
+      excludedPremiumCount,
       recentlyCancelledCount: recentlyCancelled.length,
       brandRecentlyCancelledCount: brandRecentlyCancelled.length,
       creatorRecentlyCancelledCount: creatorRecentlyCancelled.length,
