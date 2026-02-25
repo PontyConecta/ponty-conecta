@@ -170,11 +170,17 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                         <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> Verificado
                       </Badge>
                     )}
+                    {user.exclude_from_financials && (
+                      <Badge className="bg-orange-100 text-orange-700 border-0 text-[10px] px-1.5 py-0">
+                        <EyeOff className="w-2.5 h-2.5 mr-0.5" /> Excluído
+                      </Badge>
+                    )}
                     {location && (
                       <span className="text-[10px] flex items-center gap-0.5" style={{ color: 'var(--text-secondary)' }}>
                         <MapPin className="w-2.5 h-2.5" />{location}
                       </span>
                     )}
+                    <UserTagBadges tags={user.tags} size="xs" maxShow={2} />
                   </div>
                 </div>
                 <Button variant="ghost" size="icon" className="flex-shrink-0 h-8 w-8">
