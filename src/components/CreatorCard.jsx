@@ -47,7 +47,7 @@ export default function CreatorCard({
           <div className="flex items-center gap-3">
             <Avatar className="w-12 h-12">
               <AvatarImage src={creator.avatar_url} />
-              <AvatarFallback className="bg-[#9038fa]/10 text-[#9038fa]">
+              <AvatarFallback className="bg-primary/10 text-primary">
                 {creator.display_name?.[0]}
               </AvatarFallback>
             </Avatar>
@@ -80,9 +80,9 @@ export default function CreatorCard({
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-all duration-300 group flex flex-col">
+    <Card className="overflow-hidden hover:shadow-md transition-all duration-300 group flex flex-col h-full">
       {/* Cover Image */}
-      <div className="h-24 relative flex-shrink-0 bg-[#9038fa]">
+      <div className="h-24 relative flex-shrink-0 bg-primary">
         {creator.cover_image_url && (
           <img 
             src={creator.cover_image_url} 
@@ -91,7 +91,7 @@ export default function CreatorCard({
           />
         )}
         {creator.featured && (
-          <Badge className="absolute top-2 right-2 bg-[#9038fa] text-white border-0">
+          <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground border-0">
             <Star className="w-3 h-3 mr-1" />
             Destaque
           </Badge>
@@ -103,7 +103,7 @@ export default function CreatorCard({
         <div className="flex justify-between items-end mb-4">
           <Avatar className="w-20 h-20 border-4 border-card shadow-xl transition-all">
             <AvatarImage src={creator.avatar_url} />
-            <AvatarFallback className="text-white text-2xl bg-[#9038fa]">
+            <AvatarFallback className="text-primary-foreground text-2xl bg-primary">
               {creator.display_name?.[0]}
             </AvatarFallback>
           </Avatar>
@@ -146,11 +146,9 @@ export default function CreatorCard({
             </div>
           </div>
 
-          {creator.bio && (
-            <p className="text-sm line-clamp-2 min-h-[2.5rem] text-muted-foreground">
-              {isSubscribed ? creator.bio : creator.bio.slice(0, 50) + '...'}
-            </p>
-          )}
+          <p className="text-sm line-clamp-2 min-h-[2.5rem] text-muted-foreground">
+            {creator.bio ? (isSubscribed ? creator.bio : creator.bio.slice(0, 50) + '...') : '\u00A0'}
+          </p>
 
           {/* Stats */}
           <div className="flex items-center gap-4 text-sm">
@@ -167,7 +165,7 @@ export default function CreatorCard({
           </div>
 
           {/* Niches */}
-          <div className="flex flex-wrap gap-1 min-h-[1.75rem]">
+          <div className="flex flex-wrap gap-1 h-[1.75rem] overflow-hidden">
             {creator.niche?.length > 0 ? (
               <>
                 {creator.niche.slice(0, 3).map((n, i) => (
@@ -181,7 +179,7 @@ export default function CreatorCard({
                   </Badge>
                 )}
               </>
-            ) : null}
+            ) : <span>&nbsp;</span>}
           </div>
 
           {/* Actions - pushed to bottom */}
@@ -198,7 +196,7 @@ export default function CreatorCard({
             {isSubscribed ? (
               <Button 
                 size="sm" 
-                className="flex-1 bg-[#9038fa] hover:bg-[#9038fa]/90 text-white shadow-sm transition-all"
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
                 onClick={onContact}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />

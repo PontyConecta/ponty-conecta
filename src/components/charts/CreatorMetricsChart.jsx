@@ -59,15 +59,15 @@ export default function CreatorMetricsChart({ applications, deliveries }) {
           )}
           <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t">
             <div className="text-center">
-              <div className="text-lg font-bold text-emerald-600">{acceptedApps}</div>
+              <div className="text-lg font-semibold text-emerald-600">{acceptedApps}</div>
               <div className="text-[10px] text-muted-foreground">Aceitas</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-amber-600">{pendingApps}</div>
+              <div className="text-lg font-semibold text-amber-600">{pendingApps}</div>
               <div className="text-[10px] text-muted-foreground">Pendentes</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-red-500">{rejectedApps}</div>
+              <div className="text-lg font-semibold text-red-500">{rejectedApps}</div>
               <div className="text-[10px] text-muted-foreground">Recusadas</div>
             </div>
           </div>
@@ -82,22 +82,22 @@ export default function CreatorMetricsChart({ applications, deliveries }) {
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Entregas no prazo</span>
-              <span className="text-lg font-bold text-primary">{onTimeRate}%</span>
+              <span className="text-lg font-semibold text-primary">{onTimeRate}%</span>
             </div>
             <Progress value={onTimeRate} className="h-2.5" />
           </div>
 
           <div className="grid grid-cols-3 gap-3 pt-4 border-t">
             <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-600">{approvedCount}</div>
+              <div className="text-2xl font-semibold text-emerald-600">{approvedCount}</div>
               <div className="text-[10px] text-muted-foreground">Aprovadas</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{submittedCount}</div>
+              <div className="text-2xl font-semibold text-primary">{submittedCount}</div>
               <div className="text-[10px] text-muted-foreground">Enviadas</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-amber-600">{pendingDeliveries}</div>
+              <div className="text-2xl font-semibold text-amber-600">{pendingDeliveries}</div>
               <div className="text-[10px] text-muted-foreground">Pendentes</div>
             </div>
           </div>

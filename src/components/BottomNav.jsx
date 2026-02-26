@@ -41,7 +41,7 @@ export default function BottomNav({ profileType, currentPageName }) {
   return (
     /* fixed bottom, HIDDEN at lg+ (desktop uses sidebar) */
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t shadow-[0_-2px_8px_rgba(0,0,0,0.06)] safe-area-bottom">
-      <div className="flex items-center justify-around px-2 h-[72px]">
+      <div className="flex items-center justify-around px-3 h-20">
         {navItems.map((item) => {
           const isActive = currentPageName === item.page;
           return (
@@ -49,13 +49,13 @@ export default function BottomNav({ profileType, currentPageName }) {
               key={item.page}
               to={createPageUrl(item.page)}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] px-3 py-1.5 rounded-xl transition-all duration-150 active:scale-95 select-none",
+                "flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] px-3 py-2 rounded-xl transition-all duration-150 active:scale-95 select-none",
                 isActive 
                   ? 'text-primary bg-primary/10' 
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              <item.icon className={cn("w-5 h-5 transition-colors duration-150", isActive && "w-[22px] h-[22px]")} />
+              <item.icon className={cn("w-[22px] h-[22px] transition-colors duration-150", isActive && "w-6 h-6")} />
               <span className={cn("text-[10px] font-medium transition-colors duration-150", isActive && "font-semibold")}>{item.name}</span>
             </Link>
           );

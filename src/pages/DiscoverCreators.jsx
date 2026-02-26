@@ -177,11 +177,11 @@ export default function DiscoverCreators() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Tamanhos</SelectItem>
-                  <SelectItem value="nano">Nano (1K-10K)</SelectItem>
+                  <SelectItem value="nano">Nano (até 10K)</SelectItem>
                   <SelectItem value="micro">Micro (10K-50K)</SelectItem>
-                  <SelectItem value="mid">Mid (50K-500K)</SelectItem>
-                  <SelectItem value="macro">Macro (500K-1M)</SelectItem>
-                  <SelectItem value="mega">Mega (1M+)</SelectItem>
+                  <SelectItem value="mid">Mid (50K-100K)</SelectItem>
+                  <SelectItem value="macro">Macro (100K-500K)</SelectItem>
+                  <SelectItem value="mega">Mega (500K+)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -198,6 +198,7 @@ export default function DiscoverCreators() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
+              className="h-full"
             >
               <CreatorCard
                 creator={creator}

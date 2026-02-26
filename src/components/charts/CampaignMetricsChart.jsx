@@ -59,19 +59,19 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
           )}
           <div className="grid grid-cols-4 gap-2 mt-4 pt-4 border-t">
             <div className="text-center">
-              <div className="text-lg font-bold text-primary">{activeCampaigns}</div>
+              <div className="text-lg font-semibold text-primary">{activeCampaigns}</div>
               <div className="text-[10px] text-muted-foreground">Ativas</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-muted-foreground">{draftCampaigns}</div>
+              <div className="text-lg font-semibold text-muted-foreground">{draftCampaigns}</div>
               <div className="text-[10px] text-muted-foreground">Rascunhos</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-emerald-600">{completedCampaigns}</div>
+              <div className="text-lg font-semibold text-emerald-600">{completedCampaigns}</div>
               <div className="text-[10px] text-muted-foreground">Concluídas</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-amber-600">{otherCampaigns}</div>
+              <div className="text-lg font-semibold text-amber-600">{otherCampaigns}</div>
               <div className="text-[10px] text-muted-foreground">Outras</div>
             </div>
           </div>
@@ -87,16 +87,16 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
             <div className="flex items-center justify-center">
               <div className="relative w-32 h-32">
                 <svg className="w-full h-full" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="45" fill="none" className="stroke-border" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
                   <circle
                     cx="50" cy="50" r="45" fill="none"
-                    stroke="#9038fa" strokeWidth="8"
+                    stroke="hsl(var(--primary))" strokeWidth="8"
                     strokeDasharray={`${acceptanceRate * 2.83} 283`}
                     strokeLinecap="round" transform="rotate(-90 50 50)"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                   <span className="text-3xl font-bold">{acceptanceRate}%</span>
+                   <span className="text-3xl font-semibold text-foreground">{acceptanceRate}%</span>
                    <span className="text-xs text-muted-foreground">aprovação</span>
                 </div>
               </div>
@@ -104,15 +104,15 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
             
             <div className="grid grid-cols-3 gap-3 text-center pt-4 border-t">
               <div>
-                <div className="text-2xl font-bold">{totalApps}</div>
+                <div className="text-2xl font-semibold text-foreground">{totalApps}</div>
                 <div className="text-[10px] text-muted-foreground">Total de candidatos</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-emerald-600">{acceptedApps}</div>
+                <div className="text-2xl font-semibold text-emerald-600">{acceptedApps}</div>
                 <div className="text-[10px] text-muted-foreground">Aceitos</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-amber-600">{pendingApps}</div>
+                <div className="text-2xl font-semibold text-amber-600">{pendingApps}</div>
                 <div className="text-[10px] text-muted-foreground">Pendentes</div>
               </div>
             </div>

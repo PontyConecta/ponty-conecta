@@ -42,11 +42,11 @@ const CONTENT_TYPES = [
 ];
 
 const PROFILE_SIZES = [
-  { value: 'nano', label: 'Nano (1K - 10K)', desc: 'Comunidade íntima e engajada' },
+  { value: 'nano', label: 'Nano (até 10K)', desc: 'Comunidade íntima e engajada' },
   { value: 'micro', label: 'Micro (10K - 50K)', desc: 'Influência de nicho' },
-  { value: 'mid', label: 'Mid (50K - 500K)', desc: 'Alcance moderado' },
-  { value: 'macro', label: 'Macro (500K - 1M)', desc: 'Grande alcance' },
-  { value: 'mega', label: 'Mega (1M+)', desc: 'Celebridade digital' },
+  { value: 'mid', label: 'Mid (50K - 100K)', desc: 'Alcance moderado' },
+  { value: 'macro', label: 'Macro (100K - 500K)', desc: 'Grande alcance' },
+  { value: 'mega', label: 'Mega (500K+)', desc: 'Celebridade digital' },
 ];
 
 const PLATFORM_OPTIONS = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads', 'Pinterest', 'Twitch'];
@@ -143,16 +143,33 @@ export default function OnboardingCreator() {
 
   const addPlatform = () => {
     if (newPlatform.name && newPlatform.handle) {
-      setFormData(prev => ({
-        ...prev,
-        platforms: [...prev.platforms, { ...newPlatform, followers: parseInt(newPlatform.followers) || 0 }]
-      }));
+      const followers = parseInt(newPlatform.followers) || 0;
+      setFormData(prev => {
+        const updatedPlatforms = [...prev.platforms, { ...newPlatform, followers }];
+        // Auto-calculate profile_size from total followers
+        const totalFollowers = updatedPlatforms.reduce((sum, p) => sum + (Number(p.followers) || 0), 0);
+        let profileSize = 'nano';
+        if (totalFollowers > 500000) profileSize = 'mega';
+        else if (totalFollowers > 100000) profileSize = 'macro';
+        else if (totalFollowers > 50000) profileSize = 'mid';
+        else if (totalFollowers > 10000) profileSize = 'micro';
+        return { ...prev, platforms: updatedPlatforms, profile_size: profileSize };
+      });
       setNewPlatform({ name: '', handle: '', followers: '' });
     }
   };
 
   const removePlatform = (index) => {
-    setFormData(prev => ({ ...prev, platforms: prev.platforms.filter((_, i) => i !== index) }));
+    setFormData(prev => {
+      const updatedPlatforms = prev.platforms.filter((_, i) => i !== index);
+      const totalFollowers = updatedPlatforms.reduce((sum, p) => sum + (Number(p.followers) || 0), 0);
+      let profileSize = 'nano';
+      if (totalFollowers > 500000) profileSize = 'mega';
+      else if (totalFollowers > 100000) profileSize = 'macro';
+      else if (totalFollowers > 50000) profileSize = 'mid';
+      else if (totalFollowers > 10000) profileSize = 'micro';
+      return { ...prev, platforms: updatedPlatforms, profile_size: profileSize };
+    });
   };
 
   const saveStepData = async (nextStep) => {
@@ -356,7 +373,7 @@ export default function OnboardingCreator() {
                                 <span className="font-medium text-foreground">{p.name}</span>
                                 <span className="ml-2 text-muted-foreground">@{p.handle}</span>
                               </div>
-                              <Badge variant="outline">{p.followers?.toLocaleString()} seguidores</Badge>
+                              <Badge variant="outline">{Number(p.followers) >= 1000 ? (Number(p.followers) / 1000).toFixed(1) + 'K' : p.followers} seguidores</Badge>
                               <Button variant="ghost" size="icon" onClick={() => removePlatform(i)} className="h-8 w-8 text-red-400 hover:text-red-500">
                                 <X className="w-4 h-4" />
                               </Button>
@@ -364,13 +381,27 @@ export default function OnboardingCreator() {
                           ))}
                         </div>
                       )}
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Select value={newPlatform.name} onValueChange={(v) => setNewPlatform(p => ({ ...p, name: v }))}>
                           <SelectTrigger><SelectValue placeholder="Plataforma" /></SelectTrigger>
                           <SelectContent>{PLATFORM_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
                         </Select>
                         <Input value={newPlatform.handle} onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value.replace(/^@/, '') }))} placeholder="usuario (sem @)" />
-                        <Input type="number" value={newPlatform.followers} onChange={(e) => setNewPlatform(p => ({ ...p, followers: e.target.value }))} placeholder="Seguidores" />
+                        <Select value={newPlatform.followers} onValueChange={(v) => setNewPlatform(p => ({ ...p, followers: v }))}>
+                          <SelectTrigger><SelectValue placeholder="Seguidores" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="50">0 – 100</SelectItem>
+                            <SelectItem value="300">101 – 500</SelectItem>
+                            <SelectItem value="750">501 – 1K</SelectItem>
+                            <SelectItem value="3000">1K – 5K</SelectItem>
+                            <SelectItem value="7500">5K – 10K</SelectItem>
+                            <SelectItem value="30000">10K – 50K</SelectItem>
+                            <SelectItem value="75000">50K – 100K</SelectItem>
+                            <SelectItem value="300000">100K – 500K</SelectItem>
+                            <SelectItem value="750000">500K – 1M</SelectItem>
+                            <SelectItem value="2000000">+1M</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <Button variant="outline" onClick={addPlatform} disabled={!newPlatform.name || !newPlatform.handle} className="w-full mt-2">
                         <Plus className="w-4 h-4 mr-2" /> Adicionar Plataforma

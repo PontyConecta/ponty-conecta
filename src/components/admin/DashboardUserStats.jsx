@@ -194,7 +194,7 @@ function StatMiniCard({ icon: Icon, iconBg, iconColor, label, value, subtitle })
             <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${iconColor}`} />
           </div>
           <div className="min-w-0">
-            <p className="text-lg sm:text-xl font-bold text-foreground">{value}</p>
+            <p className="text-lg sm:text-xl font-semibold text-foreground">{value}</p>
             <p className="text-[10px] sm:text-xs text-muted-foreground">{label}</p>
             {subtitle && <p className="text-[9px] sm:text-[10px] mt-0.5 text-muted-foreground">{subtitle}</p>}
           </div>
