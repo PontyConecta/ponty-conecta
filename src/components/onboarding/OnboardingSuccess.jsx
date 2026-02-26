@@ -21,10 +21,10 @@ export default function OnboardingSuccess({ profileType, onContinue }) {
         <CheckCircle2 className="w-10 h-10 text-[#9038fa]" />
       </div>
 
-      <h2 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
+      <h2 className="text-3xl font-bold mb-3 text-foreground">
         Perfil Criado com Sucesso!
       </h2>
-      <p className="text-lg mb-8 max-w-md mx-auto" style={{ color: 'var(--text-secondary)' }}>
+      <p className="text-lg mb-8 max-w-md mx-auto text-muted-foreground">
         {isBrand 
           ? 'Sua marca está pronta! Agora você pode criar campanhas e encontrar os melhores criadores.'
           : 'Seu perfil está pronto! Agora você pode explorar oportunidades e se candidatar a campanhas.'}

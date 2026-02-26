@@ -111,21 +111,28 @@ Deno.serve(async (req) => {
 
         console.log(`[adminManageUser] set_user_role: adminId=${admin.id} targetUserId=${userId} newRole=${newRole}`);
 
-        // Find target user - list all and find by ID since filter({ id }) may not work
+        // Fetch all users and find target by ID
         const allUsersForRole = await base44.asServiceRole.entities.User.filter({});
-        const targetUser = allUsersForRole.find(u => u.id === userId);
+        console.log(`[adminManageUser] Total users fetched: ${allUsersForRole.length}`);
+        
+        const targetUser = allUsersForRole.find(u => String(u.id) === String(userId));
         
         if (!targetUser) {
-          console.error(`[adminManageUser] User not found: ${userId}`);
+          console.error(`[adminManageUser] User NOT found. userId="${userId}" (type: ${typeof userId}). Available IDs: ${allUsersForRole.slice(0, 5).map(u => `${u.id}(${typeof u.id})`).join(', ')}...`);
           return Response.json({ error: 'User not found' }, { status: 404 });
         }
 
         const oldRole = targetUser.role || 'user';
         console.log(`[adminManageUser] Changing role: ${targetUser.email} from "${oldRole}" to "${newRole}"`);
         
-        await base44.asServiceRole.entities.User.update(userId, { role: newRole });
+        try {
+          await base44.asServiceRole.entities.User.update(targetUser.id, { role: newRole });
+          console.log(`[adminManageUser] SUCCESS: Role updated for ${targetUser.email}`);
+        } catch (updateErr) {
+          console.error(`[adminManageUser] FAILED to update role:`, updateErr.message);
+          return Response.json({ error: `Failed to update role: ${updateErr.message}` }, { status: 500 });
+        }
         
-        console.log(`[adminManageUser] SUCCESS: Role updated for ${targetUser.email}`);
         auditAction = 'user_role_change';
         auditDetails = `User role changed from "${oldRole}" to "${newRole}" (${targetUser.email})`;
         result = { role: newRole, previousRole: oldRole };
