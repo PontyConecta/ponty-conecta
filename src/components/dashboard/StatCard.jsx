@@ -9,13 +9,15 @@ export default function StatCard({ label, value, total, icon: Icon, color, index
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <Card className="h-[108px] sm:h-[116px] border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
-        <CardContent className="p-4 lg:p-5 h-full flex flex-col justify-center">
-          <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center mb-2`}>
+      <Card className="h-[120px] border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
+        <CardContent className="p-4 lg:p-5 h-full flex flex-col justify-between">
+          <div className={`w-11 h-11 rounded-xl ${color} flex items-center justify-center`}>
             <Icon className="w-5 h-5 text-white" />
           </div>
-          <div className="text-xl sm:text-2xl font-bold tracking-tight tabular-nums leading-none">{value}</div>
-          <div className="text-xs sm:text-sm font-medium text-muted-foreground leading-tight mt-0.5">{label}</div>
+          <div>
+            <div className="text-2xl font-bold tracking-tight tabular-nums leading-none">{value}</div>
+            <div className="text-xs sm:text-sm font-medium text-muted-foreground leading-tight mt-1">{label}</div>
+          </div>
         </CardContent>
       </Card>
     </motion.div>
