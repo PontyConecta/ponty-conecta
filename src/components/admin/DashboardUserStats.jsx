@@ -12,15 +12,15 @@ const COLORS = ['#818cf8', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg shadow-lg p-3 text-xs border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{label}</p>
+    <div className="rounded-lg shadow-lg p-3 text-xs border bg-card border-border">
+      <p className="font-semibold mb-1 text-foreground">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-4">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span style={{ color: 'var(--text-secondary)' }}>{entry.name}</span>
+            <span className="text-muted-foreground">{entry.name}</span>
           </span>
-          <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{entry.value}</span>
+          <span className="font-semibold text-foreground">{entry.value}</span>
         </div>
       ))}
     </div>
@@ -51,7 +51,7 @@ export default function DashboardUserStats({ analytics }) {
         <Card className="lg:col-span-2 bg-card border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Crescimento de Usuários</h3>
+              <h3 className="text-sm font-semibold text-foreground">Crescimento de Usuários</h3>
               <div className="flex gap-1">
                 <Button variant={growthView === 'cumulative' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${growthView === 'cumulative' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setGrowthView('cumulative')}>Acumulado</Button>
                 <Button variant={growthView === 'new' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${growthView === 'new' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setGrowthView('new')}>Novos</Button>

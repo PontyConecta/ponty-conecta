@@ -102,12 +102,12 @@ export default function DashboardMarketplace({ analytics }) {
               </div>
               <div className="space-y-2">
                 {topBrands.map((brand, i) => (
-                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: COLORS[i] }}>{i + 1}</span>
-                      <span className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{brand.name}</span>
-                    </div>
-                    <Badge variant="outline" className="text-[10px]">{brand.campaigns} campanhas</Badge>
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: COLORS[i] }}>{i + 1}</span>
+                    <span className="text-sm font-medium truncate text-foreground">{brand.name}</span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px]">{brand.campaigns} campanhas</Badge>
                   </div>
                 ))}
               </div>
@@ -124,12 +124,12 @@ export default function DashboardMarketplace({ analytics }) {
               </div>
               <div className="space-y-2">
                 {topCreators.map((creator, i) => (
-                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: COLORS[i] }}>{i + 1}</span>
-                      <span className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{creator.name}</span>
-                    </div>
-                    <Badge variant="outline" className="text-[10px]">{creator.applications} candidaturas</Badge>
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: COLORS[i] }}>{i + 1}</span>
+                    <span className="text-sm font-medium truncate text-foreground">{creator.name}</span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px]">{creator.applications} candidaturas</Badge>
                   </div>
                 ))}
               </div>

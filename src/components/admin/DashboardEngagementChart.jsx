@@ -7,15 +7,15 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg shadow-lg p-3 text-xs border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{label}</p>
+    <div className="rounded-lg shadow-lg p-3 text-xs border bg-card border-border">
+      <p className="font-semibold mb-1 text-foreground">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-4">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span style={{ color: 'var(--text-secondary)' }}>{entry.name}</span>
+            <span className="text-muted-foreground">{entry.name}</span>
           </span>
-          <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{entry.value}</span>
+          <span className="font-semibold text-foreground">{entry.value}</span>
         </div>
       ))}
     </div>
