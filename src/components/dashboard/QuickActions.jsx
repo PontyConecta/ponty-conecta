@@ -17,20 +17,22 @@ export default function QuickActions({ profileType, isSubscribed }) {
         return (
           <Link key={action.label} to={createPageUrl(targetPage)} className="block h-[140px]">
             <DashboardCard index={index}>
-              <div
-                className="w-11 h-11 rounded-xl flex items-center justify-center relative shrink-0"
-                style={{ backgroundColor: action.bg }}
-              >
-                <action.icon className="w-5 h-5 text-white" />
-                {needsSub && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#9038fa] rounded-full flex items-center justify-center">
-                    <Crown className="w-3 h-3 text-white" />
-                  </div>
-                )}
+              <div className="flex flex-col items-center justify-center flex-1">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center relative shrink-0"
+                  style={{ backgroundColor: action.bg }}
+                >
+                  <action.icon className="w-5 h-5 text-white" />
+                  {needsSub && (
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#9038fa] rounded-full flex items-center justify-center">
+                      <Crown className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs sm:text-sm font-medium leading-tight text-foreground mt-2.5 text-center">
+                  {action.label}
+                </span>
               </div>
-              <span className="text-xs sm:text-sm font-medium leading-tight text-foreground mt-2.5">
-                {action.label}
-              </span>
             </DashboardCard>
           </Link>
         );
