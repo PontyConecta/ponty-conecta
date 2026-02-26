@@ -31,8 +31,8 @@ function TrendBadge({ current, previous }) {
 
 export default function DashboardMetricCard({ label, value, subtitle, icon: Icon, iconColor = 'text-blue-600', trend, previousValue, tooltip }) {
   return (
-    <Card className="bg-card border hover:shadow-md transition-shadow">
-      <CardContent className="p-5 sm:p-6">
+    <Card className="bg-card border shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-2">

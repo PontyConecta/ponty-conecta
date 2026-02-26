@@ -31,11 +31,11 @@ export default function DashboardMarketplace({ analytics }) {
 
       {/* Disputes breakdown */}
       {disputes.total > 0 && (
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <Card className="bg-card border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
-              <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Disputas</h3>
+              <h3 className="text-sm font-semibold text-foreground">Disputas</h3>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               <DisputeStat label="Abertas" value={disputes.open || 0} color="text-amber-600" />
@@ -51,9 +51,9 @@ export default function DashboardMarketplace({ analytics }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Niche distribution */}
         {nicheDistribution.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Nichos Populares</h3>
+              <h3 className="text-sm font-semibold mb-3 text-foreground">Nichos Populares</h3>
               <div className="h-52">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={nicheDistribution} layout="vertical">
@@ -73,9 +73,9 @@ export default function DashboardMarketplace({ analytics }) {
 
         {/* Platform distribution */}
         {platformDistribution.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Plataformas</h3>
+              <h3 className="text-sm font-semibold mb-3 text-foreground">Plataformas</h3>
               <div className="h-52">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -94,11 +94,11 @@ export default function DashboardMarketplace({ analytics }) {
       {/* Top Rankings */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {topBrands.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Trophy className="w-4 h-4 text-indigo-500" />
-                <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Top Marcas (por campanhas)</h3>
+                <h3 className="text-sm font-semibold text-foreground">Top Marcas (por campanhas)</h3>
               </div>
               <div className="space-y-2">
                 {topBrands.map((brand, i) => (
@@ -116,11 +116,11 @@ export default function DashboardMarketplace({ analytics }) {
         )}
 
         {topCreators.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Trophy className="w-4 h-4 text-orange-500" />
-                <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Top Criadores (por candidaturas)</h3>
+                <h3 className="text-sm font-semibold text-foreground">Top Criadores (por candidaturas)</h3>
               </div>
               <div className="space-y-2">
                 {topCreators.map((creator, i) => (
@@ -143,10 +143,10 @@ export default function DashboardMarketplace({ analytics }) {
 
 function MiniStat({ label, value, alert }) {
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+    <Card className="bg-card border shadow-sm">
       <CardContent className="p-3 sm:p-4">
-        <p className="text-[10px] sm:text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>{label}</p>
-        <p className={`text-xl sm:text-2xl font-bold ${alert ? 'text-amber-600' : ''}`} style={!alert ? { color: 'var(--text-primary)' } : {}}>
+        <p className="text-[10px] sm:text-xs mb-1 text-muted-foreground">{label}</p>
+        <p className={`text-xl sm:text-2xl font-bold ${alert ? 'text-amber-600' : 'text-foreground'}`}>
           {value}
         </p>
       </CardContent>
@@ -156,9 +156,9 @@ function MiniStat({ label, value, alert }) {
 
 function DisputeStat({ label, value, color }) {
   return (
-    <div className="p-2 rounded-lg text-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="p-2 rounded-lg text-center bg-muted/50">
       <p className={`text-lg font-bold ${color}`}>{value}</p>
-      <p className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>{label}</p>
+      <p className="text-[10px] text-muted-foreground">{label}</p>
     </div>
   );
 }

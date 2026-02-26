@@ -162,7 +162,7 @@ export default function CreatorDashboard() {
         </div>
       )}
 
-      {/* Profile Incomplete Alert — topo, antes de tudo */}
+      {/* Profile Incomplete Alert */}
       {!profileValidation.isComplete && (
         <ProfileIncompleteAlert 
           missingFields={profileValidation.missingFields} 
@@ -170,11 +170,11 @@ export default function CreatorDashboard() {
         />
       )}
 
-      {/* Quick Actions */}
-      <QuickActions profileType="creator" isSubscribed={isSubscribed} />
-
       {/* Onboarding Missions */}
       <DashboardMissions userId={user?.id} profileType="creator" />
+
+      {/* Quick Actions */}
+      <QuickActions profileType="creator" isSubscribed={isSubscribed} />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3 lg:gap-4">

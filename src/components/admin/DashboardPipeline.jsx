@@ -28,24 +28,24 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Pipeline — lista com barras individuais */}
-      <Card className="bg-card border">
-        <CardContent className="p-5">
-          <div className="flex items-center justify-between mb-5">
+      <Card className="bg-card border shadow-sm">
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-foreground">Pipeline de Campanhas</h3>
-            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
               {totalCampaigns} total
             </span>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {pipelineData.map(item => {
               const pct = totalCampaigns > 0 ? Math.round((item.value / totalCampaigns) * 100) : 0;
               const barWidth = maxVal > 0 ? (item.value / maxVal) * 100 : 0;
               return (
-                <div key={item.key} className="flex items-center gap-1.5">
+                <div key={item.key} className="flex items-center gap-1.5 h-7">
                   {/* Status dot + label */}
-                  <div className="flex items-center gap-1.5 w-[88px] flex-shrink-0">
-                    <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                  <div className="flex items-center gap-1.5 w-[82px] sm:w-[90px] flex-shrink-0">
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                     <span className="text-[11px] text-muted-foreground truncate leading-none">{item.stage}</span>
                   </div>
 
@@ -54,22 +54,22 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
                     {item.value}
                   </span>
 
-                  {/* Bar — flex-1 maximizes width */}
-                  <div className="flex-1 h-2.5 rounded-full bg-muted/40 overflow-hidden">
+                  {/* Bar */}
+                  <div className="flex-1 h-2 rounded-full bg-muted/40 overflow-hidden min-w-0">
                     {item.value > 0 && (
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
                           width: `${Math.max(barWidth, 4)}%`,
                           backgroundColor: item.color,
-                          opacity: 0.8,
+                          opacity: 0.85,
                         }}
                       />
                     )}
                   </div>
 
                   {/* Percentage */}
-                  <span className={`text-[10px] w-7 text-right flex-shrink-0 tabular-nums ${item.value > 0 ? 'text-muted-foreground font-medium' : 'text-muted-foreground/25'}`}>
+                  <span className={`text-[10px] w-[26px] text-right flex-shrink-0 tabular-nums ${item.value > 0 ? 'text-muted-foreground font-medium' : 'text-muted-foreground/25'}`}>
                     {pct}%
                   </span>
                 </div>

@@ -26,9 +26,9 @@ export default function DashboardEngagementChart({ data }) {
   if (!data || data.length === 0) return null;
 
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+    <Card className="bg-card border shadow-sm">
       <CardContent className="p-4 sm:p-5">
-        <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Engajamento ao Longo do Tempo</h3>
+        <h3 className="text-sm font-semibold mb-4 text-foreground">Engajamento ao Longo do Tempo</h3>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>

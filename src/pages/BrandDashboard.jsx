@@ -166,7 +166,7 @@ export default function BrandDashboard() {
         </div>
       )}
 
-      {/* Profile Incomplete Alert — topo, antes de tudo */}
+      {/* Profile Incomplete Alert */}
       {!profileValidation.isComplete && (
         <ProfileIncompleteAlert 
           missingFields={profileValidation.missingFields} 
@@ -174,11 +174,11 @@ export default function BrandDashboard() {
         />
       )}
 
-      {/* Quick Actions */}
-      <QuickActions profileType="brand" isSubscribed={isSubscribed} />
-
       {/* Onboarding Missions */}
       <DashboardMissions userId={user?.id} profileType="brand" />
+
+      {/* Quick Actions */}
+      <QuickActions profileType="brand" isSubscribed={isSubscribed} />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">

@@ -54,9 +54,9 @@ export default function DashboardFinancials() {
   }
 
   if (!stripeData) return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+    <Card className="bg-card border shadow-sm">
       <CardContent className="p-6 text-center">
-        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Não foi possível carregar as métricas financeiras do Stripe.</p>
+        <p className="text-sm text-muted-foreground">Não foi possível carregar as métricas financeiras do Stripe.</p>
         <Button onClick={loadStripeData} variant="outline" size="sm" className="mt-3">Tentar novamente</Button>
       </CardContent>
     </Card>
@@ -192,9 +192,9 @@ export default function DashboardFinancials() {
       {/* Distribution Charts */}
       <div className={`grid gap-4 ${(d.subDistribution?.length > 0 && d.planTypeDistribution?.length > 0) ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 lg:grid-cols-1'}`}>
         {d.subDistribution?.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Status das Assinaturas</h3>
+              <h3 className="text-sm font-semibold mb-3 text-foreground">Status das Assinaturas</h3>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -218,9 +218,9 @@ export default function DashboardFinancials() {
         )}
 
         {d.planTypeDistribution?.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Tipo de Plano</h3>
+              <h3 className="text-sm font-semibold mb-3 text-foreground">Tipo de Plano</h3>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>

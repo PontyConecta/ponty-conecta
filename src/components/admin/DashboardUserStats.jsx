@@ -48,7 +48,7 @@ export default function DashboardUserStats({ analytics }) {
 
       {/* Growth + Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <Card className="lg:col-span-2 bg-card border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Crescimento de Usuários</h3>
@@ -96,32 +96,32 @@ export default function DashboardUserStats({ analytics }) {
         </Card>
 
         {/* Plan Distribution */}
-        <Card className="bg-card border">
-          <CardContent className="p-5">
-            <h3 className="text-sm font-semibold mb-3 text-foreground">Distribuição por Plano</h3>
-            <div className="h-48">
+        <Card className="bg-card border shadow-sm">
+          <CardContent className="p-4 sm:p-5">
+            <h3 className="text-sm font-semibold mb-2 text-foreground">Distribuição por Plano</h3>
+            <div className="h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={planDist}
                     cx="50%"
                     cy="50%"
-                    innerRadius={28}
-                    outerRadius={54}
+                    innerRadius={30}
+                    outerRadius={56}
                     paddingAngle={3}
                     dataKey="value"
                     label={({ name, value, cx, cy, midAngle, outerRadius: oR }) => {
                       const RADIAN = Math.PI / 180;
-                      const r = oR + 16;
+                      const r = oR + 14;
                       const x = cx + r * Math.cos(-midAngle * RADIAN);
                       const y = cy + r * Math.sin(-midAngle * RADIAN);
                       return (
-                        <text x={x} y={y} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" style={{ fontSize: '10px', fill: 'hsl(var(--foreground))', fontWeight: 600 }}>
+                        <text x={x} y={y} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" style={{ fontSize: '10.5px', fill: 'hsl(var(--foreground))', fontWeight: 600 }}>
                           {name}: {value}
                         </text>
                       );
                     }}
-                    labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 0.8, offset: 8 }}
+                    labelLine={{ stroke: 'hsl(var(--border))', strokeWidth: 0.75, offset: 6 }}
                   >
                     {planDist.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
@@ -130,7 +130,7 @@ export default function DashboardUserStats({ analytics }) {
               </ResponsiveContainer>
             </div>
             {/* Legends */}
-            <div className="flex flex-wrap gap-3 mt-2 justify-center">
+            <div className="flex flex-wrap gap-3 mt-1 justify-center">
               {planDist.map((p, i) => (
                 <span key={p.name} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
@@ -145,9 +145,9 @@ export default function DashboardUserStats({ analytics }) {
       {/* Geography + Profile Size */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {stateDist.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Distribuição por Estado</h3>
+              <h3 className="text-sm font-semibold mb-3 text-foreground">Distribuição por Estado</h3>
               <div className="h-52">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stateDist} layout="vertical">
@@ -163,9 +163,9 @@ export default function DashboardUserStats({ analytics }) {
           </Card>
         )}
         {sizeDist.length > 0 && (
-          <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+          <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Tamanho de Perfil (Creators)</h3>
+              <h3 className="text-sm font-semibold mb-3 text-foreground">Tamanho de Perfil (Creators)</h3>
               <div className="h-52">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={sizeDist}>
@@ -187,16 +187,16 @@ export default function DashboardUserStats({ analytics }) {
 
 function StatMiniCard({ icon: Icon, iconBg, iconColor, label, value, subtitle }) {
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+    <Card className="bg-card border shadow-sm">
       <CardContent className="p-3 sm:p-4">
         <div className="flex items-center gap-3">
           <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0`}>
             <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${iconColor}`} />
           </div>
           <div className="min-w-0">
-            <p className="text-lg sm:text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{value}</p>
-            <p className="text-[10px] sm:text-xs" style={{ color: 'var(--text-secondary)' }}>{label}</p>
-            {subtitle && <p className="text-[9px] sm:text-[10px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{subtitle}</p>}
+            <p className="text-lg sm:text-xl font-bold text-foreground">{value}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">{label}</p>
+            {subtitle && <p className="text-[9px] sm:text-[10px] mt-0.5 text-muted-foreground">{subtitle}</p>}
           </div>
         </div>
       </CardContent>
