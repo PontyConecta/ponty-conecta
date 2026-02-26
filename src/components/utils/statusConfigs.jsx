@@ -17,37 +17,37 @@ import {
 export const campaignStatusConfig = {
   draft: { 
     label: 'Rascunho', 
-    color: 'bg-muted text-muted-foreground', 
+    color: 'bg-slate-100 text-slate-700', 
     icon: Edit 
   },
   under_review: { 
     label: 'Em Análise', 
-    color: 'bg-accent/10 text-accent-foreground', 
+    color: 'bg-yellow-100 text-yellow-700', 
     icon: AlertTriangle 
   },
   active: { 
     label: 'Ativa', 
-    color: 'bg-primary/10 text-primary', 
+    color: 'bg-emerald-100 text-emerald-700', 
     icon: CheckCircle2 
   },
   paused: { 
     label: 'Pausada', 
-    color: 'bg-destructive/10 text-destructive', 
+    color: 'bg-orange-100 text-orange-700', 
     icon: Pause 
   },
   applications_closed: { 
     label: 'Inscrições Fechadas', 
-    color: 'bg-secondary text-secondary-foreground', 
+    color: 'bg-blue-100 text-blue-700', 
     icon: XCircle 
   },
   completed: { 
     label: 'Concluída', 
-    color: 'bg-primary/15 text-primary', 
+    color: 'bg-violet-100 text-violet-700', 
     icon: CheckCircle2 
   },
   cancelled: { 
     label: 'Cancelada', 
-    color: 'bg-destructive/10 text-destructive', 
+    color: 'bg-red-100 text-red-700', 
     icon: Ban 
   }
 };
@@ -55,27 +55,27 @@ export const campaignStatusConfig = {
 export const applicationStatusConfig = {
   pending: { 
     label: 'Pendente', 
-    color: 'bg-accent/10 text-accent-foreground', 
+    color: 'bg-yellow-100 text-yellow-700', 
     icon: Clock 
   },
   accepted: { 
     label: 'Aceita', 
-    color: 'bg-primary/10 text-primary', 
+    color: 'bg-emerald-100 text-emerald-700', 
     icon: CheckCircle2 
   },
   rejected: { 
     label: 'Rejeitada', 
-    color: 'bg-destructive/10 text-destructive', 
+    color: 'bg-red-100 text-red-700', 
     icon: XCircle 
   },
   withdrawn: { 
     label: 'Cancelada', 
-    color: 'bg-muted text-muted-foreground', 
+    color: 'bg-slate-100 text-slate-700', 
     icon: Ban 
   },
   completed: { 
     label: 'Concluída', 
-    color: 'bg-primary/15 text-primary', 
+    color: 'bg-violet-100 text-violet-700', 
     icon: CheckCircle2 
   }
 };
@@ -83,37 +83,37 @@ export const applicationStatusConfig = {
 export const deliveryStatusConfig = {
   pending: { 
     label: 'Pendente', 
-    color: 'bg-accent/10 text-accent-foreground', 
+    color: 'bg-yellow-100 text-yellow-700', 
     icon: Clock 
   },
   submitted: { 
     label: 'Enviada', 
-    color: 'bg-secondary text-secondary-foreground', 
+    color: 'bg-blue-100 text-blue-700', 
     icon: CheckCircle2 
   },
   approved: { 
     label: 'Aprovada', 
-    color: 'bg-primary/10 text-primary', 
+    color: 'bg-emerald-100 text-emerald-700', 
     icon: CheckCircle2 
   },
   contested: { 
     label: 'Contestada', 
-    color: 'bg-destructive/10 text-destructive', 
+    color: 'bg-orange-100 text-orange-700', 
     icon: AlertTriangle 
   },
   in_dispute: { 
     label: 'Em Disputa', 
-    color: 'bg-destructive/15 text-destructive', 
+    color: 'bg-red-100 text-red-700', 
     icon: AlertTriangle 
   },
   resolved: { 
     label: 'Resolvida', 
-    color: 'bg-primary/15 text-primary', 
+    color: 'bg-violet-100 text-violet-700', 
     icon: CheckCircle2 
   },
   closed: { 
     label: 'Encerrada', 
-    color: 'bg-muted text-muted-foreground', 
+    color: 'bg-slate-100 text-slate-700', 
     icon: XCircle 
   }
 };
@@ -121,27 +121,27 @@ export const deliveryStatusConfig = {
 export const disputeStatusConfig = {
   open: { 
     label: 'Aberta', 
-    color: 'bg-destructive/10 text-destructive', 
+    color: 'bg-red-100 text-red-700', 
     icon: AlertTriangle 
   },
   under_review: { 
     label: 'Em Análise', 
-    color: 'bg-accent/10 text-accent-foreground', 
+    color: 'bg-yellow-100 text-yellow-700', 
     icon: Clock 
   },
   resolved_brand_favor: { 
     label: 'Favorável à Marca', 
-    color: 'bg-primary/10 text-primary', 
+    color: 'bg-indigo-100 text-indigo-700', 
     icon: Building2 
   },
   resolved_creator_favor: { 
     label: 'Favorável ao Criador', 
-    color: 'bg-primary/15 text-primary', 
+    color: 'bg-orange-100 text-orange-700', 
     icon: User 
   },
   closed: { 
     label: 'Encerrada', 
-    color: 'bg-muted text-muted-foreground', 
+    color: 'bg-slate-100 text-slate-700', 
     icon: CheckCircle2 
   }
 };
@@ -149,39 +149,39 @@ export const disputeStatusConfig = {
 export const auditLogActionConfig = {
   role_switch: { 
     label: 'Troca de Perfil', 
-    color: 'bg-primary/10 text-primary' 
+    color: 'bg-violet-100 text-violet-700' 
   },
   user_role_change: {
     label: 'Papel Alterado',
-    color: 'bg-destructive/10 text-destructive'
+    color: 'bg-red-100 text-red-700'
   },
   user_activated: { 
     label: 'Usuário Ativado', 
-    color: 'bg-primary/10 text-primary' 
+    color: 'bg-emerald-100 text-emerald-700' 
   },
   user_deactivated: { 
     label: 'Usuário Desativado', 
-    color: 'bg-destructive/10 text-destructive' 
+    color: 'bg-orange-100 text-orange-700' 
   },
   subscription_override: { 
     label: 'Assinatura Alterada', 
-    color: 'bg-secondary text-secondary-foreground' 
+    color: 'bg-blue-100 text-blue-700' 
   },
   user_flagged: { 
     label: 'Usuário Marcado', 
-    color: 'bg-accent/10 text-accent-foreground' 
+    color: 'bg-yellow-100 text-yellow-700' 
   },
   data_export: { 
     label: 'Exportação de Dados', 
-    color: 'bg-secondary text-secondary-foreground' 
+    color: 'bg-indigo-100 text-indigo-700' 
   },
   campaign_status_change: { 
     label: 'Status de Campanha', 
-    color: 'bg-primary/15 text-primary' 
+    color: 'bg-purple-100 text-purple-700' 
   },
   dispute_resolved: { 
     label: 'Disputa Resolvida', 
-    color: 'bg-primary/10 text-primary' 
+    color: 'bg-emerald-100 text-emerald-700' 
   }
 };
 
@@ -197,7 +197,7 @@ export const getStatusConfig = (type, status) => {
   const config = configs[type]?.[status];
   return config || { 
     label: status, 
-    color: 'bg-muted text-muted-foreground', 
+    color: 'bg-slate-100 text-slate-700', 
     icon: Clock 
   };
 };
