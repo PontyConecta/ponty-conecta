@@ -27,66 +27,52 @@ import StatusBadge from '@/components/common/StatusBadge';
 
 
 export default function BrandDashboard() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType } = useAuth();
   const [brand, setBrand] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [applications, setApplications] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
   const [campaignsMap, setCampaignsMap] = useState({});
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authProfile && profileType === 'brand') {
+      setBrand(authProfile);
+      setProfileValidation(validateBrandProfile(authProfile));
+      loadPageData(authProfile);
+    }
+  }, [authProfile, profileType]);
 
-  // Real-time subscriptions
   useEffect(() => {
     if (!brand?.id) return;
     const unsubs = [
       base44.entities.Campaign.subscribe((event) => {
-        if (event.data?.brand_id === brand.id || event.type === 'delete') loadData();
+        if (event.data?.brand_id === brand.id || event.type === 'delete') loadPageData(brand);
       }),
       base44.entities.Application.subscribe((event) => {
-        if (event.data?.brand_id === brand.id || event.type === 'delete') loadData();
+        if (event.data?.brand_id === brand.id || event.type === 'delete') loadPageData(brand);
       }),
       base44.entities.Delivery.subscribe((event) => {
-        if (event.data?.brand_id === brand.id || event.type === 'delete') loadData();
+        if (event.data?.brand_id === brand.id || event.type === 'delete') loadPageData(brand);
       })
     ];
     return () => unsubs.forEach(u => u());
   }, [brand?.id]);
 
-  const loadData = async () => {
+  const loadPageData = async (brandProfile) => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-
-      const brands = await base44.entities.Brand.filter({ user_id: userData.id });
-      if (brands.length > 0) {
-        setBrand(brands[0]);
-        
-        // Validar completude do perfil
-        const validation = validateBrandProfile(brands[0]);
-        setProfileValidation(validation);
-        
-        // Load ALL data for accurate metrics
-        const [campaignsData, allApplicationsData, allDeliveriesData] = await Promise.all([
-          base44.entities.Campaign.filter({ brand_id: brands[0].id }, '-created_date'),
-          base44.entities.Application.filter({ brand_id: brands[0].id }, '-created_date'),
-          base44.entities.Delivery.filter({ brand_id: brands[0].id }, '-created_date')
-        ]);
-        
-        setCampaigns(campaignsData);
-        setApplications(allApplicationsData);
-        setDeliveries(allDeliveriesData);
-
-        // Build campaigns map for deliveries
-        const cMap = {};
-        campaignsData.forEach(c => { cMap[c.id] = c; });
-        setCampaignsMap(cMap);
-      }
+      const [campaignsData, allApplicationsData, allDeliveriesData] = await Promise.all([
+        base44.entities.Campaign.filter({ brand_id: brandProfile.id }, '-created_date'),
+        base44.entities.Application.filter({ brand_id: brandProfile.id }, '-created_date'),
+        base44.entities.Delivery.filter({ brand_id: brandProfile.id }, '-created_date')
+      ]);
+      setCampaigns(campaignsData);
+      setApplications(allApplicationsData);
+      setDeliveries(allDeliveriesData);
+      const cMap = {};
+      campaignsData.forEach(c => { cMap[c.id] = c; });
+      setCampaignsMap(cMap);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

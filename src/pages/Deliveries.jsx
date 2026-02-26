@@ -54,7 +54,7 @@ import SearchFilter from '../components/common/SearchFilter';
 import Pagination from '../components/common/Pagination';
 
 export default function Deliveries() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType: authProfileType } = useAuth();
   const [profile, setProfile] = useState(null);
   const [profileType, setProfileType] = useState(null);
   const [deliveries, setDeliveries] = useState([]);
@@ -67,67 +67,50 @@ export default function Deliveries() {
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [contestReason, setContestReason] = useState('');
-  
-  // Creator submission state
   const [proofUrls, setProofUrls] = useState([]);
   const [contentUrls, setContentUrls] = useState(['']);
   const [proofNotes, setProofNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  
-  // Paginação
   const pagination = usePagination(20);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authProfile && authProfileType) {
+      setProfile(authProfile);
+      setProfileType(authProfileType);
+      loadPageData(authProfile, authProfileType);
+    }
+  }, [authProfile, authProfileType]);
 
-  const loadData = async (isRefresh = false) => {
+  const loadData = (isRefresh = false) => {
     if (!isRefresh) setLoading(true);
+    return loadPageData(profile, profileType).finally(() => setRefreshing(false));
+  };
+
+  const loadPageData = async (p, pt) => {
+    if (!p || !pt) return;
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-
-      const [brands, creators] = await Promise.all([
-        base44.entities.Brand.filter({ user_id: userData.id }),
-        base44.entities.Creator.filter({ user_id: userData.id })
-      ]);
-
-      if (brands.length > 0) {
-        setProfile(brands[0]);
-        setProfileType('brand');
-        await loadBrandDeliveries(brands[0]);
-      } else if (creators.length > 0) {
-        setProfile(creators[0]);
-        setProfileType('creator');
-        await loadCreatorDeliveries(creators[0]);
-      }
+      if (pt === 'brand') await loadBrandDeliveries(p);
+      else await loadCreatorDeliveries(p);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
   const handleRefresh = async (e) => {
     const startY = e.touches[0].clientY;
-    
     const handleMove = (e) => {
       const currentY = e.touches[0].clientY;
-      const pullDistance = currentY - startY;
-      
-      if (pullDistance > 100 && window.scrollY === 0 && !refreshing) {
+      if (currentY - startY > 100 && window.scrollY === 0 && !refreshing) {
         setRefreshing(true);
         loadData(true);
         document.removeEventListener('touchmove', handleMove);
       }
     };
-    
     document.addEventListener('touchmove', handleMove);
-    document.addEventListener('touchend', () => {
-      document.removeEventListener('touchmove', handleMove);
-    }, { once: true });
+    document.addEventListener('touchend', () => document.removeEventListener('touchmove', handleMove), { once: true });
   };
 
   useEffect(() => {
@@ -140,36 +123,26 @@ export default function Deliveries() {
       base44.entities.Delivery.filter({ brand_id: brand.id }, '-created_date'),
       base44.entities.Campaign.filter({ brand_id: brand.id })
     ]);
-    
     setDeliveries(deliveriesData);
     setCampaigns(arrayToMap(campaignsData));
-
-    // Batch fetch creators for better performance
     const creatorIds = [...new Set(deliveriesData.map(d => d.creator_id))];
     if (creatorIds.length > 0) {
-      const allCreators = await base44.entities.Creator.list();
-      setCreators(arrayToMap(allCreators.filter(c => creatorIds.includes(c.id))));
+      const creatorsData = await Promise.all(creatorIds.map(id => base44.entities.Creator.filter({ id })));
+      setCreators(arrayToMap(creatorsData.flat()));
     }
   };
 
   const loadCreatorDeliveries = async (creator) => {
-    const deliveriesData = await base44.entities.Delivery.filter(
-      { creator_id: creator.id }, 
-      '-created_date'
-    );
+    const deliveriesData = await base44.entities.Delivery.filter({ creator_id: creator.id }, '-created_date');
     setDeliveries(deliveriesData);
-
-    // Batch fetch campaigns and brands for better performance
     const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id))];
     const brandIds = [...new Set(deliveriesData.map(d => d.brand_id))];
-    
-    const [allCampaigns, allBrands] = await Promise.all([
-      campaignIds.length > 0 ? base44.entities.Campaign.list() : Promise.resolve([]),
-      brandIds.length > 0 ? base44.entities.Brand.list() : Promise.resolve([])
+    const [campaignsData, brandsData] = await Promise.all([
+      campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
+      brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
     ]);
-    
-    setCampaigns(arrayToMap(allCampaigns.filter(c => campaignIds.includes(c.id))));
-    setBrands(arrayToMap(allBrands.filter(b => brandIds.includes(b.id))));
+    setCampaigns(arrayToMap(campaignsData.flat()));
+    setBrands(arrayToMap(brandsData.flat()));
   };
 
   // Brand actions

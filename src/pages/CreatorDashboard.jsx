@@ -26,7 +26,7 @@ import StatCard from '@/components/dashboard/StatCard';
 import StatusBadge from '@/components/common/StatusBadge';
 
 export default function CreatorDashboard() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType } = useAuth();
   const [creator, setCreator] = useState(null);
   const [applications, setApplications] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
@@ -37,67 +37,57 @@ export default function CreatorDashboard() {
   const [brandsMap, setBrandsMap] = useState({});
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authProfile && profileType === 'creator') {
+      setCreator(authProfile);
+      setProfileValidation(validateCreatorProfile(authProfile));
+      loadPageData(authProfile);
+    }
+  }, [authProfile, profileType]);
 
-  // Real-time subscriptions
   useEffect(() => {
     if (!creator?.id) return;
     const unsubs = [
       base44.entities.Application.subscribe((event) => {
-        if (event.data?.creator_id === creator.id || event.type === 'delete') loadData();
+        if (event.data?.creator_id === creator.id || event.type === 'delete') loadPageData(creator);
       }),
       base44.entities.Delivery.subscribe((event) => {
-        if (event.data?.creator_id === creator.id || event.type === 'delete') loadData();
+        if (event.data?.creator_id === creator.id || event.type === 'delete') loadPageData(creator);
       }),
       base44.entities.Reputation.subscribe((event) => {
-        if (event.data?.user_id === user?.id) loadData();
+        if (event.data?.user_id === user?.id) loadPageData(creator);
       })
     ];
     return () => unsubs.forEach(u => u());
   }, [creator?.id, user?.id]);
 
-  const loadData = async () => {
+  const loadPageData = async (creatorProfile) => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const [applicationsData, deliveriesData, reputationData] = await Promise.all([
+        base44.entities.Application.filter({ creator_id: creatorProfile.id }, '-created_date'),
+        base44.entities.Delivery.filter({ creator_id: creatorProfile.id }, '-created_date'),
+        base44.entities.Reputation.filter({ user_id: user?.id, profile_type: 'creator' })
+      ]);
+      setApplications(applicationsData);
+      setDeliveries(deliveriesData);
 
-      const creators = await base44.entities.Creator.filter({ user_id: userData.id });
-      if (creators.length > 0) {
-        setCreator(creators[0]);
-        
-        const validation = validateCreatorProfile(creators[0]);
-        setProfileValidation(validation);
-        
-        const [applicationsData, deliveriesData, reputationData] = await Promise.all([
-          base44.entities.Application.filter({ creator_id: creators[0].id }, '-created_date'),
-          base44.entities.Delivery.filter({ creator_id: creators[0].id }, '-created_date'),
-          base44.entities.Reputation.filter({ user_id: userData.id, profile_type: 'creator' })
-        ]);
-        
-        setApplications(applicationsData);
-        setDeliveries(deliveriesData);
+      const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id).filter(Boolean))];
+      const brandIds = [...new Set(deliveriesData.map(d => d.brand_id).filter(Boolean))];
+      const appCampaignIds = [...new Set(applicationsData.map(a => a.campaign_id).filter(Boolean))];
+      const allCampaignIds = [...new Set([...campaignIds, ...appCampaignIds])];
 
-        // Load campaigns and brands for deliveries and applications
-        const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id).filter(Boolean))];
-        const brandIds = [...new Set(deliveriesData.map(d => d.brand_id).filter(Boolean))];
-        const appCampaignIds = [...new Set(applicationsData.map(a => a.campaign_id).filter(Boolean))];
-        const allCampaignIds = [...new Set([...campaignIds, ...appCampaignIds])];
+      const [campaignsData, brandsData] = await Promise.all([
+        allCampaignIds.length > 0 ? Promise.all(allCampaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
+        brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
+      ]);
+      const cMap = {};
+      campaignsData.flat().forEach(c => { cMap[c.id] = c; });
+      setCampaignsMap(cMap);
+      const bMap = {};
+      brandsData.flat().forEach(b => { bMap[b.id] = b; });
+      setBrandsMap(bMap);
 
-        const [campaignsData, brandsData] = await Promise.all([
-          allCampaignIds.length > 0 ? Promise.all(allCampaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
-          brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
-        ]);
-        const cMap = {};
-        campaignsData.flat().forEach(c => { cMap[c.id] = c; });
-        setCampaignsMap(cMap);
-        const bMap = {};
-        brandsData.flat().forEach(b => { bMap[b.id] = b; });
-        setBrandsMap(bMap);
-
-        if (reputationData.length > 0) {
-          setReputation(reputationData[0]);
-        }
+      if (reputationData.length > 0) {
+        setReputation(reputationData[0]);
       }
     } catch (error) {
       console.error('Error loading data:', error);

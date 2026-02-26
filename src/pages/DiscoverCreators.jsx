@@ -59,15 +59,6 @@ export default function DiscoverCreators() {
 
   const loadData = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-
-      const brands = await base44.entities.Brand.filter({ user_id: userData.id });
-      if (brands.length > 0) {
-        setBrand(brands[0]);
-        setIsSubscribed(brands[0].subscription_status === 'premium' || brands[0].subscription_status === 'legacy' || (brands[0].subscription_status === 'trial' && brands[0].trial_end_date && new Date(brands[0].trial_end_date) > new Date()));
-      }
-
       // Buscar apenas criadores com perfil completo
       const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date');
       
