@@ -129,7 +129,8 @@ export function useApplicationsViewModel(profileType, profile) {
       });
       closeDialog();
     } catch (error) {
-      console.error('Error rejecting application:', error);
+      console.error('[rejectApplication] appId:', selectedApplication?.id, 'error:', error.message);
+      toast.error('Erro ao recusar candidatura. Tente novamente.');
     }
   }, [selectedApplication, rejectionReason, profileType, profileId, rejectMutation, closeDialog]);
 
@@ -138,7 +139,8 @@ export function useApplicationsViewModel(profileType, profile) {
     try {
       await withdrawMutation.mutateAsync({ applicationId, profileType, profileId });
     } catch (error) {
-      console.error('Error withdrawing application:', error);
+      console.error('[withdrawApplication] appId:', applicationId, 'error:', error.message);
+      toast.error('Erro ao cancelar candidatura. Tente novamente.');
     }
   }, [profileType, profileId, withdrawMutation]);
 

@@ -122,7 +122,8 @@ export function useDeliveriesViewModel(profileType, profileId) {
       });
       closeSubmitDialog();
     } catch (error) {
-      console.error('Error submitting delivery:', error);
+      console.error('[submitDelivery] deliveryId:', selectedDelivery?.id, 'error:', error.message);
+      toast.error('Erro ao enviar entrega. Tente novamente.');
     }
   }, [selectedDelivery, contentUrls, proofUrls, proofNotes, profileType, profileId, submitDeliveryMutation]);
 

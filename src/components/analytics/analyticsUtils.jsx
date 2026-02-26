@@ -17,10 +17,9 @@ export const sendFacebookEvent = async (eventName, eventData = {}, userEmail = n
     };
 
     const response = await base44.functions.invoke('facebookCAPI', payload);
-    console.log('Facebook CAPI event sent:', eventName);
     return response;
   } catch (error) {
-    console.error('Error sending Facebook event:', error);
+    // Silently fail — analytics should never block UX
   }
 };
 
