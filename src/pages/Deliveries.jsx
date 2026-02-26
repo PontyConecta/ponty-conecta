@@ -214,24 +214,17 @@ export default function Deliveries() {
     setProcessing(true);
     
     try {
-      await base44.entities.Delivery.update(selectedDelivery.id, {
-        status: 'in_dispute',
-        contested_at: new Date().toISOString(),
-        reviewed_at: new Date().toISOString(),
-        contest_reason: contestReason
-      });
-
-      await base44.entities.Dispute.create({
+      const response = await base44.functions.invoke('contestDelivery', {
         delivery_id: selectedDelivery.id,
-        campaign_id: selectedDelivery.campaign_id,
-        brand_id: profile.id,
-        creator_id: selectedDelivery.creator_id,
-        raised_by: 'brand',
-        reason: contestReason,
-        status: 'open',
-        brand_statement: contestReason
+        reason: contestReason
       });
 
+      if (!response.data?.success) {
+        toast.error(response.data?.error || 'Erro ao contestar entrega');
+        return;
+      }
+
+      toast.success('Entrega contestada. Disputa aberta.');
       await loadData();
       setSelectedDelivery(null);
       setContestReason('');

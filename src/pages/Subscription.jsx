@@ -22,9 +22,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
+import { useAuth } from '@/components/contexts/AuthContext';
 
 export default function Subscription() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType: authProfileType, refreshProfile } = useAuth();
   const [profile, setProfile] = useState(null);
   const [profileType, setProfileType] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,14 +34,20 @@ export default function Subscription() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadUserData();
-  }, []);
+    if (authProfile && authProfileType) {
+      setProfile(authProfile);
+      setProfileType(authProfileType);
+      setLoading(false);
+    }
+  }, [authProfile, authProfileType]);
 
   useEffect(() => {
-    // Check for success parameter in URL after profile is loaded
+    // Check for success parameter in URL after profile is loaded — force refresh
     if (profile && profileType) {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('success') === 'true') {
+        // Force refresh profile from DB to pick up webhook updates
+        refreshProfile();
         const plan = urlParams.get('plan') || selectedPlan;
         trackPurchase({
           value: plan === 'monthly' ? 45 : 450,
@@ -51,30 +58,6 @@ export default function Subscription() {
       }
     }
   }, [profile, profileType]);
-
-  const loadUserData = async () => {
-    try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-
-      const [brands, creators] = await Promise.all([
-        base44.entities.Brand.filter({ user_id: userData.id }),
-        base44.entities.Creator.filter({ user_id: userData.id })
-      ]);
-
-      if (brands.length > 0) {
-        setProfile(brands[0]);
-        setProfileType('brand');
-      } else if (creators.length > 0) {
-        setProfile(creators[0]);
-        setProfileType('creator');
-      }
-    } catch (error) {
-      console.error('Error loading user:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubscribe = async () => {
     if (window.self !== window.top) {

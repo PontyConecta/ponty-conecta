@@ -16,6 +16,7 @@ import {
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateCreatorProfile } from '@/components/utils/profileValidation';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
+import { useAuth } from '@/components/contexts/AuthContext';
 import CreatorMetricsChart from '@/components/charts/CreatorMetricsChart';
 import CreatorReputationSection from '@/components/creator/CreatorReputationSection';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';

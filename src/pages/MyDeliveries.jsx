@@ -37,9 +37,10 @@ import {
   Eye
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../components/contexts/AuthContext';
 
 export default function MyDeliveries() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType } = useAuth();
   const [creator, setCreator] = useState(null);
   const [deliveries, setDeliveries] = useState([]);
   const [campaigns, setCampaigns] = useState({});
@@ -49,48 +50,42 @@ export default function MyDeliveries() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  
   const [proofUrls, setProofUrls] = useState([]);
   const [contentUrls, setContentUrls] = useState(['']);
   const [proofNotes, setProofNotes] = useState('');
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authProfile && profileType === 'creator') {
+      setCreator(authProfile);
+      loadPageData(authProfile);
+    }
+  }, [authProfile, profileType]);
 
-  const loadData = async () => {
+  const loadData = () => loadPageData(creator);
+
+  const loadPageData = async (creatorProfile) => {
+    if (!creatorProfile) return;
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const deliveriesData = await base44.entities.Delivery.filter(
+        { creator_id: creatorProfile.id }, 
+        '-created_date'
+      );
+      setDeliveries(deliveriesData);
 
-      const creators = await base44.entities.Creator.filter({ user_id: userData.id });
-      if (creators.length > 0) {
-        setCreator(creators[0]);
-        
-        const deliveriesData = await base44.entities.Delivery.filter(
-          { creator_id: creators[0].id }, 
-          '-created_date'
-        );
-        setDeliveries(deliveriesData);
-
-        // Load campaigns
-        const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id))];
-        const campaignsData = await Promise.all(campaignIds.map(id =>
-          base44.entities.Campaign.filter({ id })
-        ));
-        const campaignsMap = {};
-        campaignsData.flat().forEach(c => { campaignsMap[c.id] = c; });
-        setCampaigns(campaignsMap);
-
-        // Load brands
-        const brandIds = [...new Set(deliveriesData.map(d => d.brand_id))];
-        const brandsData = await Promise.all(brandIds.map(id =>
-          base44.entities.Brand.filter({ id })
-        ));
-        const brandsMap = {};
-        brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
-        setBrands(brandsMap);
-      }
+      const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id))];
+      const brandIds = [...new Set(deliveriesData.map(d => d.brand_id))];
+      
+      const [campaignsData, brandsData] = await Promise.all([
+        campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
+        brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
+      ]);
+      
+      const campaignsMap = {};
+      campaignsData.flat().forEach(c => { campaignsMap[c.id] = c; });
+      setCampaigns(campaignsMap);
+      const brandsMap = {};
+      brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
+      setBrands(brandsMap);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

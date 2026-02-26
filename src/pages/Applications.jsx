@@ -45,9 +45,10 @@ import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
 import Pagination from '../components/common/Pagination';
+import { useAuth } from '../components/contexts/AuthContext';
 
 export default function Applications() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType: authProfileType } = useAuth();
   const [profile, setProfile] = useState(null);
   const [profileType, setProfileType] = useState(null);
   const [applications, setApplications] = useState([]);
@@ -63,31 +64,25 @@ export default function Applications() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [agreedRate, setAgreedRate] = useState('');
   
-  // Paginação
   const pagination = usePagination(20);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authProfile && authProfileType) {
+      setProfile(authProfile);
+      setProfileType(authProfileType);
+      loadPageData(authProfile, authProfileType);
+    }
+  }, [authProfile, authProfileType]);
 
-  const loadData = async () => {
+  const loadData = () => loadPageData(profile, profileType);
+
+  const loadPageData = async (p, pt) => {
+    if (!p || !pt) return;
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-
-      const [brands, creators] = await Promise.all([
-        base44.entities.Brand.filter({ user_id: userData.id }),
-        base44.entities.Creator.filter({ user_id: userData.id })
-      ]);
-
-      if (brands.length > 0) {
-        setProfile(brands[0]);
-        setProfileType('brand');
-        await loadBrandApplications(brands[0]);
-      } else if (creators.length > 0) {
-        setProfile(creators[0]);
-        setProfileType('creator');
-        await loadCreatorApplications(creators[0]);
+      if (pt === 'brand') {
+        await loadBrandApplications(p);
+      } else {
+        await loadCreatorApplications(p);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -105,11 +100,10 @@ export default function Applications() {
     setApplications(applicationsData);
     setCampaigns(arrayToMap(campaignsData));
 
-    // Batch fetch creators for better performance
     const creatorIds = [...new Set(applicationsData.map(a => a.creator_id))];
     if (creatorIds.length > 0) {
-      const allCreators = await base44.entities.Creator.list();
-      setCreators(arrayToMap(allCreators.filter(c => creatorIds.includes(c.id))));
+      const creatorsData = await Promise.all(creatorIds.map(id => base44.entities.Creator.filter({ id })));
+      setCreators(arrayToMap(creatorsData.flat()));
     }
   };
 
@@ -120,17 +114,16 @@ export default function Applications() {
     );
     setApplications(applicationsData);
 
-    // Batch fetch campaigns and brands for better performance
     const campaignIds = [...new Set(applicationsData.map(a => a.campaign_id))];
     const brandIds = [...new Set(applicationsData.map(a => a.brand_id))];
     
-    const [allCampaigns, allBrands] = await Promise.all([
-      campaignIds.length > 0 ? base44.entities.Campaign.list() : Promise.resolve([]),
-      brandIds.length > 0 ? base44.entities.Brand.list() : Promise.resolve([])
+    const [campaignsData, brandsData] = await Promise.all([
+      campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
+      brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
     ]);
     
-    setCampaigns(arrayToMap(allCampaigns.filter(c => campaignIds.includes(c.id))));
-    setBrands(arrayToMap(allBrands.filter(b => brandIds.includes(b.id))));
+    setCampaigns(arrayToMap(campaignsData.flat()));
+    setBrands(arrayToMap(brandsData.flat()));
   };
 
   const handleAccept = async () => {

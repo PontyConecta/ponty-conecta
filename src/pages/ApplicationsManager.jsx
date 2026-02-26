@@ -35,9 +35,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useAuth } from '../components/contexts/AuthContext';
 
 export default function ApplicationsManager() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType } = useAuth();
   const [brand, setBrand] = useState(null);
   const [applications, setApplications] = useState([]);
   const [campaigns, setCampaigns] = useState({});
@@ -52,38 +53,35 @@ export default function ApplicationsManager() {
   const [agreedRate, setAgreedRate] = useState('');
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authProfile && profileType === 'brand') {
+      setBrand(authProfile);
+      loadPageData(authProfile);
+    }
+  }, [authProfile, profileType]);
 
-  const loadData = async () => {
+  const loadData = () => loadPageData(brand);
+
+  const loadPageData = async (brandProfile) => {
+    if (!brandProfile) return;
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
+      const [applicationsData, campaignsData] = await Promise.all([
+        base44.entities.Application.filter({ brand_id: brandProfile.id }, '-created_date'),
+        base44.entities.Campaign.filter({ brand_id: brandProfile.id })
+      ]);
+      
+      setApplications(applicationsData);
+      
+      const campaignsMap = {};
+      campaignsData.forEach(c => { campaignsMap[c.id] = c; });
+      setCampaigns(campaignsMap);
 
-      const brands = await base44.entities.Brand.filter({ user_id: userData.id });
-      if (brands.length > 0) {
-        setBrand(brands[0]);
-        
-        const [applicationsData, campaignsData] = await Promise.all([
-          base44.entities.Application.filter({ brand_id: brands[0].id }, '-created_date'),
-          base44.entities.Campaign.filter({ brand_id: brands[0].id })
-        ]);
-        
-        setApplications(applicationsData);
-        
-        const campaignsMap = {};
-        campaignsData.forEach(c => { campaignsMap[c.id] = c; });
-        setCampaigns(campaignsMap);
-
-        // Load creators
-        const creatorIds = [...new Set(applicationsData.map(a => a.creator_id))];
-        const creatorsData = await Promise.all(creatorIds.map(id =>
-          base44.entities.Creator.filter({ id })
-        ));
-        const creatorsMap = {};
-        creatorsData.flat().forEach(c => { creatorsMap[c.id] = c; });
-        setCreators(creatorsMap);
-      }
+      const creatorIds = [...new Set(applicationsData.map(a => a.creator_id))];
+      const creatorsData = await Promise.all(creatorIds.map(id =>
+        base44.entities.Creator.filter({ id })
+      ));
+      const creatorsMap = {};
+      creatorsData.flat().forEach(c => { creatorsMap[c.id] = c; });
+      setCreators(creatorsMap);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
