@@ -147,21 +147,17 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
             </div>
           </div>
 
-          {/* Role Management */}
+          {/* Role Info */}
           <SectionCard icon={Shield} label="Papel do Usuário">
             <div className="flex items-center gap-3">
-              <Select value={newRole} onValueChange={setNewRole}>
-                <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">Usuário (padrão)</SelectItem>
-                  <SelectItem value="admin">Administrador</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={handleSaveRole} disabled={actionLoading || newRole === user.role} className="bg-primary hover:bg-primary/90 text-primary-foreground" size="sm">
-                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
-              </Button>
+              <Badge className={user.role === 'admin' ? 'bg-red-100 text-red-700 border-0' : 'bg-slate-100 text-slate-700 border-0'}>
+                {user.role === 'admin' ? 'Administrador' : 'Usuário'}
+              </Badge>
             </div>
-            <p className="text-xs text-muted-foreground">Administradores têm acesso ao painel admin, gerenciamento de usuários e moderação.</p>
+            <p className="text-xs text-muted-foreground">
+              Para alterar o papel do usuário, use o <strong>Painel Base44</strong> (Dashboard → Usuários). 
+              Essa alteração é restrita pela plataforma por segurança.
+            </p>
           </SectionCard>
 
           {/* Info Grid */}
