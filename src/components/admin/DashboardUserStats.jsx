@@ -99,21 +99,41 @@ export default function DashboardUserStats({ analytics }) {
         <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
           <CardContent className="p-4">
             <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Distribuição por Plano</h3>
-            <div className="h-48">
+            <div className="h-52">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={planDist} cx="50%" cy="50%" innerRadius={30} outerRadius={60} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                  <Pie
+                    data={planDist}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={32}
+                    outerRadius={58}
+                    paddingAngle={3}
+                    dataKey="value"
+                    label={({ name, value, cx, cy, midAngle, outerRadius: oR }) => {
+                      const RADIAN = Math.PI / 180;
+                      const labelRadius = oR + 28;
+                      const x = cx + labelRadius * Math.cos(-midAngle * RADIAN);
+                      const y = cy + labelRadius * Math.sin(-midAngle * RADIAN);
+                      return (
+                        <text x={x} y={y} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" style={{ fontSize: '11px', fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                          {name}: {value}
+                        </text>
+                      );
+                    }}
+                    labelLine={{ stroke: 'hsl(var(--border))', strokeWidth: 1, offset: 14 }}
+                  >
                     {planDist.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '11px' }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '11px' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
             {/* Legends */}
-            <div className="flex flex-wrap gap-2 mt-2 justify-center">
+            <div className="flex flex-wrap gap-3 mt-3 justify-center">
               {planDist.map((p, i) => (
-                <span key={p.name} className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--text-secondary)' }}>
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                <span key={p.name} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                   {p.name} ({p.value})
                 </span>
               ))}
