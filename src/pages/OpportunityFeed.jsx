@@ -102,7 +102,7 @@ export default function OpportunityFeed() {
     }
     if (!isSubscribed) { setShowPaywall(true); return; }
     try {
-      await applyMutation.mutateAsync({ campaignId: selectedCampaign.id, message: applicationMessage, proposedRate });
+      await applyMutation.mutateAsync({ campaignId: selectedCampaign.id, message: applicationMessage, proposedRate, creatorId: creator?.id });
       toast.success('Candidatura enviada com sucesso!');
       setSelectedCampaign(null);
       setApplicationMessage('');

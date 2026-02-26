@@ -107,7 +107,7 @@ export default function Deliveries() {
   const handleApprove = async () => {
     if (!selectedDelivery) return;
     try {
-      await approveMutation.mutateAsync(selectedDelivery.id);
+      await approveMutation.mutateAsync({ deliveryId: selectedDelivery.id, profileType, profileId: profile.id });
       toast.success('Entrega aprovada com sucesso!');
       setSelectedDelivery(null);
     } catch (error) {
@@ -126,7 +126,7 @@ export default function Deliveries() {
       return;
     }
     try {
-      await contestMutation.mutateAsync({ deliveryId: selectedDelivery.id, reason: contestReason });
+      await contestMutation.mutateAsync({ deliveryId: selectedDelivery.id, reason: contestReason, profileType, profileId: profile.id });
       toast.success('Entrega contestada. Disputa aberta.');
       setSelectedDelivery(null);
       setContestReason('');
@@ -155,7 +155,9 @@ export default function Deliveries() {
     try {
       await submitDeliveryMutation.mutateAsync({
         deliveryId: selectedDelivery.id,
-        data: { ...deliveryData, on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true }
+        data: { ...deliveryData, on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true },
+        profileType,
+        profileId: profile.id,
       });
       closeSubmitDialog();
     } catch (error) {

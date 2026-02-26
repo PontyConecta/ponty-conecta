@@ -74,7 +74,7 @@ export default function Applications() {
   const handleAccept = async () => {
     if (!selectedApplication) return;
     try {
-      await acceptMutation.mutateAsync({ applicationId: selectedApplication.id, agreedRate });
+      await acceptMutation.mutateAsync({ applicationId: selectedApplication.id, agreedRate, profileType, profileId: profile.id });
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       toast.success('Match! Candidatura aceita com sucesso 🎉');
       setSelectedApplication(null);
@@ -87,7 +87,7 @@ export default function Applications() {
   const handleReject = async () => {
     if (!selectedApplication) return;
     try {
-      await rejectMutation.mutateAsync({ applicationId: selectedApplication.id, rejectionReason });
+      await rejectMutation.mutateAsync({ applicationId: selectedApplication.id, rejectionReason, profileType, profileId: profile.id });
       setSelectedApplication(null);
       setRejectionReason('');
     } catch (error) {
@@ -98,7 +98,7 @@ export default function Applications() {
   const handleWithdraw = async (applicationId) => {
     if (!window.confirm('Tem certeza que deseja cancelar esta candidatura?')) return;
     try {
-      await withdrawMutation.mutateAsync(applicationId);
+      await withdrawMutation.mutateAsync({ applicationId, profileType, profileId: profile.id });
     } catch (error) {
       console.error('Error withdrawing application:', error);
     }
