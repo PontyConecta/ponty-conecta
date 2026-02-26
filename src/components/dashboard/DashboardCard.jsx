@@ -18,7 +18,7 @@ export default function DashboardCard({ children, index = 0, onClick, className 
         className={`h-full border bg-card shadow-sm hover:shadow-md transition-all duration-200 ${onClick ? 'cursor-pointer hover:-translate-y-0.5' : ''} ${className}`}
         onClick={onClick}
       >
-        <CardContent className="p-4 lg:p-5 h-full flex flex-col items-center justify-center text-center">
+        <CardContent className="p-4 lg:p-5 h-full flex flex-col">
           {children}
         </CardContent>
       </Card>
