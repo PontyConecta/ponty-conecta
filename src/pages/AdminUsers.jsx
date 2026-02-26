@@ -214,7 +214,7 @@ export default function AdminUsers() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#9038fa' }} />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -227,13 +227,13 @@ export default function AdminUsers() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Gerenciamento de Usuários</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Gerenciamento de Usuários</h1>
           <div className="flex items-center gap-2 mt-1">
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm text-muted-foreground">
               {filteredUsers.length} de {users.length} usuários
             </p>
             {filteredUsers.length !== users.length && (
-              <Badge variant="outline" className="text-[10px]" style={{ borderColor: '#9038fa', color: '#9038fa' }}>
+              <Badge variant="outline" className="text-[10px] border-primary text-primary">
                 filtrado
               </Badge>
             )}
@@ -241,17 +241,15 @@ export default function AdminUsers() {
         </div>
         <div className="flex items-center gap-2">
           {/* Density toggle */}
-          <div className="flex items-center gap-0.5 p-0.5 rounded-md" style={{ backgroundColor: 'var(--bg-primary)' }}>
+          <div className="flex items-center gap-0.5 p-0.5 rounded-md bg-muted">
             <Button 
-              variant="ghost" size="icon" className={`h-8 w-8 ${density === 'default' ? 'shadow-sm' : 'opacity-50'}`}
-              style={density === 'default' ? { backgroundColor: 'var(--bg-secondary)' } : {}}
+              variant="ghost" size="icon" className={`h-8 w-8 ${density === 'default' ? 'shadow-sm bg-card' : 'opacity-50'}`}
               onClick={() => setDensity('default')}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
             </Button>
             <Button 
-              variant="ghost" size="icon" className={`h-8 w-8 ${density === 'compact' ? 'shadow-sm' : 'opacity-50'}`}
-              style={density === 'compact' ? { backgroundColor: 'var(--bg-secondary)' } : {}}
+              variant="ghost" size="icon" className={`h-8 w-8 ${density === 'compact' ? 'shadow-sm bg-card' : 'opacity-50'}`}
               onClick={() => setDensity('compact')}
             >
               <List className="w-3.5 h-3.5" />

@@ -228,8 +228,8 @@ export default function AdminDisputes() {
           <Shield className="w-6 h-6 text-red-600" />
         </div>
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Painel de Disputas</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Resolver conflitos entre marcas e criadores</p>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Painel de Disputas</h1>
+          <p className="text-muted-foreground">Resolver conflitos entre marcas e criadores</p>
         </div>
       </div>
 
@@ -290,10 +290,10 @@ export default function AdminDisputes() {
                               <Building2 className="w-5 h-5 text-indigo-600" />
                             </div>
                           )}
-                          <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{brand?.company_name || 'Marca'}</span>
+                          <span className="font-medium" className="text-foreground">{brand?.company_name || 'Marca'}</span>
                         </div>
                         
-                        <Scale className="w-5 h-5 text-slate-400" />
+                        <Scale className="w-5 h-5 text-muted-foreground" />
                         
                         <div className="flex items-center gap-2">
                           <Avatar className="w-10 h-10">
@@ -302,13 +302,13 @@ export default function AdminDisputes() {
                               {creator?.display_name?.[0] || 'C'}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{creator?.display_name || 'Criador'}</span>
+                          <span className="font-medium" className="text-foreground">{creator?.display_name || 'Criador'}</span>
                         </div>
                       </div>
 
                       {/* Info */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
-                        <span style={{ color: 'var(--text-secondary)' }}>
+                        <span className="text-muted-foreground">
                           {formatDate(dispute.created_date)}
                         </span>
                         <StatusBadge type="dispute" status={dispute.status} />
@@ -331,10 +331,10 @@ export default function AdminDisputes() {
 
                     {/* Reason Preview */}
                     <div className="mt-4 pt-4 border-t">
-                      <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
+                      <p className="text-sm line-clamp-2" className="text-muted-foreground">
                         <strong>Motivo:</strong> {dispute.reason}
                       </p>
-                      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+                      <p className="text-sm mt-1" className="text-muted-foreground">
                         Campanha: {campaign?.title || '-'}
                       </p>
                     </div>
@@ -364,11 +364,11 @@ export default function AdminDisputes() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Shield className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--border-color)' }} />
-            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+            <Shield className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+            <h3 className="text-lg font-semibold mb-2 text-foreground">
               Nenhuma disputa encontrada
             </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-muted-foreground text-sm">
               {filterStatus !== 'all' ? 'Tente ajustar o filtro' : 'Não há disputas para resolver'}
             </p>
           </CardContent>
@@ -389,7 +389,7 @@ export default function AdminDisputes() {
             <div className="space-y-6 py-4">
               {/* Parties */}
               <div className="grid grid-cols-2 gap-4">
-                <Card className="bg-indigo-50 border-indigo-200">
+                <Card className="bg-indigo-500/10 border-indigo-500/20">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       {brands[selectedDispute.brand_id]?.logo_url ? (
@@ -401,7 +401,7 @@ export default function AdminDisputes() {
                       )}
                       <div>
                         <p className="text-xs text-indigo-600 font-medium">MARCA</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-foreground">
                           {brands[selectedDispute.brand_id]?.company_name}
                         </p>
                       </div>
@@ -409,7 +409,7 @@ export default function AdminDisputes() {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-orange-50 border-orange-200">
+                <Card className="bg-orange-500/10 border-orange-500/20">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-12 h-12">
@@ -420,7 +420,7 @@ export default function AdminDisputes() {
                       </Avatar>
                       <div>
                         <p className="text-xs text-orange-600 font-medium">CRIADOR</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-foreground">
                           {creators[selectedDispute.creator_id]?.display_name}
                         </p>
                       </div>
@@ -432,21 +432,21 @@ export default function AdminDisputes() {
               {/* Campaign Info */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-slate-500">Campanha</CardTitle>
+                  <CardTitle className="text-sm text-muted-foreground">Campanha</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <h4 className="font-semibold text-slate-900 mb-2">
+                  <h4 className="font-semibold text-foreground mb-2">
                     {campaigns[selectedDispute.campaign_id]?.title}
                   </h4>
-                  <p className="text-sm text-slate-600 mb-4">
+                  <p className="text-sm text-muted-foreground mb-4">
                     {campaigns[selectedDispute.campaign_id]?.description}
                   </p>
                   
                   {/* Proof Requirements */}
                   {campaigns[selectedDispute.campaign_id]?.proof_requirements && (
-                    <div className="p-3 bg-amber-50 rounded-lg">
-                      <p className="text-sm font-medium text-amber-900 mb-1">Requisitos de Prova</p>
-                      <p className="text-sm text-amber-800">
+                    <div className="p-3 bg-amber-500/10 rounded-lg">
+                      <p className="text-sm font-medium text-amber-700 mb-1">Requisitos de Prova</p>
+                      <p className="text-sm text-amber-600">
                         {campaigns[selectedDispute.campaign_id].proof_requirements}
                       </p>
                     </div>
@@ -463,7 +463,7 @@ export default function AdminDisputes() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-700">{selectedDispute.reason}</p>
+                  <p className="text-foreground">{selectedDispute.reason}</p>
                 </CardContent>
               </Card>
 
@@ -472,20 +472,20 @@ export default function AdminDisputes() {
                 {selectedDispute.brand_statement && (
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm text-slate-500">Posição da Marca</CardTitle>
+                      <CardTitle className="text-sm text-muted-foreground">Posição da Marca</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-slate-700">{selectedDispute.brand_statement}</p>
+                      <p className="text-sm text-foreground">{selectedDispute.brand_statement}</p>
                     </CardContent>
                   </Card>
                 )}
                 {selectedDispute.creator_statement && (
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm text-slate-500">Posição do Criador</CardTitle>
+                      <CardTitle className="text-sm text-muted-foreground">Posição do Criador</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-slate-700">{selectedDispute.creator_statement}</p>
+                      <p className="text-sm text-foreground">{selectedDispute.creator_statement}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -495,7 +495,7 @@ export default function AdminDisputes() {
               {deliveries[selectedDispute.delivery_id] && (
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-slate-500">Provas Enviadas pelo Criador</CardTitle>
+                    <CardTitle className="text-sm text-muted-foreground">Provas Enviadas pelo Criador</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {deliveries[selectedDispute.delivery_id].proof_urls?.length > 0 && (
@@ -506,7 +506,7 @@ export default function AdminDisputes() {
                             href={url} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 rounded-lg text-sm text-slate-700 hover:bg-slate-200"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-muted rounded-lg text-sm text-foreground hover:bg-muted/80"
                           >
                             <FileText className="w-4 h-4" />
                             Arquivo {i + 1}
@@ -517,7 +517,7 @@ export default function AdminDisputes() {
                     )}
                     {deliveries[selectedDispute.delivery_id].content_urls?.length > 0 && (
                       <div className="space-y-1">
-                        <p className="text-xs text-slate-500">Links do conteúdo:</p>
+                        <p className="text-xs text-muted-foreground">Links do conteúdo:</p>
                         {deliveries[selectedDispute.delivery_id].content_urls.map((url, i) => (
                           <a 
                             key={i} 
@@ -533,8 +533,8 @@ export default function AdminDisputes() {
                       </div>
                     )}
                     {deliveries[selectedDispute.delivery_id].proof_notes && (
-                      <div className="p-3 bg-slate-50 rounded-lg">
-                        <p className="text-sm text-slate-700">
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm text-foreground">
                           {deliveries[selectedDispute.delivery_id].proof_notes}
                         </p>
                       </div>
@@ -547,7 +547,7 @@ export default function AdminDisputes() {
               {selectedDispute.evidence_urls?.length > 0 && (
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-slate-500">Evidências Adicionais</CardTitle>
+                    <CardTitle className="text-sm text-muted-foreground">Evidências Adicionais</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
@@ -557,7 +557,7 @@ export default function AdminDisputes() {
                           href={url} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 rounded-lg text-sm text-slate-700 hover:bg-slate-200"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-muted rounded-lg text-sm text-foreground hover:bg-muted/80"
                         >
                           <FileText className="w-4 h-4" />
                           Evidência {i + 1}
@@ -631,8 +631,8 @@ export default function AdminDisputes() {
                     <CardTitle className="text-sm text-emerald-600">Decisão Final</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-slate-700 mb-2">{selectedDispute.resolution}</p>
-                    <div className="flex items-center gap-4 text-sm text-slate-500">
+                    <p className="text-foreground mb-2">{selectedDispute.resolution}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>Por: {selectedDispute.resolved_by}</span>
                       <span>Em: {formatDate(selectedDispute.resolved_at)}</span>
                     </div>

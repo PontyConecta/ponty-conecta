@@ -127,8 +127,8 @@ export default function AdminCampaigns() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Todas as Campanhas</h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>{filteredCampaigns.length} campanhas encontradas</p>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Todas as Campanhas</h1>
+          <p className="mt-1 text-muted-foreground">{filteredCampaigns.length} campanhas encontradas</p>
         </div>
         <Button onClick={handleExport} variant="outline">
           <Download className="w-4 h-4 mr-2" />
@@ -141,7 +141,7 @@ export default function AdminCampaigns() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por título ou marca..."
                 value={searchTerm}
@@ -176,41 +176,41 @@ export default function AdminCampaigns() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-3">
-                    <h3 className="text-lg font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                    <h3 className="text-lg font-semibold truncate text-foreground">
                       {campaign.title}
                     </h3>
                     {getStatusBadge(campaign.status)}
                   </div>
                   
-                  <p className="text-sm line-clamp-2 mb-4" style={{ color: 'var(--text-secondary)' }}>
+                  <p className="text-sm line-clamp-2 mb-4 text-muted-foreground">
                     {campaign.description}
                   </p>
 
                   <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="flex items-center gap-2 text-sm">
-                      <Users className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                      <span style={{ color: 'var(--text-secondary)' }}>
+                      <Users className="w-4 h-4" className="text-muted-foreground" />
+                      <span className="text-muted-foreground">
                         {getBrandName(campaign.brand_id)}
                       </span>
                     </div>
                     
                     <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                      <span style={{ color: 'var(--text-secondary)' }}>
+                      <Calendar className="w-4 h-4" className="text-muted-foreground" />
+                      <span className="text-muted-foreground">
                         Prazo: {new Date(campaign.deadline).toLocaleDateString('pt-BR')}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                      <span style={{ color: 'var(--text-secondary)' }}>
+                      <CheckCircle2 className="w-4 h-4" className="text-muted-foreground" />
+                      <span className="text-muted-foreground">
                         {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm">
-                      <AlertCircle className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                      <span style={{ color: 'var(--text-secondary)' }}>
+                      <AlertCircle className="w-4 h-4" className="text-muted-foreground" />
+                      <span className="text-muted-foreground">
                         {campaign.total_applications || 0} candidaturas
                       </span>
                     </div>
@@ -226,7 +226,7 @@ export default function AdminCampaigns() {
                         R$ {campaign.budget_min} - R$ {campaign.budget_max}
                       </Badge>
                     )}
-                    <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                    <span className="text-xs" className="text-muted-foreground">
                       Criada em {new Date(campaign.created_date).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
@@ -255,24 +255,24 @@ export default function AdminCampaigns() {
           {selectedCampaign && (
             <div className="space-y-6 py-4">
               <div>
-                <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Informações Básicas</h4>
+                <h4 className="font-semibold mb-2" className="text-foreground">Informações Básicas</h4>
                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span style={{ color: 'var(--text-secondary)' }}>Marca:</span>
+                    <span className="text-muted-foreground">Marca:</span>
                     <p className="font-medium">{getBrandName(selectedCampaign.brand_id)}</p>
                   </div>
                   <div>
-                    <span style={{ color: 'var(--text-secondary)' }}>Status:</span>
+                    <span className="text-muted-foreground">Status:</span>
                     <div className="mt-1">{getStatusBadge(selectedCampaign.status)}</div>
                   </div>
                   <div>
-                    <span style={{ color: 'var(--text-secondary)' }}>Prazo de Entrega:</span>
+                    <span className="text-muted-foreground">Prazo de Entrega:</span>
                     <p className="font-medium">
                       {new Date(selectedCampaign.deadline).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
                   <div>
-                    <span style={{ color: 'var(--text-secondary)' }}>Prazo para Candidaturas:</span>
+                    <span className="text-muted-foreground">Prazo para Candidaturas:</span>
                     <p className="font-medium">
                       {selectedCampaign.application_deadline 
                         ? new Date(selectedCampaign.application_deadline).toLocaleDateString('pt-BR')
@@ -283,26 +283,26 @@ export default function AdminCampaigns() {
               </div>
 
               <div>
-                <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Descrição</h4>
-                <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--text-secondary)' }}>
+                <h4 className="font-semibold mb-2" className="text-foreground">Descrição</h4>
+                <p className="text-sm whitespace-pre-wrap" className="text-muted-foreground">
                   {selectedCampaign.description}
                 </p>
               </div>
 
               {selectedCampaign.requirements && (
                 <div>
-                  <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Requisitos</h4>
-                  <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--text-secondary)' }}>
+                  <h4 className="font-semibold mb-2" className="text-foreground">Requisitos</h4>
+                  <p className="text-sm whitespace-pre-wrap" className="text-muted-foreground">
                     {selectedCampaign.requirements}
                   </p>
                 </div>
               )}
 
               <div>
-                <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Remuneração</h4>
+                <h4 className="font-semibold mb-2" className="text-foreground">Remuneração</h4>
                 <div className="text-sm space-y-2">
                   <p>
-                    <span style={{ color: 'var(--text-secondary)' }}>Tipo:</span>{' '}
+                    <span className="text-muted-foreground">Tipo:</span>{' '}
                     <Badge variant="outline">
                       {selectedCampaign.remuneration_type === 'cash' ? 'Pagamento' : 
                        selectedCampaign.remuneration_type === 'barter' ? 'Permuta' : 'Misto'}
@@ -310,7 +310,7 @@ export default function AdminCampaigns() {
                   </p>
                   {selectedCampaign.budget_min && selectedCampaign.budget_max && (
                     <p>
-                      <span style={{ color: 'var(--text-secondary)' }}>Orçamento:</span>{' '}
+                      <span className="text-muted-foreground">Orçamento:</span>{' '}
                       R$ {selectedCampaign.budget_min} - R$ {selectedCampaign.budget_max}
                     </p>
                   )}
@@ -318,22 +318,22 @@ export default function AdminCampaigns() {
               </div>
 
               <div>
-                <h4 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Estatísticas</h4>
+                <h4 className="font-semibold mb-2" className="text-foreground">Estatísticas</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <Card>
                     <CardContent className="p-4">
-                      <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                      <div className="text-2xl font-bold" className="text-foreground">
                         {selectedCampaign.total_applications || 0}
                       </div>
-                      <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Total de Candidaturas</div>
+                      <div className="text-xs" className="text-muted-foreground">Total de Candidaturas</div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4">
-                      <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                      <div className="text-2xl font-bold" className="text-foreground">
                         {selectedCampaign.slots_filled || 0}/{selectedCampaign.slots_total || 1}
                       </div>
-                      <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>Vagas Preenchidas</div>
+                      <div className="text-xs" className="text-muted-foreground">Vagas Preenchidas</div>
                     </CardContent>
                   </Card>
                 </div>
