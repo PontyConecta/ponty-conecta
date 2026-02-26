@@ -111,9 +111,9 @@ Deno.serve(async (req) => {
 
         console.log(`[adminManageUser] set_user_role: adminId=${admin.id} targetUserId=${userId} newRole=${newRole}`);
 
-        // Find target user by ID
-        const targetUsers = await base44.asServiceRole.entities.User.filter({ id: userId });
-        const targetUser = targetUsers[0];
+        // Find target user - list all and find by ID since filter({ id }) may not work
+        const allUsersForRole = await base44.asServiceRole.entities.User.filter({});
+        const targetUser = allUsersForRole.find(u => u.id === userId);
         
         if (!targetUser) {
           console.error(`[adminManageUser] User not found: ${userId}`);
