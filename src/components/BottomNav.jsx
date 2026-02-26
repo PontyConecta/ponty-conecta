@@ -51,7 +51,7 @@ export default function BottomNav({ profileType, currentPageName }) {
               className={cn(
                 "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] px-3 py-1.5 rounded-xl transition-all duration-150 active:scale-95 select-none",
                 isActive 
-                  ? 'text-primary' 
+                  ? 'text-primary bg-primary/10' 
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
