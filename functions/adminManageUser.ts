@@ -109,17 +109,23 @@ Deno.serve(async (req) => {
           return Response.json({ error: 'role must be "user" or "admin"' }, { status: 400 });
         }
 
-        // Get all users to find the target user
-        const allUsers = await base44.asServiceRole.entities.User.filter({});
-        const targetUser = allUsers.find(u => u.id === userId);
+        console.log(`[adminManageUser] set_user_role: adminId=${admin.id} targetUserId=${userId} newRole=${newRole}`);
+
+        // Find target user by ID
+        const targetUsers = await base44.asServiceRole.entities.User.filter({ id: userId });
+        const targetUser = targetUsers[0];
         
         if (!targetUser) {
+          console.error(`[adminManageUser] User not found: ${userId}`);
           return Response.json({ error: 'User not found' }, { status: 404 });
         }
 
         const oldRole = targetUser.role || 'user';
+        console.log(`[adminManageUser] Changing role: ${targetUser.email} from "${oldRole}" to "${newRole}"`);
+        
         await base44.asServiceRole.entities.User.update(userId, { role: newRole });
         
+        console.log(`[adminManageUser] SUCCESS: Role updated for ${targetUser.email}`);
         auditAction = 'user_role_change';
         auditDetails = `User role changed from "${oldRole}" to "${newRole}" (${targetUser.email})`;
         result = { role: newRole, previousRole: oldRole };
