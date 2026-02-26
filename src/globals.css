@@ -24,7 +24,7 @@ html, html[data-theme="light"] {
   /* Layout metrics */
   --header-height: 56px;
   --header-height-lg: 64px;
-  --bottom-nav-height: 80px;
+  --bottom-nav-height: 84px;
 
   --background: 220 14% 96%;
   --foreground: 224 24% 12%;
@@ -159,7 +159,7 @@ html[data-theme="neon"], html[data-theme="musk"] {
 /* Mobile bottom nav safe area */
 @media (max-width: 1023px) {
   .pb-mobile-safe {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
   }
 }
 
