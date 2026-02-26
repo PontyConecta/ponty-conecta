@@ -107,18 +107,20 @@ export function useOpportunitiesQuery(creatorId) {
 }
 
 // ─── MUTATIONS ───
+// All mutations receive { profileType, profileId } for scoped invalidation.
+// Invalidation targets the EXACT key prefix [entity, profileType, profileId].
 
 export function useApproveMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (deliveryId) => {
+    mutationFn: async ({ deliveryId, profileType, profileId }) => {
       const response = await base44.functions.invoke('approveDelivery', { delivery_id: deliveryId });
       if (!response.data?.success) throw new Error(response.data?.error || 'Erro ao aprovar entrega');
-      return response.data;
+      return { ...response.data, _profileType: profileType, _profileId: profileId };
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['deliveries'] });
-      qc.invalidateQueries({ queryKey: ['applications'] });
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['deliveries', data._profileType, data._profileId] });
+      qc.invalidateQueries({ queryKey: ['applications', data._profileType, data._profileId] });
     },
   });
 }
@@ -126,13 +128,13 @@ export function useApproveMutation() {
 export function useContestMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ deliveryId, reason }) => {
+    mutationFn: async ({ deliveryId, reason, profileType, profileId }) => {
       const response = await base44.functions.invoke('contestDelivery', { delivery_id: deliveryId, reason });
       if (!response.data?.success) throw new Error(response.data?.error || 'Erro ao contestar entrega');
-      return response.data;
+      return { ...response.data, _profileType: profileType, _profileId: profileId };
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['deliveries'] });
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['deliveries', data._profileType, data._profileId] });
     },
   });
 }
@@ -140,17 +142,17 @@ export function useContestMutation() {
 export function useAcceptApplicationMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ applicationId, agreedRate }) => {
+    mutationFn: async ({ applicationId, agreedRate, profileType, profileId }) => {
       const response = await base44.functions.invoke('acceptApplication', {
         application_id: applicationId,
         agreed_rate: agreedRate ? parseFloat(agreedRate) : null,
       });
       if (!response.data?.success) throw new Error(response.data?.error || 'Erro ao aceitar candidatura');
-      return response.data;
+      return { ...response.data, _profileType: profileType, _profileId: profileId };
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['applications'] });
-      qc.invalidateQueries({ queryKey: ['deliveries'] });
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['applications', data._profileType, data._profileId] });
+      qc.invalidateQueries({ queryKey: ['deliveries', data._profileType, data._profileId] });
     },
   });
 }
@@ -158,15 +160,16 @@ export function useAcceptApplicationMutation() {
 export function useRejectApplicationMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ applicationId, rejectionReason }) => {
+    mutationFn: async ({ applicationId, rejectionReason, profileType, profileId }) => {
       await base44.entities.Application.update(applicationId, {
         status: 'rejected',
         rejected_at: new Date().toISOString(),
         rejection_reason: rejectionReason,
       });
+      return { _profileType: profileType, _profileId: profileId };
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['applications'] });
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['applications', data._profileType, data._profileId] });
     },
   });
 }
@@ -174,11 +177,12 @@ export function useRejectApplicationMutation() {
 export function useWithdrawApplicationMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (applicationId) => {
+    mutationFn: async ({ applicationId, profileType, profileId }) => {
       await base44.entities.Application.update(applicationId, { status: 'withdrawn' });
+      return { _profileType: profileType, _profileId: profileId };
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['applications'] });
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['applications', data._profileType, data._profileId] });
     },
   });
 }
@@ -186,18 +190,18 @@ export function useWithdrawApplicationMutation() {
 export function useApplyToCampaignMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ campaignId, message, proposedRate }) => {
+    mutationFn: async ({ campaignId, message, proposedRate, creatorId }) => {
       const response = await base44.functions.invoke('applyToCampaign', {
         campaign_id: campaignId,
         message,
         proposed_rate: proposedRate ? parseFloat(proposedRate) : null,
       });
       if (!response.data?.success) throw new Error(response.data?.error || 'Erro ao candidatar-se');
-      return response.data;
+      return { ...response.data, _creatorId: creatorId };
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['opportunities'] });
-      qc.invalidateQueries({ queryKey: ['applications'] });
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['opportunities', data._creatorId] });
+      qc.invalidateQueries({ queryKey: ['applications', 'creator', data._creatorId] });
     },
   });
 }
@@ -205,15 +209,16 @@ export function useApplyToCampaignMutation() {
 export function useSubmitDeliveryMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ deliveryId, data }) => {
+    mutationFn: async ({ deliveryId, data, profileType, profileId }) => {
       await base44.entities.Delivery.update(deliveryId, {
         status: 'submitted',
         submitted_at: new Date().toISOString(),
         ...data,
       });
+      return { _profileType: profileType, _profileId: profileId };
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['deliveries'] });
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['deliveries', data._profileType, data._profileId] });
     },
   });
 }
