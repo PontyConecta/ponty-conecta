@@ -118,9 +118,6 @@ function LayoutContent({ children, currentPageName }) {
               </AlertDialogContent>
             </AlertDialog>
 
-            {/* Theme Toggle */}
-            <ThemeSelector />
-
             {/* Notifications */}
             <NotificationDropdown />
 

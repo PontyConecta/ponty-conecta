@@ -31,19 +31,19 @@ function TrendBadge({ current, previous }) {
 
 export default function DashboardMetricCard({ label, value, subtitle, icon: Icon, iconColor = 'text-blue-600', trend, previousValue, tooltip }) {
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4 sm:p-5">
+    <Card className="bg-card border hover:shadow-md transition-shadow">
+      <CardContent className="p-5 sm:p-6">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <p className="text-[11px] sm:text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>{label}</p>
+            <div className="flex items-center gap-1.5 mb-2">
+              <p className="text-[11px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
               {tooltip && (
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info className="w-3 h-3 cursor-help flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+                      <Info className="w-3 h-3 cursor-help flex-shrink-0 text-muted-foreground" />
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[220px] text-xs" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+                    <TooltipContent side="top" className="max-w-[220px] text-xs">
                       <p>{tooltip}</p>
                     </TooltipContent>
                   </Tooltip>
@@ -51,7 +51,7 @@ export default function DashboardMetricCard({ label, value, subtitle, icon: Icon
               )}
             </div>
             <div className="flex items-baseline gap-2">
-              <p className="text-xl sm:text-2xl font-bold tabular-nums" style={{ color: 'var(--text-primary)' }}>
+              <p className="text-xl sm:text-2xl font-bold tabular-nums text-foreground">
                 {value}
               </p>
               {(trend !== undefined || previousValue !== undefined) && (
@@ -59,7 +59,7 @@ export default function DashboardMetricCard({ label, value, subtitle, icon: Icon
               )}
             </div>
             {subtitle && (
-              <p className="text-[10px] sm:text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{subtitle}</p>
+              <p className="text-[10px] sm:text-xs mt-1.5 text-muted-foreground">{subtitle}</p>
             )}
           </div>
           {Icon && (

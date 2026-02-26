@@ -14,8 +14,7 @@ function SortHeader({ label, field, sortField, sortDir, onSort }) {
   const active = sortField === field;
   return (
     <button 
-      className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
-      style={{ color: active ? '#9038fa' : 'var(--text-secondary)' }}
+      className={`flex items-center gap-1 text-xs font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity ${active ? 'text-primary' : 'text-muted-foreground'}`}
       onClick={() => onSort(field)}
     >
       {label}
@@ -57,30 +56,30 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
 
   if (users.length === 0) {
     return (
-      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <Card className="bg-card border">
         <CardContent className="p-12 text-center">
-          <p style={{ color: 'var(--text-secondary)' }}>Nenhum usuário encontrado</p>
+          <p className="text-muted-foreground">Nenhum usuário encontrado</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+    <Card className="bg-card border">
       {/* Desktop Header */}
-      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 px-4 py-2.5 border-b items-center" style={{ borderColor: 'var(--border-color)' }}>
+      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 px-5 py-3 border-b items-center">
         <div><Checkbox checked={selectedIds.length === users.length && users.length > 0} onCheckedChange={toggleAll} /></div>
         <SortHeader label="Usuário" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Tipo" field="type" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Plano" field="subscription" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Estado" field="state" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="UF" field="location" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Tags</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tags</span>
         <SortHeader label="Data" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Ação</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ação</span>
       </div>
 
-      <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
+      <div className="divide-y divide-border">
         {users.map((user) => {
           const { profile, type } = getUserProfile(user.id);
           const isSelected = selectedIds.includes(user.id);
@@ -89,7 +88,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
           return (
             <div key={user.id} className={`${rowPadding} transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-purple-50/50' : ''}`}>
               {/* Desktop Row */}
-              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 items-center">
+              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 px-5 items-center">
                 <div><Checkbox checked={isSelected} onCheckedChange={() => toggleOne(user.id)} /></div>
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Avatar className={`${compact ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>
@@ -100,18 +99,18 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                   </Avatar>
                   <div className="min-w-0">
                     <div className="flex items-center gap-1">
-                      <p className={`font-medium ${compact ? 'text-xs' : 'text-sm'} truncate`} style={{ color: 'var(--text-primary)' }}>
+                      <p className={`font-medium ${compact ? 'text-xs' : 'text-sm'} truncate text-foreground`}>
                         {type === 'brand' ? profile?.company_name : profile?.display_name || user.full_name || 'Sem nome'}
                       </p>
                       {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500 flex-shrink-0" />}
                       {profile?.is_verified && <CheckCircle2 className="w-3 h-3 text-blue-500 flex-shrink-0" />}
                       {user.exclude_from_financials && <EyeOff className="w-3 h-3 text-orange-500 flex-shrink-0" title="Excluído dos financeiros" />}
                     </div>
-                    <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
+                    <p className="text-xs truncate text-muted-foreground">{user.email}</p>
                   </div>
                 </div>
                 <div>
-                  <Badge variant="outline" className="text-xs px-2 py-0.5 capitalize" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
+                  <Badge variant="outline" className="text-xs px-2 py-0.5 capitalize">
                     {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                   </Badge>
                 </div>
@@ -123,7 +122,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                 </div>
                 <div>
                   {location && (
-                    <span className="text-xs flex items-center gap-0.5" style={{ color: 'var(--text-secondary)' }}>
+                    <span className="text-xs flex items-center gap-0.5 text-muted-foreground">
                       <MapPin className="w-3 h-3" />{location}
                     </span>
                   )}
@@ -132,7 +131,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                   <UserTagBadges tags={user.tags} size="xs" maxShow={2} />
                 </div>
                 <div>
-                  <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="text-xs text-muted-foreground">
                     {new Date(user.created_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                   </span>
                 </div>
@@ -154,14 +153,14 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1">
-                    <p className="font-medium text-sm truncate" style={{ color: 'var(--text-primary)' }}>
+                    <p className="font-medium text-sm truncate text-foreground">
                       {type === 'brand' ? profile?.company_name : profile?.display_name || user.full_name || 'Sem nome'}
                     </p>
                     {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500" />}
                   </div>
                   <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                       {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                     </Badge>
                     {renderSubBadge(profile?.subscription_status)}
@@ -176,7 +175,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                       </Badge>
                     )}
                     {location && (
-                      <span className="text-[10px] flex items-center gap-0.5" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="text-[10px] flex items-center gap-0.5 text-muted-foreground">
                         <MapPin className="w-2.5 h-2.5" />{location}
                       </span>
                     )}

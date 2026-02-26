@@ -60,19 +60,18 @@ export default function UserFilters({
   };
 
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      <CardContent className="p-4">
-        <div className="space-y-3">
+    <Card className="bg-card border">
+      <CardContent className="p-5">
+        <div className="space-y-4">
           {/* Primary filters row */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por nome, email, empresa, @handle..."
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="pl-10"
-                style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
               />
             </div>
             <Select value={roleFilter} onValueChange={onRoleChange}>
@@ -119,11 +118,11 @@ export default function UserFilters({
 
           {/* Advanced filters */}
           {showAdvanced && (
-            <div className="pt-3 border-t space-y-3" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="pt-4 border-t space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
                 {/* State filter */}
                 <div className="flex items-center gap-2 flex-1">
-                  <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+                  <MapPin className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
                   <Select value={stateFilter || 'all'} onValueChange={onStateChange}>
                     <SelectTrigger className="flex-1">
                       <SelectValue placeholder="Estado" />
@@ -137,7 +136,7 @@ export default function UserFilters({
 
                 {/* Niche filter (creators only) */}
                 <div className="flex items-center gap-2 flex-1">
-                  <Tag className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+                  <Tag className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
                   <Select value={nicheFilter || 'all'} onValueChange={onNicheChange}>
                     <SelectTrigger className="flex-1">
                       <SelectValue placeholder="Nicho" />
@@ -163,7 +162,7 @@ export default function UserFilters({
 
                 {/* Date filter */}
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+                  <Calendar className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
                   <Select value={dateFilter || 'all'} onValueChange={onDateChange}>
                     <SelectTrigger className="w-full sm:w-40">
                       <SelectValue placeholder="Cadastro" />
@@ -183,7 +182,7 @@ export default function UserFilters({
               <div className="flex flex-col sm:flex-row gap-3">
                 {/* Tag filter */}
                 <div className="flex items-center gap-2 flex-1">
-                  <Tag className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+                  <Tag className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
                   <Select value={tagFilter || 'all'} onValueChange={onTagChange}>
                     <SelectTrigger className="flex-1">
                       <SelectValue placeholder="Tag" />
@@ -212,7 +211,7 @@ export default function UserFilters({
               {/* Active filters + clear */}
               {activeFilterCount > 0 && (
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] font-medium uppercase" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="text-[10px] font-medium uppercase text-muted-foreground">
                     {activeFilterCount} filtro(s) ativo(s)
                   </span>
                   <Button variant="ghost" size="sm" className="h-6 text-[10px] text-red-500 hover:text-red-600 px-2" onClick={handleClearAll}>
