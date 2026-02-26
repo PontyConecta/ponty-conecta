@@ -181,7 +181,7 @@ export default function BrandDashboard() {
       <QuickActions profileType="brand" isSubscribed={isSubscribed} />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4" style={{ '--card-min-h': '120px' }}>
         {stats.map((stat, index) => (
           <StatCard key={index} index={index} {...stat} />
         ))}

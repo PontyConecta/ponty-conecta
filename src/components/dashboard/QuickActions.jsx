@@ -10,7 +10,7 @@ export default function QuickActions({ profileType, isSubscribed }) {
   const actions = profileType === 'brand' ? brandActions : creatorActions;
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
       {actions.map((action, index) => {
         const needsSub = action.requiresSub && !isSubscribed;
         const targetPage = needsSub ? 'Subscription' : action.page;
@@ -23,20 +23,20 @@ export default function QuickActions({ profileType, isSubscribed }) {
             transition={{ duration: 0.3, delay: index * 0.05 }}
           >
             <Link to={createPageUrl(targetPage)}>
-              <Card className="border bg-card shadow-sm hover:shadow-md cursor-pointer hover:-translate-y-0.5 transition-all duration-200">
-                <CardContent className="p-3 sm:p-4 flex flex-col items-center text-center gap-2.5 sm:gap-3">
+              <Card className="h-full border bg-card shadow-sm hover:shadow-md cursor-pointer hover:-translate-y-0.5 transition-all duration-200">
+                <CardContent className="p-4 lg:p-5 h-full flex flex-col items-center justify-center text-center gap-2.5">
                   <div 
-                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center relative"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center relative"
                     style={{ backgroundColor: action.bg }}
                   >
-                    <action.icon className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-white" />
+                    <action.icon className="w-5 h-5 text-white" />
                     {needsSub && (
                       <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#9038fa] rounded-full flex items-center justify-center">
                         <Crown className="w-3 h-3 text-white" />
                       </div>
                     )}
                   </div>
-                  <span className="text-xs sm:text-sm font-medium leading-tight">
+                  <span className="text-xs sm:text-sm font-medium leading-tight text-foreground">
                     {action.label}
                   </span>
                 </CardContent>
