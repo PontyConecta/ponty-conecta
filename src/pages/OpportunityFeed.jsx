@@ -166,7 +166,7 @@ export default function OpportunityFeed() {
                   proposedRate={vm.proposedRate}
                   setProposedRate={vm.setProposedRate}
                   applying={vm.applying}
-                  onBack={() => { /* go back to details view */ }}
+                  onBack={() => vm.setViewingDetails(true)}
                   onSubmit={vm.handleApply}
                 />
               )}
