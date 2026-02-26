@@ -106,6 +106,59 @@ export function useOpportunitiesQuery(creatorId) {
   });
 }
 
+// ─── BRAND DASHBOARD ───
+
+export function useBrandDashboardQuery(brandId) {
+  return useQuery({
+    queryKey: ['dashboard', 'brand', brandId],
+    queryFn: async () => {
+      const [campaigns, applications, deliveries] = await Promise.all([
+        base44.entities.Campaign.filter({ brand_id: brandId }, '-created_date'),
+        base44.entities.Application.filter({ brand_id: brandId }, '-created_date'),
+        base44.entities.Delivery.filter({ brand_id: brandId }, '-created_date'),
+      ]);
+      const campaignsMap = arrayToMap(campaigns);
+      return { campaigns, applications, deliveries, campaignsMap };
+    },
+    enabled: !!brandId,
+    ...QUERY_CONFIG,
+  });
+}
+
+// ─── CREATOR DASHBOARD ───
+
+export function useCreatorDashboardQuery(creatorId, userId) {
+  return useQuery({
+    queryKey: ['dashboard', 'creator', creatorId],
+    queryFn: async () => {
+      const [applications, deliveries, reputationData] = await Promise.all([
+        base44.entities.Application.filter({ creator_id: creatorId }, '-created_date'),
+        base44.entities.Delivery.filter({ creator_id: creatorId }, '-created_date'),
+        base44.entities.Reputation.filter({ user_id: userId, profile_type: 'creator' }),
+      ]);
+
+      const campaignIds = [...new Set([
+        ...deliveries.map(d => d.campaign_id),
+        ...applications.map(a => a.campaign_id),
+      ].filter(Boolean))];
+      const brandIds = [...new Set(deliveries.map(d => d.brand_id).filter(Boolean))];
+
+      const [campaignsData, brandsData] = await Promise.all([
+        campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
+        brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([]),
+      ]);
+
+      const campaignsMap = arrayToMap(campaignsData.flat());
+      const brandsMap = arrayToMap(brandsData.flat());
+      const reputation = reputationData.length > 0 ? reputationData[0] : null;
+
+      return { applications, deliveries, campaignsMap, brandsMap, reputation };
+    },
+    enabled: !!creatorId && !!userId,
+    ...QUERY_CONFIG,
+  });
+}
+
 // ─── MUTATIONS ───
 // All mutations receive { profileType, profileId } for scoped invalidation.
 // Invalidation targets the EXACT key prefix [entity, profileType, profileId].
