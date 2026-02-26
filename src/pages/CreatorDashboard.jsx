@@ -162,16 +162,16 @@ export default function CreatorDashboard() {
         </div>
       )}
 
-      {/* Quick Actions */}
-      <QuickActions profileType="creator" isSubscribed={isSubscribed} />
-
-      {/* Profile Incomplete Alert */}
+      {/* Profile Incomplete Alert — topo, antes de tudo */}
       {!profileValidation.isComplete && (
         <ProfileIncompleteAlert 
           missingFields={profileValidation.missingFields} 
           profileType="creator"
         />
       )}
+
+      {/* Quick Actions */}
+      <QuickActions profileType="creator" isSubscribed={isSubscribed} />
 
       {/* Onboarding Missions */}
       <DashboardMissions userId={user?.id} profileType="creator" />

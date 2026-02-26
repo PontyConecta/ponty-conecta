@@ -37,30 +37,30 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
             </span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {pipelineData.map(item => {
               const pct = totalCampaigns > 0 ? Math.round((item.value / totalCampaigns) * 100) : 0;
               const barWidth = maxVal > 0 ? (item.value / maxVal) * 100 : 0;
               return (
-                <div key={item.key} className="flex items-center gap-3">
+                <div key={item.key} className="flex items-center gap-2">
                   {/* Status label */}
-                  <div className="flex items-center gap-2 w-[120px] flex-shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
-                    <span className="text-xs text-muted-foreground truncate">{item.stage}</span>
+                  <div className="flex items-center gap-1.5 w-[100px] flex-shrink-0">
+                    <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="text-[11px] text-muted-foreground truncate leading-none">{item.stage}</span>
                   </div>
 
                   {/* Count */}
-                  <span className="text-xs font-semibold text-foreground w-6 text-right flex-shrink-0 tabular-nums">
+                  <span className="text-[11px] font-semibold text-foreground w-5 text-right flex-shrink-0 tabular-nums">
                     {item.value}
                   </span>
 
                   {/* Bar */}
-                  <div className="flex-1 h-3.5 rounded-full bg-muted/60 overflow-hidden">
+                  <div className="flex-1 h-3 rounded bg-muted/50 overflow-hidden">
                     {item.value > 0 && (
                       <div
-                        className="h-full rounded-full transition-all duration-500"
+                        className="h-full rounded transition-all duration-500"
                         style={{
-                          width: `${Math.max(barWidth, 4)}%`,
+                          width: `${Math.max(barWidth, 3)}%`,
                           backgroundColor: item.color,
                           opacity: 0.85,
                         }}
@@ -69,7 +69,7 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
                   </div>
 
                   {/* Percentage */}
-                  <span className={`text-[11px] w-9 text-right flex-shrink-0 tabular-nums font-medium ${item.value > 0 ? 'text-foreground' : 'text-muted-foreground/40'}`}>
+                  <span className={`text-[10px] w-7 text-right flex-shrink-0 tabular-nums font-medium ${item.value > 0 ? 'text-muted-foreground' : 'text-muted-foreground/30'}`}>
                     {pct}%
                   </span>
                 </div>

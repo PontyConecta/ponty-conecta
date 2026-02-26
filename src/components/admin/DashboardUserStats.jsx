@@ -106,22 +106,22 @@ export default function DashboardUserStats({ analytics }) {
                     data={planDist}
                     cx="50%"
                     cy="50%"
-                    innerRadius={32}
-                    outerRadius={58}
+                    innerRadius={30}
+                    outerRadius={56}
                     paddingAngle={3}
                     dataKey="value"
                     label={({ name, value, cx, cy, midAngle, outerRadius: oR }) => {
                       const RADIAN = Math.PI / 180;
-                      const labelRadius = oR + 28;
+                      const labelRadius = oR + 20;
                       const x = cx + labelRadius * Math.cos(-midAngle * RADIAN);
                       const y = cy + labelRadius * Math.sin(-midAngle * RADIAN);
                       return (
-                        <text x={x} y={y} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" style={{ fontSize: '11px', fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                        <text x={x} y={y} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" style={{ fontSize: '11px', fill: 'hsl(var(--foreground))', fontWeight: 500 }}>
                           {name}: {value}
                         </text>
                       );
                     }}
-                    labelLine={{ stroke: 'hsl(var(--border))', strokeWidth: 1, offset: 14 }}
+                    labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 1, offset: 10 }}
                   >
                     {planDist.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>

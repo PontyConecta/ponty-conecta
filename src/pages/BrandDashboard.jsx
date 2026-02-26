@@ -166,16 +166,16 @@ export default function BrandDashboard() {
         </div>
       )}
 
-      {/* Quick Actions */}
-      <QuickActions profileType="brand" isSubscribed={isSubscribed} />
-
-      {/* Profile Incomplete Alert */}
+      {/* Profile Incomplete Alert — topo, antes de tudo */}
       {!profileValidation.isComplete && (
         <ProfileIncompleteAlert 
           missingFields={profileValidation.missingFields} 
           profileType="brand"
         />
       )}
+
+      {/* Quick Actions */}
+      <QuickActions profileType="brand" isSubscribed={isSubscribed} />
 
       {/* Onboarding Missions */}
       <DashboardMissions userId={user?.id} profileType="brand" />
