@@ -18,7 +18,7 @@ export default function StatCard({ label, value, total, icon: Icon, color, index
             {label}
           </div>
           {total !== undefined && (
-            <div className="text-[11px] text-muted-foreground/60 leading-none mt-0.5">
+            <div className="text-xs text-muted-foreground leading-none mt-0.5">
               de {total} no total
             </div>
           )}
