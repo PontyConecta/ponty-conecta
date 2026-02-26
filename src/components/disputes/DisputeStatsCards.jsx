@@ -11,28 +11,28 @@ export default function DisputeStatsCards({ disputes }) {
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card>
-        <CardContent className="p-4">
+      <Card className="bg-card border">
+        <CardContent className="p-5">
           <div className="text-2xl font-bold text-red-600">{stats.open}</div>
-          <div className="text-sm text-slate-500">Abertas</div>
+          <div className="text-sm text-muted-foreground mt-1">Abertas</div>
         </CardContent>
       </Card>
-      <Card>
-        <CardContent className="p-4">
+      <Card className="bg-card border">
+        <CardContent className="p-5">
           <div className="text-2xl font-bold text-yellow-600">{stats.under_review}</div>
-          <div className="text-sm text-slate-500">Em Análise</div>
+          <div className="text-sm text-muted-foreground mt-1">Em Análise</div>
         </CardContent>
       </Card>
-      <Card>
-        <CardContent className="p-4">
+      <Card className="bg-card border">
+        <CardContent className="p-5">
           <div className="text-2xl font-bold text-emerald-600">{stats.resolved}</div>
-          <div className="text-sm text-slate-500">Resolvidas</div>
+          <div className="text-sm text-muted-foreground mt-1">Resolvidas</div>
         </CardContent>
       </Card>
-      <Card>
-        <CardContent className="p-4">
-          <div className="text-2xl font-bold text-slate-600">{stats.total}</div>
-          <div className="text-sm text-slate-500">Total</div>
+      <Card className="bg-card border">
+        <CardContent className="p-5">
+          <div className="text-2xl font-bold text-foreground">{stats.total}</div>
+          <div className="text-sm text-muted-foreground mt-1">Total</div>
         </CardContent>
       </Card>
     </div>
