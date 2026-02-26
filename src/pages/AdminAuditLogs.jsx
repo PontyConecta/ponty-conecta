@@ -113,33 +113,33 @@ export default function AdminAuditLogs() {
           <Card key={log.id} className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" className="bg-muted">
-                  <Shield className="w-5 h-5" className="text-muted-foreground" />
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-muted">
+                  <Shield className="w-5 h-5 text-muted-foreground" />
                 </div>
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                   {getActionBadge(log.action)}
-                  <div className="flex items-center gap-1 text-xs" className="text-muted-foreground">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="w-3 h-3" />
                     {formatDateTime(log.timestamp)}
                   </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm mb-2" className="text-muted-foreground">
+                  <div className="flex items-center gap-2 text-sm mb-2 text-muted-foreground">
                     <User className="w-4 h-4" />
                     <span className="font-medium">{log.admin_email}</span>
                   </div>
 
-                  <div className="text-sm mb-2" className="text-foreground">
+                  <div className="text-sm mb-2 text-foreground">
                     {log.details}
                   </div>
 
                   {log.note && (
-                    <div className="flex items-start gap-2 text-sm p-3 rounded-lg mt-2" className="bg-muted">
-                      <FileText className="w-4 h-4 mt-0.5" className="text-muted-foreground" />
+                    <div className="flex items-start gap-2 text-sm p-3 rounded-lg mt-2 bg-muted">
+                      <FileText className="w-4 h-4 mt-0.5 text-muted-foreground" />
                       <div>
-                        <div className="text-xs mb-1" className="text-muted-foreground">Nota:</div>
+                        <div className="text-xs mb-1 text-muted-foreground">Nota:</div>
                         <div className="text-foreground">{log.note}</div>
                       </div>
                     </div>
