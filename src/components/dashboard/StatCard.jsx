@@ -17,17 +17,19 @@ export default function StatCard({ label, value, total, icon: Icon, color, index
             <Icon className="w-5 h-5 text-white" />
           </div>
           <div>
-            <div className="text-2xl font-bold tracking-tight tabular-nums leading-none">
-              {value}
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-bold tracking-tight tabular-nums leading-none">
+                {value}
+              </span>
+              {total > 0 && total !== value && (
+                <span className="text-[11px] text-muted-foreground/60 font-normal">
+                  /{total}
+                </span>
+              )}
             </div>
-            <div className="text-xs sm:text-sm font-medium text-muted-foreground leading-tight mt-0.5">
+            <div className="text-xs sm:text-sm font-medium text-muted-foreground leading-tight mt-1">
               {label}
             </div>
-            {total !== undefined && (
-              <div className="text-[11px] text-muted-foreground/70 leading-tight mt-0.5">
-                de {total} no total
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
