@@ -44,9 +44,11 @@ import {
   Ban
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
+import { useAuth } from '@/components/contexts/AuthContext';
 
 export default function OpportunityFeed() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType } = useAuth();
   const [creator, setCreator] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [brands, setBrands] = useState({});
@@ -66,41 +68,37 @@ export default function OpportunityFeed() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authProfile && profileType === 'creator') {
+      setCreator(authProfile);
+      setIsSubscribed(isProfileSubscribed(authProfile));
+      const validation = validateCreatorProfile(authProfile);
+      setProfileValidation(validation);
+      loadPageData(authProfile);
+    }
+  }, [authProfile, profileType]);
 
-  const loadData = async (isRefresh = false) => {
+  const loadData = (isRefresh = false) => {
     if (!isRefresh) setLoading(true);
+    return loadPageData(creator).finally(() => setRefreshing(false));
+  };
+
+  const loadPageData = async (creatorProfile) => {
+    if (!creatorProfile) return;
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-
-      const creators = await base44.entities.Creator.filter({ user_id: userData.id });
-      if (creators.length > 0) {
-        setCreator(creators[0]);
-        setIsSubscribed(creators[0].subscription_status === 'premium' || creators[0].subscription_status === 'legacy' || (creators[0].subscription_status === 'trial' && creators[0].trial_end_date && new Date(creators[0].trial_end_date) > new Date()));
-        
-        // Validar completude do perfil
-        const validation = validateCreatorProfile(creators[0]);
-        setProfileValidation(validation);
-        
-        const apps = await base44.entities.Application.filter({ creator_id: creators[0].id });
-        setMyApplications(apps);
-      }
-
-      // Load active campaigns
-      const campaignsData = await base44.entities.Campaign.filter({ status: 'active' }, '-created_date');
+      const [apps, campaignsData] = await Promise.all([
+        base44.entities.Application.filter({ creator_id: creatorProfile.id }),
+        base44.entities.Campaign.filter({ status: 'active' }, '-created_date')
+      ]);
+      setMyApplications(apps);
       setCampaigns(campaignsData);
 
-      // Load brands in batch for better performance
       const brandIds = [...new Set(campaignsData.map(c => c.brand_id))];
       if (brandIds.length > 0) {
-        const allBrands = await base44.entities.Brand.list();
+        const brandsData = await Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id })));
         const brandsMap = {};
-        allBrands.filter(b => brandIds.includes(b.id)).forEach(b => { brandsMap[b.id] = b; });
+        brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
         setBrands(brandsMap);
       }
-
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

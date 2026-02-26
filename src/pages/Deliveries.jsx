@@ -52,6 +52,7 @@ import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
 import Pagination from '../components/common/Pagination';
+import { useAuth } from '../components/contexts/AuthContext';
 
 export default function Deliveries() {
   const { user, profile: authProfile, profileType: authProfileType } = useAuth();
@@ -692,7 +693,7 @@ export default function Deliveries() {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => {}}
+                      onClick={handleContest}
                       disabled={processing || !contestReason}
                       className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
                     >
