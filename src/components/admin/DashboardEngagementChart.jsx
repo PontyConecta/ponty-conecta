@@ -34,16 +34,16 @@ export default function DashboardEngagementChart({ data }) {
             <AreaChart data={data}>
               <defs>
                 <linearGradient id="engApps" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#9038fa" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#9038fa" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="engDel" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="engAccepted" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#fb923c" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#fb923c" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -51,8 +51,8 @@ export default function DashboardEngagementChart({ data }) {
               <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: '11px' }} />
-              <Area type="monotone" dataKey="candidaturas" name="Candidaturas" stroke="#3b82f6" fill="url(#engApps)" strokeWidth={2} />
-              <Area type="monotone" dataKey="aceitas" name="Aceitas" stroke="#f59e0b" fill="url(#engAccepted)" strokeWidth={2} />
+              <Area type="monotone" dataKey="candidaturas" name="Candidaturas" stroke="#9038fa" fill="url(#engApps)" strokeWidth={2} />
+              <Area type="monotone" dataKey="aceitas" name="Aceitas" stroke="#fb923c" fill="url(#engAccepted)" strokeWidth={2} />
               <Area type="monotone" dataKey="entregas" name="Entregas" stroke="#10b981" fill="url(#engDel)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
