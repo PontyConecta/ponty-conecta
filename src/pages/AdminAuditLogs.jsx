@@ -87,7 +87,7 @@ export default function AdminAuditLogs() {
               className="flex-1"
             />
             <Select value={actionFilter} onValueChange={setActionFilter}>
-              <SelectTrigger className="w-full sm:w-56 hover:bg-indigo-50">
+              <SelectTrigger className="w-full sm:w-56">
                 <SelectValue placeholder="Tipo de Ação" />
               </SelectTrigger>
               <SelectContent>
@@ -110,8 +110,8 @@ export default function AdminAuditLogs() {
       {/* Logs List */}
       <div className="space-y-3">
         {filteredLogs.map((log) => (
-          <Card key={log.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
+          <Card key={log.id} className="bg-card border hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-muted">
                   <Shield className="w-5 h-5 text-muted-foreground" />

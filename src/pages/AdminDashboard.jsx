@@ -62,7 +62,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Admin Navigation Header */}
       <AdminHeader currentPageName="AdminDashboard" />
 
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabs - always visible so Financeiro works even if analytics fails */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="flex-wrap h-auto gap-1 p-1 bg-muted">
           <TabsTrigger value="overview" className="text-xs">Visão Geral</TabsTrigger>
           <TabsTrigger value="financials" className="text-xs">Financeiro</TabsTrigger>

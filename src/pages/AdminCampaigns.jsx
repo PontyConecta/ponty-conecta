@@ -171,8 +171,8 @@ export default function AdminCampaigns() {
       {/* Campaigns List */}
       <div className="grid gap-4">
         {filteredCampaigns.map((campaign) => (
-          <Card key={campaign.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
+          <Card key={campaign.id} className="bg-card border hover:shadow-md transition-shadow">
+            <CardContent className="p-5 lg:p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-3">

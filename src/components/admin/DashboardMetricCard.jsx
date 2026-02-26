@@ -20,8 +20,8 @@ function TrendBadge({ current, previous }) {
 
   return (
     <span className={`inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
-      isNeutral ? 'bg-slate-100 text-slate-500' :
-      isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+      isNeutral ? 'bg-muted text-muted-foreground' :
+      isPositive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'
     }`}>
       {isNeutral ? <Minus className="w-2.5 h-2.5" /> : isPositive ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
       {Math.abs(pct)}%

@@ -220,7 +220,7 @@ export default function AdminUsers() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Admin Navigation Header */}
       <AdminHeader currentPageName="AdminUsers" />
 
