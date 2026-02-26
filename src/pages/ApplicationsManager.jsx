@@ -61,7 +61,7 @@ export default function ApplicationsManager() {
   const handleAccept = async () => {
     if (!selectedApplication) return;
     try {
-      await acceptMutation.mutateAsync({ applicationId: selectedApplication.id, agreedRate });
+      await acceptMutation.mutateAsync({ applicationId: selectedApplication.id, agreedRate, profileType: 'brand', profileId: authProfile?.id });
       toast.success('Candidatura aceita com sucesso!');
       setSelectedApplication(null);
       setAgreedRate('');
@@ -73,7 +73,7 @@ export default function ApplicationsManager() {
   const handleReject = async () => {
     if (!selectedApplication) return;
     try {
-      await rejectMutation.mutateAsync({ applicationId: selectedApplication.id, rejectionReason });
+      await rejectMutation.mutateAsync({ applicationId: selectedApplication.id, rejectionReason, profileType: 'brand', profileId: authProfile?.id });
       setSelectedApplication(null);
       setRejectionReason('');
     } catch (error) {
