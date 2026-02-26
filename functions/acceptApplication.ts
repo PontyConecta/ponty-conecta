@@ -10,6 +10,7 @@ Deno.serve(async (req) => {
     }
 
     const { application_id, agreed_rate } = await req.json();
+    console.log(`[acceptApplication] userId=${user.id} applicationId=${application_id}`);
     if (!application_id) {
       return Response.json({ error: 'application_id is required' }, { status: 400 });
     }

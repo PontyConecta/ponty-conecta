@@ -10,6 +10,7 @@ Deno.serve(async (req) => {
     }
 
     const { campaign_id, message, proposed_rate } = await req.json();
+    console.log(`[applyToCampaign] userId=${user.id} campaignId=${campaign_id}`);
     if (!campaign_id) {
       return Response.json({ error: 'campaign_id is required' }, { status: 400 });
     }

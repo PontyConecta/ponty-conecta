@@ -10,6 +10,7 @@ Deno.serve(async (req) => {
     }
 
     const { delivery_id, reason } = await req.json();
+    console.log(`[contestDelivery] userId=${user.id} deliveryId=${delivery_id}`);
     if (!delivery_id || !reason) {
       return Response.json({ error: 'delivery_id and reason are required' }, { status: 400 });
     }

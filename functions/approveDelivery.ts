@@ -10,6 +10,7 @@ Deno.serve(async (req) => {
     }
 
     const { delivery_id } = await req.json();
+    console.log(`[approveDelivery] userId=${user.id} deliveryId=${delivery_id}`);
     if (!delivery_id) {
       return Response.json({ error: 'delivery_id is required' }, { status: 400 });
     }
