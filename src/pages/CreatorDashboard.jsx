@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateCreatorProfile } from '@/components/utils/profileValidation';
+import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import CreatorMetricsChart from '@/components/charts/CreatorMetricsChart';
 import CreatorReputationSection from '@/components/creator/CreatorReputationSection';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
@@ -132,7 +133,7 @@ export default function CreatorDashboard() {
     }
   ];
 
-  const isSubscribed = creator?.subscription_status === 'premium' || creator?.subscription_status === 'legacy' || (creator?.subscription_status === 'trial' && creator?.trial_end_date && new Date(creator.trial_end_date) > new Date());
+  const isSubscribed = isProfileSubscribed(creator);
   const isNewUser = activeApplications.length === 0 && deliveries.length === 0;
 
   return (

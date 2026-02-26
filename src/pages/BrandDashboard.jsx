@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
+import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import QuickActions from '@/components/dashboard/QuickActions';
@@ -136,7 +137,7 @@ export default function BrandDashboard() {
     }
   ];
 
-  const isSubscribed = brand?.subscription_status === 'premium' || brand?.subscription_status === 'legacy' || (brand?.subscription_status === 'trial' && brand?.trial_end_date && new Date(brand.trial_end_date) > new Date());
+  const isSubscribed = isProfileSubscribed(brand);
   const isNewUser = campaigns.length === 0 && pendingApplications.length === 0;
 
   return (

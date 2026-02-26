@@ -21,6 +21,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 
 export default function Subscription() {
   const [user, setUser] = useState(null);
@@ -128,7 +129,7 @@ export default function Subscription() {
   }
 
   const isBrand = profileType === 'brand';
-  const isSubscribed = profile?.subscription_status === 'premium' || profile?.subscription_status === 'legacy' || (profile?.subscription_status === 'trial' && profile?.trial_end_date && new Date(profile.trial_end_date) > new Date());
+  const isSubscribed = isProfileSubscribed(profile);
 
   const brandFeatures = [
     'Criação ilimitada de campanhas',
