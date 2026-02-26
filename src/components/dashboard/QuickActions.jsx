@@ -23,8 +23,8 @@ export default function QuickActions({ profileType, isSubscribed }) {
             transition={{ duration: 0.3, delay: index * 0.05 }}
           >
             <Link to={createPageUrl(targetPage)}>
-              <Card className="h-full border bg-card shadow-sm hover:shadow-md cursor-pointer hover:-translate-y-0.5 transition-all duration-200">
-                <CardContent className="p-4 lg:p-5 h-full flex flex-col items-center justify-center text-center gap-2.5">
+              <Card className="h-[108px] sm:h-[116px] border bg-card shadow-sm hover:shadow-md cursor-pointer hover:-translate-y-0.5 transition-all duration-200">
+                <CardContent className="p-4 lg:p-5 h-full flex flex-col justify-center items-start gap-2.5">
                   <div 
                     className="w-10 h-10 rounded-xl flex items-center justify-center relative"
                     style={{ backgroundColor: action.bg }}
@@ -36,7 +36,7 @@ export default function QuickActions({ profileType, isSubscribed }) {
                       </div>
                     )}
                   </div>
-                  <span className="text-xs sm:text-sm font-medium leading-tight text-foreground">
+                  <span className="text-xs sm:text-sm font-medium leading-tight text-foreground text-left">
                     {action.label}
                   </span>
                 </CardContent>
