@@ -240,22 +240,22 @@ export default function OnboardingBrand() {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen py-8 px-4 bg-background">
       <div className="max-w-xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#9038fa' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg bg-[#9038fa]">
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Configure sua Marca</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Complete seu perfil para começar a criar campanhas</p>
+          <h1 className="text-3xl font-bold mb-2 text-foreground">Configure sua Marca</h1>
+          <p className="text-muted-foreground">Complete seu perfil para começar a criar campanhas</p>
         </div>
 
         <OnboardingProgress steps={STEPS} currentStep={step} accentColor="indigo" onStepClick={handleStepClick} />
 
-        <Card className="shadow-xl border-0 mb-24" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <Card className="shadow-xl border mb-24 bg-card">
           <CardContent className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
               <motion.div
@@ -268,34 +268,34 @@ export default function OnboardingBrand() {
                 {step === 1 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nome da Empresa *</Label>
+                      <Label className="text-sm font-medium text-foreground">Nome da Empresa *</Label>
                       <Input value={formData.company_name} onChange={(e) => handleChange('company_name', e.target.value)} placeholder="Ex: Minha Empresa LTDA" className="mt-2 h-12" />
                       <FieldHint text="O nome que será exibido para creators na plataforma." />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Estado *</Label>
+                        <Label className="text-sm font-medium text-foreground">Estado *</Label>
                         <div className="mt-2">
                           <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione" />
                         </div>
                       </div>
                       <div>
-                        <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Cidade</Label>
+                        <Label className="text-sm font-medium text-foreground">Cidade</Label>
                         <div className="relative mt-2">
-                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                           <Input value={formData.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="Ex: São Paulo" className="pl-11 h-12" />
                         </div>
                       </div>
                     </div>
                     <FieldHint text="Sua localização ajuda a conectar com creators da mesma região." />
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Logo da Marca</Label>
+                      <Label className="text-sm font-medium text-foreground">Logo da Marca</Label>
                       <div className="mt-3 flex items-center gap-4">
                         <div className="relative">
                           {formData.logo_url ? (
                             <img src={formData.logo_url} alt="Logo" className="w-24 h-24 rounded-xl object-cover border-4 border-white shadow-lg" />
                           ) : (
-                            <div className="w-24 h-24 rounded-xl flex items-center justify-center border-4 shadow-lg" style={{ backgroundColor: 'rgba(144,56,250,0.1)', borderColor: 'var(--bg-secondary)' }}>
+                            <div className="w-24 h-24 rounded-xl flex items-center justify-center border-4 border-card shadow-lg bg-primary/10">
                               <Building2 className="w-10 h-10 text-[#9038fa]/60" />
                             </div>
                           )}
@@ -305,8 +305,8 @@ export default function OnboardingBrand() {
                           </label>
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Adicione a logo da sua marca</p>
-                          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>JPG, PNG. Recomendado: 400x400px</p>
+                          <p className="text-sm font-medium text-foreground">Adicione a logo da sua marca</p>
+                          <p className="text-xs mt-1 text-muted-foreground">JPG, PNG. Recomendado: 400x400px</p>
                         </div>
                       </div>
                     </div>
@@ -316,7 +316,7 @@ export default function OnboardingBrand() {
                 {step === 2 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Segmento *</Label>
+                      <Label className="text-sm font-medium text-foreground">Segmento *</Label>
                       <Select value={formData.industry} onValueChange={(v) => handleChange('industry', v)}>
                         <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione o segmento" /></SelectTrigger>
                         <SelectContent>{INDUSTRIES.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
@@ -324,14 +324,14 @@ export default function OnboardingBrand() {
                       <FieldHint text="Nos ajuda a sugerir creators que atuam no seu segmento." />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tamanho da Empresa</Label>
+                      <Label className="text-sm font-medium text-foreground">Tamanho da Empresa</Label>
                       <Select value={formData.company_size} onValueChange={(v) => handleChange('company_size', v)}>
                         <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent>{COMPANY_SIZES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Orçamento Mensal de Marketing</Label>
+                      <Label className="text-sm font-medium text-foreground">Orçamento Mensal de Marketing</Label>
                       <Select value={formData.marketing_budget} onValueChange={(v) => handleChange('marketing_budget', v)}>
                         <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione" /></SelectTrigger>
                         <SelectContent>{BUDGETS.map(b => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}</SelectContent>
@@ -339,14 +339,14 @@ export default function OnboardingBrand() {
                       <FieldHint text="Para apresentarmos creators que se encaixam na sua capacidade de investimento." />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Sobre a Marca * (mínimo 20 caracteres)</Label>
+                      <Label className="text-sm font-medium text-foreground">Sobre a Marca * (mínimo 20 caracteres)</Label>
                       <Textarea value={formData.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Conte sobre sua marca, valores e o que vocês fazem..." className="mt-2 min-h-[120px]" />
                       <p className={`text-xs mt-1 font-medium ${formData.description.length >= 20 ? 'text-emerald-600' : 'text-[#9038fa]'}`}>
                         {formData.description.length}/20
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Público-Alvo</Label>
+                      <Label className="text-sm font-medium text-foreground">Público-Alvo</Label>
                       <Input value={formData.target_audience} onChange={(e) => handleChange('target_audience', e.target.value)} placeholder="Ex: Mulheres 25-35, classe A/B" className="mt-2 h-12" />
                     </div>
                   </div>
@@ -362,9 +362,9 @@ export default function OnboardingBrand() {
                 {step === 4 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email de Contato *</Label>
+                      <Label className="text-sm font-medium text-foreground">Email de Contato *</Label>
                       <div className="relative mt-2">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="contato@suamarca.com.br" className="pl-11 h-12" />
                       </div>
                       {formData.contact_email && !isValidEmail(formData.contact_email) && (
@@ -373,9 +373,9 @@ export default function OnboardingBrand() {
                       <FieldHint text="Email principal para comunicação com creators." />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Telefone *</Label>
+                      <Label className="text-sm font-medium text-foreground">Telefone *</Label>
                       <div className="relative mt-2">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input 
                           value={formData.contact_phone} 
                           onChange={(e) => handleChange('contact_phone', formatPhoneNumber(e.target.value))} 
@@ -395,7 +395,7 @@ export default function OnboardingBrand() {
             </AnimatePresence>
 
             {step < 5 && (
-              <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
                   <ArrowLeft className="w-4 h-4" /> Voltar
                 </Button>
