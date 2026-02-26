@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,59 +47,42 @@ import { deliverySchema, validate } from '../components/utils/validationSchemas'
 import { validateTransition } from '../components/utils/stateTransitions';
 import { toast } from 'sonner';
 import { formatDate } from '../components/utils/formatters';
-import { arrayToMap } from '../components/utils/entityHelpers';
 import { usePagination } from '../components/hooks/usePagination';
 import StatusBadge from '../components/common/StatusBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
 import Pagination from '../components/common/Pagination';
 import { useAuth } from '../components/contexts/AuthContext';
+import { useDeliveriesQuery, useApproveMutation, useContestMutation, useSubmitDeliveryMutation } from '../components/hooks/useEntityQuery';
 
 export default function Deliveries() {
   const { user, profile: authProfile, profileType: authProfileType } = useAuth();
-  const [profile, setProfile] = useState(null);
-  const [profileType, setProfileType] = useState(null);
-  const [deliveries, setDeliveries] = useState([]);
-  const [campaigns, setCampaigns] = useState({});
-  const [creators, setCreators] = useState({});
-  const [brands, setBrands] = useState({});
-  const [loading, setLoading] = useState(true);
+  const profileType = authProfileType;
+  const profile = authProfile;
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useDeliveriesQuery(profileType, profile?.id);
+  const deliveries = data?.deliveries || [];
+  const campaigns = data?.campaigns || {};
+  const creators = data?.creators || {};
+  const brands = data?.brands || {};
+
+  const approveMutation = useApproveMutation();
+  const contestMutation = useContestMutation();
+  const submitDeliveryMutation = useSubmitDeliveryMutation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('submitted');
   const [selectedDelivery, setSelectedDelivery] = useState(null);
-  const [processing, setProcessing] = useState(false);
   const [contestReason, setContestReason] = useState('');
   const [proofUrls, setProofUrls] = useState([]);
   const [contentUrls, setContentUrls] = useState(['']);
   const [proofNotes, setProofNotes] = useState('');
-  const [submitting, setSubmitting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const pagination = usePagination(20);
 
-  useEffect(() => {
-    if (authProfile && authProfileType) {
-      setProfile(authProfile);
-      setProfileType(authProfileType);
-      loadPageData(authProfile, authProfileType);
-    }
-  }, [authProfile, authProfileType]);
-
-  const loadData = (isRefresh = false) => {
-    if (!isRefresh) setLoading(true);
-    return loadPageData(profile, profileType).finally(() => setRefreshing(false));
-  };
-
-  const loadPageData = async (p, pt) => {
-    if (!p || !pt) return;
-    try {
-      if (pt === 'brand') await loadBrandDeliveries(p);
-      else await loadCreatorDeliveries(p);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const processing = approveMutation.isPending || contestMutation.isPending;
+  const submitting = submitDeliveryMutation.isPending;
 
   const handleRefresh = async (e) => {
     const startY = e.touches[0].clientY;
@@ -106,7 +90,7 @@ export default function Deliveries() {
       const currentY = e.touches[0].clientY;
       if (currentY - startY > 100 && window.scrollY === 0 && !refreshing) {
         setRefreshing(true);
-        loadData(true);
+        queryClient.invalidateQueries({ queryKey: ['deliveries'] }).finally(() => setRefreshing(false));
         document.removeEventListener('touchmove', handleMove);
       }
     };
@@ -119,56 +103,15 @@ export default function Deliveries() {
     return () => document.removeEventListener('touchstart', handleRefresh);
   }, [refreshing]);
 
-  const loadBrandDeliveries = async (brand) => {
-    const [deliveriesData, campaignsData] = await Promise.all([
-      base44.entities.Delivery.filter({ brand_id: brand.id }, '-created_date'),
-      base44.entities.Campaign.filter({ brand_id: brand.id })
-    ]);
-    setDeliveries(deliveriesData);
-    setCampaigns(arrayToMap(campaignsData));
-    const creatorIds = [...new Set(deliveriesData.map(d => d.creator_id))];
-    if (creatorIds.length > 0) {
-      const creatorsData = await Promise.all(creatorIds.map(id => base44.entities.Creator.filter({ id })));
-      setCreators(arrayToMap(creatorsData.flat()));
-    }
-  };
-
-  const loadCreatorDeliveries = async (creator) => {
-    const deliveriesData = await base44.entities.Delivery.filter({ creator_id: creator.id }, '-created_date');
-    setDeliveries(deliveriesData);
-    const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id))];
-    const brandIds = [...new Set(deliveriesData.map(d => d.brand_id))];
-    const [campaignsData, brandsData] = await Promise.all([
-      campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
-      brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
-    ]);
-    setCampaigns(arrayToMap(campaignsData.flat()));
-    setBrands(arrayToMap(brandsData.flat()));
-  };
-
   // Brand actions
   const handleApprove = async () => {
     if (!selectedDelivery) return;
-    setProcessing(true);
-    
     try {
-      const response = await base44.functions.invoke('approveDelivery', {
-        delivery_id: selectedDelivery.id
-      });
-
-      if (!response.data?.success) {
-        toast.error(response.data?.error || 'Erro ao aprovar entrega');
-        return;
-      }
-
+      await approveMutation.mutateAsync(selectedDelivery.id);
       toast.success('Entrega aprovada com sucesso!');
-      await loadData();
       setSelectedDelivery(null);
     } catch (error) {
-      console.error('Error approving delivery:', error);
-      toast.error('Erro ao aprovar entrega.');
-    } finally {
-      setProcessing(false);
+      toast.error(error.message || 'Erro ao aprovar entrega.');
     }
   };
 
@@ -177,95 +120,46 @@ export default function Deliveries() {
       toast.error('Preencha o motivo da contestação');
       return;
     }
-
-    // Valida transição
     const validation = validateTransition('delivery', { ...selectedDelivery, contest_reason: contestReason }, 'in_dispute');
     if (!validation.valid) {
       toast.error(validation.error || validation.errors?.[0]);
       return;
     }
-
-    setProcessing(true);
-    
     try {
-      const response = await base44.functions.invoke('contestDelivery', {
-        delivery_id: selectedDelivery.id,
-        reason: contestReason
-      });
-
-      if (!response.data?.success) {
-        toast.error(response.data?.error || 'Erro ao contestar entrega');
-        return;
-      }
-
+      await contestMutation.mutateAsync({ deliveryId: selectedDelivery.id, reason: contestReason });
       toast.success('Entrega contestada. Disputa aberta.');
-      await loadData();
       setSelectedDelivery(null);
       setContestReason('');
     } catch (error) {
-      console.error('Error contesting delivery:', error);
-    } finally {
-      setProcessing(false);
+      toast.error(error.message || 'Erro ao contestar entrega.');
     }
   };
 
   // Creator actions
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
-    
     for (const file of files) {
-      try {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        setProofUrls(prev => [...prev, file_url]);
-      } catch (error) {
-        console.error('Error uploading file:', error);
-      }
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setProofUrls(prev => [...prev, file_url]);
     }
   };
 
   const handleSubmitDelivery = async () => {
     if (!selectedDelivery) return;
-    
     const validContentUrls = contentUrls.filter(url => url.trim());
-    
-    // Valida dados
-    const deliveryData = {
-      proof_urls: proofUrls,
-      content_urls: validContentUrls,
-      proof_notes: proofNotes
-    };
-    
+    const deliveryData = { proof_urls: proofUrls, content_urls: validContentUrls, proof_notes: proofNotes };
     const validation = validate(deliverySchema, deliveryData);
-    if (!validation.success) {
-      const firstError = Object.values(validation.errors)[0];
-      toast.error(firstError);
-      return;
-    }
-
-    // Valida transição
+    if (!validation.success) { toast.error(Object.values(validation.errors)[0]); return; }
     const transitionValidation = validateTransition('delivery', selectedDelivery, 'submitted');
-    if (!transitionValidation.valid) {
-      toast.error(transitionValidation.error || transitionValidation.errors?.[0]);
-      return;
-    }
-    
-    setSubmitting(true);
-    
+    if (!transitionValidation.valid) { toast.error(transitionValidation.error || transitionValidation.errors?.[0]); return; }
     try {
-      
-      await base44.entities.Delivery.update(selectedDelivery.id, {
-        status: 'submitted',
-        submitted_at: new Date().toISOString(),
-        ...deliveryData,
-        on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true
+      await submitDeliveryMutation.mutateAsync({
+        deliveryId: selectedDelivery.id,
+        data: { ...deliveryData, on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true }
       });
-
-      await loadData();
       closeSubmitDialog();
     } catch (error) {
       console.error('Error submitting delivery:', error);
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -310,7 +204,7 @@ export default function Deliveries() {
     pagination.reset();
   }, [searchTerm, filterStatus]);
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 

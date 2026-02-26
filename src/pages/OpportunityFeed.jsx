@@ -44,87 +44,49 @@ import {
   Ban
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
+import { useOpportunitiesQuery, useApplyToCampaignMutation } from '@/components/hooks/useEntityQuery';
 
 export default function OpportunityFeed() {
   const { user, profile: authProfile, profileType } = useAuth();
-  const [creator, setCreator] = useState(null);
-  const [campaigns, setCampaigns] = useState([]);
-  const [brands, setBrands] = useState({});
-  const [myApplications, setMyApplications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const creator = authProfile;
+  const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
+  const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
+
+  const { data, isLoading } = useOpportunitiesQuery(profileType === 'creator' ? authProfile?.id : null);
+  const campaigns = data?.campaigns || [];
+  const brands = data?.brands || {};
+  const myApplications = data?.myApplications || [];
+
+  const applyMutation = useApplyToCampaignMutation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlatform, setFilterPlatform] = useState('all');
   const [filterRemuneration, setFilterRemuneration] = useState('all');
   const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [applying, setApplying] = useState(false);
   const [applicationMessage, setApplicationMessage] = useState('');
   const [proposedRate, setProposedRate] = useState('');
   const [showPaywall, setShowPaywall] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const [viewingDetails, setViewingDetails] = useState(false);
-  const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    if (authProfile && profileType === 'creator') {
-      setCreator(authProfile);
-      setIsSubscribed(isProfileSubscribed(authProfile));
-      const validation = validateCreatorProfile(authProfile);
-      setProfileValidation(validation);
-      loadPageData(authProfile);
-    }
-  }, [authProfile, profileType]);
-
-  const loadData = (isRefresh = false) => {
-    if (!isRefresh) setLoading(true);
-    return loadPageData(creator).finally(() => setRefreshing(false));
-  };
-
-  const loadPageData = async (creatorProfile) => {
-    if (!creatorProfile) return;
-    try {
-      const [apps, campaignsData] = await Promise.all([
-        base44.entities.Application.filter({ creator_id: creatorProfile.id }),
-        base44.entities.Campaign.filter({ status: 'active' }, '-created_date')
-      ]);
-      setMyApplications(apps);
-      setCampaigns(campaignsData);
-
-      const brandIds = [...new Set(campaignsData.map(c => c.brand_id))];
-      if (brandIds.length > 0) {
-        const brandsData = await Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id })));
-        const brandsMap = {};
-        brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
-        setBrands(brandsMap);
-      }
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
+  const applying = applyMutation.isPending;
 
   const handleRefresh = async (e) => {
     const startY = e.touches[0].clientY;
-    
     const handleMove = (e) => {
       const currentY = e.touches[0].clientY;
-      const pullDistance = currentY - startY;
-      
-      if (pullDistance > 100 && window.scrollY === 0 && !refreshing) {
+      if (currentY - startY > 100 && window.scrollY === 0 && !refreshing) {
         setRefreshing(true);
-        loadData(true);
+        queryClient.invalidateQueries({ queryKey: ['opportunities'] }).finally(() => setRefreshing(false));
         document.removeEventListener('touchmove', handleMove);
       }
     };
-    
     document.addEventListener('touchmove', handleMove);
-    document.addEventListener('touchend', () => {
-      document.removeEventListener('touchmove', handleMove);
-    }, { once: true });
+    document.addEventListener('touchend', () => document.removeEventListener('touchmove', handleMove), { once: true });
   };
 
   useEffect(() => {
@@ -134,44 +96,20 @@ export default function OpportunityFeed() {
 
   const handleApply = async () => {
     if (!creator || !selectedCampaign) return;
-    
-    // Verificar se o perfil está completo
     if (!profileValidation.isComplete) {
-      toast.error('Complete seu perfil antes de se candidatar', {
-        description: 'Preencha os campos obrigatórios no seu perfil'
-      });
+      toast.error('Complete seu perfil antes de se candidatar', { description: 'Preencha os campos obrigatórios no seu perfil' });
       return;
     }
-    
-    if (!isSubscribed) {
-      setShowPaywall(true);
-      return;
-    }
-    
-    setApplying(true);
+    if (!isSubscribed) { setShowPaywall(true); return; }
     try {
-      const response = await base44.functions.invoke('applyToCampaign', {
-        campaign_id: selectedCampaign.id,
-        message: applicationMessage,
-        proposed_rate: proposedRate ? parseFloat(proposedRate) : null
-      });
-
-      if (!response.data?.success) {
-        toast.error(response.data?.error || 'Erro ao candidatar-se');
-        return;
-      }
-
+      await applyMutation.mutateAsync({ campaignId: selectedCampaign.id, message: applicationMessage, proposedRate });
       toast.success('Candidatura enviada com sucesso!');
-      await loadData();
       setSelectedCampaign(null);
       setApplicationMessage('');
       setProposedRate('');
       setViewingDetails(false);
     } catch (error) {
-      console.error('Error applying:', error);
-      toast.error('Erro ao candidatar-se. Tente novamente.');
-    } finally {
-      setApplying(false);
+      toast.error(error.message || 'Erro ao candidatar-se. Tente novamente.');
     }
   };
 
@@ -223,7 +161,7 @@ export default function OpportunityFeed() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

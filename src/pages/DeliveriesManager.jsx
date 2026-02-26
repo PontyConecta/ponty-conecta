@@ -37,105 +37,46 @@ import {
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
+import { useDeliveriesQuery, useApproveMutation, useContestMutation } from '../components/hooks/useEntityQuery';
 
 export default function DeliveriesManager() {
   const { user, profile: authProfile, profileType } = useAuth();
-  const [brand, setBrand] = useState(null);
-  const [deliveries, setDeliveries] = useState([]);
-  const [campaigns, setCampaigns] = useState({});
-  const [creators, setCreators] = useState({});
-  const [loading, setLoading] = useState(true);
+
+  const { data, isLoading } = useDeliveriesQuery('brand', authProfile?.id);
+  const deliveries = data?.deliveries || [];
+  const campaigns = data?.campaigns || {};
+  const creators = data?.creators || {};
+
+  const approveMutation = useApproveMutation();
+  const contestMutation = useContestMutation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('submitted');
   const [selectedDelivery, setSelectedDelivery] = useState(null);
-  const [processing, setProcessing] = useState(false);
   const [contestReason, setContestReason] = useState('');
 
-  useEffect(() => {
-    if (authProfile && profileType === 'brand') {
-      setBrand(authProfile);
-      loadPageData(authProfile);
-    }
-  }, [authProfile, profileType]);
-
-  const loadData = () => loadPageData(brand);
-
-  const loadPageData = async (brandProfile) => {
-    if (!brandProfile) return;
-    try {
-      const [deliveriesData, campaignsData] = await Promise.all([
-        base44.entities.Delivery.filter({ brand_id: brandProfile.id }, '-created_date'),
-        base44.entities.Campaign.filter({ brand_id: brandProfile.id })
-      ]);
-      
-      setDeliveries(deliveriesData);
-      
-      const campaignsMap = {};
-      campaignsData.forEach(c => { campaignsMap[c.id] = c; });
-      setCampaigns(campaignsMap);
-
-      const creatorIds = [...new Set(deliveriesData.map(d => d.creator_id))];
-      const creatorsData = await Promise.all(creatorIds.map(id =>
-        base44.entities.Creator.filter({ id })
-      ));
-      const creatorsMap = {};
-      creatorsData.flat().forEach(c => { creatorsMap[c.id] = c; });
-      setCreators(creatorsMap);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const processing = approveMutation.isPending || contestMutation.isPending;
 
   const handleApprove = async () => {
     if (!selectedDelivery) return;
-    setProcessing(true);
-    
     try {
-      const response = await base44.functions.invoke('approveDelivery', {
-        delivery_id: selectedDelivery.id
-      });
-
-      if (!response.data?.success) {
-        toast.error(response.data?.error || 'Erro ao aprovar entrega');
-        return;
-      }
-
+      await approveMutation.mutateAsync(selectedDelivery.id);
       toast.success('Entrega aprovada com sucesso!');
-      await loadData();
       setSelectedDelivery(null);
     } catch (error) {
-      console.error('Error approving delivery:', error);
-      toast.error('Erro ao aprovar entrega.');
-    } finally {
-      setProcessing(false);
+      toast.error(error.message || 'Erro ao aprovar entrega.');
     }
   };
 
   const handleContest = async () => {
     if (!selectedDelivery || !contestReason) return;
-    setProcessing(true);
-    
     try {
-      const response = await base44.functions.invoke('contestDelivery', {
-        delivery_id: selectedDelivery.id,
-        reason: contestReason
-      });
-
-      if (!response.data?.success) {
-        toast.error(response.data?.error || 'Erro ao contestar entrega');
-        return;
-      }
-
+      await contestMutation.mutateAsync({ deliveryId: selectedDelivery.id, reason: contestReason });
       toast.success('Entrega contestada. Disputa aberta.');
-      await loadData();
       setSelectedDelivery(null);
       setContestReason('');
     } catch (error) {
-      console.error('Error contesting delivery:', error);
-    } finally {
-      setProcessing(false);
+      toast.error(error.message || 'Erro ao contestar entrega.');
     }
   };
 
@@ -163,7 +104,7 @@ export default function DeliveriesManager() {
     return matchesSearch && matchesStatus;
   });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

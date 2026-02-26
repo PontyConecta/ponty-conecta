@@ -35,10 +35,8 @@ import {
   Target
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { validateTransition } from '../components/utils/stateTransitions';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
-import { arrayToMap } from '../components/utils/entityHelpers';
 import { formatDate } from '../components/utils/formatters';
 import { usePagination } from '../components/hooks/usePagination';
 import StatusBadge from '../components/common/StatusBadge';
@@ -46,144 +44,61 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
 import Pagination from '../components/common/Pagination';
 import { useAuth } from '../components/contexts/AuthContext';
+import { useApplicationsQuery, useAcceptApplicationMutation, useRejectApplicationMutation, useWithdrawApplicationMutation } from '../components/hooks/useEntityQuery';
 
 export default function Applications() {
   const { user, profile: authProfile, profileType: authProfileType } = useAuth();
-  const [profile, setProfile] = useState(null);
-  const [profileType, setProfileType] = useState(null);
-  const [applications, setApplications] = useState([]);
-  const [campaigns, setCampaigns] = useState({});
-  const [creators, setCreators] = useState({});
-  const [brands, setBrands] = useState({});
-  const [loading, setLoading] = useState(true);
+  const profileType = authProfileType;
+  const profile = authProfile;
+
+  const { data, isLoading } = useApplicationsQuery(profileType, profile?.id);
+  const applications = data?.applications || [];
+  const campaigns = data?.campaigns || {};
+  const creators = data?.creators || {};
+  const brands = data?.brands || {};
+
+  const acceptMutation = useAcceptApplicationMutation();
+  const rejectMutation = useRejectApplicationMutation();
+  const withdrawMutation = useWithdrawApplicationMutation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('pending');
   const [filterCampaign, setFilterCampaign] = useState('all');
   const [selectedApplication, setSelectedApplication] = useState(null);
-  const [processing, setProcessing] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [agreedRate, setAgreedRate] = useState('');
   
   const pagination = usePagination(20);
-
-  useEffect(() => {
-    if (authProfile && authProfileType) {
-      setProfile(authProfile);
-      setProfileType(authProfileType);
-      loadPageData(authProfile, authProfileType);
-    }
-  }, [authProfile, authProfileType]);
-
-  const loadData = () => loadPageData(profile, profileType);
-
-  const loadPageData = async (p, pt) => {
-    if (!p || !pt) return;
-    try {
-      if (pt === 'brand') {
-        await loadBrandApplications(p);
-      } else {
-        await loadCreatorApplications(p);
-      }
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadBrandApplications = async (brand) => {
-    const [applicationsData, campaignsData] = await Promise.all([
-      base44.entities.Application.filter({ brand_id: brand.id }, '-created_date'),
-      base44.entities.Campaign.filter({ brand_id: brand.id })
-    ]);
-    
-    setApplications(applicationsData);
-    setCampaigns(arrayToMap(campaignsData));
-
-    const creatorIds = [...new Set(applicationsData.map(a => a.creator_id))];
-    if (creatorIds.length > 0) {
-      const creatorsData = await Promise.all(creatorIds.map(id => base44.entities.Creator.filter({ id })));
-      setCreators(arrayToMap(creatorsData.flat()));
-    }
-  };
-
-  const loadCreatorApplications = async (creator) => {
-    const applicationsData = await base44.entities.Application.filter(
-      { creator_id: creator.id }, 
-      '-created_date'
-    );
-    setApplications(applicationsData);
-
-    const campaignIds = [...new Set(applicationsData.map(a => a.campaign_id))];
-    const brandIds = [...new Set(applicationsData.map(a => a.brand_id))];
-    
-    const [campaignsData, brandsData] = await Promise.all([
-      campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
-      brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
-    ]);
-    
-    setCampaigns(arrayToMap(campaignsData.flat()));
-    setBrands(arrayToMap(brandsData.flat()));
-  };
+  const processing = acceptMutation.isPending || rejectMutation.isPending;
 
   const handleAccept = async () => {
     if (!selectedApplication) return;
-    setProcessing(true);
-    
     try {
-      const response = await base44.functions.invoke('acceptApplication', {
-        application_id: selectedApplication.id,
-        agreed_rate: agreedRate ? parseFloat(agreedRate) : null
-      });
-
-      if (!response.data?.success) {
-        toast.error(response.data?.error || 'Erro ao aceitar candidatura');
-        return;
-      }
-
+      await acceptMutation.mutateAsync({ applicationId: selectedApplication.id, agreedRate });
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       toast.success('Match! Candidatura aceita com sucesso 🎉');
-
-      await loadData();
       setSelectedApplication(null);
       setAgreedRate('');
     } catch (error) {
-      console.error('Error accepting application:', error);
-      toast.error('Erro ao aceitar candidatura. Tente novamente.');
-    } finally {
-      setProcessing(false);
+      toast.error(error.message || 'Erro ao aceitar candidatura.');
     }
   };
 
   const handleReject = async () => {
     if (!selectedApplication) return;
-    setProcessing(true);
-    
     try {
-      await base44.entities.Application.update(selectedApplication.id, {
-        status: 'rejected',
-        rejected_at: new Date().toISOString(),
-        rejection_reason: rejectionReason
-      });
-
-      await loadData();
+      await rejectMutation.mutateAsync({ applicationId: selectedApplication.id, rejectionReason });
       setSelectedApplication(null);
       setRejectionReason('');
     } catch (error) {
       console.error('Error rejecting application:', error);
-    } finally {
-      setProcessing(false);
     }
   };
 
   const handleWithdraw = async (applicationId) => {
     if (!window.confirm('Tem certeza que deseja cancelar esta candidatura?')) return;
-    
     try {
-      await base44.entities.Application.update(applicationId, {
-        status: 'withdrawn'
-      });
-      await loadData();
+      await withdrawMutation.mutateAsync(applicationId);
     } catch (error) {
       console.error('Error withdrawing application:', error);
     }
@@ -228,7 +143,7 @@ export default function Applications() {
     pagination.reset();
   }, [searchTerm, filterStatus, filterCampaign]);
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 

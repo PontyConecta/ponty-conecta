@@ -36,104 +36,48 @@ import {
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
+import { useApplicationsQuery, useAcceptApplicationMutation, useRejectApplicationMutation } from '../components/hooks/useEntityQuery';
 
 export default function ApplicationsManager() {
   const { user, profile: authProfile, profileType } = useAuth();
-  const [brand, setBrand] = useState(null);
-  const [applications, setApplications] = useState([]);
-  const [campaigns, setCampaigns] = useState({});
-  const [creators, setCreators] = useState({});
-  const [loading, setLoading] = useState(true);
+
+  const { data, isLoading } = useApplicationsQuery('brand', authProfile?.id);
+  const applications = data?.applications || [];
+  const campaigns = data?.campaigns || {};
+  const creators = data?.creators || {};
+
+  const acceptMutation = useAcceptApplicationMutation();
+  const rejectMutation = useRejectApplicationMutation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('pending');
   const [filterCampaign, setFilterCampaign] = useState('all');
   const [selectedApplication, setSelectedApplication] = useState(null);
-  const [processing, setProcessing] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [agreedRate, setAgreedRate] = useState('');
 
-  useEffect(() => {
-    if (authProfile && profileType === 'brand') {
-      setBrand(authProfile);
-      loadPageData(authProfile);
-    }
-  }, [authProfile, profileType]);
-
-  const loadData = () => loadPageData(brand);
-
-  const loadPageData = async (brandProfile) => {
-    if (!brandProfile) return;
-    try {
-      const [applicationsData, campaignsData] = await Promise.all([
-        base44.entities.Application.filter({ brand_id: brandProfile.id }, '-created_date'),
-        base44.entities.Campaign.filter({ brand_id: brandProfile.id })
-      ]);
-      
-      setApplications(applicationsData);
-      
-      const campaignsMap = {};
-      campaignsData.forEach(c => { campaignsMap[c.id] = c; });
-      setCampaigns(campaignsMap);
-
-      const creatorIds = [...new Set(applicationsData.map(a => a.creator_id))];
-      const creatorsData = await Promise.all(creatorIds.map(id =>
-        base44.entities.Creator.filter({ id })
-      ));
-      const creatorsMap = {};
-      creatorsData.flat().forEach(c => { creatorsMap[c.id] = c; });
-      setCreators(creatorsMap);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const processing = acceptMutation.isPending || rejectMutation.isPending;
 
   const handleAccept = async () => {
     if (!selectedApplication) return;
-    setProcessing(true);
-    
     try {
-      const response = await base44.functions.invoke('acceptApplication', {
-        application_id: selectedApplication.id,
-        agreed_rate: agreedRate ? parseFloat(agreedRate) : null
-      });
-
-      if (!response.data?.success) {
-        toast.error(response.data?.error || 'Erro ao aceitar candidatura');
-        return;
-      }
-
+      await acceptMutation.mutateAsync({ applicationId: selectedApplication.id, agreedRate });
       toast.success('Candidatura aceita com sucesso!');
-      await loadData();
       setSelectedApplication(null);
       setAgreedRate('');
     } catch (error) {
-      console.error('Error accepting application:', error);
-      toast.error('Erro ao aceitar candidatura.');
-    } finally {
-      setProcessing(false);
+      toast.error(error.message || 'Erro ao aceitar candidatura.');
     }
   };
 
   const handleReject = async () => {
     if (!selectedApplication) return;
-    setProcessing(true);
-    
     try {
-      await base44.entities.Application.update(selectedApplication.id, {
-        status: 'rejected',
-        rejected_at: new Date().toISOString(),
-        rejection_reason: rejectionReason
-      });
-
-      await loadData();
+      await rejectMutation.mutateAsync({ applicationId: selectedApplication.id, rejectionReason });
       setSelectedApplication(null);
       setRejectionReason('');
     } catch (error) {
       console.error('Error rejecting application:', error);
-    } finally {
-      setProcessing(false);
     }
   };
 
@@ -166,7 +110,7 @@ export default function ApplicationsManager() {
     return matchesSearch && matchesStatus && matchesCampaign;
   });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
