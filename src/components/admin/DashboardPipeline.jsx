@@ -81,8 +81,8 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
 
       {/* Funnel */}
       {funnelData && funnelData.length > 0 && (
-        <Card className="bg-card border">
-          <CardContent className="p-5">
+        <Card className="bg-card border shadow-sm">
+          <CardContent className="p-4 sm:p-5">
             <h3 className="text-sm font-semibold mb-4 text-foreground">Funil de Conversão</h3>
             <div className="space-y-0">
               {funnelData.map((item, i) => {

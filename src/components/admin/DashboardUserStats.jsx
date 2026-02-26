@@ -71,9 +71,9 @@ export default function DashboardUserStats({ analytics }) {
                         <stop offset="95%" stopColor="#fb923c" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                    <YAxis tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend wrapperStyle={{ fontSize: '11px' }} />
                     <Area type="monotone" dataKey="marcas_total" name="Marcas" stroke="#818cf8" fill="url(#ugBrands)" strokeWidth={2} />
@@ -81,9 +81,9 @@ export default function DashboardUserStats({ analytics }) {
                   </AreaChart>
                 ) : (
                   <BarChart data={userGrowthData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                    <YAxis tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend wrapperStyle={{ fontSize: '11px' }} />
                     <Bar dataKey="novos_marcas" name="Novas Marcas" fill="#818cf8" radius={[4, 4, 0, 0]} />
@@ -152,9 +152,9 @@ export default function DashboardUserStats({ analytics }) {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stateDist} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                    <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                    <YAxis dataKey="name" type="category" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} width={35} />
-                    <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '11px' }} />
+                    <XAxis type="number" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis dataKey="name" type="category" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} width={35} />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '11px' }} />
                     <Bar dataKey="value" name="Usuários" fill="#818cf8" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -169,10 +169,10 @@ export default function DashboardUserStats({ analytics }) {
               <div className="h-52">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={sizeDist}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                    <YAxis tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                    <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '11px' }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '11px' }} />
                     <Bar dataKey="value" name="Creators" fill="#fb923c" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
