@@ -147,22 +147,16 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
             </div>
           </div>
 
-          {/* Role Management */}
+          {/* Role Info */}
           <SectionCard icon={Shield} label="Papel do Usuário">
             <div className="flex items-center gap-3">
-              <Select value={newRole} onValueChange={setNewRole}>
-                <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">Usuário</SelectItem>
-                  <SelectItem value="admin">Administrador</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={handleSaveRole} disabled={actionLoading || newRole === user.role} className="bg-primary hover:bg-primary/90 text-primary-foreground" size="sm">
-                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
-              </Button>
+              <Badge className={user.role === 'admin' ? 'bg-red-100 text-red-700 border-0' : 'bg-slate-100 text-slate-700 border-0'}>
+                {user.role === 'admin' ? 'Administrador' : 'Usuário'}
+              </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Promover a admin dá acesso completo ao painel administrativo.
+              Para promover ou remover admin, acesse o <strong>Painel Base44</strong> → Dashboard → Usuários e altere o role diretamente. 
+              A plataforma restringe essa alteração via app por segurança.
             </p>
           </SectionCard>
 
