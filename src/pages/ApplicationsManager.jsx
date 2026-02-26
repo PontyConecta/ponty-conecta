@@ -34,6 +34,7 @@ import {
   Eye
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function ApplicationsManager() {
   const [user, setUser] = useState(null);
@@ -95,36 +96,23 @@ export default function ApplicationsManager() {
     setProcessing(true);
     
     try {
-      const campaign = campaigns[selectedApplication.campaign_id];
-      const rate = agreedRate ? parseFloat(agreedRate) : selectedApplication.proposed_rate;
-
-      // Update application
-      await base44.entities.Application.update(selectedApplication.id, {
-        status: 'accepted',
-        accepted_at: new Date().toISOString(),
-        agreed_rate: rate
-      });
-
-      // Update campaign slots
-      await base44.entities.Campaign.update(campaign.id, {
-        slots_filled: (campaign.slots_filled || 0) + 1
-      });
-
-      // Create delivery record
-      await base44.entities.Delivery.create({
+      const response = await base44.functions.invoke('acceptApplication', {
         application_id: selectedApplication.id,
-        campaign_id: campaign.id,
-        creator_id: selectedApplication.creator_id,
-        brand_id: brand.id,
-        status: 'pending',
-        deadline: campaign.deadline
+        agreed_rate: agreedRate ? parseFloat(agreedRate) : null
       });
 
+      if (!response.data?.success) {
+        toast.error(response.data?.error || 'Erro ao aceitar candidatura');
+        return;
+      }
+
+      toast.success('Candidatura aceita com sucesso!');
       await loadData();
       setSelectedApplication(null);
       setAgreedRate('');
     } catch (error) {
       console.error('Error accepting application:', error);
+      toast.error('Erro ao aceitar candidatura.');
     } finally {
       setProcessing(false);
     }

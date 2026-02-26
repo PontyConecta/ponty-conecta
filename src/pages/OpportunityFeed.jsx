@@ -152,19 +152,18 @@ export default function OpportunityFeed() {
     
     setApplying(true);
     try {
-      await base44.entities.Application.create({
+      const response = await base44.functions.invoke('applyToCampaign', {
         campaign_id: selectedCampaign.id,
-        creator_id: creator.id,
-        brand_id: selectedCampaign.brand_id,
         message: applicationMessage,
-        proposed_rate: proposedRate ? parseFloat(proposedRate) : null,
-        status: 'pending'
+        proposed_rate: proposedRate ? parseFloat(proposedRate) : null
       });
 
-      await base44.entities.Campaign.update(selectedCampaign.id, {
-        total_applications: (selectedCampaign.total_applications || 0) + 1
-      });
+      if (!response.data?.success) {
+        toast.error(response.data?.error || 'Erro ao candidatar-se');
+        return;
+      }
 
+      toast.success('Candidatura enviada com sucesso!');
       await loadData();
       setSelectedCampaign(null);
       setApplicationMessage('');
@@ -172,6 +171,7 @@ export default function OpportunityFeed() {
       setViewingDetails(false);
     } catch (error) {
       console.error('Error applying:', error);
+      toast.error('Erro ao candidatar-se. Tente novamente.');
     } finally {
       setApplying(false);
     }

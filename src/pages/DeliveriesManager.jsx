@@ -35,6 +35,7 @@ import {
   Flag
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function DeliveriesManager() {
   const [user, setUser] = useState(null);
@@ -94,30 +95,21 @@ export default function DeliveriesManager() {
     setProcessing(true);
     
     try {
-      await base44.entities.Delivery.update(selectedDelivery.id, {
-        status: 'approved',
-        approved_at: new Date().toISOString(),
-        reviewed_at: new Date().toISOString(),
-        on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true
+      const response = await base44.functions.invoke('approveDelivery', {
+        delivery_id: selectedDelivery.id
       });
 
-      // Update application status
-      await base44.entities.Application.update(selectedDelivery.application_id, {
-        status: 'completed'
-      });
-
-      // Update creator stats
-      const creator = creators[selectedDelivery.creator_id];
-      if (creator) {
-        await base44.entities.Creator.update(creator.id, {
-          completed_campaigns: (creator.completed_campaigns || 0) + 1
-        });
+      if (!response.data?.success) {
+        toast.error(response.data?.error || 'Erro ao aprovar entrega');
+        return;
       }
 
+      toast.success('Entrega aprovada com sucesso!');
       await loadData();
       setSelectedDelivery(null);
     } catch (error) {
       console.error('Error approving delivery:', error);
+      toast.error('Erro ao aprovar entrega.');
     } finally {
       setProcessing(false);
     }

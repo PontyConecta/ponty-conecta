@@ -135,43 +135,19 @@ export default function Applications() {
 
   const handleAccept = async () => {
     if (!selectedApplication) return;
-    
-    const campaign = campaigns[selectedApplication.campaign_id];
-    
-    // Valida transição de estado
-    const validation = validateTransition('application', selectedApplication, 'accepted', { campaign });
-    if (!validation.valid) {
-      toast.error(validation.error || validation.errors?.[0]);
-      return;
-    }
-
     setProcessing(true);
     
     try {
-      const currentSlotsFilled = campaign.slots_filled || 0;
-
-      const rate = agreedRate ? parseFloat(agreedRate) : selectedApplication.proposed_rate;
-
-      await base44.entities.Application.update(selectedApplication.id, {
-        status: 'accepted',
-        accepted_at: new Date().toISOString(),
-        agreed_rate: rate
-      });
-
-      await base44.entities.Campaign.update(campaign.id, {
-        slots_filled: currentSlotsFilled + 1
-      });
-
-      await base44.entities.Delivery.create({
+      const response = await base44.functions.invoke('acceptApplication', {
         application_id: selectedApplication.id,
-        campaign_id: campaign.id,
-        creator_id: selectedApplication.creator_id,
-        brand_id: profile.id,
-        status: 'pending',
-        deadline: campaign.deadline
+        agreed_rate: agreedRate ? parseFloat(agreedRate) : null
       });
 
-      // Confetti celebration on match!
+      if (!response.data?.success) {
+        toast.error(response.data?.error || 'Erro ao aceitar candidatura');
+        return;
+      }
+
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       toast.success('Match! Candidatura aceita com sucesso 🎉');
 
@@ -180,7 +156,7 @@ export default function Applications() {
       setAgreedRate('');
     } catch (error) {
       console.error('Error accepting application:', error);
-      alert('Erro ao aceitar candidatura. Tente novamente.');
+      toast.error('Erro ao aceitar candidatura. Tente novamente.');
     } finally {
       setProcessing(false);
     }

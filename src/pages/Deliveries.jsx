@@ -175,39 +175,24 @@ export default function Deliveries() {
   // Brand actions
   const handleApprove = async () => {
     if (!selectedDelivery) return;
-
-    // Valida transição
-    const validation = validateTransition('delivery', selectedDelivery, 'approved');
-    if (!validation.valid) {
-      toast.error(validation.error || validation.errors?.[0]);
-      return;
-    }
-
     setProcessing(true);
     
     try {
-      await base44.entities.Delivery.update(selectedDelivery.id, {
-        status: 'approved',
-        approved_at: new Date().toISOString(),
-        reviewed_at: new Date().toISOString(),
-        on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true
+      const response = await base44.functions.invoke('approveDelivery', {
+        delivery_id: selectedDelivery.id
       });
 
-      await base44.entities.Application.update(selectedDelivery.application_id, {
-        status: 'completed'
-      });
-
-      const creator = creators[selectedDelivery.creator_id];
-      if (creator) {
-        await base44.entities.Creator.update(creator.id, {
-          completed_campaigns: (creator.completed_campaigns || 0) + 1
-        });
+      if (!response.data?.success) {
+        toast.error(response.data?.error || 'Erro ao aprovar entrega');
+        return;
       }
 
+      toast.success('Entrega aprovada com sucesso!');
       await loadData();
       setSelectedDelivery(null);
     } catch (error) {
       console.error('Error approving delivery:', error);
+      toast.error('Erro ao aprovar entrega.');
     } finally {
       setProcessing(false);
     }
