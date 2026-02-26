@@ -44,7 +44,7 @@ export default function NotificationDropdown({ triggerClassName }) {
           notificationsList.push({
             id: `app-${app.id}`, type: 'application', title: 'Nova Candidatura',
             message: `Um criador se candidatou para sua campanha`, icon: MessageSquare,
-            color: 'text-blue-600', timestamp: app.created_date, read: false,
+            color: 'text-primary', timestamp: app.created_date, read: false,
             actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
           });
         });
@@ -53,7 +53,7 @@ export default function NotificationDropdown({ triggerClassName }) {
           notificationsList.push({
             id: `delivery-${del.id}`, type: 'delivery', title: 'Entrega Pendente',
             message: `Criador enviou conteúdo para revisão`, icon: CheckCircle2,
-            color: 'text-green-600', timestamp: del.submitted_at, read: false,
+            color: 'text-primary', timestamp: del.submitted_at, read: false,
             actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
           });
         });
@@ -65,7 +65,7 @@ export default function NotificationDropdown({ triggerClassName }) {
               notificationsList.push({
                 id: `campaign-${camp.id}`, type: 'campaign', title: 'Campanha Próxima do Prazo',
                 message: `${camp.title} vence em ${daysLeft} dias`, icon: Clock,
-                color: 'text-orange-600', timestamp: camp.created_date, read: false,
+                color: 'text-destructive', timestamp: camp.created_date, read: false,
                 actionUrl: createPageUrl('CampaignManager'), relatedEntityId: camp.id
               });
             }
@@ -89,7 +89,7 @@ export default function NotificationDropdown({ triggerClassName }) {
           notificationsList.push({
             id: `opp-${opp.id}`, type: 'opportunity', title: 'Nova Oportunidade',
             message: `${brand?.company_name || 'Uma marca'} lançou uma nova campanha`, icon: Megaphone,
-            color: 'text-purple-600', timestamp: opp.created_date, read: false,
+            color: 'text-primary', timestamp: opp.created_date, read: false,
             actionUrl: createPageUrl('OpportunityFeed'), relatedEntityId: opp.id
           });
         });
@@ -98,7 +98,7 @@ export default function NotificationDropdown({ triggerClassName }) {
           notificationsList.push({
             id: `app-accepted-${app.id}`, type: 'application_accepted', title: 'Candidatura Aceita! 🎉',
             message: `Sua candidatura foi aceita para uma campanha`, icon: CheckCircle2,
-            color: 'text-green-600', timestamp: app.accepted_at || app.created_date, read: false,
+            color: 'text-primary', timestamp: app.accepted_at || app.created_date, read: false,
             actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
           });
         });
@@ -107,7 +107,7 @@ export default function NotificationDropdown({ triggerClassName }) {
           notificationsList.push({
             id: `delivery-approved-${del.id}`, type: 'delivery_approved', title: 'Entrega Aprovada',
             message: `Sua entrega foi aprovada pela marca`, icon: CheckCircle2,
-            color: 'text-green-600', timestamp: del.approved_at || del.created_date, read: false,
+            color: 'text-primary', timestamp: del.approved_at || del.created_date, read: false,
             actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
           });
         });
@@ -116,7 +116,7 @@ export default function NotificationDropdown({ triggerClassName }) {
           notificationsList.push({
             id: `delivery-contested-${del.id}`, type: 'delivery_contested', title: 'Entrega Contestada',
             message: `A marca contestou sua entrega. Revise os comentários.`, icon: AlertCircle,
-            color: 'text-red-600', timestamp: del.contested_at || del.created_date, read: false,
+            color: 'text-destructive', timestamp: del.contested_at || del.created_date, read: false,
             actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
           });
         });
