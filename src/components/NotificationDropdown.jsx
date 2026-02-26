@@ -217,7 +217,7 @@ export default function NotificationDropdown({ triggerClassName }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full">
+        <Button variant="ghost" size="icon" className="relative h-11 w-11 min-h-[44px] min-w-[44px] rounded-full">
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#9038fa] rounded-full ring-2 ring-card"></span>
