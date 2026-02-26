@@ -8,15 +8,15 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg shadow-lg p-3 text-xs border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-      <p className="font-semibold mb-1.5" style={{ color: 'var(--text-primary)' }}>{label}</p>
+    <div className="rounded-lg shadow-lg p-3 text-xs border bg-card border-border">
+      <p className="font-semibold mb-1.5 text-foreground">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-4">
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span style={{ color: 'var(--text-secondary)' }}>{entry.name}</span>
+            <span className="text-muted-foreground">{entry.name}</span>
           </span>
-          <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>R$ {entry.value?.toLocaleString('pt-BR')}</span>
+          <span className="font-semibold text-foreground">R$ {entry.value?.toLocaleString('pt-BR')}</span>
         </div>
       ))}
     </div>
@@ -31,10 +31,10 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
   const showSegmented = profileFilter === 'all';
 
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+    <Card className="bg-card border shadow-sm">
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Receita Mensal (MRR)</h3>
+          <h3 className="text-sm font-semibold text-foreground">Receita Mensal (MRR)</h3>
           <div className="flex gap-1">
             <Button variant={chartType === 'area' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${chartType === 'area' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setChartType('area')}>Área</Button>
             <Button variant={chartType === 'bar' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${chartType === 'bar' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setChartType('bar')}>Barra</Button>
@@ -58,9 +58,9 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
                     <stop offset="95%" stopColor="#fb923c" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                <YAxis tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} tickFormatter={v => `R$${v}`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={v => `R$${v}`} />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
                 {showSegmented ? (
@@ -74,9 +74,9 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
               </AreaChart>
             ) : (
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                <YAxis tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} tickFormatter={v => `R$${v}`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={v => `R$${v}`} />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
                 {showSegmented ? (
