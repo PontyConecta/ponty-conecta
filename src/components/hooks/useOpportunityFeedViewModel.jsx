@@ -126,7 +126,7 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
     filterRemuneration, setFilterRemuneration,
     // Dialog
     selectedCampaign,
-    viewingDetails,
+    viewingDetails, setViewingDetails,
     applicationMessage, setApplicationMessage,
     proposedRate, setProposedRate,
     showPaywall, setShowPaywall,
