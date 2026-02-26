@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -24,63 +25,48 @@ import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
 import StatCard from '@/components/dashboard/StatCard';
 import StatusBadge from '@/components/common/StatusBadge';
-
+import { useBrandDashboardQuery } from '@/components/hooks/useEntityQuery';
 
 export default function BrandDashboard() {
   const { user, profile: authProfile, profileType } = useAuth();
-  const [brand, setBrand] = useState(null);
-  const [campaigns, setCampaigns] = useState([]);
-  const [applications, setApplications] = useState([]);
-  const [deliveries, setDeliveries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
-  const [campaignsMap, setCampaignsMap] = useState({});
+  const queryClient = useQueryClient();
+  const brand = authProfile;
+  const profileValidation = authProfile ? validateBrandProfile(authProfile) : { isComplete: true, missingFields: [] };
 
-  useEffect(() => {
-    if (authProfile && profileType === 'brand') {
-      setBrand(authProfile);
-      setProfileValidation(validateBrandProfile(authProfile));
-      loadPageData(authProfile);
-    }
-  }, [authProfile, profileType]);
+  const { data, isLoading } = useBrandDashboardQuery(brand?.id);
+  const campaigns = data?.campaigns || [];
+  const applications = data?.applications || [];
+  const deliveries = data?.deliveries || [];
+  const campaignsMap = data?.campaignsMap || {};
 
+  // Realtime: invalidate scoped keys only
   useEffect(() => {
     if (!brand?.id) return;
+    const brandId = brand.id;
     const unsubs = [
       base44.entities.Campaign.subscribe((event) => {
-        if (event.data?.brand_id === brand.id || event.type === 'delete') loadPageData(brand);
+        if (event.data?.brand_id === brandId || event.type === 'delete') {
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'brand', brandId] });
+          queryClient.invalidateQueries({ queryKey: ['deliveries', 'brand', brandId] });
+        }
       }),
       base44.entities.Application.subscribe((event) => {
-        if (event.data?.brand_id === brand.id || event.type === 'delete') loadPageData(brand);
+        if (event.data?.brand_id === brandId || event.type === 'delete') {
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'brand', brandId] });
+          queryClient.invalidateQueries({ queryKey: ['applications', 'brand', brandId] });
+        }
       }),
       base44.entities.Delivery.subscribe((event) => {
-        if (event.data?.brand_id === brand.id || event.type === 'delete') loadPageData(brand);
+        if (event.data?.brand_id === brandId || event.type === 'delete') {
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'brand', brandId] });
+          queryClient.invalidateQueries({ queryKey: ['deliveries', 'brand', brandId] });
+        }
       })
     ];
     return () => unsubs.forEach(u => u());
-  }, [brand?.id]);
+  }, [brand?.id, queryClient]);
 
-  const loadPageData = async (brandProfile) => {
-    try {
-      const [campaignsData, allApplicationsData, allDeliveriesData] = await Promise.all([
-        base44.entities.Campaign.filter({ brand_id: brandProfile.id }, '-created_date'),
-        base44.entities.Application.filter({ brand_id: brandProfile.id }, '-created_date'),
-        base44.entities.Delivery.filter({ brand_id: brandProfile.id }, '-created_date')
-      ]);
-      setCampaigns(campaignsData);
-      setApplications(allApplicationsData);
-      setDeliveries(allDeliveriesData);
-      const cMap = {};
-      campaignsData.forEach(c => { cMap[c.id] = c; });
-      setCampaignsMap(cMap);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

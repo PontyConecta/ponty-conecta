@@ -27,76 +27,45 @@ import StatusBadge from '@/components/common/StatusBadge';
 
 export default function CreatorDashboard() {
   const { user, profile: authProfile, profileType } = useAuth();
-  const [creator, setCreator] = useState(null);
-  const [applications, setApplications] = useState([]);
-  const [deliveries, setDeliveries] = useState([]);
-  const [reputation, setReputation] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
-  const [campaignsMap, setCampaignsMap] = useState({});
-  const [brandsMap, setBrandsMap] = useState({});
+  const queryClient = useQueryClient();
+  const creator = authProfile;
+  const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
 
-  useEffect(() => {
-    if (authProfile && profileType === 'creator') {
-      setCreator(authProfile);
-      setProfileValidation(validateCreatorProfile(authProfile));
-      loadPageData(authProfile);
-    }
-  }, [authProfile, profileType]);
+  const { data, isLoading } = useCreatorDashboardQuery(creator?.id, user?.id);
+  const applications = data?.applications || [];
+  const deliveries = data?.deliveries || [];
+  const campaignsMap = data?.campaignsMap || {};
+  const brandsMap = data?.brandsMap || {};
+  const reputation = data?.reputation || null;
 
+  // Realtime: invalidate scoped keys only
   useEffect(() => {
     if (!creator?.id) return;
+    const creatorId = creator.id;
+    const userId = user?.id;
     const unsubs = [
       base44.entities.Application.subscribe((event) => {
-        if (event.data?.creator_id === creator.id || event.type === 'delete') loadPageData(creator);
+        if (event.data?.creator_id === creatorId || event.type === 'delete') {
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'creator', creatorId] });
+          queryClient.invalidateQueries({ queryKey: ['applications', 'creator', creatorId] });
+        }
       }),
       base44.entities.Delivery.subscribe((event) => {
-        if (event.data?.creator_id === creator.id || event.type === 'delete') loadPageData(creator);
+        if (event.data?.creator_id === creatorId || event.type === 'delete') {
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'creator', creatorId] });
+          queryClient.invalidateQueries({ queryKey: ['deliveries', 'creator', creatorId] });
+        }
       }),
       base44.entities.Reputation.subscribe((event) => {
-        if (event.data?.user_id === user?.id) loadPageData(creator);
+        if (event.data?.user_id === userId) {
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'creator', creatorId] });
+        }
       })
     ];
     return () => unsubs.forEach(u => u());
-  }, [creator?.id, user?.id]);
+  }, [creator?.id, user?.id, queryClient]);
 
-  const loadPageData = async (creatorProfile) => {
-    try {
-      const [applicationsData, deliveriesData, reputationData] = await Promise.all([
-        base44.entities.Application.filter({ creator_id: creatorProfile.id }, '-created_date'),
-        base44.entities.Delivery.filter({ creator_id: creatorProfile.id }, '-created_date'),
-        base44.entities.Reputation.filter({ user_id: user?.id, profile_type: 'creator' })
-      ]);
-      setApplications(applicationsData);
-      setDeliveries(deliveriesData);
-
-      const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id).filter(Boolean))];
-      const brandIds = [...new Set(deliveriesData.map(d => d.brand_id).filter(Boolean))];
-      const appCampaignIds = [...new Set(applicationsData.map(a => a.campaign_id).filter(Boolean))];
-      const allCampaignIds = [...new Set([...campaignIds, ...appCampaignIds])];
-
-      const [campaignsData, brandsData] = await Promise.all([
-        allCampaignIds.length > 0 ? Promise.all(allCampaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
-        brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
-      ]);
-      const cMap = {};
-      campaignsData.flat().forEach(c => { cMap[c.id] = c; });
-      setCampaignsMap(cMap);
-      const bMap = {};
-      brandsData.flat().forEach(b => { bMap[b.id] = b; });
-      setBrandsMap(bMap);
-
-      if (reputationData.length > 0) {
-        setReputation(reputationData[0]);
-      }
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
