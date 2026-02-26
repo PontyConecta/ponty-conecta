@@ -53,8 +53,8 @@ export default function DashboardUserStats({ analytics }) {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-foreground">Crescimento de Usuários</h3>
               <div className="flex gap-1">
-                <Button variant={growthView === 'cumulative' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${growthView === 'cumulative' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setGrowthView('cumulative')}>Acumulado</Button>
-                <Button variant={growthView === 'new' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${growthView === 'new' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setGrowthView('new')}>Novos</Button>
+                <Button variant={growthView === 'cumulative' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${growthView === 'cumulative' ? 'bg-primary text-primary-foreground' : ''}`} onClick={() => setGrowthView('cumulative')}>Acumulado</Button>
+                <Button variant={growthView === 'new' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${growthView === 'new' ? 'bg-primary text-primary-foreground' : ''}`} onClick={() => setGrowthView('new')}>Novos</Button>
               </div>
             </div>
             <div className="h-60">

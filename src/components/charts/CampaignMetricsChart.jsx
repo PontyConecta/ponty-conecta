@@ -36,7 +36,7 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold tracking-tight">Campanhas Criadas</CardTitle>
-            <span className="text-sm font-bold text-primary">{campaigns.length} total</span>
+            <span className="text-sm font-semibold text-primary">{campaigns.length} total</span>
           </div>
         </CardHeader>
         <CardContent>
@@ -49,7 +49,7 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: 'hsl(var(--card))' }}
                 />
-                <Bar dataKey="campanhas" fill="#9038fa" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="campanhas" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (

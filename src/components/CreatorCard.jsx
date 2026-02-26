@@ -82,7 +82,7 @@ export default function CreatorCard({
   return (
     <Card className="overflow-hidden hover:shadow-md transition-all duration-300 group flex flex-col h-full">
       {/* Cover Image */}
-      <div className="h-24 relative flex-shrink-0 bg-primary">
+      <div className="h-24 relative flex-shrink-0 bg-gradient-to-r from-primary/90 to-primary/60">
         {creator.cover_image_url && (
           <img 
             src={creator.cover_image_url} 

@@ -179,9 +179,9 @@ export default function DiscoverCreators() {
                   <SelectItem value="all">Todos os Tamanhos</SelectItem>
                   <SelectItem value="nano">Nano (até 10K)</SelectItem>
                   <SelectItem value="micro">Micro (10K-50K)</SelectItem>
-                  <SelectItem value="mid">Mid (50K-100K)</SelectItem>
-                  <SelectItem value="macro">Macro (100K-500K)</SelectItem>
-                  <SelectItem value="mega">Mega (500K+)</SelectItem>
+                  <SelectItem value="mid">Mid (50K-500K)</SelectItem>
+                  <SelectItem value="macro">Macro (500K-1M)</SelectItem>
+                  <SelectItem value="mega">Mega (1M+)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

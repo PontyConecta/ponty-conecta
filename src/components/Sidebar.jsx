@@ -102,12 +102,12 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
         {!isSubscribed && !isCollapsed && (
           <div className="p-4 border-t">
             <Link to={createPageUrl('Subscription')}>
-              <div className="p-4 rounded-xl text-white cursor-pointer hover:shadow-lg transition-shadow bg-[#9038fa]">
+              <div className="p-4 rounded-xl text-primary-foreground cursor-pointer hover:shadow-lg transition-shadow bg-primary">
                 <div className="flex items-center gap-2 mb-2">
                   <Crown className="w-5 h-5" />
                   <span className="font-semibold text-sm">Plano Premium</span>
                 </div>
-                <p className="text-xs text-white/90 leading-relaxed">
+                <p className="text-xs text-primary-foreground/90 leading-relaxed">
                   Desbloqueie recursos premium e crie campanhas ilimitadas
                 </p>
               </div>
@@ -119,7 +119,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link to={createPageUrl('Subscription')} className="flex justify-center">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white bg-[#9038fa]">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-primary-foreground bg-primary">
                     <Crown className="w-5 h-5" />
                   </div>
                 </Link>

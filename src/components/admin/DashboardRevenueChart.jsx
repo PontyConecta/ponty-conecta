@@ -36,8 +36,8 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-foreground">Receita Mensal (MRR)</h3>
           <div className="flex gap-1">
-            <Button variant={chartType === 'area' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${chartType === 'area' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setChartType('area')}>Área</Button>
-            <Button variant={chartType === 'bar' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${chartType === 'bar' ? 'bg-[#9038fa] text-white' : ''}`} onClick={() => setChartType('bar')}>Barra</Button>
+            <Button variant={chartType === 'area' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${chartType === 'area' ? 'bg-primary text-primary-foreground' : ''}`} onClick={() => setChartType('area')}>Área</Button>
+            <Button variant={chartType === 'bar' ? 'default' : 'ghost'} size="sm" className={`h-7 text-[10px] px-2 ${chartType === 'bar' ? 'bg-primary text-primary-foreground' : ''}`} onClick={() => setChartType('bar')}>Barra</Button>
           </div>
         </div>
         <div className="h-72">

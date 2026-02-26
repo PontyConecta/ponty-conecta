@@ -49,7 +49,7 @@ export default function CreatorMetricsChart({ applications, deliveries }) {
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', backgroundColor: 'hsl(var(--card))' }}
                 />
-                <Bar dataKey="candidaturas" fill="#9038fa" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="candidaturas" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (

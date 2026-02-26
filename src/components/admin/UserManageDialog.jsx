@@ -93,15 +93,15 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card text-foreground">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-card text-foreground p-0 sm:p-0">
+        <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="flex items-center gap-2 text-foreground">
             <Shield className="w-5 h-5 text-primary" />
             Gerenciar Usuário
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5 py-2">
+        <div className="space-y-5 px-6 pb-6">
           {/* User Header */}
           <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
             <Avatar className="w-14 h-14 flex-shrink-0">

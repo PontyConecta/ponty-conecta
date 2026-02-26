@@ -23,6 +23,7 @@ import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import FieldHint from '@/components/onboarding/FieldHint';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
+import { computeProfileSize, FOLLOWER_RANGES, formatFollowers as fmtFollowers, getProfileSizeLabel } from '@/components/utils/profileSizeUtils';
 
 const STEPS = [
   { number: 1, title: 'Identidade' },
@@ -41,12 +42,13 @@ const CONTENT_TYPES = [
   'Fotos', 'Reels', 'Stories', 'Vídeos Longos', 'Lives', 'Podcasts', 'Blogs', 'Unboxing', 'Reviews'
 ];
 
+// profile_size is now auto-calculated — PROFILE_SIZES kept only for reference
 const PROFILE_SIZES = [
   { value: 'nano', label: 'Nano (até 10K)', desc: 'Comunidade íntima e engajada' },
   { value: 'micro', label: 'Micro (10K - 50K)', desc: 'Influência de nicho' },
-  { value: 'mid', label: 'Mid (50K - 100K)', desc: 'Alcance moderado' },
-  { value: 'macro', label: 'Macro (100K - 500K)', desc: 'Grande alcance' },
-  { value: 'mega', label: 'Mega (500K+)', desc: 'Celebridade digital' },
+  { value: 'mid', label: 'Mid (50K - 500K)', desc: 'Alcance moderado' },
+  { value: 'macro', label: 'Macro (500K - 1M)', desc: 'Grande alcance' },
+  { value: 'mega', label: 'Mega (1M+)', desc: 'Celebridade digital' },
 ];
 
 const PLATFORM_OPTIONS = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads', 'Pinterest', 'Twitch'];
@@ -146,14 +148,7 @@ export default function OnboardingCreator() {
       const followers = parseInt(newPlatform.followers) || 0;
       setFormData(prev => {
         const updatedPlatforms = [...prev.platforms, { ...newPlatform, followers }];
-        // Auto-calculate profile_size from total followers
-        const totalFollowers = updatedPlatforms.reduce((sum, p) => sum + (Number(p.followers) || 0), 0);
-        let profileSize = 'nano';
-        if (totalFollowers > 500000) profileSize = 'mega';
-        else if (totalFollowers > 100000) profileSize = 'macro';
-        else if (totalFollowers > 50000) profileSize = 'mid';
-        else if (totalFollowers > 10000) profileSize = 'micro';
-        return { ...prev, platforms: updatedPlatforms, profile_size: profileSize };
+        return { ...prev, platforms: updatedPlatforms, profile_size: computeProfileSize(updatedPlatforms) };
       });
       setNewPlatform({ name: '', handle: '', followers: '' });
     }
@@ -162,13 +157,7 @@ export default function OnboardingCreator() {
   const removePlatform = (index) => {
     setFormData(prev => {
       const updatedPlatforms = prev.platforms.filter((_, i) => i !== index);
-      const totalFollowers = updatedPlatforms.reduce((sum, p) => sum + (Number(p.followers) || 0), 0);
-      let profileSize = 'nano';
-      if (totalFollowers > 500000) profileSize = 'mega';
-      else if (totalFollowers > 100000) profileSize = 'macro';
-      else if (totalFollowers > 50000) profileSize = 'mid';
-      else if (totalFollowers > 10000) profileSize = 'micro';
-      return { ...prev, platforms: updatedPlatforms, profile_size: profileSize };
+      return { ...prev, platforms: updatedPlatforms, profile_size: computeProfileSize(updatedPlatforms) };
     });
   };
 
@@ -189,6 +178,7 @@ export default function OnboardingCreator() {
       dataToSave.profile_size = formData.profile_size;
     } else if (step === 3) {
       dataToSave.platforms = formData.platforms;
+      dataToSave.profile_size = computeProfileSize(formData.platforms);
       dataToSave.portfolio_url = formData.portfolio_url;
     } else if (step === 4) {
       dataToSave.contact_email = formData.contact_email;
@@ -240,7 +230,7 @@ export default function OnboardingCreator() {
   const isStepValid = () => {
     switch (step) {
       case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state;
-      case 2: return formData.niche.length > 0 && formData.content_types.length > 0 && formData.profile_size;
+      case 2: return formData.niche.length > 0 && formData.content_types.length > 0;
       case 3: return formData.platforms.length > 0;
       case 4: return isValidEmail(formData.contact_email) && formData.contact_whatsapp?.replace(/\D/g, '').length >= 10;
       case 5: return true;
@@ -343,18 +333,13 @@ export default function OnboardingCreator() {
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-foreground">Tamanho do Perfil *</Label>
-                      <Select value={formData.profile_size} onValueChange={(v) => handleChange('profile_size', v)}>
-                        <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione seu alcance" /></SelectTrigger>
-                        <SelectContent>
-                          {PROFILE_SIZES.map(s => (
-                            <SelectItem key={s.value} value={s.value}>
-                              <span className="font-medium">{s.label}</span>
-                              <span className="text-xs ml-2 text-muted-foreground">{s.desc}</span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Label className="text-sm font-medium text-foreground">Tamanho do Perfil</Label>
+                      <p className="text-xs mt-1 text-muted-foreground">Calculado automaticamente com base na sua maior plataforma.</p>
+                      <div className="mt-2 h-12 flex items-center px-4 rounded-lg bg-muted/50 border">
+                        <Badge variant="outline" className="capitalize text-sm">
+                          {formData.profile_size ? getProfileSizeLabel(formData.profile_size) : 'Adicione plataformas no passo 3'}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -373,7 +358,7 @@ export default function OnboardingCreator() {
                                 <span className="font-medium text-foreground">{p.name}</span>
                                 <span className="ml-2 text-muted-foreground">@{p.handle}</span>
                               </div>
-                              <Badge variant="outline">{Number(p.followers) >= 1000 ? (Number(p.followers) / 1000).toFixed(1) + 'K' : p.followers} seguidores</Badge>
+                              <Badge variant="outline">{fmtFollowers(p.followers)} seguidores</Badge>
                               <Button variant="ghost" size="icon" onClick={() => removePlatform(i)} className="h-8 w-8 text-red-400 hover:text-red-500">
                                 <X className="w-4 h-4" />
                               </Button>
@@ -390,16 +375,9 @@ export default function OnboardingCreator() {
                         <Select value={newPlatform.followers} onValueChange={(v) => setNewPlatform(p => ({ ...p, followers: v }))}>
                           <SelectTrigger><SelectValue placeholder="Seguidores" /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="50">0 – 100</SelectItem>
-                            <SelectItem value="300">101 – 500</SelectItem>
-                            <SelectItem value="750">501 – 1K</SelectItem>
-                            <SelectItem value="3000">1K – 5K</SelectItem>
-                            <SelectItem value="7500">5K – 10K</SelectItem>
-                            <SelectItem value="30000">10K – 50K</SelectItem>
-                            <SelectItem value="75000">50K – 100K</SelectItem>
-                            <SelectItem value="300000">100K – 500K</SelectItem>
-                            <SelectItem value="750000">500K – 1M</SelectItem>
-                            <SelectItem value="2000000">+1M</SelectItem>
+                            {FOLLOWER_RANGES.map(r => (
+                              <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>

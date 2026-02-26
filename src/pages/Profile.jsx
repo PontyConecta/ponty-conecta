@@ -57,6 +57,7 @@ import {
 import BrazilStateSelect, { getStateLabel } from '@/components/common/BrazilStateSelect';
 import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
+import { computeProfileSize, FOLLOWER_RANGES, formatFollowers as fmtFollowers, getProfileSizeLabel } from '@/components/utils/profileSizeUtils';
 
 export default function Profile() {
   const { user, profile, profileType, refreshProfile, logout } = useAuth();
@@ -187,22 +188,19 @@ export default function Profile() {
 
   const addPlatform = () => {
     if (newPlatform.name && newPlatform.handle) {
-      setFormData(prev => ({
-        ...prev,
-        platforms: [...(prev.platforms || []), { 
-          ...newPlatform, 
-          followers: parseInt(newPlatform.followers) || 0 
-        }]
-      }));
+      setFormData(prev => {
+        const updatedPlatforms = [...(prev.platforms || []), { ...newPlatform, followers: parseInt(newPlatform.followers) || 0 }];
+        return { ...prev, platforms: updatedPlatforms, profile_size: computeProfileSize(updatedPlatforms) };
+      });
       setNewPlatform({ name: '', handle: '', followers: '' });
     }
   };
 
   const removePlatform = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      platforms: prev.platforms.filter((_, i) => i !== index)
-    }));
+    setFormData(prev => {
+      const updatedPlatforms = prev.platforms.filter((_, i) => i !== index);
+      return { ...prev, platforms: updatedPlatforms, profile_size: computeProfileSize(updatedPlatforms) };
+    });
   };
 
   const handleSave = async () => {
@@ -513,18 +511,12 @@ export default function Profile() {
 
                     <div>
                       <Label>Tamanho do Perfil</Label>
-                      <Select value={formData.profile_size} onValueChange={(v) => handleChange('profile_size', v)}>
-                        <SelectTrigger className="mt-2 h-12">
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="nano">Nano (1K-10K)</SelectItem>
-                          <SelectItem value="micro">Micro (10K-50K)</SelectItem>
-                          <SelectItem value="mid">Mid (50K-500K)</SelectItem>
-                          <SelectItem value="macro">Macro (500K-1M)</SelectItem>
-                          <SelectItem value="mega">Mega (1M+)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <p className="text-xs mt-1 text-muted-foreground">Calculado automaticamente pela maior plataforma.</p>
+                      <div className="mt-2 h-12 flex items-center px-4 rounded-lg bg-muted/50 border">
+                        <Badge variant="outline" className="capitalize text-sm">
+                          {formData.profile_size ? getProfileSizeLabel(formData.profile_size) : 'Adicione plataformas'}
+                        </Badge>
+                      </div>
                     </div>
 
                     {/* Platforms */}
@@ -537,14 +529,14 @@ export default function Profile() {
                               <span className="font-medium">{platform.name}</span>
                               <span className="ml-2 text-muted-foreground">@{platform.handle}</span>
                             </div>
-                            <Badge variant="outline">{platform.followers?.toLocaleString() || 0}</Badge>
+                            <Badge variant="outline">{fmtFollowers(platform.followers)} seg.</Badge>
                             <Button variant="ghost" size="icon" onClick={() => removePlatform(index)} className="h-8 w-8">
                               <X className="w-4 h-4" />
                             </Button>
                           </div>
                         ))}
                         
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                           <Select value={newPlatform.name} onValueChange={(v) => setNewPlatform(p => ({ ...p, name: v }))}>
                             <SelectTrigger className="h-12"><SelectValue placeholder="Plataforma" /></SelectTrigger>
                             <SelectContent>
@@ -556,12 +548,14 @@ export default function Profile() {
                             onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value.replace(/^@/, '') }))}
                             placeholder="usuario (sem @)"
                           />
-                          <Input
-                            type="number"
-                            value={newPlatform.followers}
-                            onChange={(e) => setNewPlatform(p => ({ ...p, followers: e.target.value }))}
-                            placeholder="Seguidores"
-                          />
+                          <Select value={newPlatform.followers} onValueChange={(v) => setNewPlatform(p => ({ ...p, followers: v }))}>
+                            <SelectTrigger className="h-12"><SelectValue placeholder="Seguidores" /></SelectTrigger>
+                            <SelectContent>
+                              {FOLLOWER_RANGES.map(r => (
+                                <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <Button variant="outline" onClick={addPlatform} disabled={!newPlatform.name || !newPlatform.handle} className="w-full">
                           <Plus className="w-4 h-4 mr-2" />
