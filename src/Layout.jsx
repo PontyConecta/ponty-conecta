@@ -124,9 +124,9 @@ function LayoutContent({ children, currentPageName }) {
             {/* Admin Link */}
             {isAdmin && (
               <Link to={createPageUrl('AdminDashboard')}>
-                <Button variant="ghost" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full hover:bg-[#9038fa]/10">
-                  <Shield className="w-5 h-5 text-[#9038fa]" />
-                </Button>
+                <button className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center hover:bg-[#9038fa]/10 transition-colors">
+                  <Shield className="w-5 h-5" style={{ color: '#9038fa' }} />
+                </button>
               </Link>
             )}
 

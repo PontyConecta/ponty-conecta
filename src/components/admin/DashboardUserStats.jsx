@@ -96,32 +96,32 @@ export default function DashboardUserStats({ analytics }) {
         </Card>
 
         {/* Plan Distribution */}
-        <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-          <CardContent className="p-4">
-            <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Distribuição por Plano</h3>
-            <div className="h-52">
+        <Card className="bg-card border">
+          <CardContent className="p-5">
+            <h3 className="text-sm font-semibold mb-3 text-foreground">Distribuição por Plano</h3>
+            <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={planDist}
                     cx="50%"
                     cy="50%"
-                    innerRadius={30}
-                    outerRadius={56}
+                    innerRadius={28}
+                    outerRadius={54}
                     paddingAngle={3}
                     dataKey="value"
                     label={({ name, value, cx, cy, midAngle, outerRadius: oR }) => {
                       const RADIAN = Math.PI / 180;
-                      const labelRadius = oR + 20;
-                      const x = cx + labelRadius * Math.cos(-midAngle * RADIAN);
-                      const y = cy + labelRadius * Math.sin(-midAngle * RADIAN);
+                      const r = oR + 16;
+                      const x = cx + r * Math.cos(-midAngle * RADIAN);
+                      const y = cy + r * Math.sin(-midAngle * RADIAN);
                       return (
-                        <text x={x} y={y} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" style={{ fontSize: '11px', fill: 'hsl(var(--foreground))', fontWeight: 500 }}>
+                        <text x={x} y={y} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" style={{ fontSize: '10px', fill: 'hsl(var(--foreground))', fontWeight: 600 }}>
                           {name}: {value}
                         </text>
                       );
                     }}
-                    labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 1, offset: 10 }}
+                    labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 0.8, offset: 8 }}
                   >
                     {planDist.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
@@ -130,10 +130,10 @@ export default function DashboardUserStats({ analytics }) {
               </ResponsiveContainer>
             </div>
             {/* Legends */}
-            <div className="flex flex-wrap gap-3 mt-3 justify-center">
+            <div className="flex flex-wrap gap-3 mt-2 justify-center">
               {planDist.map((p, i) => (
                 <span key={p.name} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                   {p.name} ({p.value})
                 </span>
               ))}
