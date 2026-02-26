@@ -185,11 +185,11 @@ export default function Subscription() {
           <p className="text-muted-foreground">Você tem acesso completo à plataforma</p>
         </div>
 
-        <Card className="border-emerald-200 bg-emerald-50/50">
+        <Card className="border-emerald-500/20 bg-emerald-500/5">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <Badge className="bg-emerald-100 text-emerald-700 border-0 mb-2">
+                <Badge className="bg-emerald-500/15 text-emerald-600 border-0 mb-2">
                   <CheckCircle2 className="w-3 h-3 mr-1" />
                   Ativa
                 </Badge>
@@ -243,7 +243,7 @@ export default function Subscription() {
   return (
     <div className="max-w-4xl mx-auto pb-8">
       <div className="text-center mb-8 lg:mb-12">
-        <Badge className="mb-4 bg-purple-100 text-purple-700 border-0 px-4 py-1.5">
+        <Badge className="mb-4 bg-primary/10 text-primary border-0 px-4 py-1.5">
           {isBrand ? <Building2 className="w-4 h-4 mr-2" /> : <Star className="w-4 h-4 mr-2" />}
           {isBrand ? 'Plano para Marcas' : 'Plano para Criadores'}
         </Badge>
@@ -271,13 +271,13 @@ export default function Subscription() {
               className={`
                 relative cursor-pointer transition-all h-full
                 ${selectedPlan === plan.id 
-                  ? `border-2 border-[#9038fa] shadow-lg` 
+                  ? `border-2 border-primary shadow-lg` 
                   : 'border-2 border-transparent'}
               `}
               onClick={() => setSelectedPlan(plan.id)}
             >
               {plan.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#9038fa] text-white text-xs font-medium px-3 py-1 rounded-full">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">
                   {plan.badge}
                 </div>
               )}
@@ -288,7 +288,7 @@ export default function Subscription() {
                     <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </div>
                   {plan.discount && (
-                    <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                    <Badge className="bg-emerald-500/15 text-emerald-600 border-0">
                       {plan.discount}
                     </Badge>
                   )}
@@ -297,7 +297,7 @@ export default function Subscription() {
                   <span className="text-4xl font-bold text-foreground">R$ {plan.price}</span>
                   <span className="text-muted-foreground">{plan.period}</span>
                 </div>
-                <div className={`w-full h-1 rounded-full transition-colors ${selectedPlan === plan.id ? 'bg-[#9038fa]' : 'bg-border'}`} />
+                <div className={`w-full h-1 rounded-full transition-colors ${selectedPlan === plan.id ? 'bg-primary' : 'bg-border'}`} />
               </CardContent>
             </Card>
           </motion.div>
@@ -307,7 +307,7 @@ export default function Subscription() {
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Crown className="w-5 h-5 text-[#9038fa]" />
+            <Crown className="w-5 h-5 text-primary" />
             O que está incluso
           </CardTitle>
         </CardHeader>

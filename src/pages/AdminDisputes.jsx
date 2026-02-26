@@ -571,7 +571,7 @@ export default function AdminDisputes() {
 
               {/* Resolution (only for open disputes) */}
               {(selectedDispute.status === 'open' || selectedDispute.status === 'under_review') && (
-                <Card className="border-emerald-200 bg-emerald-50/50">
+                <Card className="border-emerald-500/20 bg-emerald-500/5">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Gavel className="w-5 h-5 text-emerald-600" />
@@ -626,7 +626,7 @@ export default function AdminDisputes() {
 
               {/* Resolution Display (for resolved disputes) */}
               {selectedDispute.resolution && (
-                <Card className="border-emerald-200">
+                <Card className="border-emerald-500/20">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm text-emerald-600">Decisão Final</CardTitle>
                   </CardHeader>
