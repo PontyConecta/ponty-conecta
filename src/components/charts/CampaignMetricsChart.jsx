@@ -49,7 +49,7 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: 'hsl(var(--card))' }}
                 />
-                <Bar dataKey="campanhas" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="campanhas" fill="#9038fa" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -90,7 +90,7 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
                   <circle cx="50" cy="50" r="45" fill="none" className="stroke-border" strokeWidth="8" />
                   <circle
                     cx="50" cy="50" r="45" fill="none"
-                    stroke="hsl(var(--primary))" strokeWidth="8"
+                    stroke="#9038fa" strokeWidth="8"
                     strokeDasharray={`${acceptanceRate * 2.83} 283`}
                     strokeLinecap="round" transform="rotate(-90 50 50)"
                   />
