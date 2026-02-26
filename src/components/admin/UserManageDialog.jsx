@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { 
   Loader2, Building2, Star, Shield, CheckCircle2, Crown, 
-  Gift, AlertTriangle, Eye, Calendar, Mail, Globe, EyeOff
+  AlertTriangle, Eye, Calendar, Mail, EyeOff
 } from 'lucide-react';
 import { toast } from 'sonner';
 import UserTagManager from './UserTagManager';
@@ -36,7 +36,6 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [newRole, setNewRole] = useState(user?.role || 'user');
   const [excludeFromFinancials, setExcludeFromFinancials] = useState(user?.exclude_from_financials || false);
 
-  // Reset state when user/profile changes
   React.useEffect(() => {
     if (user && profile) {
       setNewSubscriptionStatus(profile.subscription_status || 'starter');
@@ -63,7 +62,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
       setAuditNote('');
       onActionComplete?.();
     } catch (error) {
-      console.error('Error:', error);
+      console.error('[UserManageDialog]', action, error.message);
       toast.error('Erro ao realizar ação');
     } finally {
       setActionLoading(false);
@@ -72,23 +71,13 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
 
   const handleSaveSubscription = () => {
     const data = { subscription_status: newSubscriptionStatus };
-    if (newSubscriptionStatus === 'trial') {
-      data.trial_days = trialDays;
-    }
+    if (newSubscriptionStatus === 'trial') data.trial_days = trialDays;
     handleAction('set_subscription_status', data);
   };
 
-  const handleSaveAccountState = () => {
-    handleAction('set_account_state', { account_state: newAccountState });
-  };
-
-  const handleToggleVerified = () => {
-    handleAction('toggle_verified');
-  };
-
-  const handleSaveRole = () => {
-    handleAction('set_user_role', { role: newRole });
-  };
+  const handleSaveAccountState = () => handleAction('set_account_state', { account_state: newAccountState });
+  const handleToggleVerified = () => handleAction('toggle_verified');
+  const handleSaveRole = () => handleAction('set_user_role', { role: newRole });
 
   const subscriptionBadge = (status) => {
     const configs = {
@@ -104,32 +93,32 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card text-foreground">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Shield className="w-5 h-5" style={{ color: '#9038fa' }} />
+          <DialogTitle className="flex items-center gap-2 text-foreground">
+            <Shield className="w-5 h-5 text-primary" />
             Gerenciar Usuário
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-2">
+        <div className="space-y-5 py-2">
           {/* User Header */}
-          <div className="flex items-center gap-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
-            <Avatar className="w-16 h-16">
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
+            <Avatar className="w-14 h-14 flex-shrink-0">
               <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-              <AvatarFallback className="text-lg font-bold" style={{ backgroundColor: 'rgba(144, 56, 250, 0.1)', color: '#9038fa' }}>
+              <AvatarFallback className="text-lg font-bold bg-primary/10 text-primary">
                 {user.full_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold truncate" style={{ color: 'var(--text-primary)' }}>
+              <h3 className="text-base font-semibold tracking-tight truncate text-foreground">
                 {profileType === 'brand' ? profile.company_name : profile.display_name || user.full_name || 'Sem nome'}
               </h3>
-              <div className="flex items-center gap-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                <Mail className="w-3.5 h-3.5" />
-                {user.email}
+              <div className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5">
+                <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="truncate">{user.email}</span>
               </div>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
+              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                 <Badge className={profileType === 'brand' ? 'bg-indigo-100 text-indigo-700 border-0' : 'bg-orange-100 text-orange-700 border-0'}>
                   {profileType === 'brand' ? <><Building2 className="w-3 h-3 mr-1" /> Marca</> : <><Star className="w-3 h-3 mr-1" /> Criador</>}
                 </Badge>
@@ -150,7 +139,6 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                   </Badge>
                 )}
               </div>
-              {/* Tags display */}
               {user.tags && user.tags.length > 0 && (
                 <div className="mt-2">
                   <UserTagBadges tags={user.tags} maxShow={6} />
@@ -160,74 +148,35 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
           </div>
 
           {/* Role Management */}
-          <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4" style={{ color: '#9038fa' }} />
-              <Label className="font-semibold" style={{ color: 'var(--text-primary)' }}>Papel do Usuário</Label>
-            </div>
+          <SectionCard icon={Shield} label="Papel do Usuário">
             <div className="flex items-center gap-3">
               <Select value={newRole} onValueChange={setNewRole}>
-                <SelectTrigger className="flex-1">
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="user">Usuário (padrão)</SelectItem>
                   <SelectItem value="admin">Administrador</SelectItem>
                 </SelectContent>
               </Select>
-              <Button 
-                onClick={handleSaveRole} 
-                disabled={actionLoading || newRole === user.role}
-                className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
-                size="sm"
-              >
+              <Button onClick={handleSaveRole} disabled={actionLoading || newRole === user.role} className="bg-primary hover:bg-primary/90 text-primary-foreground" size="sm">
                 {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
               </Button>
             </div>
-            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-              Administradores têm acesso ao painel admin, gerenciamento de usuários e moderação.
-            </p>
-          </div>
+            <p className="text-xs text-muted-foreground">Administradores têm acesso ao painel admin, gerenciamento de usuários e moderação.</p>
+          </SectionCard>
 
-          {/* Current Info Grid */}
+          {/* Info Grid */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-              <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Estado da Conta</p>
-              <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-                {profile.account_state === 'ready' ? '✅ Pronta' : '⏳ Incompleta'}
-              </p>
-            </div>
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-              <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Onboarding</p>
-              <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-                Passo {profile.onboarding_step || 1} de 4
-              </p>
-            </div>
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-              <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Cadastrado em</p>
-              <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-                {new Date(user.created_date).toLocaleDateString('pt-BR')}
-              </p>
-            </div>
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-              <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>Stripe ID</p>
-              <p className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>
-                {profile.stripe_customer_id || 'Nenhum'}
-              </p>
-            </div>
+            <InfoCell label="Estado da Conta" value={profile.account_state === 'ready' ? '✅ Pronta' : '⏳ Incompleta'} />
+            <InfoCell label="Onboarding" value={`Passo ${profile.onboarding_step || 1} de 4`} />
+            <InfoCell label="Cadastrado em" value={new Date(user.created_date).toLocaleDateString('pt-BR')} />
+            <InfoCell label="Stripe ID" value={profile.stripe_customer_id || 'Nenhum'} truncate />
           </div>
 
           {/* Subscription Management */}
-          <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
-            <div className="flex items-center gap-2">
-              <Crown className="w-4 h-4" style={{ color: '#9038fa' }} />
-              <Label className="font-semibold" style={{ color: 'var(--text-primary)' }}>Assinatura</Label>
-            </div>
+          <SectionCard icon={Crown} label="Assinatura">
             <div className="flex items-center gap-3">
               <Select value={newSubscriptionStatus} onValueChange={setNewSubscriptionStatus}>
-                <SelectTrigger className="flex-1">
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="starter">Starter (Gratuito)</SelectItem>
                   <SelectItem value="premium">Premium (Pago)</SelectItem>
@@ -236,103 +185,71 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                   <SelectItem value="pending">Pendente (Pagamento atrasado)</SelectItem>
                 </SelectContent>
               </Select>
-              <Button 
-                onClick={handleSaveSubscription} 
-                disabled={actionLoading || newSubscriptionStatus === profile.subscription_status}
-                className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
-                size="sm"
-              >
+              <Button onClick={handleSaveSubscription} disabled={actionLoading || newSubscriptionStatus === profile.subscription_status} className="bg-primary hover:bg-primary/90 text-primary-foreground" size="sm">
                 {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
               </Button>
             </div>
             {newSubscriptionStatus === 'trial' && (
-              <div className="flex items-center gap-3 pl-1">
-                <Label className="text-sm whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>Dias de trial:</Label>
+              <div className="flex items-center gap-3">
+                <Label className="text-sm whitespace-nowrap text-muted-foreground">Dias de trial:</Label>
                 <Select value={String(trialDays)} onValueChange={(v) => setTrialDays(Number(v))}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="7">7 dias</SelectItem>
-                    <SelectItem value="14">14 dias</SelectItem>
-                    <SelectItem value="30">30 dias</SelectItem>
-                    <SelectItem value="60">60 dias</SelectItem>
-                    <SelectItem value="90">90 dias</SelectItem>
-                    <SelectItem value="120">120 dias</SelectItem>
-                    <SelectItem value="180">180 dias</SelectItem>
-                    <SelectItem value="270">270 dias</SelectItem>
-                    <SelectItem value="365">365 dias (1 ano)</SelectItem>
+                    {[7, 14, 30, 60, 90, 120, 180, 270, 365].map(d => (
+                      <SelectItem key={d} value={String(d)}>{d} dias</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             )}
             {profile.trial_end_date && profile.subscription_status === 'trial' && (
-              <p className="text-xs flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-xs flex items-center gap-1 text-muted-foreground">
                 <Calendar className="w-3 h-3" />
                 Trial expira em: {new Date(profile.trial_end_date).toLocaleDateString('pt-BR')}
               </p>
             )}
-          </div>
+          </SectionCard>
 
-          {/* Account State Management */}
-          <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
-            <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4" style={{ color: '#9038fa' }} />
-              <Label className="font-semibold" style={{ color: 'var(--text-primary)' }}>Estado da Conta</Label>
-            </div>
+          {/* Account State */}
+          <SectionCard icon={Eye} label="Estado da Conta">
             <div className="flex items-center gap-3">
               <Select value={newAccountState} onValueChange={setNewAccountState}>
-                <SelectTrigger className="flex-1">
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="incomplete">Incompleta (precisa completar onboarding)</SelectItem>
                   <SelectItem value="ready">Pronta (perfil completo)</SelectItem>
                 </SelectContent>
               </Select>
-              <Button 
-                onClick={handleSaveAccountState} 
-                disabled={actionLoading || newAccountState === profile.account_state}
-                className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
-                size="sm"
-              >
+              <Button onClick={handleSaveAccountState} disabled={actionLoading || newAccountState === profile.account_state} className="bg-primary hover:bg-primary/90 text-primary-foreground" size="sm">
                 {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
               </Button>
             </div>
-          </div>
+          </SectionCard>
 
           {/* Verification */}
-          <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
+          <SectionCard icon={CheckCircle2} label="Verificação">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4" style={{ color: '#9038fa' }} />
-                <Label className="font-semibold" style={{ color: 'var(--text-primary)' }}>Verificação</Label>
-              </div>
-              <Button 
-                onClick={handleToggleVerified} 
-                disabled={actionLoading}
-                variant={profile.is_verified ? 'outline' : 'default'}
-                size="sm"
-                className={!profile.is_verified ? 'bg-[#9038fa] hover:bg-[#7a2de0] text-white' : ''}
-              >
+              <p className="text-xs text-muted-foreground flex-1">
+                {profile.is_verified 
+                  ? 'Este perfil está verificado e exibe o selo.' 
+                  : 'Este perfil ainda não foi verificado.'}
+              </p>
+              <Button onClick={handleToggleVerified} disabled={actionLoading} variant={profile.is_verified ? 'outline' : 'default'} size="sm"
+                className={!profile.is_verified ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}>
                 {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 
                   profile.is_verified ? 'Remover Verificação' : 'Verificar Perfil'}
               </Button>
             </div>
-            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-              {profile.is_verified 
-                ? 'Este perfil está verificado e exibe o selo de verificação.' 
-                : 'Este perfil ainda não foi verificado.'}
-            </p>
-          </div>
+          </SectionCard>
 
           {/* Exclude from Financials */}
-          <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
+          <SectionCard icon={EyeOff} label="Excluir dos Cálculos Financeiros">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <EyeOff className="w-4 h-4" style={{ color: '#9038fa' }} />
-                <Label className="font-semibold" style={{ color: 'var(--text-primary)' }}>Excluir dos Cálculos Financeiros</Label>
-              </div>
+              <p className="text-xs text-muted-foreground flex-1">
+                {excludeFromFinancials 
+                  ? 'Excluído dos cálculos de MRR, receita e métricas financeiras.' 
+                  : 'Ative para excluir das métricas financeiras (útil para contas de teste).'}
+              </p>
               <Button 
                 onClick={async () => {
                   const newVal = !excludeFromFinancials;
@@ -348,12 +265,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                   excludeFromFinancials ? 'Excluído ✓' : 'Excluir'}
               </Button>
             </div>
-            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-              {excludeFromFinancials 
-                ? 'Este usuário está sendo excluído dos cálculos de MRR, receita e métricas financeiras do Stripe.' 
-                : 'Ative para que as assinaturas deste usuário não sejam contabilizadas nas métricas financeiras (útil para contas de teste).'}
-            </p>
-          </div>
+          </SectionCard>
 
           {/* Tags */}
           <UserTagManager
@@ -364,17 +276,38 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
 
           {/* Audit Note */}
           <div className="space-y-2">
-            <Label className="text-sm" style={{ color: 'var(--text-secondary)' }}>Nota de Auditoria (opcional)</Label>
+            <Label className="text-sm text-muted-foreground">Nota de Auditoria (opcional)</Label>
             <Textarea
               placeholder="Motivo da alteração..."
               value={auditNote}
               onChange={(e) => setAuditNote(e.target.value)}
               rows={2}
-              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+              className="bg-background"
             />
           </div>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function SectionCard({ icon: Icon, label, children }) {
+  return (
+    <div className="space-y-3 p-4 rounded-xl border border-border bg-background/50">
+      <div className="flex items-center gap-2">
+        <Icon className="w-4 h-4 text-primary" />
+        <Label className="font-semibold text-foreground">{label}</Label>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function InfoCell({ label, value, truncate }) {
+  return (
+    <div className="p-3 rounded-lg bg-muted/50">
+      <p className="text-xs mb-1 text-muted-foreground">{label}</p>
+      <p className={`font-semibold text-sm text-foreground ${truncate ? 'truncate' : ''}`}>{value}</p>
+    </div>
   );
 }
