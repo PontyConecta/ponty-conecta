@@ -9,13 +9,13 @@ export default function QuickActions({ profileType, isSubscribed }) {
   const actions = profileType === 'brand' ? brandActions : creatorActions;
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4" style={{ minHeight: 120 }}>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4" style={{ minHeight: 140 }}>
       {actions.map((action, index) => {
         const needsSub = action.requiresSub && !isSubscribed;
         const targetPage = needsSub ? 'Subscription' : action.page;
 
         return (
-          <Link key={action.label} to={createPageUrl(targetPage)} className="block h-[120px]">
+          <Link key={action.label} to={createPageUrl(targetPage)} className="block h-[140px]">
             <DashboardCard index={index}>
               <div
                 className="w-11 h-11 rounded-xl flex items-center justify-center relative shrink-0"

@@ -9,7 +9,7 @@ export default function StatCard({ label, value, total, icon: Icon, color, index
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: index * 0.05 }}
     >
-      <Card className="h-[120px] border bg-card shadow-sm hover:shadow-md transition-all duration-200">
+      <Card className="h-[140px] border bg-card shadow-sm hover:shadow-md transition-all duration-200">
         <CardContent className="p-4 lg:p-5 h-full flex flex-col justify-between">
           <div
             className={`w-11 h-11 rounded-xl ${color} flex items-center justify-center shrink-0`}
