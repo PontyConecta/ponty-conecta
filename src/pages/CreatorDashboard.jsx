@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -24,6 +25,7 @@ import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
 import StatCard from '@/components/dashboard/StatCard';
 import StatusBadge from '@/components/common/StatusBadge';
+import { useCreatorDashboardQuery } from '@/components/hooks/useEntityQuery';
 
 export default function CreatorDashboard() {
   const { user, profile: authProfile, profileType } = useAuth();
