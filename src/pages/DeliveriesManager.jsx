@@ -450,7 +450,7 @@ export default function DeliveriesManager() {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => {}}
+                      onClick={handleContest}
                       disabled={processing || !contestReason}
                       className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
                     >

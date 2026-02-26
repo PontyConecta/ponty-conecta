@@ -37,9 +37,11 @@ import {
 } from 'lucide-react';
 import { BRAZIL_STATES, getStateLabel } from '@/components/common/BrazilStateSelect';
 import { motion } from 'framer-motion';
+import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
+import { useAuth } from '@/components/contexts/AuthContext';
 
 export default function DiscoverCreators() {
-  const [user, setUser] = useState(null);
+  const { user, profile: authProfile, profileType } = useAuth();
   const [brand, setBrand] = useState(null);
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,8 +56,12 @@ export default function DiscoverCreators() {
   const niches = ['Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde', 'Viagens', 'Gastronomia'];
 
   useEffect(() => {
+    if (authProfile && profileType === 'brand') {
+      setBrand(authProfile);
+      setIsSubscribed(isProfileSubscribed(authProfile));
+    }
     loadData();
-  }, []);
+  }, [authProfile, profileType]);
 
   const loadData = async () => {
     try {
