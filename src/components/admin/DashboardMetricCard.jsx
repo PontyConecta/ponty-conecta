@@ -51,7 +51,7 @@ export default function DashboardMetricCard({ label, value, subtitle, icon: Icon
               )}
             </div>
             <div className="flex items-baseline gap-2">
-              <p className="text-xl sm:text-2xl font-bold tabular-nums text-foreground">
+              <p className="text-xl sm:text-2xl font-semibold tracking-tight tabular-nums text-foreground">
                 {value}
               </p>
               {(trend !== undefined || previousValue !== undefined) && (

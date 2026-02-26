@@ -37,7 +37,7 @@ export default function CreatorMetricsChart({ applications, deliveries }) {
     <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
       <Card className="border bg-card shadow-sm">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Candidaturas</CardTitle>
+          <CardTitle className="text-lg font-semibold tracking-tight">Candidaturas</CardTitle>
         </CardHeader>
         <CardContent>
           {chartData.length > 0 ? (
@@ -76,7 +76,7 @@ export default function CreatorMetricsChart({ applications, deliveries }) {
 
       <Card className="border bg-card shadow-sm">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Entregas</CardTitle>
+          <CardTitle className="text-lg font-semibold tracking-tight">Entregas</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
           <div>

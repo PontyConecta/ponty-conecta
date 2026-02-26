@@ -69,7 +69,7 @@ export default function AdminDashboard() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Dashboards</h1>
+          <h1 className="text-2xl lg:text-3xl font-semibold tracking-tight text-foreground">Dashboards</h1>
           <p className="text-xs mt-1 text-muted-foreground">
             Atualizado: {lastRefresh.toLocaleTimeString('pt-BR')}
           </p>

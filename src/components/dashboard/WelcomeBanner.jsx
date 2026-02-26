@@ -24,7 +24,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
                 <Rocket className="w-3 h-3 mr-1" />
                 Perfil Pronto!
               </Badge>
-              <h2 className="text-2xl lg:text-3xl font-bold mb-2">
+              <h2 className="text-2xl lg:text-3xl font-semibold tracking-tight mb-2">
                 Bem-vindo, {name}! 🎉
               </h2>
               <p className="text-muted-foreground mb-5 max-w-lg">

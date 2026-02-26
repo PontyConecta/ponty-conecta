@@ -35,7 +35,7 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold">Campanhas Criadas</CardTitle>
+            <CardTitle className="text-lg font-semibold tracking-tight">Campanhas Criadas</CardTitle>
             <span className="text-sm font-bold text-primary">{campaigns.length} total</span>
           </div>
         </CardHeader>
@@ -80,7 +80,7 @@ export default function CampaignMetricsChart({ campaigns, applications }) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Taxa de Aceitação</CardTitle>
+          <CardTitle className="text-lg font-semibold tracking-tight">Taxa de Aceitação</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
