@@ -232,21 +232,21 @@ export default function OnboardingCreator() {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen py-8 px-4 bg-background">
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#9038fa' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg bg-[#9038fa]">
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Configure seu Perfil</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Complete seu perfil para acessar oportunidades</p>
+          <h1 className="text-3xl font-bold mb-2 text-foreground">Configure seu Perfil</h1>
+          <p className="text-muted-foreground">Complete seu perfil para acessar oportunidades</p>
         </div>
 
         <OnboardingProgress steps={STEPS} currentStep={step} accentColor="orange" onStepClick={(s) => { if (s < step) setStep(s); }} />
 
-        <Card className="shadow-xl border-0 mb-24" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <Card className="shadow-xl border mb-24 bg-card">
           <CardContent className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
               <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
@@ -258,7 +258,7 @@ export default function OnboardingCreator() {
                         {formData.avatar_url ? (
                           <img src={formData.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
                         ) : (
-                          <div className="w-24 h-24 rounded-full flex items-center justify-center border-4 shadow-lg" style={{ backgroundColor: 'rgba(144,56,250,0.1)', borderColor: 'var(--bg-secondary)' }}>
+                          <div className="w-24 h-24 rounded-full flex items-center justify-center border-4 border-card shadow-lg bg-primary/10">
                             <User className="w-10 h-10 text-[#9038fa]/60" />
                           </div>
                         )}
@@ -268,28 +268,28 @@ export default function OnboardingCreator() {
                         </label>
                       </div>
                       <div className="flex-1">
-                        <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nome Artístico *</Label>
+                        <Label className="text-sm font-medium text-foreground">Nome Artístico *</Label>
                         <Input value={formData.display_name} onChange={(e) => handleChange('display_name', e.target.value)} placeholder="Como você quer ser conhecido" className="mt-2 h-12" />
                         <FieldHint text="O nome que será exibido no seu perfil público." />
                         </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Bio * (mínimo 20 caracteres)</Label>
+                      <Label className="text-sm font-medium text-foreground">Bio * (mínimo 20 caracteres)</Label>
                       <Textarea value={formData.bio} onChange={(e) => handleChange('bio', e.target.value)} placeholder="Conte sobre você, seu estilo de conteúdo..." className="mt-2 min-h-[120px]" />
                       <p className={`text-xs mt-1 font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-[#9038fa]'}`}>
                         {formData.bio.length}/20
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Estado *</Label>
+                      <Label className="text-sm font-medium text-foreground">Estado *</Label>
                       <div className="mt-2">
                         <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione seu estado" />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Cidade</Label>
+                      <Label className="text-sm font-medium text-foreground">Cidade</Label>
                       <div className="relative mt-2">
-                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input value={formData.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="Ex: São Paulo" className="pl-11 h-12" />
                       </div>
                     </div>
@@ -299,9 +299,9 @@ export default function OnboardingCreator() {
                 {step === 2 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Nichos de Conteúdo *</Label>
+                      <Label className="text-sm font-medium text-foreground">Nichos de Conteúdo *</Label>
                       <FieldHint text="Nos ajuda a conectar você com as melhores campanhas para o seu perfil." />
-                      <p className="text-sm mt-1 mb-3" style={{ color: 'var(--text-secondary)' }}>Selecione até 5 nichos</p>
+                      <p className="text-sm mt-1 mb-3 text-muted-foreground">Selecione até 5 nichos</p>
                       <div className="flex flex-wrap gap-2">
                         {NICHES.map(niche => (
                           <Badge key={niche} variant={formData.niche.includes(niche) ? "default" : "outline"}
@@ -311,10 +311,10 @@ export default function OnboardingCreator() {
                           </Badge>
                         ))}
                       </div>
-                      <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>{formData.niche.length}/5 selecionados</p>
+                      <p className="text-xs mt-2 text-muted-foreground">{formData.niche.length}/5 selecionados</p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tipos de Conteúdo *</Label>
+                      <Label className="text-sm font-medium text-foreground">Tipos de Conteúdo *</Label>
                       <div className="flex flex-wrap gap-2 mt-3">
                         {CONTENT_TYPES.map(type => (
                           <Badge key={type} variant={formData.content_types.includes(type) ? "default" : "outline"}
@@ -326,14 +326,14 @@ export default function OnboardingCreator() {
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tamanho do Perfil *</Label>
+                      <Label className="text-sm font-medium text-foreground">Tamanho do Perfil *</Label>
                       <Select value={formData.profile_size} onValueChange={(v) => handleChange('profile_size', v)}>
                         <SelectTrigger className="mt-2 h-12"><SelectValue placeholder="Selecione seu alcance" /></SelectTrigger>
                         <SelectContent>
                           {PROFILE_SIZES.map(s => (
                             <SelectItem key={s.value} value={s.value}>
                               <span className="font-medium">{s.label}</span>
-                              <span className="text-xs ml-2" style={{ color: 'var(--text-secondary)' }}>{s.desc}</span>
+                              <span className="text-xs ml-2 text-muted-foreground">{s.desc}</span>
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -345,16 +345,16 @@ export default function OnboardingCreator() {
                 {step === 3 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Suas Plataformas *</Label>
+                      <Label className="text-sm font-medium text-foreground">Suas Plataformas *</Label>
                       <FieldHint text="Marcas verificam seus perfis para avaliar candidaturas. Adicione pelo menos uma." />
-                      <p className="text-sm mt-1 mb-4" style={{ color: 'var(--text-secondary)' }}>Adicione suas redes sociais</p>
+                      <p className="text-sm mt-1 mb-4 text-muted-foreground">Adicione suas redes sociais</p>
                       {formData.platforms.length > 0 && (
                         <div className="space-y-2 mb-4">
                           {formData.platforms.map((p, i) => (
-                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
                               <div className="flex-1">
-                                <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{p.name}</span>
-                                <span className="ml-2" style={{ color: 'var(--text-secondary)' }}>@{p.handle}</span>
+                                <span className="font-medium text-foreground">{p.name}</span>
+                                <span className="ml-2 text-muted-foreground">@{p.handle}</span>
                               </div>
                               <Badge variant="outline">{p.followers?.toLocaleString()} seguidores</Badge>
                               <Button variant="ghost" size="icon" onClick={() => removePlatform(i)} className="h-8 w-8 text-red-400 hover:text-red-500">
@@ -378,9 +378,9 @@ export default function OnboardingCreator() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Portfólio / Media Kit</Label>
+                      <Label className="text-sm font-medium text-foreground">Portfólio / Media Kit</Label>
                       <div className="relative mt-2">
-                        <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                        <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input value={formData.portfolio_url} onChange={(e) => handleChange('portfolio_url', e.target.value)} placeholder="https://seumediakit.com" className="pl-11 h-12" />
                       </div>
                     </div>
@@ -390,7 +390,7 @@ export default function OnboardingCreator() {
                 {step === 4 && (
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Email de Contato *</Label>
+                      <Label className="text-sm font-medium text-foreground">Email de Contato *</Label>
                       <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="seu@email.com" className="mt-2 h-12" />
                       {formData.contact_email && !isValidEmail(formData.contact_email) && (
                         <p className="text-xs mt-1 text-red-500">Digite um email válido (ex: nome@email.com)</p>
@@ -398,7 +398,7 @@ export default function OnboardingCreator() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>WhatsApp *</Label>
+                      <Label className="text-sm font-medium text-foreground">WhatsApp *</Label>
                       <Input 
                         value={formData.contact_whatsapp} 
                         onChange={(e) => handleChange('contact_whatsapp', formatPhoneNumber(e.target.value))} 
@@ -409,25 +409,25 @@ export default function OnboardingCreator() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Faixa de Valores (R$)</Label>
-                      <p className="text-xs mt-1 mb-2" style={{ color: 'var(--text-secondary)' }}>Quanto você cobra por publicação/campanha</p>
+                      <Label className="text-sm font-medium text-foreground">Faixa de Valores (R$)</Label>
+                      <p className="text-xs mt-1 mb-2 text-muted-foreground">Quanto você cobra por publicação/campanha</p>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Mínimo</Label>
+                          <Label className="text-xs text-muted-foreground">Mínimo</Label>
                           <Input type="number" value={formData.rate_cash_min} onChange={(e) => handleChange('rate_cash_min', e.target.value)} placeholder="500" className="mt-1 h-12" />
                         </div>
                         <div>
-                          <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Máximo</Label>
+                          <Label className="text-xs text-muted-foreground">Máximo</Label>
                           <Input type="number" value={formData.rate_cash_max} onChange={(e) => handleChange('rate_cash_max', e.target.value)} placeholder="5000" className="mt-1 h-12" />
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/50">
                       <Checkbox id="accepts_barter" checked={formData.accepts_barter} onCheckedChange={(c) => handleChange('accepts_barter', c)} />
                       <div className="flex-1">
-                        <Label htmlFor="accepts_barter" className="text-sm font-medium cursor-pointer" style={{ color: 'var(--text-primary)' }}>Aceito permutas (produtos/serviços)</Label>
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>Marcas poderão oferecer produtos ao invés de pagamento</p>
+                        <Label htmlFor="accepts_barter" className="text-sm font-medium cursor-pointer text-foreground">Aceito permutas (produtos/serviços)</Label>
+                        <p className="text-xs mt-0.5 text-muted-foreground">Marcas poderão oferecer produtos ao invés de pagamento</p>
                       </div>
                     </div>
                   </div>
@@ -440,7 +440,7 @@ export default function OnboardingCreator() {
             </AnimatePresence>
 
             {step < 5 && (
-              <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
                   <ArrowLeft className="w-4 h-4" /> Voltar
                 </Button>
