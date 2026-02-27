@@ -221,8 +221,10 @@ Deno.serve(async (req) => {
     }
   }
 
-  if (droppedFields.length > 0) {
-    console.log(`[updateProfile] Dropped fields for ${profile_type} user ${user.id}: ${droppedFields.join(', ')}`);
+  // Only log dropped fields that are PROTECTED (attempted privilege escalation)
+  const protectedDropped = droppedFields.filter(f => PROTECTED_FIELDS.includes(f));
+  if (protectedDropped.length > 0) {
+    console.warn(`[updateProfile] BLOCKED protected fields for ${profile_type} user ${user.id}: ${protectedDropped.join(', ')}`);
   }
 
   // Validate required fields
