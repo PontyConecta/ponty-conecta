@@ -65,11 +65,8 @@ function sanitizeArray(val, maxItems = 50) {
 function sanitizeUrl(val) {
   if (typeof val !== 'string') return null;
   const trimmed = val.trim();
-  if (trimmed === '') return '';
-  // Allow empty string (clear the field) or valid URL
+  if (trimmed === '') return '';  // allow clearing the field
   if (/^https?:\/\/.+/i.test(trimmed)) return trimmed;
-  // Also allow file URLs from Base44 upload
-  if (trimmed.startsWith('https://') || trimmed.startsWith('http://')) return trimmed;
   return null; // invalid URL dropped
 }
 
