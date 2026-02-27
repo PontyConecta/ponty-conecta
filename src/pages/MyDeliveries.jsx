@@ -109,7 +109,6 @@ export default function MyDeliveries() {
   const handleSubmitDelivery = async () => {
     if (!selectedDelivery) return;
     
-    // Mandatory proof validation
     if (proofUrls.length === 0) {
       alert('É obrigatório anexar pelo menos uma prova da entrega (screenshot, foto, etc).');
       return;
@@ -120,13 +119,11 @@ export default function MyDeliveries() {
     try {
       const validContentUrls = contentUrls.filter(url => url.trim());
       
-      await base44.entities.Delivery.update(selectedDelivery.id, {
-        status: 'submitted',
-        submitted_at: new Date().toISOString(),
+      await base44.functions.invoke('submitDelivery', {
+        delivery_id: selectedDelivery.id,
         proof_urls: proofUrls,
         content_urls: validContentUrls,
         proof_notes: proofNotes,
-        on_time: selectedDelivery.deadline ? new Date() <= new Date(selectedDelivery.deadline) : true
       });
 
       await loadData();

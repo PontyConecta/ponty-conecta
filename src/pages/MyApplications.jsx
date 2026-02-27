@@ -79,8 +79,9 @@ export default function MyApplications() {
     if (!window.confirm('Tem certeza que deseja cancelar esta candidatura?')) return;
     
     try {
-      await base44.entities.Application.update(applicationId, {
-        status: 'withdrawn'
+      await base44.functions.invoke('manageApplication', {
+        action: 'withdraw',
+        application_id: applicationId,
       });
       await loadData();
     } catch (error) {

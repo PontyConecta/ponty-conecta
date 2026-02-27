@@ -214,11 +214,12 @@ export function useRejectApplicationMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ applicationId, rejectionReason, profileType, profileId }) => {
-      await base44.entities.Application.update(applicationId, {
-        status: 'rejected',
-        rejected_at: new Date().toISOString(),
-        rejection_reason: rejectionReason,
+      const response = await base44.functions.invoke('manageApplication', {
+        action: 'reject',
+        application_id: applicationId,
+        data: { rejection_reason: rejectionReason },
       });
+      if (!response.data?.success) throw new Error(response.data?.error || 'Erro ao rejeitar candidatura');
       return { _profileType: profileType, _profileId: profileId };
     },
     onSuccess: (data) => {
@@ -231,7 +232,11 @@ export function useWithdrawApplicationMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ applicationId, profileType, profileId }) => {
-      await base44.entities.Application.update(applicationId, { status: 'withdrawn' });
+      const response = await base44.functions.invoke('manageApplication', {
+        action: 'withdraw',
+        application_id: applicationId,
+      });
+      if (!response.data?.success) throw new Error(response.data?.error || 'Erro ao cancelar candidatura');
       return { _profileType: profileType, _profileId: profileId };
     },
     onSuccess: (data) => {
@@ -263,11 +268,13 @@ export function useSubmitDeliveryMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ deliveryId, data, profileType, profileId }) => {
-      await base44.entities.Delivery.update(deliveryId, {
-        status: 'submitted',
-        submitted_at: new Date().toISOString(),
-        ...data,
+      const response = await base44.functions.invoke('submitDelivery', {
+        delivery_id: deliveryId,
+        proof_urls: data.proof_urls || [],
+        content_urls: data.content_urls || [],
+        proof_notes: data.proof_notes || '',
       });
+      if (!response.data?.success) throw new Error(response.data?.error || 'Erro ao enviar entrega');
       return { _profileType: profileType, _profileId: profileId };
     },
     onSuccess: (data) => {

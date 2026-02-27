@@ -108,11 +108,30 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
 
     setSaving(true);
     if (editingCampaign) {
-      await base44.entities.Campaign.update(editingCampaign.id, campaignData);
-      toast.success('Campanha atualizada!');
+      const response = await base44.functions.invoke('manageCampaign', {
+        action: 'update',
+        campaign_id: editingCampaign.id,
+        data: campaignData,
+      });
+      if (response.data?.success) {
+        toast.success('Campanha atualizada!');
+      } else {
+        toast.error(response.data?.error || 'Erro ao atualizar campanha');
+        setSaving(false);
+        return;
+      }
     } else {
-      await base44.entities.Campaign.create(campaignData);
-      toast.success('Campanha criada com sucesso!');
+      const response = await base44.functions.invoke('manageCampaign', {
+        action: 'create',
+        data: campaignData,
+      });
+      if (response.data?.success) {
+        toast.success('Campanha criada com sucesso!');
+      } else {
+        toast.error(response.data?.error || 'Erro ao criar campanha');
+        setSaving(false);
+        return;
+      }
     }
     setSaving(false);
     onSaved();

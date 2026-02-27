@@ -152,7 +152,7 @@ export default function OnboardingBrand() {
 
   const saveStepData = async (nextStep) => {
     setSaving(true);
-    const dataToSave = { onboarding_step: nextStep };
+    const dataToSave = {};
 
     if (step === 1) {
       dataToSave.company_name = formData.company_name;
@@ -167,7 +167,6 @@ export default function OnboardingBrand() {
       dataToSave.target_audience = formData.target_audience;
     } else if (step === 3) {
       dataToSave.online_presences = formData.online_presences;
-      // Also sync legacy fields for backward compatibility
       const ig = formData.online_presences.find(p => p.type === 'instagram');
       const li = formData.online_presences.find(p => p.type === 'linkedin');
       const ws = formData.online_presences.find(p => p.type === 'website');
@@ -179,14 +178,14 @@ export default function OnboardingBrand() {
       dataToSave.contact_phone = formData.contact_phone;
     }
 
-    if (brand) {
-      await base44.entities.Brand.update(brand.id, dataToSave);
-    } else {
-      const created = await base44.entities.Brand.create({
-        user_id: user.id,
-        ...dataToSave,
-      });
-      setBrand(created);
+    const response = await base44.functions.invoke('onboardingSaveStep', {
+      profile_type: 'brand',
+      step,
+      data: dataToSave,
+    });
+
+    if (response.data?.success && response.data?.profile) {
+      setBrand(response.data.profile);
     }
     setSaving(false);
   };
@@ -210,11 +209,7 @@ export default function OnboardingBrand() {
 
   const handleFinalize = async () => {
     setSaving(true);
-    await base44.entities.Brand.update(brand.id, { account_state: 'ready', onboarding_step: 5 });
-    base44.functions.invoke('createOnboardingMissions', {
-      profile_type: 'brand',
-      profile_id: brand.id
-    }).catch(err => console.error('Mission creation error:', err));
+    await base44.functions.invoke('onboardingFinalize', { profile_type: 'brand' });
     await refreshProfile();
     setSaving(false);
     navigate(createPageUrl('BrandDashboard'));

@@ -163,7 +163,7 @@ export default function OnboardingCreator() {
 
   const saveStepData = async (nextStep) => {
     setSaving(true);
-    const dataToSave = { onboarding_step: nextStep };
+    const dataToSave = {};
 
     if (step === 1) {
       dataToSave.display_name = formData.display_name;
@@ -188,11 +188,14 @@ export default function OnboardingCreator() {
       dataToSave.accepts_barter = formData.accepts_barter;
     }
 
-    if (creator) {
-      await base44.entities.Creator.update(creator.id, dataToSave);
-    } else {
-      const created = await base44.entities.Creator.create({ user_id: user.id, ...dataToSave });
-      setCreator(created);
+    const response = await base44.functions.invoke('onboardingSaveStep', {
+      profile_type: 'creator',
+      step,
+      data: dataToSave,
+    });
+
+    if (response.data?.success && response.data?.profile) {
+      setCreator(response.data.profile);
     }
     setSaving(false);
   };
@@ -208,12 +211,7 @@ export default function OnboardingCreator() {
 
   const handleFinalize = async () => {
     setSaving(true);
-    await base44.entities.Creator.update(creator.id, { account_state: 'ready', onboarding_step: 5 });
-    // Create onboarding missions in background
-    base44.functions.invoke('createOnboardingMissions', {
-      profile_type: 'creator',
-      profile_id: creator.id
-    }).catch(err => console.error('Mission creation error:', err));
+    await base44.functions.invoke('onboardingFinalize', { profile_type: 'creator' });
     await refreshProfile();
     setSaving(false);
     navigate(createPageUrl('CreatorDashboard'));

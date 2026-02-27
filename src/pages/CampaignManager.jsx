@@ -85,9 +85,17 @@ export default function CampaignManager() {
     }
 
     try {
-      await base44.entities.Campaign.update(campaignId, { status: newStatus });
-      toast.success('Status da campanha atualizado!');
-      await loadData();
+      const response = await base44.functions.invoke('manageCampaign', {
+        action: 'update_status',
+        campaign_id: campaignId,
+        data: { status: newStatus },
+      });
+      if (response.data?.success) {
+        toast.success('Status da campanha atualizado!');
+        await loadData();
+      } else {
+        toast.error(response.data?.error || 'Erro ao atualizar status');
+      }
     } catch (error) {
       console.error('Error updating campaign:', error);
       toast.error('Erro ao atualizar status da campanha');

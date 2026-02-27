@@ -64,40 +64,19 @@ export default function SelectProfile() {
   const selectProfile = async (type) => {
     setSelecting(true);
     try {
-      // Double-check no existing profile exists (prevent duplicates)
-      const [existingBrands, existingCreators] = await Promise.all([
-        base44.entities.Brand.filter({ user_id: user.id }),
-        base44.entities.Creator.filter({ user_id: user.id })
-      ]);
+      const response = await base44.functions.invoke('selectProfile', { profile_type: type });
+      const result = response.data;
 
-      if (existingBrands.length > 0 || existingCreators.length > 0) {
-        // Profile already exists, redirect instead of creating duplicate
-        if (existingBrands.length > 0) {
-          const dest = existingBrands[0].account_state === 'ready' ? 'BrandDashboard' : 'OnboardingBrand';
-          navigate(createPageUrl(dest));
-        } else {
-          const dest = existingCreators[0].account_state === 'ready' ? 'CreatorDashboard' : 'OnboardingCreator';
-          navigate(createPageUrl(dest));
-        }
+      if (result?.already_exists) {
+        const profileType = result.profile_type;
+        const dest = result.account_state === 'ready'
+          ? (profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')
+          : (profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator');
+        navigate(createPageUrl(dest));
         return;
       }
 
-      if (type === 'brand') {
-        await base44.entities.Brand.create({
-          user_id: user.id,
-          account_state: 'incomplete',
-          onboarding_step: 1
-        });
-        navigate(createPageUrl('OnboardingBrand'));
-      } else {
-        await base44.entities.Creator.create({
-          user_id: user.id,
-          display_name: user.full_name,
-          account_state: 'incomplete',
-          onboarding_step: 1
-        });
-        navigate(createPageUrl('OnboardingCreator'));
-      }
+      navigate(createPageUrl(type === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator'));
     } catch (error) {
       console.error('Error creating profile:', error);
       setSelecting(false);
