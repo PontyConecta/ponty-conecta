@@ -130,50 +130,13 @@ export default function AdminDisputes() {
     
     setProcessing(true);
     try {
-      // Update dispute
-      await base44.entities.Dispute.update(selectedDispute.id, {
-        status: resolutionType,
-        resolution: resolution,
-        resolved_by: user.email,
-        resolved_at: new Date().toISOString()
+      const response = await base44.functions.invoke('resolveDispute', {
+        dispute_id: selectedDispute.id,
+        resolution,
+        resolution_type: resolutionType,
       });
-
-      // Create audit log for dispute resolution
-      await base44.entities.AuditLog.create({
-        admin_id: user.id,
-        admin_email: user.email,
-        action: 'dispute_resolved',
-        target_entity_id: selectedDispute.id,
-        target_user_id: selectedDispute.raised_by === 'brand' ? selectedDispute.brand_id : selectedDispute.creator_id,
-        details: `Disputa resolvida: ${resolutionType === 'resolved_creator_favor' ? 'Favorável ao Criador' : 'Favorável à Marca'}. Campanha: ${campaigns[selectedDispute.campaign_id]?.title || '-'}`,
-        note: resolution,
-        timestamp: new Date().toISOString()
-      });
-
-      // Update delivery based on resolution
-      const delivery = deliveries[selectedDispute.delivery_id];
-      if (delivery) {
-        const newDeliveryStatus = resolutionType === 'resolved_creator_favor' ? 'approved' : 'closed';
-        await base44.entities.Delivery.update(delivery.id, {
-          status: newDeliveryStatus,
-          approved_at: resolutionType === 'resolved_creator_favor' ? new Date().toISOString() : delivery.approved_at,
-          payment_status: resolutionType === 'resolved_creator_favor' ? 'completed' : 'disputed'
-        });
-      }
-
-      // Update application and creator stats if creator won
-      if (resolutionType === 'resolved_creator_favor' && delivery) {
-        await base44.entities.Application.update(delivery.application_id, {
-          status: 'completed'
-        });
-        
-        // Update creator stats
-        const creator = await base44.entities.Creator.filter({ id: delivery.creator_id });
-        if (creator.length > 0) {
-          await base44.entities.Creator.update(creator[0].id, {
-            completed_campaigns: (creator[0].completed_campaigns || 0) + 1
-          });
-        }
+      if (!response.data?.success) {
+        throw new Error(response.data?.error || 'Erro ao resolver disputa');
       }
 
       await loadData();
@@ -183,7 +146,7 @@ export default function AdminDisputes() {
       toast.success('Disputa resolvida com sucesso');
     } catch (error) {
       console.error('Error resolving dispute:', error);
-      toast.error('Erro ao resolver disputa');
+      toast.error(error.message || 'Erro ao resolver disputa');
     } finally {
       setProcessing(false);
     }
