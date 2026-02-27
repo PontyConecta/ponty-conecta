@@ -1,65 +1,60 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+// ─── Template: Auth → Validate → Ownership → Execute → Audit → Respond ───
+
+const FN = 'resolveDispute';
+
+function err(msg, code, status = 400) {
+  return Response.json({ error: msg, code }, { status });
+}
+
+const VALID_RESOLUTION_TYPES = ['resolved_creator_favor', 'resolved_brand_favor'];
+const RESOLVABLE_STATUSES = ['open', 'under_review'];
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
   try {
+    // ── 1. AUTH (admin-only) ──
     const user = await base44.auth.me();
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!user) return err('Unauthorized', 'UNAUTHORIZED', 401);
+    if (user.role !== 'admin') return err('Forbidden: Admin access required', 'FORBIDDEN', 403);
 
-    // Admin-only
-    if (user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-    }
-
+    // ── 2. VALIDATE INPUT ──
     const { dispute_id, resolution, resolution_type } = await req.json();
 
     if (!dispute_id || !resolution || !resolution_type) {
-      return Response.json({ error: 'Missing required fields: dispute_id, resolution, resolution_type' }, { status: 400 });
+      return err('Missing required fields: dispute_id, resolution, resolution_type', 'MISSING_FIELDS');
+    }
+    if (typeof resolution !== 'string' || resolution.trim().length === 0) {
+      return err('Resolution must be a non-empty string', 'INVALID_INPUT');
+    }
+    if (!VALID_RESOLUTION_TYPES.includes(resolution_type)) {
+      return err('Invalid resolution_type', 'INVALID_INPUT');
     }
 
-    const validTypes = ['resolved_creator_favor', 'resolved_brand_favor'];
-    if (!validTypes.includes(resolution_type)) {
-      return Response.json({ error: 'Invalid resolution_type' }, { status: 400 });
-    }
-
-    // Fetch dispute
+    // ── 3. FETCH & VALIDATE STATE ──
     const disputes = await base44.asServiceRole.entities.Dispute.filter({ id: dispute_id });
-    if (disputes.length === 0) {
-      return Response.json({ error: 'Dispute not found' }, { status: 404 });
-    }
+    if (disputes.length === 0) return err('Dispute not found', 'NOT_FOUND', 404);
     const dispute = disputes[0];
 
-    // Validate status transition
-    if (dispute.status !== 'open' && dispute.status !== 'under_review') {
-      return Response.json({ error: `Cannot resolve dispute with status "${dispute.status}"` }, { status: 400 });
+    if (!RESOLVABLE_STATUSES.includes(dispute.status)) {
+      return err(`Cannot resolve dispute with status "${dispute.status}"`, 'INVALID_TRANSITION');
     }
 
     const now = new Date().toISOString();
+    const cleanResolution = resolution.trim();
 
-    // 1. Update dispute
+    // ── 4. EXECUTE ──
+    // 4a. Update dispute
     await base44.asServiceRole.entities.Dispute.update(dispute.id, {
       status: resolution_type,
-      resolution: resolution,
+      resolution: cleanResolution,
       resolved_by: user.email,
       resolved_at: now,
     });
 
-    // 2. Create audit log
-    await base44.asServiceRole.entities.AuditLog.create({
-      admin_id: user.id,
-      admin_email: user.email,
-      action: 'dispute_resolved',
-      target_entity_id: dispute.id,
-      target_user_id: dispute.raised_by === 'brand' ? dispute.brand_id : dispute.creator_id,
-      details: `Disputa resolvida: ${resolution_type === 'resolved_creator_favor' ? 'Favorável ao Criador' : 'Favorável à Marca'}.`,
-      note: resolution,
-      timestamp: now,
-    });
-
-    // 3. Update delivery based on resolution
+    // 4b. Update delivery based on resolution
     if (dispute.delivery_id) {
       const deliveries = await base44.asServiceRole.entities.Delivery.filter({ id: dispute.delivery_id });
       if (deliveries.length > 0) {
@@ -71,14 +66,13 @@ Deno.serve(async (req) => {
           payment_status: resolution_type === 'resolved_creator_favor' ? 'completed' : 'disputed',
         });
 
-        // 4. If creator won, update application + creator stats
+        // 4c. If creator won → complete application + bump stats
         if (resolution_type === 'resolved_creator_favor') {
           if (delivery.application_id) {
             await base44.asServiceRole.entities.Application.update(delivery.application_id, {
               status: 'completed',
             });
           }
-
           if (delivery.creator_id) {
             const creators = await base44.asServiceRole.entities.Creator.filter({ id: delivery.creator_id });
             if (creators.length > 0) {
@@ -91,9 +85,23 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ── 5. AUDIT LOG (always) ──
+    await base44.asServiceRole.entities.AuditLog.create({
+      admin_id: user.id,
+      admin_email: user.email,
+      action: 'dispute_resolved',
+      target_entity_id: dispute.id,
+      target_user_id: dispute.raised_by === 'brand' ? dispute.brand_id : dispute.creator_id,
+      details: `Disputa resolvida: ${resolution_type === 'resolved_creator_favor' ? 'Favorável ao Criador' : 'Favorável à Marca'}.`,
+      note: cleanResolution,
+      timestamp: now,
+    });
+
+    // ── 6. RESPOND ──
+    console.log(`[${FN}] Dispute ${dispute_id} resolved as ${resolution_type} by admin ${user.email}`);
     return Response.json({ success: true });
   } catch (error) {
-    console.error('[resolveDispute] Error:', error.message);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error(`[${FN}] Error:`, error.message);
+    return err(error.message, 'INTERNAL_ERROR', 500);
   }
 });

@@ -1,21 +1,29 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+// ─── Template: Auth → Validate → Ownership → Sanitize → Execute → Respond ───
+
+const FN = 'selectProfile';
+
+function err(msg, code, status = 400) {
+  return Response.json({ error: msg, code }, { status });
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
   try {
+    // ── 1. AUTH ──
     const user = await base44.auth.me();
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!user) return err('Unauthorized', 'UNAUTHORIZED', 401);
 
+    // ── 2. VALIDATE INPUT ──
     const { profile_type } = await req.json();
 
     if (!['brand', 'creator'].includes(profile_type)) {
-      return Response.json({ error: 'Invalid profile_type' }, { status: 400 });
+      return err('Invalid profile_type', 'INVALID_INPUT');
     }
 
-    // Check if user already has a profile (prevent duplicates)
+    // ── 3. OWNERSHIP / DUPLICATE CHECK ──
     const [existingBrands, existingCreators] = await Promise.all([
       base44.entities.Brand.filter({ user_id: user.id }),
       base44.entities.Creator.filter({ user_id: user.id }),
@@ -32,7 +40,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create new profile
+    // ── 4. EXECUTE ──
     let profile;
     if (profile_type === 'brand') {
       profile = await base44.entities.Brand.create({
@@ -49,9 +57,11 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ── 5. RESPOND ──
+    console.log(`[${FN}] Created ${profile_type} profile for user ${user.id}`);
     return Response.json({ success: true, profile, profile_type });
   } catch (error) {
-    console.error('[selectProfile] Error:', error.message);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error(`[${FN}] Error:`, error.message);
+    return err(error.message, 'INTERNAL_ERROR', 500);
   }
 });
