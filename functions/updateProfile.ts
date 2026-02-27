@@ -197,14 +197,22 @@ Deno.serve(async (req) => {
       continue;
     }
 
+    // Skip null/undefined values (user didn't intend to update this field)
+    if (value === null || value === undefined) {
+      continue;
+    }
+
     // Apply field-specific sanitizer
     const sanitizer = FIELD_SANITIZERS[key];
     if (sanitizer) {
       const sanitized = sanitizer(value);
       if (sanitized !== null) {
         sanitizedUpdates[key] = sanitized;
+      } else if (sanitized === null && typeof value === 'string' && value.trim() === '') {
+        // sanitizer returned null for empty string — allow clearing for string/url fields
+        sanitizedUpdates[key] = '';
       }
-      // null means invalid value — skip silently
+      // null from non-string input means invalid value — skip silently
     } else {
       // No sanitizer defined but field is whitelisted — store as-is (string fallback)
       if (typeof value === 'string') {
