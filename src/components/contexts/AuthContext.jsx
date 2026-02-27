@@ -114,6 +114,7 @@ export function AuthProvider({ children }) {
   };
 
   // Atualizar perfil com feedback (sem reload)
+  // SECURITY: Routes through backend function to enforce field sanitization
   const updateProfile = async (updates) => {
     if (!profile || !profileType) {
       toast.error('Perfil não encontrado');
@@ -122,20 +123,24 @@ export function AuthProvider({ children }) {
 
     setUpdating(true);
     try {
-      let updatedProfile;
-      if (profileType === 'brand') {
-        updatedProfile = await base44.entities.Brand.update(profile.id, updates);
-      } else if (profileType === 'creator') {
-        updatedProfile = await base44.entities.Creator.update(profile.id, updates);
+      const response = await base44.functions.invoke('updateProfile', {
+        profile_type: profileType,
+        updates
+      });
+
+      if (response.data?.success && response.data?.profile) {
+        setProfile(response.data.profile);
+      } else {
+        // Fallback: refresh from server
+        await refreshProfile();
       }
-      
-      // Atualizar estado local instantaneamente
-      setProfile(updatedProfile);
+
       toast.success('Perfil atualizado com sucesso!');
       return true;
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
-      toast.error('Erro ao salvar alterações. Tente novamente.');
+      const msg = error?.response?.data?.error || 'Erro ao salvar alterações. Tente novamente.';
+      toast.error(msg);
       return false;
     } finally {
       setUpdating(false);
