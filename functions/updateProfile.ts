@@ -272,7 +272,13 @@ Deno.serve(async (req) => {
         admin_email: user.email,
         action: 'profile_update',
         target_user_id: user.id,
-        details: JSON.stringify({ profile_type, keys: sensitiveChanged }),
+        details: JSON.stringify({
+          actor: 'user',
+          actor_user_id: user.id,
+          actor_email: user.email,
+          profile_type,
+          keys_changed: sensitiveChanged
+        }),
         timestamp: new Date().toISOString()
       });
     } catch (auditErr) {
