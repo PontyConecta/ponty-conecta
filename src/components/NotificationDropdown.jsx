@@ -147,20 +147,16 @@ export default function NotificationDropdown({ triggerClassName }) {
 
   const markAsRead = async (notificationId) => {
     try {
-      const existing = await base44.entities.Notification.filter({ user_id: user.id, notification_key: notificationId });
-      if (existing.length > 0) {
-        await base44.entities.Notification.update(existing[0].id, { read_at: new Date().toISOString() });
-      } else {
-        const notification = notifications.find(n => n.id === notificationId);
-        if (notification) {
-          await base44.entities.Notification.create({
-            user_id: user.id, notification_key: notificationId, type: notification.type,
-            title: notification.title, message: notification.message,
-            action_url: notification.actionUrl, related_entity_id: notification.relatedEntityId,
-            read_at: new Date().toISOString()
-          });
-        }
-      }
+      const notification = notifications.find(n => n.id === notificationId);
+      await base44.functions.invoke('manageNotification', {
+        action: 'mark_read',
+        notification_key: notificationId,
+        notification_data: notification ? {
+          type: notification.type, title: notification.title,
+          message: notification.message, action_url: notification.actionUrl,
+          related_entity_id: notification.relatedEntityId,
+        } : null,
+      });
       setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
@@ -170,20 +166,15 @@ export default function NotificationDropdown({ triggerClassName }) {
 
   const markAllAsRead = async () => {
     try {
-      const promises = notifications.filter(n => !n.read).map(async (notification) => {
-        const existing = await base44.entities.Notification.filter({ user_id: user.id, notification_key: notification.id });
-        if (existing.length > 0) {
-          return base44.entities.Notification.update(existing[0].id, { read_at: new Date().toISOString() });
-        } else {
-          return base44.entities.Notification.create({
-            user_id: user.id, notification_key: notification.id, type: notification.type,
-            title: notification.title, message: notification.message,
-            action_url: notification.actionUrl, related_entity_id: notification.relatedEntityId,
-            read_at: new Date().toISOString()
-          });
-        }
+      const unread = notifications.filter(n => !n.read);
+      await base44.functions.invoke('manageNotification', {
+        action: 'mark_all_read',
+        notification_keys: unread.map(n => n.id),
+        notification_data: unread.map(n => ({
+          type: n.type, title: n.title, message: n.message,
+          action_url: n.actionUrl, related_entity_id: n.relatedEntityId,
+        })),
       });
-      await Promise.all(promises);
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch (error) {
@@ -193,20 +184,16 @@ export default function NotificationDropdown({ triggerClassName }) {
 
   const dismissNotification = async (notificationId) => {
     try {
-      const existing = await base44.entities.Notification.filter({ user_id: user.id, notification_key: notificationId });
-      if (existing.length > 0) {
-        await base44.entities.Notification.update(existing[0].id, { dismissed_at: new Date().toISOString() });
-      } else {
-        const notification = notifications.find(n => n.id === notificationId);
-        if (notification) {
-          await base44.entities.Notification.create({
-            user_id: user.id, notification_key: notificationId, type: notification.type,
-            title: notification.title, message: notification.message,
-            action_url: notification.actionUrl, related_entity_id: notification.relatedEntityId,
-            dismissed_at: new Date().toISOString()
-          });
-        }
-      }
+      const notification = notifications.find(n => n.id === notificationId);
+      await base44.functions.invoke('manageNotification', {
+        action: 'dismiss',
+        notification_key: notificationId,
+        notification_data: notification ? {
+          type: notification.type, title: notification.title,
+          message: notification.message, action_url: notification.actionUrl,
+          related_entity_id: notification.relatedEntityId,
+        } : null,
+      });
       setNotifications(prev => prev.filter(n => n.id !== notificationId));
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
