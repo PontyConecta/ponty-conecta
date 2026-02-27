@@ -238,6 +238,20 @@ Deno.serve(async (req) => {
     }
   }
 
+  // Validate rate range if both are present
+  if (
+    sanitizedUpdates.rate_cash_min !== undefined &&
+    sanitizedUpdates.rate_cash_max !== undefined &&
+    typeof sanitizedUpdates.rate_cash_min === 'number' &&
+    typeof sanitizedUpdates.rate_cash_max === 'number' &&
+    sanitizedUpdates.rate_cash_min > sanitizedUpdates.rate_cash_max
+  ) {
+    return Response.json(
+      { error: 'rate_cash_min não pode ser maior que rate_cash_max' },
+      { status: 400 }
+    );
+  }
+
   if (Object.keys(sanitizedUpdates).length === 0) {
     return Response.json({ error: 'No valid fields to update' }, { status: 400 });
   }
