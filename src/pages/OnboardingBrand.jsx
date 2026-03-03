@@ -137,7 +137,17 @@ export default function OnboardingBrand() {
     setLoading(false);
   };
 
+  const [fieldErrors, setFieldErrors] = useState({});
+
   const handleChange = (field, value) => {
+    if (fieldErrors[field]) {
+      setFieldErrors(prev => { const n = { ...prev }; delete n[field]; return n; });
+    }
+    // Reset city when state changes
+    if (field === 'state') {
+      setFormData(prev => ({ ...prev, state: value, city: '' }));
+      return;
+    }
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -178,22 +188,33 @@ export default function OnboardingBrand() {
       dataToSave.contact_phone = formData.contact_phone;
     }
 
-    const response = await base44.functions.invoke('onboardingSaveStep', {
-      profile_type: 'brand',
-      step,
-      data: dataToSave,
-    });
+    try {
+      const response = await base44.functions.invoke('onboardingSaveStep', {
+        profile_type: 'brand',
+        step,
+        data: dataToSave,
+      });
 
-    if (response.data?.success && response.data?.profile) {
-      setBrand(response.data.profile);
+      if (response.data?.success && response.data?.profile) {
+        setBrand(response.data.profile);
+        setFieldErrors({});
+      }
+    } catch (error) {
+      const body = error?.response?.data;
+      if (body?.field_errors) {
+        setFieldErrors(body.field_errors);
+      }
+      setSaving(false);
+      return false;
     }
     setSaving(false);
+    return true;
   };
 
   const handleNext = async () => {
     if (step < 5) {
-      await saveStepData(step + 1);
-      setStep(step + 1);
+      const ok = await saveStepData(step + 1);
+      if (ok !== false) setStep(step + 1);
     }
   };
 
@@ -273,6 +294,9 @@ export default function OnboardingBrand() {
                         <div className="mt-2">
                           <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione" />
                         </div>
+                        {fieldErrors.state && (
+                          <p className="text-xs mt-1 text-red-500">{fieldErrors.state}</p>
+                        )}
                       </div>
                       <div>
                         <Label className="text-sm font-medium text-foreground">Cidade</Label>
