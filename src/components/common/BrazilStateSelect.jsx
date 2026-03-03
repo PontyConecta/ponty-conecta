@@ -43,7 +43,7 @@ export function getStateLabel(value) {
 
 export default function BrazilStateSelect({ value, onValueChange, placeholder = "Selecione o estado", className = "" }) {
   return (
-    <Select value={value || ""} onValueChange={onValueChange}>
+    <Select value={value || undefined} onValueChange={onValueChange}>
       <SelectTrigger className={`h-12 ${className}`}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

@@ -248,7 +248,7 @@ export default function OnboardingCreator() {
 
   const isStepValid = () => {
     switch (step) {
-      case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state;
+      case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state && formData.state.length === 2;
       case 2: return formData.niche.length > 0 && formData.content_types.length > 0;
       case 3: return formData.platforms.length > 0;
       case 4: return isValidEmail(formData.contact_email) && formData.contact_whatsapp?.replace(/\D/g, '').length >= 10;

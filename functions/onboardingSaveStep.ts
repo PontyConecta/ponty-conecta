@@ -151,14 +151,19 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ── State normalization (Step 1 for both profiles) ──
-    if (step === 1 && data.state !== undefined) {
-      const normalized = normalizeState(data.state);
-      if (data.state && !normalized) {
-        // User tried to send a state but it's invalid
-        fieldErrors.state = 'Estado inválido. Selecione um estado da lista.';
+    // ── State normalization (Step 1 — REQUIRED for both profiles) ──
+    if (step === 1) {
+      const rawState = data.state;
+      if (!rawState || (typeof rawState === 'string' && !rawState.trim())) {
+        fieldErrors.state = 'Selecione um estado';
+      } else {
+        const normalized = normalizeState(rawState);
+        if (!normalized) {
+          fieldErrors.state = 'Selecione um estado válido';
+        } else {
+          sanitized.state = normalized;
+        }
       }
-      sanitized.state = normalized || '';
     }
 
     // ── Derive location from city + state ──

@@ -246,7 +246,7 @@ export default function OnboardingBrand() {
 
   const isStepValid = () => {
     switch (step) {
-      case 1: return formData.company_name?.trim().length >= 2 && formData.state;
+      case 1: return formData.company_name?.trim().length >= 2 && formData.state && formData.state.length === 2;
       case 2: return formData.industry && formData.description?.length >= 20;
       case 3: return formData.online_presences.length > 0;
       case 4: return isValidEmail(formData.contact_email) && formData.contact_phone?.replace(/\D/g, '').length >= 10;
