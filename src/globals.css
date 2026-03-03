@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -156,14 +157,16 @@ html[data-theme="neon"], html[data-theme="musk"] {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Mobile bottom nav safe area */
-@media (max-width: 1023px) {
-  .pb-mobile-safe {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px);
-  }
-}
-
 /* Neon theme glow effects — subtle, controlled */
 [data-theme="neon"] .glow-primary {
   box-shadow: 0 0 20px -4px hsl(270 100% 72% / 0.3);
+}
+
+@layer utilities {
+  /* Mobile bottom nav safe area */
+  @media (max-width: 1023px) {
+    .pb-mobile-safe {
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px);
+    }
+  }
 }
