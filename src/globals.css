@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -155,6 +154,13 @@ html[data-theme="neon"], html[data-theme="musk"] {
 
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile bottom nav safe area — in @layer utilities for correct Tailwind ordering */
+@layer utilities {
+  .pb-mobile-safe {
+    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* Neon theme glow effects — subtle, controlled */
