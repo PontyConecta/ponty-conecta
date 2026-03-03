@@ -123,7 +123,18 @@ export default function OnboardingCreator() {
     }
   };
 
+  const [fieldErrors, setFieldErrors] = useState({});
+
   const handleChange = (field, value) => {
+    // Clear field error when user changes value
+    if (fieldErrors[field]) {
+      setFieldErrors(prev => { const n = { ...prev }; delete n[field]; return n; });
+    }
+    // Reset city when state changes
+    if (field === 'state') {
+      setFormData(prev => ({ ...prev, state: value, city: '' }));
+      return;
+    }
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -171,7 +182,7 @@ export default function OnboardingCreator() {
       dataToSave.avatar_url = formData.avatar_url;
       dataToSave.state = formData.state;
       dataToSave.city = formData.city;
-      dataToSave.location = formData.city && formData.state ? `${formData.city}, ${formData.state}` : formData.city || formData.state || '';
+      // location is derived server-side from city + state
     } else if (step === 2) {
       dataToSave.niche = formData.niche;
       dataToSave.content_types = formData.content_types;
@@ -188,22 +199,34 @@ export default function OnboardingCreator() {
       dataToSave.accepts_barter = formData.accepts_barter;
     }
 
-    const response = await base44.functions.invoke('onboardingSaveStep', {
-      profile_type: 'creator',
-      step,
-      data: dataToSave,
-    });
+    try {
+      const response = await base44.functions.invoke('onboardingSaveStep', {
+        profile_type: 'creator',
+        step,
+        data: dataToSave,
+      });
 
-    if (response.data?.success && response.data?.profile) {
-      setCreator(response.data.profile);
+      if (response.data?.success && response.data?.profile) {
+        setCreator(response.data.profile);
+        setFieldErrors({});
+      }
+    } catch (error) {
+      const body = error?.response?.data;
+      if (body?.field_errors) {
+        setFieldErrors(body.field_errors);
+      }
+      // Don't advance step on error — handled in handleNext
+      setSaving(false);
+      return false;
     }
     setSaving(false);
+    return true;
   };
 
   const handleNext = async () => {
     if (step < 5) {
-      await saveStepData(step + 1);
-      setStep(step + 1);
+      const ok = await saveStepData(step + 1);
+      if (ok !== false) setStep(step + 1);
     }
   };
 
@@ -290,6 +313,9 @@ export default function OnboardingCreator() {
                       <div className="mt-2">
                         <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione seu estado" />
                       </div>
+                      {fieldErrors.state && (
+                        <p className="text-xs mt-1 text-red-500">{fieldErrors.state}</p>
+                      )}
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-foreground">Cidade</Label>
