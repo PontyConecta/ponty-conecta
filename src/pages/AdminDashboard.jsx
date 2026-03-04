@@ -180,7 +180,7 @@ export default function AdminDashboard() {
                     secondaryLabel={analytics.totalUsers ? `${Math.round(((analytics.users?.never_active ?? 0) / analytics.totalUsers) * 100)}% da base` : undefined}
                   />
                   <DashboardMetricCard
-                    label="Premium Inativos"
+                    label="Criadores Premium Inativos"
                     value={analytics.alerts?.dormant_premium_users ?? 0}
                     icon={Crown}
                     iconColor="text-amber-500"
@@ -199,21 +199,22 @@ export default function AdminDashboard() {
               {/* ── Operações do Marketplace ── */}
               <div>
                 <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Operações do Marketplace</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-                  <DashboardMetricCard
-                    label="Campanhas Ativas"
-                    value={analytics.marketplace?.active_campaigns ?? analytics.activeCampaigns ?? 0}
-                    icon={Megaphone}
-                    iconColor="text-blue-500"
-                    tooltip="Campanhas com status 'ativa' atualmente."
-                    secondaryLabel={`Total: ${analytics.marketplace?.total_campaigns ?? 0}`}
-                  />
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   <DashboardMetricCard
                     label="Total de Campanhas"
                     value={analytics.marketplace?.total_campaigns ?? 0}
                     icon={FolderOpen}
                     iconColor="text-indigo-500"
                     tooltip="Total de campanhas criadas na plataforma."
+                    secondaryLabel={`${analytics.marketplace?.active_campaigns ?? 0} ativas agora`}
+                  />
+                  <DashboardMetricCard
+                    label="Campanhas Ativas"
+                    value={analytics.marketplace?.active_campaigns ?? analytics.activeCampaigns ?? 0}
+                    icon={Megaphone}
+                    iconColor="text-blue-500"
+                    tooltip="Campanhas com status 'ativa' atualmente."
+                    secondaryLabel={`de ${analytics.marketplace?.total_campaigns ?? 0} campanhas`}
                   />
                   <DashboardMetricCard
                     label="Campanhas Concluídas"
@@ -221,7 +222,7 @@ export default function AdminDashboard() {
                     icon={FolderCheck}
                     iconColor="text-emerald-500"
                     tooltip="Campanhas finalizadas com sucesso."
-                    secondaryLabel={(analytics.marketplace?.total_campaigns ?? 0) > 0 ? `${Math.round(((analytics.pipeline?.completed ?? 0) / (analytics.marketplace?.total_campaigns ?? 1)) * 100)}% do total` : undefined}
+                    secondaryLabel={(analytics.marketplace?.total_campaigns ?? 0) > 0 ? `${Math.round(((analytics.pipeline?.completed ?? 0) / (analytics.marketplace?.total_campaigns ?? 1)) * 100)}% do total` : '—'}
                   />
                 </div>
               </div>
@@ -231,9 +232,9 @@ export default function AdminDashboard() {
               {/* ── Alertas do Marketplace ── */}
               <div>
                 <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Alertas do Marketplace</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   <DashboardMetricCard
-                    label="Sem Candidaturas"
+                    label="Campanhas Sem Candidaturas"
                     value={analytics.alerts?.campaigns_zero_apps ?? 0}
                     icon={AlertCircle}
                     iconColor="text-yellow-500"
@@ -246,15 +247,15 @@ export default function AdminDashboard() {
                     icon={Clock}
                     iconColor="text-orange-500"
                     tooltip="Candidaturas aguardando resposta da marca."
-                    secondaryLabel={analytics.totalApplications ? `Taxa aprovação: ${analytics.conversionRate || 0}%` : undefined}
+                    secondaryLabel={`Taxa aprovação: ${analytics.conversionRate || 0}%`}
                   />
                   <DashboardMetricCard
-                    label="Entregas Aguardando"
+                    label="Entregas Aguardando Aprovação"
                     value={analytics.alerts?.submitted_deliveries_awaiting_review ?? 0}
                     icon={CheckCircle}
                     iconColor="text-cyan-500"
-                    tooltip="Entregas submetidas aguardando aprovação."
-                    secondaryLabel={analytics.completedDeliveries ? `${analytics.completedDeliveries} já aprovadas` : undefined}
+                    tooltip="Entregas submetidas aguardando aprovação da marca."
+                    secondaryLabel={`${analytics.completedDeliveries || 0} já aprovadas`}
                   />
                 </div>
               </div>
