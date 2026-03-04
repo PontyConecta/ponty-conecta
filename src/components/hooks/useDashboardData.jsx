@@ -25,43 +25,23 @@ async function batchFetchByIds(entityApi, ids) {
   return arrayToMap(results.flat());
 }
 
-/**
- * Count records matching a filter. Uses limit=0 trick: fetches 1 record just to
- * count, but since SDK doesn't support count(), we fetch small batches by status.
- * Returns { [status]: count }
- */
-async function countByStatus(entityApi, baseFilter, statuses) {
-  // Fetch all status counts in parallel — each limited to 500 (generous ceiling)
-  const entries = await Promise.all(
-    statuses.map(async (status) => {
-      const items = await entityApi.filter({ ...baseFilter, status }, '-created_date', 500);
-      return [status, items.length];
-    })
-  );
-  return Object.fromEntries(entries);
-}
-
-// ─── CREATOR DASHBOARD (paginated) ───
+// ─── CREATOR DASHBOARD ───
 
 export function useCreatorDashboardData(creatorId, userId) {
   return useQuery({
     queryKey: ['dashboard', 'creator', creatorId],
     queryFn: async () => {
-      // 1) Counts by status (parallel) — no full array load
-      const [appCounts, delCounts, reputationData, recentApps, recentDeliveries] = await Promise.all([
-        countByStatus(base44.entities.Application, { creator_id: creatorId }, [
-          'pending', 'accepted', 'rejected', 'withdrawn', 'completed'
-        ]),
-        countByStatus(base44.entities.Delivery, { creator_id: creatorId }, [
-          'pending', 'submitted', 'approved', 'contested', 'in_dispute', 'resolved', 'closed'
-        ]),
+      // 1) Stats from backend (1 request) + recent items + reputation in parallel
+      const [statsRes, reputationData, recentApps, recentDeliveries] = await Promise.all([
+        base44.functions.invoke('creatorDashboardStats', { creatorId, range: 'all' }),
         base44.entities.Reputation.filter({ user_id: userId, profile_type: 'creator' }),
-        // 2) Recent items for the lists (top 10)
         base44.entities.Application.filter({ creator_id: creatorId }, '-created_date', RECENT_LIMIT),
         base44.entities.Delivery.filter({ creator_id: creatorId }, '-created_date', RECENT_LIMIT),
       ]);
 
-      // 3) Batch-fetch related campaigns + brands for recent items only
+      const stats = statsRes.data;
+
+      // 2) Batch-fetch related campaigns + brands for recent items only
       const campaignIds = [...new Set([
         ...recentApps.map(a => a.campaign_id),
         ...recentDeliveries.map(d => d.campaign_id),
@@ -75,23 +55,20 @@ export function useCreatorDashboardData(creatorId, userId) {
 
       const reputation = reputationData.length > 0 ? reputationData[0] : null;
 
-      // 4) Derive aggregated stats from counts
-      const totalApps = Object.values(appCounts).reduce((a, b) => a + b, 0);
-      const totalDeliveries = Object.values(delCounts).reduce((a, b) => a + b, 0);
-
       return {
-        // Recent items (for lists, max 10)
         recentApplications: recentApps,
         recentDeliveries,
-        // Maps for display
         campaignsMap,
         brandsMap,
         reputation,
-        // Counts by status (for stats, charts)
-        appCounts,
-        delCounts,
-        totalApps,
-        totalDeliveries,
+        // From backend stats
+        appCounts: stats.appCounts || {},
+        delCounts: stats.delCounts || {},
+        totalApps: stats.totalApps || 0,
+        totalDeliveries: stats.totalDeliveries || 0,
+        onTimeRate: stats.onTimeRate ?? 100,
+        appsByMonth: stats.appsByMonth || [],
+        deliveriesByMonth: stats.deliveriesByMonth || [],
       };
     },
     enabled: !!creatorId && !!userId,
@@ -99,54 +76,38 @@ export function useCreatorDashboardData(creatorId, userId) {
   });
 }
 
-// ─── BRAND DASHBOARD (paginated) ───
+// ─── BRAND DASHBOARD ───
 
 export function useBrandDashboardData(brandId) {
   return useQuery({
     queryKey: ['dashboard', 'brand', brandId],
     queryFn: async () => {
-      // 1) Counts + recent items in parallel
-      const [
-        campaignCounts,
-        appCounts,
-        delCounts,
-        recentCampaigns,
-        recentApps,
-        recentDeliveries,
-      ] = await Promise.all([
-        countByStatus(base44.entities.Campaign, { brand_id: brandId }, [
-          'draft', 'under_review', 'active', 'paused', 'applications_closed', 'completed', 'cancelled'
-        ]),
-        countByStatus(base44.entities.Application, { brand_id: brandId }, [
-          'pending', 'accepted', 'rejected', 'withdrawn', 'completed'
-        ]),
-        countByStatus(base44.entities.Delivery, { brand_id: brandId }, [
-          'pending', 'submitted', 'approved', 'contested', 'in_dispute', 'resolved', 'closed'
-        ]),
+      // 1) Stats from backend (1 request) + recent items in parallel
+      const [statsRes, recentCampaigns, recentApps, recentDeliveries] = await Promise.all([
+        base44.functions.invoke('brandDashboardStats', { brandId, range: 'all' }),
         base44.entities.Campaign.filter({ brand_id: brandId }, '-created_date', RECENT_LIMIT),
         base44.entities.Application.filter({ brand_id: brandId }, '-created_date', RECENT_LIMIT),
         base44.entities.Delivery.filter({ brand_id: brandId }, '-created_date', RECENT_LIMIT),
       ]);
 
-      // 2) Build campaigns map from recent campaigns for display
-      const campaignsMap = arrayToMap(recentCampaigns);
+      const stats = statsRes.data;
 
-      // Derive totals
-      const totalCampaigns = Object.values(campaignCounts).reduce((a, b) => a + b, 0);
-      const totalApps = Object.values(appCounts).reduce((a, b) => a + b, 0);
-      const totalDeliveries = Object.values(delCounts).reduce((a, b) => a + b, 0);
+      // Build campaigns map from recent campaigns for display
+      const campaignsMap = arrayToMap(recentCampaigns);
 
       return {
         recentCampaigns,
         recentApplications: recentApps,
         recentDeliveries,
         campaignsMap,
-        campaignCounts,
-        appCounts,
-        delCounts,
-        totalCampaigns,
-        totalApps,
-        totalDeliveries,
+        // From backend stats
+        campaignCounts: stats.campaignCounts || {},
+        appCounts: stats.appCounts || {},
+        delCounts: stats.delCounts || {},
+        totalCampaigns: stats.totalCampaigns || 0,
+        totalApps: stats.totalApps || 0,
+        totalDeliveries: stats.totalDeliveries || 0,
+        campaignsByMonth: stats.campaignsByMonth || [],
       };
     },
     enabled: !!brandId,
