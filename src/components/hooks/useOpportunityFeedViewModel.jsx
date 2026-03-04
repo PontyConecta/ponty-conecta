@@ -1,21 +1,42 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { validateCreatorProfile } from '../utils/profileValidation';
 import { isProfileSubscribed } from '../utils/subscriptionUtils';
-import { useOpportunitiesQuery, useApplyToCampaignMutation } from './useEntityQuery';
+import { useApplyToCampaignMutation } from './useEntityQuery';
+import { useOpportunitiesPaginated } from './useOpportunitiesPaginated';
 
 export function useOpportunityFeedViewModel(authProfile, profileType) {
   const queryClient = useQueryClient();
   const creator = authProfile;
+  const creatorId = profileType === 'creator' ? authProfile?.id : null;
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
   const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
 
-  // Data
-  const { data, isLoading } = useOpportunitiesQuery(profileType === 'creator' ? authProfile?.id : null);
-  const campaigns = data?.campaigns || [];
-  const brands = data?.brands || {};
-  const myApplications = data?.myApplications || [];
+  // Paginated data
+  const {
+    data: infiniteData,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useOpportunitiesPaginated(creatorId);
+
+  // Flatten all pages into single arrays/maps
+  const { campaigns, brands, appliedCampaignIds } = useMemo(() => {
+    if (!infiniteData?.pages) return { campaigns: [], brands: {}, appliedCampaignIds: new Set() };
+    const allCampaigns = [];
+    const allBrands = {};
+    const allAppliedIds = new Set();
+    for (const page of infiniteData.pages) {
+      allCampaigns.push(...page.campaigns);
+      Object.assign(allBrands, page.brands);
+      for (const app of page.myApplications) {
+        allAppliedIds.add(app.campaign_id);
+      }
+    }
+    return { campaigns: allCampaigns, brands: allBrands, appliedCampaignIds: allAppliedIds };
+  }, [infiniteData]);
 
   const applyMutation = useApplyToCampaignMutation();
   const applying = applyMutation.isPending;
@@ -35,7 +56,7 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   // Pull-to-refresh
   const [refreshing, setRefreshing] = useState(false);
 
-  // Filtered campaigns (memoized)
+  // Filtered campaigns (memoized, client-side on loaded pages)
   const filteredCampaigns = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();
     return campaigns.filter(c => {
@@ -49,10 +70,6 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   }, [campaigns, searchTerm, filterPlatform, filterRemuneration]);
 
   // Applied check (memoized set)
-  const appliedCampaignIds = useMemo(
-    () => new Set(myApplications.map(a => a.campaign_id)),
-    [myApplications]
-  );
   const hasApplied = useCallback((campaignId) => appliedCampaignIds.has(campaignId), [appliedCampaignIds]);
 
   // Dialog handlers
