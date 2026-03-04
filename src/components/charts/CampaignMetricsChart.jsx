@@ -2,7 +2,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function CampaignMetricsChart({ campaignCounts = {}, appCounts = {}, totalCampaigns = 0, totalApps = 0, campaignsByMonth }) {
+export default function CampaignMetricsChart({ campaignCounts = {}, appCounts = {}, totalCampaigns = 0, totalApps = 0, campaignsByMonth = [] }) {
   const acceptedApps = (appCounts.accepted || 0) + (appCounts.completed || 0);
   const rejectedApps = appCounts.rejected || 0;
   const pendingApps = appCounts.pending || 0;
