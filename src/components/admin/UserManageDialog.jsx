@@ -46,6 +46,9 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
       setNewVerified(profile.is_verified || false);
       setNewRole(user.role || 'user');
       setExcludeFromFinancials(user.exclude_from_financials || false);
+      setVisibilityStatus(user.visibility_status || 'visible');
+      setHiddenReason('');
+      setShowHideForm(false);
       setAuditNote('');
       setTrialDays(30);
     }
