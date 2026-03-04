@@ -10,11 +10,20 @@ const QUERY_CONFIG = {
   retry: 1,
 };
 
-// Fetch related entities by IDs (deduped, parallel)
+// Fetch related entities by IDs — batch via $in (1 query per entity, chunked at 100)
+const BATCH_CHUNK_SIZE = 100;
 async function fetchRelatedByIds(entityApi, ids) {
   const uniqueIds = [...new Set(ids.filter(Boolean))];
   if (uniqueIds.length === 0) return {};
-  const results = await Promise.all(uniqueIds.map(id => entityApi.filter({ id })));
+
+  const chunks = [];
+  for (let i = 0; i < uniqueIds.length; i += BATCH_CHUNK_SIZE) {
+    chunks.push(uniqueIds.slice(i, i + BATCH_CHUNK_SIZE));
+  }
+
+  const results = await Promise.all(
+    chunks.map(chunk => entityApi.filter({ id: { $in: chunk } }))
+  );
   return arrayToMap(results.flat());
 }
 
@@ -143,13 +152,10 @@ export function useCreatorDashboardQuery(creatorId, userId) {
       ].filter(Boolean))];
       const brandIds = [...new Set(deliveries.map(d => d.brand_id).filter(Boolean))];
 
-      const [campaignsData, brandsData] = await Promise.all([
-        campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
-        brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([]),
+      const [campaignsMap, brandsMap] = await Promise.all([
+        fetchRelatedByIds(base44.entities.Campaign, campaignIds),
+        fetchRelatedByIds(base44.entities.Brand, brandIds),
       ]);
-
-      const campaignsMap = arrayToMap(campaignsData.flat());
-      const brandsMap = arrayToMap(brandsData.flat());
       const reputation = reputationData.length > 0 ? reputationData[0] : null;
 
       return { applications, deliveries, campaignsMap, brandsMap, reputation };
