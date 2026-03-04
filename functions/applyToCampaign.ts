@@ -78,6 +78,19 @@ Deno.serve(async (req) => {
         total_applications: currentTotal + 1
       });
 
+      // ── EMIT EVENT ──
+      try {
+        await base44.functions.invoke('emitEvent', {
+          event_type: 'application_created',
+          actor_user_id: user.id,
+          actor_role: 'creator',
+          resource_type: 'application',
+          resource_id: application.id,
+          metadata: { campaign_id, creator_id: creator.id, brand_id: campaign.brand_id },
+          idempotency_key: `application_created_${application.id}`,
+        });
+      } catch (e) { console.warn('[applyToCampaign] Event emit failed:', e.message); }
+
       console.log(`[applyToCampaign] SUCCESS: application=${application.id}, campaign=${campaign_id}, total_applications=${currentTotal + 1}`);
 
       return Response.json({

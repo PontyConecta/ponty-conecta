@@ -58,6 +58,20 @@ Deno.serve(async (req) => {
 
       // ── 5. EXECUTE ──
       const campaign = await base44.entities.Campaign.create(sanitized);
+
+      // ── EMIT EVENT ──
+      try {
+        await base44.functions.invoke('emitEvent', {
+          event_type: 'campaign_created',
+          actor_user_id: user.id,
+          actor_role: 'brand',
+          resource_type: 'campaign',
+          resource_id: campaign.id,
+          metadata: { brand_id: brand.id, title: sanitized.title },
+          idempotency_key: `campaign_created_${campaign.id}`,
+        });
+      } catch (e) { console.warn(`[${FN}] Event emit failed:`, e.message); }
+
       console.log(`[${FN}] Created campaign ${campaign.id} for brand ${brand.id}`);
       return Response.json({ success: true, campaign });
     }
@@ -104,6 +118,20 @@ Deno.serve(async (req) => {
 
       // ── 5. EXECUTE ──
       await base44.entities.Campaign.update(campaign_id, { status: data.status });
+
+      // ── EMIT EVENT ──
+      try {
+        await base44.functions.invoke('emitEvent', {
+          event_type: `campaign_${data.status}`,
+          actor_user_id: user.id,
+          actor_role: 'brand',
+          resource_type: 'campaign',
+          resource_id: campaign_id,
+          metadata: { from_status: currentStatus, to_status: data.status, brand_id: brand.id },
+          idempotency_key: `campaign_${data.status}_${campaign_id}_${Date.now()}`,
+        });
+      } catch (e) { console.warn(`[${FN}] Event emit failed:`, e.message); }
+
       console.log(`[${FN}] Status ${currentStatus} → ${data.status} for campaign ${campaign_id}`);
       return Response.json({ success: true });
     }

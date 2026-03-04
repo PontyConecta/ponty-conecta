@@ -45,6 +45,20 @@ Deno.serve(async (req) => {
 
       // ── 5. EXECUTE ──
       await base44.entities.Application.update(application_id, { status: 'withdrawn' });
+
+      // ── EMIT EVENT ──
+      try {
+        await base44.functions.invoke('emitEvent', {
+          event_type: 'application_withdrawn',
+          actor_user_id: user.id,
+          actor_role: 'creator',
+          resource_type: 'application',
+          resource_id: application_id,
+          metadata: { campaign_id: application.campaign_id, creator_id: creators[0].id },
+          idempotency_key: `application_withdrawn_${application_id}`,
+        });
+      } catch (e) { console.warn(`[${FN}] Event emit failed:`, e.message); }
+
       console.log(`[${FN}] Application ${application_id} withdrawn by creator ${creators[0].id}`);
       return Response.json({ success: true });
     }
@@ -68,6 +82,20 @@ Deno.serve(async (req) => {
         rejected_at: new Date().toISOString(),
         rejection_reason: (typeof data?.rejection_reason === 'string' ? data.rejection_reason.trim() : '') || '',
       });
+
+      // ── EMIT EVENT ──
+      try {
+        await base44.functions.invoke('emitEvent', {
+          event_type: 'application_rejected',
+          actor_user_id: user.id,
+          actor_role: 'brand',
+          resource_type: 'application',
+          resource_id: application_id,
+          metadata: { campaign_id: application.campaign_id, brand_id: brands[0].id },
+          idempotency_key: `application_rejected_${application_id}`,
+        });
+      } catch (e) { console.warn(`[${FN}] Event emit failed:`, e.message); }
+
       console.log(`[${FN}] Application ${application_id} rejected by brand ${brands[0].id}`);
       return Response.json({ success: true });
     }

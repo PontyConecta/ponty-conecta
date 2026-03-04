@@ -57,7 +57,20 @@ Deno.serve(async (req) => {
       console.warn(`[${FN}] Mission creation failed (non-critical):`, e.message);
     }
 
-    // ── 5. RESPOND ──
+    // ── 5. EMIT EVENT (fire-and-forget) ──
+    try {
+      await base44.functions.invoke('emitEvent', {
+        event_type: 'onboarding_completed',
+        actor_user_id: user.id,
+        actor_role: profile_type,
+        resource_type: profile_type,
+        resource_id: profile.id,
+        metadata: { profile_type },
+        idempotency_key: `onboarding_completed_${profile.id}`,
+      });
+    } catch (e) { console.warn(`[${FN}] Event emit failed (non-critical):`, e.message); }
+
+    // ── 6. RESPOND ──
     console.log(`[${FN}] Finalized ${profile_type} for user ${user.id}`);
     return Response.json({
       success: true,

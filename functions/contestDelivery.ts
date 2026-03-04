@@ -67,6 +67,28 @@ Deno.serve(async (req) => {
         brand_statement: reason
       });
 
+      // ── EMIT EVENTS ──
+      try {
+        await base44.functions.invoke('emitEvent', {
+          event_type: 'delivery_contested',
+          actor_user_id: user.id,
+          actor_role: 'brand',
+          resource_type: 'delivery',
+          resource_id: delivery_id,
+          metadata: { campaign_id: delivery.campaign_id, creator_id: delivery.creator_id, dispute_id: dispute.id },
+          idempotency_key: `delivery_contested_${delivery_id}`,
+        });
+        await base44.functions.invoke('emitEvent', {
+          event_type: 'dispute_created',
+          actor_user_id: user.id,
+          actor_role: 'brand',
+          resource_type: 'dispute',
+          resource_id: dispute.id,
+          metadata: { delivery_id, campaign_id: delivery.campaign_id, raised_by: 'brand' },
+          idempotency_key: `dispute_created_${dispute.id}`,
+        });
+      } catch (e) { console.warn('[contestDelivery] Event emit failed:', e.message); }
+
       console.log(`[contestDelivery] SUCCESS: delivery=${delivery_id}, dispute=${dispute.id}`);
 
       return Response.json({

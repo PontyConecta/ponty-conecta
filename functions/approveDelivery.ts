@@ -103,6 +103,19 @@ Deno.serve(async (req) => {
         });
       }
 
+      // ── EMIT EVENT ──
+      try {
+        await base44.functions.invoke('emitEvent', {
+          event_type: 'delivery_approved',
+          actor_user_id: user.id,
+          actor_role: 'brand',
+          resource_type: 'delivery',
+          resource_id: delivery_id,
+          metadata: { campaign_id: delivery.campaign_id, creator_id: delivery.creator_id, brand_id: brand.id, on_time: isOnTime },
+          idempotency_key: `delivery_approved_${delivery_id}`,
+        });
+      } catch (e) { console.warn('[approveDelivery] Event emit failed:', e.message); }
+
       console.log(`[approveDelivery] SUCCESS: delivery=${delivery_id}, application=${delivery.application_id}, on_time=${isOnTime}`);
 
       return Response.json({
