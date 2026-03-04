@@ -41,6 +41,7 @@ export function useOpportunitiesPaginated(creatorId) {
       // 3) Batch fetch creator's applications for THESE campaigns only
       const campaignIds = campaigns.map(c => c.id).filter(Boolean);
 
+      // Fetch brands first (needed for shadow mode user_id lookup)
       const [brands, myApplications] = await Promise.all([
         batchFetch(base44.entities.Brand, brandIds),
         creatorId && campaignIds.length > 0
@@ -51,18 +52,18 @@ export function useOpportunitiesPaginated(creatorId) {
           : Promise.resolve([]),
       ]);
 
-      // 4) Shadow mode: fetch Users of these brands and find hidden ones
-      const brandUserIds = Object.values(brands)
-        .map(b => b.user_id)
-        .filter(Boolean);
+      // 4) Shadow mode: fetch Users of these brands to check visibility_status
+      //    +1 request per page (User $in), only when brands exist
+      const brandUserIds = [...new Set(
+        Object.values(brands).map(b => b.user_id).filter(Boolean)
+      )];
       const hiddenBrandIds = new Set();
 
       if (brandUserIds.length > 0) {
         const usersMap = await batchFetch(base44.entities.User, brandUserIds);
-        // Build set of brand IDs whose owner is hidden
         for (const brand of Object.values(brands)) {
           const owner = usersMap[brand.user_id];
-          if (owner && owner.visibility_status === 'hidden') {
+          if (owner?.visibility_status === 'hidden') {
             hiddenBrandIds.add(brand.id);
           }
         }
