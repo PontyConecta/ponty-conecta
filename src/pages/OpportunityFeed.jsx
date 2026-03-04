@@ -13,6 +13,7 @@ import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import EmptyState from '@/components/EmptyState';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { useOpportunityFeedViewModel } from '@/components/hooks/useOpportunityFeedViewModel';
+import { useInfiniteScroll } from '@/components/hooks/useInfiniteScroll';
 import OpportunityCard from '@/components/opportunities/OpportunityCard';
 import OpportunityFilters from '@/components/opportunities/OpportunityFilters';
 import OpportunityDetailDialog from '@/components/opportunities/OpportunityDetailDialog';
