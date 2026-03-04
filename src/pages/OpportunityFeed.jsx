@@ -113,18 +113,27 @@ export default function OpportunityFeed() {
 
       {/* Campaigns Grid */}
       {vm.filteredCampaigns.length > 0 ? (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-5">
-          {vm.filteredCampaigns.map((campaign, index) => (
-            <OpportunityCard
-              key={campaign.id}
-              campaign={campaign}
-              brand={vm.brands[campaign.brand_id]}
-              applied={vm.hasApplied(campaign.id)}
-              index={index}
-              onView={vm.openCampaignDetails}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-5">
+            {vm.filteredCampaigns.map((campaign, index) => (
+              <OpportunityCard
+                key={campaign.id}
+                campaign={campaign}
+                brand={vm.brands[campaign.brand_id]}
+                applied={vm.hasApplied(campaign.id)}
+                index={index}
+                onView={vm.openCampaignDetails}
+              />
+            ))}
+          </div>
+
+          {/* Infinite scroll sentinel */}
+          <div ref={loadMoreRef} className="flex justify-center py-6">
+            {vm.isFetchingNextPage && (
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            )}
+          </div>
+        </>
       ) : (
         <Card className="border bg-card shadow-sm">
           <CardContent className="p-12">
