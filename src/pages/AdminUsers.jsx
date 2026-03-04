@@ -6,6 +6,8 @@ import { Download, Loader2, RefreshCw, LayoutGrid, List } from 'lucide-react';
 import { toast } from 'sonner';
 
 import AdminHeader from '../components/admin/AdminHeader';
+import UserKpiBar from '../components/admin/UserKpiBar';
+import UserQuickFilters from '../components/admin/UserQuickFilters';
 import UserFilters from '../components/admin/UserFilters';
 import UserBulkActions from '../components/admin/UserBulkActions';
 import UserTable from '../components/admin/UserTable';
@@ -38,6 +40,7 @@ export default function AdminUsers() {
   const [sortField, setSortField] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
   const [density, setDensity] = useState('default');
+  const [quickFilter, setQuickFilter] = useState('all');
 
   useEffect(() => { loadUsers(); }, []);
 
@@ -98,8 +101,23 @@ export default function AdminUsers() {
   // Filtering
   const filteredUsers = useMemo(() => {
     const now = new Date();
+    const DAY_MS = 24 * 60 * 60 * 1000;
     return users.filter(user => {
       const { profile, type } = getUserProfile(user.id);
+
+      // Quick filter
+      if (quickFilter !== 'all') {
+        const lastActive = user.last_active ? new Date(user.last_active).getTime() : 0;
+        const created = user.created_date ? new Date(user.created_date).getTime() : 0;
+        if (quickFilter === 'new' && (!created || (now.getTime() - created) >= 7 * DAY_MS)) return false;
+        if (quickFilter === 'never_active' && user.first_active) return false;
+        if (quickFilter === 'inactive' && lastActive && (now.getTime() - lastActive) <= 30 * DAY_MS) return false;
+        if (quickFilter === 'hidden' && user.visibility_status !== 'hidden') return false;
+        if (quickFilter === 'premium') {
+          const sub = profile?.subscription_status;
+          if (sub !== 'premium' && sub !== 'legacy' && sub !== 'trial') return false;
+        }
+      }
       
       // Search (name, email, company, display name, handles)
       if (searchTerm) {
@@ -174,7 +192,7 @@ export default function AdminUsers() {
       
       return true;
     });
-  }, [users, brands, creators, searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter]);
+  }, [users, brands, creators, searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter]);
 
   // Sorting
   const sortedUsers = useMemo(() => {
@@ -207,7 +225,7 @@ export default function AdminUsers() {
   const totalPages = Math.ceil(sortedUsers.length / PAGE_SIZE);
   const paginatedUsers = sortedUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, sortField, sortDir]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter, sortField, sortDir]);
 
   // Collect all unique tags from users
   const availableTags = useMemo(() => {
@@ -275,6 +293,12 @@ export default function AdminUsers() {
           </Button>
         </div>
       </div>
+
+      {/* KPI Bar */}
+      <UserKpiBar users={users} brands={brands} creators={creators} />
+
+      {/* Quick Filters */}
+      <UserQuickFilters value={quickFilter} onChange={setQuickFilter} />
 
       {/* Filters */}
       <UserFilters
