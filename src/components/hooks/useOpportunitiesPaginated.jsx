@@ -18,23 +18,10 @@ async function batchFetch(entityApi, ids) {
   return arrayToMap(results.flat());
 }
 
-async function batchFetchArray(entityApi, ids) {
-  const uniqueIds = [...new Set(ids.filter(Boolean))];
-  if (uniqueIds.length === 0) return [];
-  const chunks = [];
-  for (let i = 0; i < uniqueIds.length; i += BATCH_CHUNK_SIZE) {
-    chunks.push(uniqueIds.slice(i, i + BATCH_CHUNK_SIZE));
-  }
-  const results = await Promise.all(
-    chunks.map(chunk => entityApi.filter({ id: { $in: chunk } }))
-  );
-  return results.flat();
-}
-
 /**
- * Paginated opportunities feed.
- * Each page fetches PAGE_SIZE campaigns + related brands + creator applications.
- * Shadow mode: filters out campaigns from hidden brand owners.
+ * Paginated opportunities feed with shadow mode.
+ * Each page: PAGE_SIZE campaigns + brands + users (shadow check) + applications.
+ * Requests per page: campaigns(1) + brands(1) + users(1) + apps(1) = 4 max
  */
 export function useOpportunitiesPaginated(creatorId) {
   return useInfiniteQuery({
@@ -50,43 +37,49 @@ export function useOpportunitiesPaginated(creatorId) {
 
       // 2) Batch fetch related brands
       const brandIds = [...new Set(campaigns.map(c => c.brand_id).filter(Boolean))];
-      const brandsMap = await batchFetch(base44.entities.Brand, brandIds);
 
-      // 3) Shadow mode — fetch Users of brand owners to check visibility_status
-      const brandUserIds = [...new Set(
-        Object.values(brandsMap).map(b => b.user_id).filter(Boolean)
-      )];
-      const brandUsers = await batchFetchArray(base44.entities.User, brandUserIds);
-      const hiddenUserIds = new Set(
-        brandUsers.filter(u => u.visibility_status === 'hidden').map(u => u.id)
-      );
+      // 3) Batch fetch creator's applications for THESE campaigns only
+      const campaignIds = campaigns.map(c => c.id).filter(Boolean);
 
-      // Build set of hidden brand IDs (brands whose owner is hidden)
+      const [brands, myApplications] = await Promise.all([
+        batchFetch(base44.entities.Brand, brandIds),
+        creatorId && campaignIds.length > 0
+          ? base44.entities.Application.filter({
+              creator_id: creatorId,
+              campaign_id: { $in: campaignIds },
+            })
+          : Promise.resolve([]),
+      ]);
+
+      // 4) Shadow mode: fetch Users of these brands and find hidden ones
+      const brandUserIds = Object.values(brands)
+        .map(b => b.user_id)
+        .filter(Boolean);
       const hiddenBrandIds = new Set();
-      for (const [brandId, brand] of Object.entries(brandsMap)) {
-        if (hiddenUserIds.has(brand.user_id)) {
-          hiddenBrandIds.add(brandId);
+
+      if (brandUserIds.length > 0) {
+        const usersMap = await batchFetch(base44.entities.User, brandUserIds);
+        // Build set of brand IDs whose owner is hidden
+        for (const brand of Object.values(brands)) {
+          const owner = usersMap[brand.user_id];
+          if (owner && owner.visibility_status === 'hidden') {
+            hiddenBrandIds.add(brand.id);
+          }
         }
       }
 
-      // Filter out hidden campaigns
-      const visibleCampaigns = campaigns.filter(c => !hiddenBrandIds.has(c.brand_id));
-
-      // 4) Batch fetch creator's applications for visible campaigns only
-      const campaignIds = visibleCampaigns.map(c => c.id).filter(Boolean);
-
-      const myApplications = creatorId && campaignIds.length > 0
-        ? await base44.entities.Application.filter({
-            creator_id: creatorId,
-            campaign_id: { $in: campaignIds },
-          })
-        : [];
+      // 5) Filter out campaigns from hidden brands
+      const visibleCampaigns = hiddenBrandIds.size > 0
+        ? campaigns.filter(c => !hiddenBrandIds.has(c.brand_id))
+        : campaigns;
 
       return {
         campaigns: visibleCampaigns,
-        brands: brandsMap,
+        brands,
         myApplications,
-        nextOffset: pageParam + campaigns.length, // offset based on raw count (not filtered)
+        hiddenCount: campaigns.length - visibleCampaigns.length,
+        // Offset advances by raw count (including hidden) to keep server pagination stable
+        nextOffset: pageParam + campaigns.length,
         hasMore: campaigns.length === PAGE_SIZE,
       };
     },
