@@ -9,6 +9,7 @@ import {
   ChevronUp, ChevronDown, ChevronsUpDown, MapPin, EyeOff
 } from 'lucide-react';
 import { UserTagBadges } from './UserTagManager';
+import UserStatusBadges from './UserStatusBadges';
 
 function SortHeader({ label, field, sortField, sortDir, onSort }) {
   const active = sortField === field;
@@ -67,16 +68,17 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
   return (
     <Card className="bg-card border">
       {/* Desktop Header */}
-      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 px-5 py-3 border-b items-center">
+      <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_80px_80px_70px_110px_80px_80px_50px] gap-2 px-4 py-3 border-b items-center">
         <div><Checkbox checked={selectedIds.length === users.length && users.length > 0} onCheckedChange={toggleAll} /></div>
         <SortHeader label="Usuário" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Tipo" field="type" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Plano" field="subscription" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Estado" field="state" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="UF" field="location" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</span>
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tags</span>
         <SortHeader label="Data" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ação</span>
+        <span></span>
       </div>
 
       <div className="divide-y divide-border">
@@ -88,9 +90,9 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
           return (
             <div key={user.id} className={`${rowPadding} transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-purple-50/50' : ''}`}>
               {/* Desktop Row */}
-              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_90px_90px_70px_100px_80px_60px] gap-3 px-5 items-center">
+              <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_80px_80px_70px_110px_80px_80px_50px] gap-2 px-4 items-center">
                 <div><Checkbox checked={isSelected} onCheckedChange={() => toggleOne(user.id)} /></div>
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
                   <Avatar className={`${compact ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
                     <AvatarFallback className={`text-[10px] ${type === 'brand' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}`}>
@@ -105,34 +107,36 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                       {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500 flex-shrink-0" />}
                       {profile?.is_verified && <CheckCircle2 className="w-3 h-3 text-blue-500 flex-shrink-0" />}
                       {user.exclude_from_financials && <EyeOff className="w-3 h-3 text-orange-500 flex-shrink-0" title="Excluído dos financeiros" />}
-                      {user.visibility_status === 'hidden' && <EyeOff className="w-3 h-3 text-red-500 flex-shrink-0" title="Usuário oculto do marketplace" />}
                     </div>
                     <p className="text-xs truncate text-muted-foreground">{user.email}</p>
                   </div>
                 </div>
                 <div>
-                  <Badge variant="outline" className="text-xs px-2 py-0.5 capitalize">
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">
                     {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                   </Badge>
                 </div>
                 <div>{renderSubBadge(profile?.subscription_status)}</div>
                 <div>
-                  <Badge className={`border-0 text-xs px-2 py-0.5 ${profile?.account_state === 'ready' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  <Badge className={`border-0 text-[10px] px-1.5 py-0 ${profile?.account_state === 'ready' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                     {profile?.account_state === 'ready' ? 'Pronta' : 'Incompleta'}
                   </Badge>
                 </div>
                 <div>
                   {location && (
-                    <span className="text-xs flex items-center gap-0.5 text-muted-foreground">
+                    <span className="text-[10px] flex items-center gap-0.5 text-muted-foreground">
                       <MapPin className="w-3 h-3" />{location}
                     </span>
                   )}
                 </div>
                 <div>
+                  <UserStatusBadges user={user} profile={profile} maxShow={2} />
+                </div>
+                <div>
                   <UserTagBadges tags={user.tags} size="xs" maxShow={2} />
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[10px] text-muted-foreground">
                     {new Date(user.created_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                   </span>
                 </div>
@@ -165,19 +169,10 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                       {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                     </Badge>
                     {renderSubBadge(profile?.subscription_status)}
+                    <UserStatusBadges user={user} profile={profile} maxShow={2} />
                     {profile?.is_verified && (
                       <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
                         <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> Verificado
-                      </Badge>
-                    )}
-                    {user.exclude_from_financials && (
-                      <Badge className="bg-orange-100 text-orange-700 border-0 text-[10px] px-1.5 py-0">
-                        <EyeOff className="w-2.5 h-2.5 mr-0.5" /> Excluído
-                      </Badge>
-                    )}
-                    {user.visibility_status === 'hidden' && (
-                      <Badge className="bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0">
-                        <EyeOff className="w-2.5 h-2.5 mr-0.5" /> Oculto
                       </Badge>
                     )}
                     {location && (
