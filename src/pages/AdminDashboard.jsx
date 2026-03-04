@@ -48,7 +48,7 @@ export default function AdminDashboard() {
         if (fallback.data?.error) throw new Error(fallback.data.error);
         setAnalytics(fallback.data);
         setLastRefresh(new Date());
-        console.log('FALLBACK TO V1');
+
         toast.warning('Usando dados do analytics v1 (fallback)');
       } catch (err2) {
         console.error('V1 fallback also failed:', err2);
