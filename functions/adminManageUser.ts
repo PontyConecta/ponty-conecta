@@ -216,6 +216,27 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case 'set_visibility_status': {
+        const newVisibility = data?.visibility_status;
+        if (!newVisibility || !['visible', 'hidden'].includes(newVisibility)) {
+          return Response.json({ error: 'visibility_status must be "visible" or "hidden"' }, { status: 400 });
+        }
+        const visibilityUpdate = { visibility_status: newVisibility };
+        if (newVisibility === 'hidden' && data?.hidden_reason) {
+          visibilityUpdate.hidden_reason = String(data.hidden_reason).trim().slice(0, 500);
+        }
+        if (newVisibility === 'visible') {
+          visibilityUpdate.hidden_reason = '';
+        }
+        await base44.asServiceRole.entities.User.update(userId, visibilityUpdate);
+        auditAction = newVisibility === 'hidden' ? 'user_deactivated' : 'user_activated';
+        auditDetails = newVisibility === 'hidden'
+          ? `User hidden from public. Reason: ${data?.hidden_reason || 'none'}`
+          : `User visibility restored to public`;
+        result = { visibility_status: newVisibility };
+        break;
+      }
+
       case 'flag_review': {
         auditAction = 'user_flagged';
         auditDetails = `User flagged for review`;

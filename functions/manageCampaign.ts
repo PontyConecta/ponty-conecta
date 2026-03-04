@@ -105,6 +105,22 @@ Deno.serve(async (req) => {
       // ── 5. EXECUTE ──
       await base44.entities.Campaign.update(campaign_id, { status: data.status });
       console.log(`[${FN}] Status ${currentStatus} → ${data.status} for campaign ${campaign_id}`);
+
+      // ── 6. AUDIT LOG ──
+      try {
+        await base44.entities.AuditLog.create({
+          admin_id: user.id,
+          admin_email: user.email,
+          action: 'campaign_status_change',
+          target_entity_id: campaign_id,
+          target_user_id: brand.user_id,
+          details: `Campaign "${campaigns[0].title}" status changed: ${currentStatus} → ${data.status}`,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (auditErr) {
+        console.error(`[${FN}] Audit log failed (non-critical):`, auditErr.message);
+      }
+
       return Response.json({ success: true });
     }
 
