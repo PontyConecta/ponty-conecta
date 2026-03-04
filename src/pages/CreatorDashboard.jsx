@@ -25,7 +25,7 @@ import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
 import StatCard from '@/components/dashboard/StatCard';
 import StatusBadge from '@/components/common/StatusBadge';
-import { useCreatorDashboardQuery } from '@/components/hooks/useEntityQuery';
+import { useCreatorDashboardData } from '@/components/hooks/useDashboardData';
 
 export default function CreatorDashboard() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -33,12 +33,16 @@ export default function CreatorDashboard() {
   const creator = authProfile;
   const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
 
-  const { data, isLoading } = useCreatorDashboardQuery(creator?.id, user?.id);
-  const applications = data?.applications || [];
-  const deliveries = data?.deliveries || [];
+  const { data, isLoading } = useCreatorDashboardData(creator?.id, user?.id);
+  const recentApplications = data?.recentApplications || [];
+  const recentDeliveries = data?.recentDeliveries || [];
   const campaignsMap = data?.campaignsMap || {};
   const brandsMap = data?.brandsMap || {};
   const reputation = data?.reputation || null;
+  const appCounts = data?.appCounts || {};
+  const delCounts = data?.delCounts || {};
+  const totalApps = data?.totalApps || 0;
+  const totalDeliveries = data?.totalDeliveries || 0;
 
   // Realtime: invalidate scoped keys only
   useEffect(() => {
@@ -75,28 +79,28 @@ export default function CreatorDashboard() {
     );
   }
 
-  const activeApplications = applications.filter(a => a.status === 'pending' || a.status === 'accepted');
-  const activeDeliveries = deliveries.filter(d => d.status === 'pending' || d.status === 'submitted');
+  const activeAppsCount = (appCounts.pending || 0) + (appCounts.accepted || 0);
+  const activeDelCount = (delCounts.pending || 0) + (delCounts.submitted || 0);
 
   const stats = [
     { 
       label: 'Candidaturas Ativas', 
-      value: activeApplications.length,
-      total: applications.length,
+      value: activeAppsCount,
+      total: totalApps,
       icon: Target,
       color: 'bg-[#9038fa]'
     },
     { 
       label: 'Trabalhos em Andamento', 
-      value: activeDeliveries.length,
-      total: deliveries.length,
+      value: activeDelCount,
+      total: totalDeliveries,
       icon: FileText,
       color: 'bg-[#b77aff]'
     }
   ];
 
   const isSubscribed = isProfileSubscribed(creator);
-  const isNewUser = activeApplications.length === 0 && deliveries.length === 0;
+  const isNewUser = activeAppsCount === 0 && totalDeliveries === 0;
 
   return (
     <div className="space-y-5 lg:space-y-6">
@@ -147,10 +151,10 @@ export default function CreatorDashboard() {
       </div>
 
       {/* Metrics Charts */}
-      <CreatorMetricsChart applications={applications} deliveries={deliveries} />
+      <CreatorMetricsChart appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} totalDeliveries={totalDeliveries} />
 
       {/* Reputation Section */}
-      <CreatorReputationSection reputation={reputation} deliveries={deliveries} />
+      <CreatorReputationSection reputation={reputation} delCounts={delCounts} totalDeliveries={totalDeliveries} />
 
       {/* My Applications */}
       <Card className="border bg-card shadow-sm">
@@ -163,9 +167,9 @@ export default function CreatorDashboard() {
           </Link>
         </CardHeader>
         <CardContent>
-          {applications.length > 0 ? (
+          {recentApplications.length > 0 ? (
             <div className="space-y-3">
-              {applications.slice(0, 5).map((app) => (
+              {recentApplications.slice(0, 5).map((app) => (
                 <div
                   key={app.id}
                   className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors bg-muted/50"
@@ -210,9 +214,9 @@ export default function CreatorDashboard() {
           </Link>
         </CardHeader>
         <CardContent>
-          {deliveries.length > 0 ? (
+          {recentDeliveries.length > 0 ? (
             <div className="space-y-3">
-              {deliveries.slice(0, 5).map((delivery) => (
+              {recentDeliveries.slice(0, 5).map((delivery) => (
                 <div
                   key={delivery.id}
                   className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors bg-muted/50"
