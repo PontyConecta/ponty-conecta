@@ -75,6 +75,22 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
     });
   }, [campaigns, searchTerm, filterPlatform, filterRemuneration]);
 
+  // Auto-fetch more pages when client-side filters produce empty results but server has more
+  const autoFetchRef = useRef(false);
+  useEffect(() => {
+    if (
+      !isLoading &&
+      !isFetchingNextPage &&
+      hasNextPage &&
+      filteredCampaigns.length === 0 &&
+      campaigns.length > 0 &&
+      !autoFetchRef.current
+    ) {
+      autoFetchRef.current = true;
+      fetchNextPage().finally(() => { autoFetchRef.current = false; });
+    }
+  }, [isLoading, isFetchingNextPage, hasNextPage, filteredCampaigns.length, campaigns.length, fetchNextPage]);
+
   // Applied check (memoized set)
   const hasApplied = useCallback((campaignId) => appliedCampaignIds.has(campaignId), [appliedCampaignIds]);
 
