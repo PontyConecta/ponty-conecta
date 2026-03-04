@@ -624,6 +624,20 @@ async function handleLists(base44, range, listType, limit, cursor) {
     });
   }
 
+  if (listType === 'list_users') {
+    const [users, brands, creators] = await Promise.all([
+      base44.asServiceRole.entities.User.list(),
+      base44.asServiceRole.entities.Brand.list(),
+      base44.asServiceRole.entities.Creator.list(),
+    ]);
+    return Response.json({
+      list_type: listType,
+      users,
+      brands,
+      creators,
+    });
+  }
+
   if (listType === 'dormant_users' || listType === 'dormant_premium') {
     const [users, brands, creators] = await Promise.all([
       base44.asServiceRole.entities.User.list(),
