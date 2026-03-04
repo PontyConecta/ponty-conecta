@@ -19,7 +19,8 @@ import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
-import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
+// Explicit extension to force bundler resolution (rebuild-v2)
+import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart.jsx';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
