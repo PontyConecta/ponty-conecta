@@ -22,7 +22,7 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
     fetchNextPage,
   } = useOpportunitiesPaginated(creatorId);
 
-  // Flatten all pages into single arrays/maps — DEDUPLICATING by campaign.id
+  // Flatten all pages into single arrays/maps with deduplication by campaign.id
   const { campaigns, brands, appliedCampaignIds } = useMemo(() => {
     if (!infiniteData?.pages) return { campaigns: [], brands: {}, appliedCampaignIds: new Set() };
     const seenIds = new Set();
@@ -47,25 +47,10 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   const applyMutation = useApplyToCampaignMutation();
   const applying = applyMutation.isPending;
 
-  // Filters — with pagination reset on change
+  // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlatform, setFilterPlatform] = useState('all');
   const [filterRemuneration, setFilterRemuneration] = useState('all');
-
-  // Track previous filter values to detect changes and reset pagination
-  const prevFiltersRef = useRef({ searchTerm, filterPlatform, filterRemuneration });
-  useEffect(() => {
-    const prev = prevFiltersRef.current;
-    if (
-      prev.searchTerm !== searchTerm ||
-      prev.filterPlatform !== filterPlatform ||
-      prev.filterRemuneration !== filterRemuneration
-    ) {
-      prevFiltersRef.current = { searchTerm, filterPlatform, filterRemuneration };
-      // Reset paginated cache so next fetch starts from offset 0
-      queryClient.resetQueries({ queryKey: ['opportunities-paginated', creatorId] });
-    }
-  }, [searchTerm, filterPlatform, filterRemuneration, queryClient, creatorId]);
 
   // Dialog state
   const [selectedCampaign, setSelectedCampaign] = useState(null);
