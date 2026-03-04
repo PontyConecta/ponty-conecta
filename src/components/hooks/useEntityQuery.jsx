@@ -265,6 +265,7 @@ export function useApplyToCampaignMutation() {
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['opportunities', data._creatorId] });
+      qc.invalidateQueries({ queryKey: ['opportunities-paginated', data._creatorId] });
       qc.invalidateQueries({ queryKey: ['applications', 'creator', data._creatorId] });
     },
   });
