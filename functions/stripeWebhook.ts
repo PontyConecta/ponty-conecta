@@ -210,6 +210,19 @@ async function handleCheckoutCompleted(base44, session) {
   console.log('Updating profile with:', JSON.stringify(updateData));
   await base44.asServiceRole.entities[entityName].update(profile.id, updateData);
 
+  // ── EMIT EVENT ──
+  try {
+    await base44.asServiceRole.functions.invoke('emitEvent', {
+      event_type: 'subscription_updated',
+      actor_user_id: profile.user_id,
+      actor_role: profileType,
+      resource_type: 'subscription',
+      resource_id: subscriptionId || session.id,
+      metadata: { status: 'premium', plan_type: planType, profile_type: profileType },
+      idempotency_key: `subscription_checkout_${session.id}`,
+    });
+  } catch (e) { console.warn('Event emit failed:', e.message); }
+
   console.log(`SUCCESS: Subscription activated for ${profileType} ${profile.id}`);
 }
 
