@@ -168,7 +168,7 @@ export default function BrandDashboard() {
       </div>
 
       {/* Gráficos de Métricas */}
-      <CampaignMetricsChart campaignCounts={campaignCounts} appCounts={appCounts} totalCampaigns={totalCampaigns} totalApps={totalApps} />
+      <CampaignMetricsChart campaignCounts={campaignCounts} appCounts={appCounts} totalCampaigns={totalCampaigns} totalApps={totalApps} campaignsByMonth={data?.campaignsByMonth || []} />
 
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Campaigns */}
