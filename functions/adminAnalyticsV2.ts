@@ -273,12 +273,131 @@ async function handleSummary(base44, range, filters) {
     cancelled: allCampaigns.filter(c => c.status === 'cancelled').length,
   };
 
+  // ── PREVIOUS PERIOD for growth comparison ──
+  const prevStart = new Date(start);
+  prevStart.setDate(prevStart.getDate() - days);
+  const prevNewBrands = brands.filter(b => inRange(b.created_date, prevStart, start));
+  const prevNewCreators = creators.filter(c => inRange(c.created_date, prevStart, start));
+  const previousNewUsers = prevNewBrands.length + prevNewCreators.length;
+  const currentNewUsers = newBrands.length + newCreators.length;
+  const growthRate = previousNewUsers > 0
+    ? Math.round(((currentNewUsers - previousNewUsers) / previousNewUsers) * 100 * 10) / 10
+    : (currentNewUsers > 0 ? 100 : 0);
+
+  // ── SUCCESS / CONVERSION ──
+  const completedDeliveriesCount = allDeliveries.filter(d => ['approved', 'closed'].includes(d.status)).length;
+  const totalFinishedDel = finishedDel.length;
+  const successRate = totalFinishedDel > 0 ? Math.round((approvedDel.length / totalFinishedDel) * 1000) / 10 : 100;
+  const conversionRate = allApps.length > 0 ? Math.round((acceptedApps.length / allApps.length) * 1000) / 10 : 0;
+  const fulfillmentRate = acceptedApps.length > 0 ? Math.round((completedDeliveriesCount / acceptedApps.length) * 1000) / 10 : 0;
+
+  // ── FUNNELDATA ──
+  const funnelData = [
+    { stage: 'Campanhas Criadas', value: allCampaigns.length, color: '#818cf8' },
+    { stage: 'Campanhas Ativas', value: activeCampaigns.length, color: '#6366f1' },
+    { stage: 'Candidaturas', value: allApps.length, color: '#3b82f6' },
+    { stage: 'Aceitas', value: acceptedApps.length, color: '#10b981' },
+    { stage: 'Entregas Aprovadas', value: approvedDel.length, color: '#059669' },
+  ];
+
+  // ── ENGAGEMENT CHART (daily/monthly) ──
+  const engagementChart = [];
+  const engDays = days <= 7 ? 7 : days <= 30 ? 30 : 12;
+  for (let i = engDays - 1; i >= 0; i--) {
+    let date, dateStr, matchFn;
+    if (days > 30) {
+      date = new Date(end);
+      date.setMonth(date.getMonth() - i);
+      dateStr = date.toLocaleDateString('pt-BR', { month: 'short' });
+      matchFn = (itemDate) => itemDate.getMonth() === date.getMonth() && itemDate.getFullYear() === date.getFullYear();
+    } else {
+      date = new Date(end);
+      date.setDate(date.getDate() - i);
+      dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+      matchFn = (itemDate) => itemDate.toDateString() === date.toDateString();
+    }
+    engagementChart.push({
+      date: dateStr,
+      candidaturas: allApps.filter(a => matchFn(new Date(a.created_date))).length,
+      entregas: allDeliveries.filter(d => matchFn(new Date(d.created_date))).length,
+      aceitas: allApps.filter(a => (a.status === 'accepted' || a.status === 'completed') && a.accepted_at && matchFn(new Date(a.accepted_at))).length,
+    });
+  }
+
+  // ── USER GROWTH CHART ──
+  const userGrowthChart = [];
+  const ugWeeks = days > 30 ? 12 : 8;
+  const ugInterval = days > 30 ? 30 : 7;
+  for (let i = ugWeeks - 1; i >= 0; i--) {
+    const date = new Date(end);
+    date.setDate(date.getDate() - (i * ugInterval));
+    const dateStr = days > 30
+      ? date.toLocaleDateString('pt-BR', { month: 'short' })
+      : date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+    const prevDate = new Date(date); prevDate.setDate(prevDate.getDate() - ugInterval);
+    userGrowthChart.push({
+      date: dateStr,
+      marcas_total: brands.filter(b => new Date(b.created_date) <= date).length,
+      criadores_total: creators.filter(c => new Date(c.created_date) <= date).length,
+      novos_marcas: brands.filter(b => { const d2 = new Date(b.created_date); return d2 > prevDate && d2 <= date; }).length,
+      novos_criadores: creators.filter(c => { const d2 = new Date(c.created_date); return d2 > prevDate && d2 <= date; }).length,
+    });
+  }
+
+  // ── DISTRIBUTIONS ──
+  const nicheCount = {};
+  creators.forEach(c => (c.niche || []).forEach(n => { nicheCount[n] = (nicheCount[n] || 0) + 1; }));
+  const nicheDistribution = Object.entries(nicheCount).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 8);
+
+  const platformCount = {};
+  creators.forEach(c => (c.platforms || []).forEach(p => { platformCount[p.name] = (platformCount[p.name] || 0) + 1; }));
+  const platformDistribution = Object.entries(platformCount).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 6);
+
+  const stateCount = {};
+  [...brands, ...creators].forEach(p => { if (p.state) stateCount[p.state] = (stateCount[p.state] || 0) + 1; });
+  const stateDistribution = Object.entries(stateCount).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 10);
+
+  const sizeCount = { nano: 0, micro: 0, mid: 0, macro: 0, mega: 0 };
+  creators.forEach(c => { if (c.profile_size) sizeCount[c.profile_size]++; });
+  const sizeDistribution = Object.entries(sizeCount).filter(([_, v]) => v > 0).map(([name, value]) => ({ name, value }));
+
+  const planCount = { starter: 0, premium: 0, trial: 0, legacy: 0 };
+  [...brands, ...creators].forEach(p => { const s = p.subscription_status || 'starter'; if (planCount[s] !== undefined) planCount[s]++; });
+  const planDistribution = Object.entries(planCount).filter(([_, v]) => v > 0).map(([name, value]) => ({ name, value }));
+
+  // ── DISPUTES SUMMARY ──
+  const disputesSummary = {
+    open: allDisputes.filter(d => d.status === 'open').length,
+    under_review: allDisputes.filter(d => d.status === 'under_review').length,
+    resolved_brand: allDisputes.filter(d => d.status === 'resolved_brand_favor').length,
+    resolved_creator: allDisputes.filter(d => d.status === 'resolved_creator_favor').length,
+    total: allDisputes.length,
+  };
+
+  // ── TOP RANKINGS ──
+  const brandCampaignCount = {};
+  allCampaigns.forEach(c => { if (c.brand_id) brandCampaignCount[c.brand_id] = (brandCampaignCount[c.brand_id] || 0) + 1; });
+  const topBrands = Object.entries(brandCampaignCount).sort((a, b) => b[1] - a[1]).slice(0, 5)
+    .map(([id, count]) => ({ name: brands.find(b => b.id === id)?.company_name || 'Desconhecido', campaigns: count }));
+
+  const creatorAppCount = {};
+  allApps.forEach(a => { if (a.creator_id) creatorAppCount[a.creator_id] = (creatorAppCount[a.creator_id] || 0) + 1; });
+  const topCreators = Object.entries(creatorAppCount).sort((a, b) => b[1] - a[1]).slice(0, 5)
+    .map(([id, count]) => ({ name: creators.find(c => c.id === id)?.display_name || 'Desconhecido', applications: count }));
+
+  // ── ACTIVE USERS ──
+  const brandActiveUsers = brands.filter(b => b.account_state === 'ready').length;
+  const creatorActiveUsers = creators.filter(c => c.account_state === 'ready').length;
+
+  // ── NEW APPS for engagement tab ──
+  const newApplications = allApps.filter(a => inRange(a.created_date, start, end)).length;
+
   return Response.json({
     period: { range, start: start.toISOString(), end: end.toISOString() },
     users: {
       total: users.length,
       brands: brands.length, creators: creators.length,
-      new_signups: newBrands.length + newCreators.length,
+      new_signups: currentNewUsers,
       new_brands: newBrands.length, new_creators: newCreators.length,
       wau: wauUsers.length,
       wau_brands: wauUsers.filter(u => brandUserIds.has(u.id)).length,
@@ -343,6 +462,37 @@ async function handleSummary(base44, range, filters) {
       dormant_premium_users: dormantPremium.length,
     },
     pipeline,
+    // ── COMPAT LAYER (flat fields matching v1 shape for UI) ──
+    totalUsers: users.length,
+    totalBrands: brands.length,
+    totalCreators: creators.length,
+    brandActiveUsers,
+    creatorActiveUsers,
+    newUsers: currentNewUsers,
+    newBrands: newBrands.length,
+    newCreators: newCreators.length,
+    previousNewUsers,
+    growthRate,
+    activeCampaigns: activeCampaigns.length,
+    totalApplications: allApps.length,
+    acceptedApplications: acceptedApps.length,
+    completedDeliveries: completedDeliveriesCount,
+    newApplications,
+    conversionRate,
+    successRate,
+    fulfillmentRate,
+    pendingDisputes: disputesSummary.open + disputesSummary.under_review,
+    funnelData,
+    disputesSummary,
+    engagementChart,
+    userGrowthChart,
+    nicheDistribution,
+    platformDistribution,
+    stateDistribution,
+    sizeDistribution,
+    planDistribution,
+    topBrands,
+    topCreators,
   });
 }
 
