@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
  * Accepts pre-computed counts instead of full arrays.
  * Props: appCounts, delCounts, totalApps, totalDeliveries
  */
-export default function CreatorMetricsChart({ appCounts = {}, delCounts = {}, totalApps = 0, totalDeliveries = 0 }) {
+export default function CreatorMetricsChart({ appCounts = {}, delCounts = {}, totalApps = 0, totalDeliveries = 0, onTimeRate = 100 }) {
   const acceptedApps = (appCounts.accepted || 0) + (appCounts.completed || 0);
   const pendingApps = appCounts.pending || 0;
   const rejectedApps = appCounts.rejected || 0;
@@ -16,8 +16,6 @@ export default function CreatorMetricsChart({ appCounts = {}, delCounts = {}, to
   const pendingDeliveries = delCounts.pending || 0;
 
   const finishedCount = (delCounts.approved || 0) + (delCounts.closed || 0);
-  // On-time rate — we don't have per-record on_time flag in counts, use reputation or 100%
-  const onTimeRate = 100;
 
   return (
     <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">

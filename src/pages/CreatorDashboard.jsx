@@ -151,7 +151,7 @@ export default function CreatorDashboard() {
       </div>
 
       {/* Metrics Charts */}
-      <CreatorMetricsChart appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} totalDeliveries={totalDeliveries} />
+      <CreatorMetricsChart appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} totalDeliveries={totalDeliveries} onTimeRate={data?.onTimeRate ?? 100} />
 
       {/* Reputation Section */}
       <CreatorReputationSection reputation={reputation} delCounts={delCounts} totalDeliveries={totalDeliveries} />

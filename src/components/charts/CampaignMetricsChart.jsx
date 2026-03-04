@@ -1,11 +1,12 @@
 import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 /**
- * Accepts pre-computed counts instead of full arrays.
- * Props: campaignCounts, appCounts, totalCampaigns, totalApps
+ * Accepts pre-computed counts and optional monthly series from backend.
+ * Props: campaignCounts, appCounts, totalCampaigns, totalApps, campaignsByMonth
  */
-export default function CampaignMetricsChart({ campaignCounts = {}, appCounts = {}, totalCampaigns = 0, totalApps = 0 }) {
+export default function CampaignMetricsChart({ campaignCounts = {}, appCounts = {}, totalCampaigns = 0, totalApps = 0, campaignsByMonth = [] }) {
   const acceptedApps = (appCounts.accepted || 0) + (appCounts.completed || 0);
   const rejectedApps = appCounts.rejected || 0;
   const pendingApps = appCounts.pending || 0;
@@ -17,6 +18,16 @@ export default function CampaignMetricsChart({ campaignCounts = {}, appCounts = 
   const completedCampaigns = campaignCounts.completed || 0;
   const otherCampaigns = (campaignCounts.paused || 0) + (campaignCounts.applications_closed || 0) + (campaignCounts.cancelled || 0);
 
+  // Format month labels for chart
+  const chartData = campaignsByMonth.map(item => {
+    const [year, month] = item.month.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return {
+      month: date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+      campanhas: item.count,
+    };
+  });
+
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       <Card>
@@ -27,12 +38,26 @@ export default function CampaignMetricsChart({ campaignCounts = {}, appCounts = 
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-6">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-foreground">{totalCampaigns}</div>
-              <div className="text-sm text-muted-foreground mt-1">Total de campanhas</div>
+          {chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis dataKey="month" className="text-muted-foreground" fontSize={12} />
+                <YAxis className="text-muted-foreground" fontSize={12} allowDecimals={false} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: 'hsl(var(--card))' }}
+                />
+                <Bar dataKey="campanhas" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center py-6">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-foreground">{totalCampaigns}</div>
+                <div className="text-sm text-muted-foreground mt-1">Total de campanhas</div>
+              </div>
             </div>
-          </div>
+          )}
           <div className="grid grid-cols-4 gap-2 mt-4 pt-4 border-t">
             <div className="text-center">
               <div className="text-lg font-semibold text-primary">{activeCampaigns}</div>
