@@ -29,19 +29,22 @@ function TrendBadge({ current, previous }) {
   );
 }
 
-export default function DashboardMetricCard({ label, value, subtitle, icon: Icon, iconColor = 'text-blue-600', trend, previousValue, tooltip }) {
+export default function DashboardMetricCard({ label, value, subtitle, secondaryLabel, icon: Icon, iconColor = 'text-blue-600', trend, previousValue, tooltip }) {
+  const hasTrend = trend !== undefined || previousValue !== undefined;
+  const numericValue = typeof value === 'string' ? parseFloat(value.replace(/[^\d.-]/g, '')) : value;
+
   return (
     <Card className="bg-card border shadow-sm hover:shadow-md transition-shadow">
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="px-3 py-2.5 sm:px-4 sm:py-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 mb-2">
-              <p className="text-[11px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+            <div className="flex items-center gap-1.5 mb-1">
+              <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70 truncate">{label}</p>
               {tooltip && (
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info className="w-3 h-3 cursor-help flex-shrink-0 text-muted-foreground" />
+                      <Info className="w-3 h-3 cursor-help flex-shrink-0 text-muted-foreground/50" />
                     </TooltipTrigger>
                     <TooltipContent side="top" className="max-w-[220px] text-xs">
                       <p>{tooltip}</p>
@@ -51,20 +54,26 @@ export default function DashboardMetricCard({ label, value, subtitle, icon: Icon
               )}
             </div>
             <div className="flex items-baseline gap-2">
-              <p className="text-xl sm:text-2xl font-semibold tracking-tight tabular-nums text-foreground">
+              <p className="text-2xl sm:text-[1.75rem] font-bold tracking-tight tabular-nums text-foreground leading-none">
                 {value}
               </p>
-              {(trend !== undefined || previousValue !== undefined) && (
-                <TrendBadge current={typeof value === 'string' ? parseFloat(value.replace(/[^\d.-]/g, '')) : value} previous={previousValue} />
+              {hasTrend && (
+                <TrendBadge current={numericValue} previous={previousValue} />
               )}
             </div>
+            {!hasTrend && !subtitle && (
+              <p className="text-[10px] mt-1 text-muted-foreground/50">— sem mudança</p>
+            )}
             {subtitle && (
-              <p className="text-[10px] sm:text-xs mt-1.5 text-muted-foreground">{subtitle}</p>
+              <p className="text-[10px] sm:text-[11px] mt-1 text-muted-foreground leading-tight">{subtitle}</p>
+            )}
+            {secondaryLabel && (
+              <p className="text-[10px] mt-0.5 text-muted-foreground/60 leading-tight">{secondaryLabel}</p>
             )}
           </div>
           {Icon && (
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconColor.replace('text-', 'bg-').replace('-600', '-100').replace('-500', '-100')}`}>
-              <Icon className={`w-5 h-5 ${iconColor}`} />
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${iconColor.replace('text-', 'bg-').replace('-600', '-100').replace('-500', '-100').replace('-400', '-100')}`}>
+              <Icon className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${iconColor}`} />
             </div>
           )}
         </div>
