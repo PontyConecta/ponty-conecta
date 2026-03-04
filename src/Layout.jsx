@@ -40,9 +40,20 @@ function LayoutContent({ children, currentPageName }) {
   const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
   const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
 
+  // Track page view
   useEffect(() => {
     trackPageView(currentPageName);
   }, [currentPageName]);
+
+  // Track activity (1x per session, fire-and-forget)
+  useEffect(() => {
+    if (!user) return;
+    const key = `ponty_activity_${user.id}`;
+    const last = sessionStorage.getItem(key);
+    if (last) return; // Already tracked this session
+    sessionStorage.setItem(key, '1');
+    base44.functions.invoke('trackActivity', {}).catch(() => {});
+  }, [user]);
 
   const handleToggleSidebar = () => {
     setSidebarCollapsed(prev => !prev);
