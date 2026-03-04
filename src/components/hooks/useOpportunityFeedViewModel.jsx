@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { validateCreatorProfile } from '../utils/profileValidation';
@@ -22,14 +22,20 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
     fetchNextPage,
   } = useOpportunitiesPaginated(creatorId);
 
-  // Flatten all pages into single arrays/maps
+  // Flatten all pages into single arrays/maps — DEDUPLICATING by campaign.id
   const { campaigns, brands, appliedCampaignIds } = useMemo(() => {
     if (!infiniteData?.pages) return { campaigns: [], brands: {}, appliedCampaignIds: new Set() };
+    const seenIds = new Set();
     const allCampaigns = [];
     const allBrands = {};
     const allAppliedIds = new Set();
     for (const page of infiniteData.pages) {
-      allCampaigns.push(...page.campaigns);
+      for (const campaign of page.campaigns) {
+        if (!seenIds.has(campaign.id)) {
+          seenIds.add(campaign.id);
+          allCampaigns.push(campaign);
+        }
+      }
       Object.assign(allBrands, page.brands);
       for (const app of page.myApplications) {
         allAppliedIds.add(app.campaign_id);
@@ -41,10 +47,25 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   const applyMutation = useApplyToCampaignMutation();
   const applying = applyMutation.isPending;
 
-  // Filters
+  // Filters — with pagination reset on change
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlatform, setFilterPlatform] = useState('all');
   const [filterRemuneration, setFilterRemuneration] = useState('all');
+
+  // Track previous filter values to detect changes and reset pagination
+  const prevFiltersRef = useRef({ searchTerm, filterPlatform, filterRemuneration });
+  useEffect(() => {
+    const prev = prevFiltersRef.current;
+    if (
+      prev.searchTerm !== searchTerm ||
+      prev.filterPlatform !== filterPlatform ||
+      prev.filterRemuneration !== filterRemuneration
+    ) {
+      prevFiltersRef.current = { searchTerm, filterPlatform, filterRemuneration };
+      // Reset paginated cache so next fetch starts from offset 0
+      queryClient.resetQueries({ queryKey: ['opportunities-paginated', creatorId] });
+    }
+  }, [searchTerm, filterPlatform, filterRemuneration, queryClient, creatorId]);
 
   // Dialog state
   const [selectedCampaign, setSelectedCampaign] = useState(null);
