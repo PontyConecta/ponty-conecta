@@ -105,6 +105,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                       {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500 flex-shrink-0" />}
                       {profile?.is_verified && <CheckCircle2 className="w-3 h-3 text-blue-500 flex-shrink-0" />}
                       {user.exclude_from_financials && <EyeOff className="w-3 h-3 text-orange-500 flex-shrink-0" title="Excluído dos financeiros" />}
+                      {user.visibility_status === 'hidden' && <EyeOff className="w-3 h-3 text-red-500 flex-shrink-0" title="Usuário oculto do marketplace" />}
                     </div>
                     <p className="text-xs truncate text-muted-foreground">{user.email}</p>
                   </div>
