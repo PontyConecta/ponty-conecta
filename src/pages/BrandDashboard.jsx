@@ -19,7 +19,7 @@ import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
-import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart.js';
+import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
