@@ -1,3 +1,4 @@
+// rebuild-v2: forced module resolution cleanup
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
