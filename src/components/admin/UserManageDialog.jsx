@@ -269,6 +269,70 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
             </div>
           </SectionCard>
 
+          {/* Visibilidade Pública */}
+          <SectionCard icon={EyeOff} label="Visibilidade Pública">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Badge className={`border-0 text-xs px-2 py-0.5 ${visibilityStatus === 'hidden' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                  {visibilityStatus === 'hidden' ? 'Oculto' : 'Visível'}
+                </Badge>
+                {visibilityStatus === 'hidden' && user?.hidden_reason && (
+                  <span className="text-xs text-muted-foreground italic truncate max-w-[200px]" title={user.hidden_reason}>
+                    {user.hidden_reason}
+                  </span>
+                )}
+              </div>
+              {visibilityStatus === 'visible' ? (
+                <Button
+                  onClick={() => setShowHideForm(prev => !prev)}
+                  disabled={actionLoading}
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 border-red-200 hover:bg-red-50"
+                >
+                  {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ocultar Perfil'}
+                </Button>
+              ) : (
+                <Button
+                  onClick={async () => {
+                    await handleAction('set_visibility_status', { visibility_status: 'visible' });
+                    setVisibilityStatus('visible');
+                    setHiddenReason('');
+                    setShowHideForm(false);
+                  }}
+                  disabled={actionLoading}
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Tornar Visível'}
+                </Button>
+              )}
+            </div>
+            {showHideForm && visibilityStatus === 'visible' && (
+              <div className="space-y-2 mt-2">
+                <Textarea
+                  placeholder="Motivo para ocultar o usuário (opcional)"
+                  value={hiddenReason}
+                  onChange={(e) => setHiddenReason(e.target.value)}
+                  rows={2}
+                  className="bg-background"
+                />
+                <Button
+                  onClick={async () => {
+                    await handleAction('set_visibility_status', { visibility_status: 'hidden', hidden_reason: hiddenReason });
+                    setVisibilityStatus('hidden');
+                    setShowHideForm(false);
+                  }}
+                  disabled={actionLoading}
+                  size="sm"
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Ocultação'}
+                </Button>
+              </div>
+            )}
+          </SectionCard>
+
           {/* Tags */}
           <UserTagManager
             tags={user?.tags || []}
