@@ -18,17 +18,17 @@ Deno.serve(async (req) => {
     if (!user) return err('Unauthorized', 'UNAUTHORIZED', 401);
 
     const now = new Date().toISOString();
+    const nowMs = Date.now();
 
     // ── 2. THROTTLE CHECK ──
-    // If last_active exists and is within 24h, skip update
+    // If last_active is within 24h, skip the write
     if (user.last_active) {
-      const lastActive = new Date(user.last_active).getTime();
-      const nowMs = Date.now();
-      if (nowMs - lastActive < THROTTLE_MS) {
+      const lastMs = new Date(user.last_active).getTime();
+      if (nowMs - lastMs < THROTTLE_MS) {
         return Response.json({
           did_update: false,
           first_active: user.first_active || null,
-          last_active: user.last_active,
+          last_active: user.last_active
         });
       }
     }
@@ -44,12 +44,12 @@ Deno.serve(async (req) => {
     // ── 4. EXECUTE ──
     await base44.auth.updateMe(updateData);
 
-    // ── 5. RESPOND ──
-    console.log(`[${FN}] Updated activity for user ${user.id} | first=${!user.first_active ? 'SET' : 'existing'}`);
+    console.log(`[${FN}] Updated activity for user ${user.id} | first_active=${!user.first_active ? 'SET' : 'kept'}`);
+
     return Response.json({
       did_update: true,
       first_active: updateData.first_active || user.first_active,
-      last_active: now,
+      last_active: now
     });
   } catch (error) {
     console.error(`[${FN}] Error:`, error.message);
