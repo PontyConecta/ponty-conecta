@@ -113,12 +113,13 @@ Deno.serve(async (req) => {
           admin_email: user.email,
           action: 'campaign_status_change',
           target_entity_id: campaign_id,
-          target_user_id: brand.user_id,
+          target_user_id: user.id,
           details: `Campaign "${campaigns[0].title}" status changed: ${currentStatus} → ${data.status}`,
+          note: data.reason || '',
           timestamp: new Date().toISOString(),
         });
       } catch (auditErr) {
-        console.error(`[${FN}] Audit log failed (non-critical):`, auditErr.message);
+        console.warn(`[${FN}] AuditLog failed (non-critical):`, auditErr.message);
       }
 
       return Response.json({ success: true });
