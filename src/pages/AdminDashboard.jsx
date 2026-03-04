@@ -157,7 +157,99 @@ export default function AdminDashboard() {
                   tooltip="Percentual de entregas aprovadas sobre o total de entregas finalizadas."
                 />
               </div>
+              {/* ── Platform Health ── */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Platform Health</h3>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                  <DashboardMetricCard
+                    label="Dormant Users"
+                    value={analytics.users?.dormant ?? 0}
+                    icon={UserX}
+                    iconColor="text-orange-500"
+                    tooltip="Usuários inativos há mais de 30 dias."
+                  />
+                  <DashboardMetricCard
+                    label="Never Active"
+                    value={analytics.users?.never_active ?? 0}
+                    icon={Ghost}
+                    iconColor="text-zinc-400"
+                    tooltip="Usuários que nunca registraram atividade."
+                  />
+                  <DashboardMetricCard
+                    label="Dormant Premium"
+                    value={analytics.alerts?.dormant_premium_users ?? 0}
+                    icon={Crown}
+                    iconColor="text-amber-500"
+                    tooltip="Usuários premium inativos há mais de 30 dias."
+                  />
+                  <DashboardMetricCard
+                    label="Open Disputes"
+                    value={analytics.alerts?.open_disputes ?? 0}
+                    icon={Scale}
+                    iconColor="text-red-500"
+                    tooltip="Disputas abertas ou em análise."
+                  />
+                </div>
+              </div>
+
+              {/* ── Marketplace Operations ── */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Marketplace Operations</h3>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <DashboardMetricCard
+                    label="Active Campaigns"
+                    value={analytics.marketplace?.active_campaigns ?? analytics.activeCampaigns ?? 0}
+                    icon={Megaphone}
+                    iconColor="text-blue-500"
+                    tooltip="Campanhas com status 'ativa' atualmente."
+                  />
+                  <DashboardMetricCard
+                    label="Total Campaigns"
+                    value={analytics.marketplace?.total_campaigns ?? 0}
+                    icon={FolderOpen}
+                    iconColor="text-indigo-500"
+                    tooltip="Total de campanhas criadas na plataforma."
+                  />
+                  <DashboardMetricCard
+                    label="Completed Campaigns"
+                    value={analytics.pipeline?.completed ?? 0}
+                    icon={FolderCheck}
+                    iconColor="text-emerald-500"
+                    tooltip="Campanhas finalizadas com sucesso."
+                  />
+                </div>
+              </div>
+
               <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
+
+              {/* ── Marketplace Alerts ── */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Marketplace Alerts</h3>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <DashboardMetricCard
+                    label="Campaigns w/o Apps"
+                    value={analytics.alerts?.campaigns_zero_apps ?? 0}
+                    icon={AlertCircle}
+                    iconColor="text-yellow-500"
+                    tooltip="Campanhas ativas que ainda não receberam nenhuma candidatura."
+                  />
+                  <DashboardMetricCard
+                    label="Pending Applications"
+                    value={analytics.alerts?.pending_applications ?? 0}
+                    icon={Clock}
+                    iconColor="text-orange-500"
+                    tooltip="Candidaturas aguardando resposta da marca."
+                  />
+                  <DashboardMetricCard
+                    label="Deliveries Awaiting"
+                    value={analytics.alerts?.submitted_deliveries_awaiting_review ?? 0}
+                    icon={CheckCircle}
+                    iconColor="text-cyan-500"
+                    tooltip="Entregas submetidas aguardando aprovação da marca."
+                  />
+                </div>
+              </div>
+
               <DashboardEngagementChart data={analytics.engagementChart} />
             </>
           ) : null}
