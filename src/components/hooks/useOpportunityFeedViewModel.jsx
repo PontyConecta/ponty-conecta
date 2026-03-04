@@ -52,20 +52,9 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   const [filterPlatform, setFilterPlatform] = useState('all');
   const [filterRemuneration, setFilterRemuneration] = useState('all');
 
-  // Track previous filter snapshot; reset infinite query when filters change
-  const prevFiltersRef = useRef({ searchTerm: '', filterPlatform: 'all', filterRemuneration: 'all' });
-  useEffect(() => {
-    const prev = prevFiltersRef.current;
-    const changed =
-      prev.searchTerm !== searchTerm ||
-      prev.filterPlatform !== filterPlatform ||
-      prev.filterRemuneration !== filterRemuneration;
-    prevFiltersRef.current = { searchTerm, filterPlatform, filterRemuneration };
-    if (changed) {
-      // Reset infinite query → drops all pages, re-fetches page 0
-      queryClient.resetQueries({ queryKey: ['opportunities-paginated', creatorId] });
-    }
-  }, [searchTerm, filterPlatform, filterRemuneration, queryClient, creatorId]);
+  // Note: filters are client-side only (search/platform/remuneration), so we don't
+  // reset the infinite query on filter change. The auto-fetch effect below handles
+  // loading more pages when client-side filters produce empty visible results.
 
   // Dialog state
   const [selectedCampaign, setSelectedCampaign] = useState(null);
