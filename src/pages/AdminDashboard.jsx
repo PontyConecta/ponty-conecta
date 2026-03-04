@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, BarChart3, FolderOpen, FolderCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
