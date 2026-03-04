@@ -35,6 +35,9 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [trialDays, setTrialDays] = useState(30);
   const [newRole, setNewRole] = useState(user?.role || 'user');
   const [excludeFromFinancials, setExcludeFromFinancials] = useState(user?.exclude_from_financials || false);
+  const [visibilityStatus, setVisibilityStatus] = useState(user?.visibility_status || 'visible');
+  const [hiddenReason, setHiddenReason] = useState('');
+  const [showHideForm, setShowHideForm] = useState(false);
 
   React.useEffect(() => {
     if (user && profile) {
