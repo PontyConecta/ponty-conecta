@@ -5,8 +5,8 @@ import { trackPageView } from '@/components/analytics/analyticsUtils';
 import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
 import { ThemeProvider, useTheme } from '@/components/contexts/ThemeContext';
-import { base44 } from '@/api/base44Client';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { base44 } from '@/api/base44Client';
 import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
@@ -43,16 +43,6 @@ function LayoutContent({ children, currentPageName }) {
   useEffect(() => {
     trackPageView(currentPageName);
   }, [currentPageName]);
-
-  // Track activity once per session (fire-and-forget)
-  useEffect(() => {
-    if (!user) return;
-    const key = `ponty_activity_${user.id}`;
-    const last = sessionStorage.getItem(key);
-    if (last) return; // already tracked this session
-    sessionStorage.setItem(key, '1');
-    base44.functions.invoke('trackActivity', {}).catch(() => {});
-  }, [user]);
 
   const handleToggleSidebar = () => {
     setSidebarCollapsed(prev => !prev);
