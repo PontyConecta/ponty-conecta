@@ -57,20 +57,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ── 5. EMIT EVENT (fire-and-forget) ──
-    try {
-      await base44.functions.invoke('emitEvent', {
-        event_type: 'profile_selected',
-        actor_user_id: user.id,
-        actor_role: profile_type,
-        resource_type: profile_type,
-        resource_id: profile.id,
-        metadata: { profile_type },
-        idempotency_key: `profile_selected_${profile.id}`,
-      });
-    } catch (e) { console.warn(`[${FN}] Event emit failed (non-critical):`, e.message); }
-
-    // ── 6. RESPOND ──
+    // ── 5. RESPOND ──
     console.log(`[${FN}] Created ${profile_type} profile for user ${user.id}`);
     return Response.json({ success: true, profile, profile_type });
   } catch (error) {

@@ -101,19 +101,6 @@ Deno.serve(async (req) => {
         deadline: campaign.deadline
       });
 
-      // ── EMIT EVENT ──
-      try {
-        await base44.functions.invoke('emitEvent', {
-          event_type: 'application_approved',
-          actor_user_id: user.id,
-          actor_role: 'brand',
-          resource_type: 'application',
-          resource_id: application_id,
-          metadata: { campaign_id: campaign.id, creator_id: application.creator_id, brand_id: brand.id, delivery_id: delivery.id },
-          idempotency_key: `application_approved_${application_id}`,
-        });
-      } catch (e) { console.warn('[acceptApplication] Event emit failed:', e.message); }
-
       console.log(`[acceptApplication] SUCCESS: application=${application_id}, delivery=${delivery.id}, slots=${currentSlotsFilled + 1}/${slotsTotal}`);
 
       return Response.json({

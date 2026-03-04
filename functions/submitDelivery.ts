@@ -54,20 +54,7 @@ Deno.serve(async (req) => {
 
     await base44.entities.Delivery.update(delivery_id, updateData);
 
-    // ── 6. EMIT EVENT (fire-and-forget) ──
-    try {
-      await base44.functions.invoke('emitEvent', {
-        event_type: 'delivery_submitted',
-        actor_user_id: user.id,
-        actor_role: 'creator',
-        resource_type: 'delivery',
-        resource_id: delivery_id,
-        metadata: { campaign_id: delivery.campaign_id, creator_id: creators[0].id, on_time: updateData.on_time },
-        idempotency_key: `delivery_submitted_${delivery_id}`,
-      });
-    } catch (e) { console.warn(`[${FN}] Event emit failed:`, e.message); }
-
-    // ── 7. RESPOND ──
+    // ── 6. RESPOND ──
     console.log(`[${FN}] Delivery ${delivery_id} submitted by creator ${creators[0].id}`);
     return Response.json({ success: true });
   } catch (error) {

@@ -73,7 +73,6 @@ import SelectProfile from './pages/SelectProfile';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import SubscriptionPage from './pages/SubscriptionPage';
-import AdminMetrics from './pages/AdminMetrics';
 import __Layout from './Layout.jsx';
 
 
@@ -104,7 +103,6 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "SubscriptionPage": SubscriptionPage,
-    "AdminMetrics": AdminMetrics,
 }
 
 export const pagesConfig = {

@@ -97,20 +97,7 @@ Deno.serve(async (req) => {
       timestamp: now,
     });
 
-    // ── 6. EMIT EVENT (fire-and-forget) ──
-    try {
-      await base44.functions.invoke('emitEvent', {
-        event_type: 'dispute_resolved',
-        actor_user_id: user.id,
-        actor_role: 'admin',
-        resource_type: 'dispute',
-        resource_id: dispute_id,
-        metadata: { resolution_type, delivery_id: dispute.delivery_id, campaign_id: dispute.campaign_id },
-        idempotency_key: `dispute_resolved_${dispute_id}`,
-      });
-    } catch (e) { console.warn(`[${FN}] Event emit failed:`, e.message); }
-
-    // ── 7. RESPOND ──
+    // ── 6. RESPOND ──
     console.log(`[${FN}] Dispute ${dispute_id} resolved as ${resolution_type} by admin ${user.email}`);
     return Response.json({ success: true });
   } catch (error) {

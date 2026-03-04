@@ -2,12 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Megaphone, AlertTriangle, FileText, BarChart3 
+  LayoutDashboard, Users, Megaphone, AlertTriangle, FileText 
 } from 'lucide-react';
 
 const adminNav = [
   { name: 'Dashboards', page: 'AdminDashboard', icon: LayoutDashboard },
-  { name: 'Métricas', page: 'AdminMetrics', icon: BarChart3 },
+
   { name: 'Usuários', page: 'AdminUsers', icon: Users },
   { name: 'Campanhas', page: 'AdminCampaigns', icon: Megaphone },
   { name: 'Disputas', page: 'AdminDisputes', icon: AlertTriangle },
