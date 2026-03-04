@@ -105,7 +105,7 @@ export default function CreatorReputationSection({ reputation, delCounts = {}, t
               </div>
 
               <div className="text-xs text-center text-muted-foreground">
-                {reputation?.on_time_deliveries || onTimeFromDeliveries} de {reputation?.campaigns_completed || finishedDeliveries} no prazo
+                {reputation?.on_time_deliveries || finishedDeliveries} de {reputation?.campaigns_completed || finishedDeliveries} no prazo
               </div>
             </div>
 
