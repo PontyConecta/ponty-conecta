@@ -5,15 +5,17 @@ import { Progress } from "@/components/ui/progress";
 import { TrendingUp, CheckCircle2, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function CreatorReputationSection({ reputation, delCounts = {}, totalDeliveries = 0 }) {
+export default function CreatorReputationSection({ reputation, delCounts = {}, totalDeliveries = 0, onTimeRate: onTimeRateProp }) {
   const submittedDeliveries = delCounts.submitted || 0;
   const approvedDeliveries = delCounts.approved || 0;
   const completedDeliveries = approvedDeliveries;
   
   const finishedDeliveries = (delCounts.approved || 0) + (delCounts.closed || 0);
-  const onTimeRate = reputation?.campaigns_completed > 0 
-    ? Math.round((reputation.on_time_deliveries / reputation.campaigns_completed) * 100)
-    : 100;
+  const onTimeRate = onTimeRateProp != null 
+    ? onTimeRateProp
+    : (reputation?.campaigns_completed > 0 
+        ? Math.round((reputation.on_time_deliveries / reputation.campaigns_completed) * 100)
+        : 100);
 
   return (
     <Card className="lg:col-span-2 overflow-hidden border bg-card shadow-sm">

@@ -154,7 +154,7 @@ export default function CreatorDashboard() {
       <CreatorMetricsChart appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} totalDeliveries={totalDeliveries} onTimeRate={data?.onTimeRate ?? 100} />
 
       {/* Reputation Section */}
-      <CreatorReputationSection reputation={reputation} delCounts={delCounts} totalDeliveries={totalDeliveries} />
+      <CreatorReputationSection reputation={reputation} delCounts={delCounts} totalDeliveries={totalDeliveries} onTimeRate={data?.onTimeRate} />
 
       {/* My Applications */}
       <Card className="border bg-card shadow-sm">
