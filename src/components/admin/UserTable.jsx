@@ -175,6 +175,11 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                         <EyeOff className="w-2.5 h-2.5 mr-0.5" /> Excluído
                       </Badge>
                     )}
+                    {user.visibility_status === 'hidden' && (
+                      <Badge className="bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0">
+                        <EyeOff className="w-2.5 h-2.5 mr-0.5" /> Oculto
+                      </Badge>
+                    )}
                     {location && (
                       <span className="text-[10px] flex items-center gap-0.5 text-muted-foreground">
                         <MapPin className="w-2.5 h-2.5" />{location}
