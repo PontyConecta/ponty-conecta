@@ -5,18 +5,14 @@ import { Progress } from "@/components/ui/progress";
 import { TrendingUp, CheckCircle2, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function CreatorReputationSection({ reputation, deliveries }) {
-  const totalDeliveries = deliveries?.length || 0;
-  const submittedDeliveries = deliveries?.filter(d => d.status === 'submitted').length || 0;
-  const approvedDeliveries = deliveries?.filter(d => d.status === 'approved').length || 0;
+export default function CreatorReputationSection({ reputation, delCounts = {}, totalDeliveries = 0 }) {
+  const submittedDeliveries = delCounts.submitted || 0;
+  const approvedDeliveries = delCounts.approved || 0;
   const completedDeliveries = approvedDeliveries;
   
-  const onTimeFromDeliveries = deliveries?.filter(d => d.on_time === true).length || 0;
-  const finishedDeliveries = deliveries?.filter(d => d.status === 'approved' || d.status === 'closed').length || 0;
+  const finishedDeliveries = (delCounts.approved || 0) + (delCounts.closed || 0);
   const onTimeRate = reputation?.campaigns_completed > 0 
     ? Math.round((reputation.on_time_deliveries / reputation.campaigns_completed) * 100)
-    : finishedDeliveries > 0
-    ? Math.round((onTimeFromDeliveries / finishedDeliveries) * 100)
     : 100;
 
   return (
