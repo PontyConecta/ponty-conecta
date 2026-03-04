@@ -22,6 +22,7 @@ import ApplyToCampaignDialog from '@/components/opportunities/ApplyToCampaignDia
 export default function OpportunityFeed() {
   const { profile: authProfile, profileType } = useAuth();
   const vm = useOpportunityFeedViewModel(authProfile, profileType);
+  const { loadMoreRef } = useInfiniteScroll(vm.handleLoadMore, vm.hasNextPage);
 
   // Pull to refresh (touch)
   useEffect(() => {
