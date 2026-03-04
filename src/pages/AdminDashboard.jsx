@@ -40,7 +40,7 @@ export default function AdminDashboard() {
       if (response.data?.error) throw new Error(response.data.error);
       setAnalytics(response.data);
       setLastRefresh(new Date());
-      console.log('USING V2');
+
     } catch (error) {
       console.error('Error loading v2 analytics, falling back to v1:', error);
       try {
