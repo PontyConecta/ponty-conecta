@@ -44,14 +44,26 @@ export default function AdminUsers() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const response = await base44.functions.invoke('adminAnalytics', { type: 'list_users' });
+      const response = await base44.functions.invoke('adminAnalyticsV2', {
+        mode: 'lists', list_type: 'list_users', range: '30d'
+      });
       const { users: u, brands: b, creators: c } = response.data;
       setUsers(u || []);
       setBrands(b || []);
       setCreators(c || []);
     } catch (error) {
-      console.error('Error loading users:', error);
-      toast.error('Erro ao carregar usuários');
+      console.error('Error loading users via v2, trying v1 fallback:', error);
+      try {
+        const fallback = await base44.functions.invoke('adminAnalytics', { type: 'list_users' });
+        const { users: u, brands: b, creators: c } = fallback.data;
+        setUsers(u || []);
+        setBrands(b || []);
+        setCreators(c || []);
+        toast.warning('Usando fallback v1 para lista de usuários');
+      } catch (err2) {
+        console.error('V1 fallback also failed:', err2);
+        toast.error('Erro ao carregar usuários');
+      }
     } finally {
       setLoading(false);
     }

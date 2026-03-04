@@ -28,18 +28,31 @@ export default function AdminDashboard() {
 
   const [analyticsError, setAnalyticsError] = useState(false);
 
+  // Map v1 dateRange keys to v2 range values
+  const rangeMap = { day: '7d', week: '7d', month: '30d', year: '90d' };
+
   const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       setAnalyticsError(false);
-      const response = await base44.functions.invoke('adminAnalytics', { dateRange });
+      const v2Range = typeof dateRange === 'string' ? (rangeMap[dateRange] || '30d') : '30d';
+      const response = await base44.functions.invoke('adminAnalyticsV2', { mode: 'summary', range: v2Range });
       if (response.data?.error) throw new Error(response.data.error);
       setAnalytics(response.data);
       setLastRefresh(new Date());
     } catch (error) {
-      console.error('Error loading analytics:', error);
-      setAnalyticsError(true);
-      toast.error('Erro ao carregar analytics');
+      console.error('Error loading v2 analytics, falling back to v1:', error);
+      try {
+        const fallback = await base44.functions.invoke('adminAnalytics', { dateRange });
+        if (fallback.data?.error) throw new Error(fallback.data.error);
+        setAnalytics(fallback.data);
+        setLastRefresh(new Date());
+        toast.warning('Usando dados do analytics v1 (fallback)');
+      } catch (err2) {
+        console.error('V1 fallback also failed:', err2);
+        setAnalyticsError(true);
+        toast.error('Erro ao carregar analytics');
+      }
     } finally {
       setLoading(false);
     }
