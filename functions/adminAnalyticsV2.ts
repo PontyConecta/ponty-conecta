@@ -94,7 +94,7 @@ function computeBrandLabels(brand, campaigns, apps, deliveries) {
 // ─── MODE HANDLERS ───
 
 async function handleSummary(base44, range, filters) {
-  const { start, end } = parseRange(range);
+  const { start, end, days } = parseRange(range);
   const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
