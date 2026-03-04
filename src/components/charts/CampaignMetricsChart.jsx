@@ -1,4 +1,3 @@
-// CampaignMetricsChart — canonical file (rebuild-v2)
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +14,6 @@ export default function CampaignMetricsChart({ campaignCounts = {}, appCounts = 
   const completedCampaigns = campaignCounts.completed || 0;
   const otherCampaigns = (campaignCounts.paused || 0) + (campaignCounts.applications_closed || 0) + (campaignCounts.cancelled || 0);
 
-  // Defensive guard: normalize campaignsByMonth to always be an array
   const safe = Array.isArray(campaignsByMonth) ? campaignsByMonth : [];
   const chartData = safe.map(item => {
     const parts = (item.month || '').split('-');
