@@ -122,11 +122,19 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
     }
   }, [creator, selectedCampaign, profileValidation.isComplete, isSubscribed, applicationMessage, proposedRate, applyMutation, closeDialog]);
 
+  // Load more (infinite scroll trigger)
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      return fetchNextPage();
+    }
+    return Promise.resolve();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   // Pull-to-refresh
   const handleRefresh = useCallback(() => {
     if (refreshing) return;
     setRefreshing(true);
-    queryClient.invalidateQueries({ queryKey: ['opportunities'] }).finally(() => setRefreshing(false));
+    queryClient.invalidateQueries({ queryKey: ['opportunities-paginated'] }).finally(() => setRefreshing(false));
   }, [refreshing, queryClient]);
 
   return {
@@ -134,6 +142,10 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
     isLoading,
     brands,
     filteredCampaigns,
+    // Pagination
+    hasNextPage: !!hasNextPage,
+    isFetchingNextPage,
+    handleLoadMore,
     // State
     isSubscribed,
     profileValidation,
