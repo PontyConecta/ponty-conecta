@@ -47,10 +47,25 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   const applyMutation = useApplyToCampaignMutation();
   const applying = applyMutation.isPending;
 
-  // Filters
+  // Filters — on change, reset paginated cache so it re-fetches from offset 0
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlatform, setFilterPlatform] = useState('all');
   const [filterRemuneration, setFilterRemuneration] = useState('all');
+
+  // Track previous filter snapshot; reset infinite query when filters change
+  const prevFiltersRef = useRef({ searchTerm: '', filterPlatform: 'all', filterRemuneration: 'all' });
+  useEffect(() => {
+    const prev = prevFiltersRef.current;
+    const changed =
+      prev.searchTerm !== searchTerm ||
+      prev.filterPlatform !== filterPlatform ||
+      prev.filterRemuneration !== filterRemuneration;
+    prevFiltersRef.current = { searchTerm, filterPlatform, filterRemuneration };
+    if (changed) {
+      // Reset infinite query → drops all pages, re-fetches page 0
+      queryClient.resetQueries({ queryKey: ['opportunities-paginated', creatorId] });
+    }
+  }, [searchTerm, filterPlatform, filterRemuneration, queryClient, creatorId]);
 
   // Dialog state
   const [selectedCampaign, setSelectedCampaign] = useState(null);
