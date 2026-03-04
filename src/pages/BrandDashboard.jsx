@@ -25,7 +25,7 @@ import QuickActions from '@/components/dashboard/QuickActions';
 import DashboardMissions from '@/components/dashboard/DashboardMissions';
 import StatCard from '@/components/dashboard/StatCard';
 import StatusBadge from '@/components/common/StatusBadge';
-import { useBrandDashboardQuery } from '@/components/hooks/useEntityQuery';
+import { useBrandDashboardData } from '@/components/hooks/useDashboardData';
 
 export default function BrandDashboard() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -33,11 +33,17 @@ export default function BrandDashboard() {
   const brand = authProfile;
   const profileValidation = authProfile ? validateBrandProfile(authProfile) : { isComplete: true, missingFields: [] };
 
-  const { data, isLoading } = useBrandDashboardQuery(brand?.id);
-  const campaigns = data?.campaigns || [];
-  const applications = data?.applications || [];
-  const deliveries = data?.deliveries || [];
+  const { data, isLoading } = useBrandDashboardData(brand?.id);
+  const recentCampaigns = data?.recentCampaigns || [];
+  const recentApplications = data?.recentApplications || [];
+  const recentDeliveries = data?.recentDeliveries || [];
   const campaignsMap = data?.campaignsMap || {};
+  const campaignCounts = data?.campaignCounts || {};
+  const appCounts = data?.appCounts || {};
+  const delCounts = data?.delCounts || {};
+  const totalCampaigns = data?.totalCampaigns || 0;
+  const totalApps = data?.totalApps || 0;
+  const totalDeliveries = data?.totalDeliveries || 0;
 
   // Realtime: invalidate scoped keys only
   useEffect(() => {
@@ -74,44 +80,44 @@ export default function BrandDashboard() {
     );
   }
 
-  const pendingApplications = applications.filter(a => a.status === 'pending');
-  const activeCampaigns = campaigns.filter(c => c.status === 'active');
-  const submittedDeliveries = deliveries.filter(d => d.status === 'submitted');
-  const approvedDeliveries = deliveries.filter(d => d.status === 'approved');
+  const activeCampaignsCount = campaignCounts.active || 0;
+  const pendingAppsCount = appCounts.pending || 0;
+  const submittedDelCount = delCounts.submitted || 0;
+  const approvedDelCount = delCounts.approved || 0;
 
   const stats = [
     { 
       label: 'Campanhas Ativas', 
-      value: activeCampaigns.length,
-      total: campaigns.length,
+      value: activeCampaignsCount,
+      total: totalCampaigns,
       icon: Megaphone,
       color: 'bg-[#9038fa]'
     },
     { 
       label: 'Candidaturas Pendentes', 
-      value: pendingApplications.length,
-      total: applications.length,
+      value: pendingAppsCount,
+      total: totalApps,
       icon: Users,
       color: 'bg-[#b77aff]'
     },
     { 
       label: 'Entregas Aguardando', 
-      value: submittedDeliveries.length,
-      total: deliveries.length,
+      value: submittedDelCount,
+      total: totalDeliveries,
       icon: FileCheck,
       color: 'bg-emerald-500'
     },
     { 
       label: 'Total Concluídas', 
-      value: approvedDeliveries.length,
-      total: deliveries.length,
+      value: approvedDelCount,
+      total: totalDeliveries,
       icon: TrendingUp,
       color: 'bg-[#7a2de0]'
     }
   ];
 
   const isSubscribed = isProfileSubscribed(brand);
-  const isNewUser = campaigns.length === 0 && pendingApplications.length === 0;
+  const isNewUser = totalCampaigns === 0 && pendingAppsCount === 0;
 
   return (
     <div className="space-y-5 lg:space-y-6">
@@ -162,7 +168,7 @@ export default function BrandDashboard() {
       </div>
 
       {/* Gráficos de Métricas */}
-      <CampaignMetricsChart campaigns={campaigns} applications={applications} />
+      <CampaignMetricsChart campaignCounts={campaignCounts} appCounts={appCounts} totalCampaigns={totalCampaigns} totalApps={totalApps} />
 
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Campaigns */}
@@ -176,8 +182,8 @@ export default function BrandDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-3">
-            {campaigns.length > 0 ? (
-              campaigns.slice(0, 5).map((campaign) => (
+            {recentCampaigns.length > 0 ? (
+              recentCampaigns.slice(0, 5).map((campaign) => (
                 <div
                 key={campaign.id}
                 className="flex items-center justify-between p-3 rounded-xl transition-colors bg-muted/50"
@@ -193,8 +199,8 @@ export default function BrandDashboard() {
               ))
             ) : (
               <div className="text-center py-8">
-                  <Megaphone className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
-                  <p className="text-muted-foreground">Nenhuma campanha criada</p>
+                <Megaphone className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+                <p className="text-muted-foreground">Nenhuma campanha criada</p>
                 {isSubscribed && (
                   <Link to={createPageUrl('CampaignManager')}>
                     <Button variant="outline" size="sm" className="mt-3">
@@ -219,8 +225,8 @@ export default function BrandDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-3">
-            {pendingApplications.length > 0 ? (
-              pendingApplications.slice(0, 5).map((app) => {
+            {recentApplications.filter(a => a.status === 'pending').length > 0 ? (
+              recentApplications.filter(a => a.status === 'pending').slice(0, 5).map((app) => {
                 const campaign = campaignsMap[app.campaign_id];
                 return (
                   <div
@@ -260,9 +266,9 @@ export default function BrandDashboard() {
           </Link>
         </CardHeader>
         <CardContent>
-          {deliveries.length > 0 ? (
+          {recentDeliveries.length > 0 ? (
             <div className="space-y-3">
-              {deliveries.slice(0, 5).map((delivery) => (
+              {recentDeliveries.slice(0, 5).map((delivery) => (
                 <div
                   key={delivery.id}
                   className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50"
