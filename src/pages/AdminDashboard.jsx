@@ -13,7 +13,6 @@ import DashboardDateFilter from '../components/admin/DashboardDateFilter';
 import DashboardUserStats from '../components/admin/DashboardUserStats';
 import DashboardEngagementChart from '../components/admin/DashboardEngagementChart';
 import DashboardMarketplace from '../components/admin/DashboardMarketplace';
-import DashboardPipeline from '../components/admin/DashboardPipeline';
 import DashboardFinancials from '../components/admin/DashboardFinancials';
 import UserKpiBar from '../components/admin/UserKpiBar';
 
