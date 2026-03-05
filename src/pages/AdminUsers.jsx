@@ -127,6 +127,9 @@ export default function AdminUsers() {
           const sub = profile?.subscription_status;
           if (sub !== 'premium' && sub !== 'legacy' && sub !== 'trial') return false;
         }
+        if (quickFilter === 'feedback_beta') {
+          if (!user.feedback_status || user.feedback_status === 'none') return false;
+        }
       }
       
       // Search (name, email, company, display name, handles)
