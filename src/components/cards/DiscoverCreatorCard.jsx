@@ -64,7 +64,7 @@ export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) 
       {/* Content */}
       <div className="p-2.5 space-y-1.5 flex-1 flex flex-col">
         <p className="text-[11px] text-muted-foreground line-clamp-2 min-h-[2rem] flex-1">
-          {creator.bio || '\u00A0'}
+          {creator.bio || 'Criadora de conteúdo'}
         </p>
 
         <div className="flex items-center justify-between">
@@ -80,18 +80,22 @@ export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) 
         </div>
 
         {/* Niches */}
-        {creator.niche?.length > 0 && (
-          <div className="flex flex-wrap gap-1 overflow-hidden max-h-[1.2rem]">
-            {creator.niche.slice(0, 2).map((n, i) => (
-              <span key={i} className="text-[9px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                {n}
-              </span>
-            ))}
-            {creator.niche.length > 2 && (
-              <span className="text-[9px] text-muted-foreground">+{creator.niche.length - 2}</span>
-            )}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-1 overflow-hidden max-h-[1.2rem]">
+          {creator.niche?.length > 0 ? (
+            <>
+              {creator.niche.slice(0, 2).map((n, i) => (
+                <span key={i} className="text-[9px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                  {n}
+                </span>
+              ))}
+              {creator.niche.length > 2 && (
+                <span className="text-[9px] text-muted-foreground">+{creator.niche.length - 2}</span>
+              )}
+            </>
+          ) : (
+            <span className="text-[9px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">UGC</span>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -111,9 +111,7 @@ export default function DiscoverCreators() {
       {/* Header */}
       <div>
         <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Descobrir Creators</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          {filteredCreators.length} {filteredCreators.length === 1 ? 'creator' : 'creators'}
-        </p>
+        <p className="text-sm text-muted-foreground mt-0.5">Explore criadoras de conteúdo</p>
       </div>
 
       {/* Category chips */}
@@ -199,7 +197,7 @@ export default function DiscoverCreators() {
       {/* Grid */}
       <div>
         <h2 className="text-sm font-semibold text-foreground mb-3">
-          {showSections ? 'Todos os creators' : `Resultados (${filteredCreators.length})`}
+          {showSections ? 'Todos os creators' : 'Resultados'}
         </h2>
         {(showSections ? gridCreators : filteredCreators).length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -276,7 +274,7 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
           )}
         </div>
 
-        {creator.bio && <p className="text-muted-foreground">{creator.bio}</p>}
+        <p className="text-muted-foreground">{creator.bio || 'Criadora de conteúdo'}</p>
 
         <div className="flex items-center gap-6">
           <div><div className="text-2xl font-bold">{formatFollowers(getTotalFollowers(creator))}</div><div className="text-sm text-muted-foreground">Seguidores</div></div>
@@ -284,17 +282,22 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
           <div><div className="text-2xl font-bold">{creator.on_time_rate || 100}%</div><div className="text-sm text-muted-foreground">No Prazo</div></div>
         </div>
 
-        {creator.niche?.length > 0 && (
+        {creator.niche?.length > 0 ? (
           <div>
             <h4 className="font-medium mb-2">Nichos</h4>
             <div className="flex flex-wrap gap-2">{creator.niche.map((n, i) => <Badge key={i} variant="outline">{n}</Badge>)}</div>
           </div>
+        ) : (
+          <div>
+            <h4 className="font-medium mb-2">Nichos</h4>
+            <Badge variant="outline" className="text-muted-foreground">Sem nicho informado</Badge>
+          </div>
         )}
 
         {/* Platforms */}
-        {creator.platforms?.length > 0 && (
-          <div>
-            <h4 className="font-medium mb-2">Plataformas</h4>
+        <div>
+          <h4 className="font-medium mb-2">Plataformas</h4>
+          {creator.platforms?.length > 0 ? (
             <div className="space-y-2">
               {creator.platforms.map((p, i) => (
                 <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted">
@@ -305,7 +308,6 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
                     ) : (
                       <span className="text-muted-foreground flex items-center gap-1">
                         <Lock className="w-3 h-3" />
-                        {maskHandle(p.handle)}
                       </span>
                     )}
                   </div>
@@ -313,8 +315,10 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-sm text-muted-foreground">Plataformas não informadas</p>
+          )}
+        </div>
 
         {/* Portfolio */}
         {creator.portfolio_images?.length > 0 && (
