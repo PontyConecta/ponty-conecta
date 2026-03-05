@@ -16,7 +16,7 @@ import DiscoverCreatorCard from '@/components/cards/DiscoverCreatorCard';
 import CategoryChips from '@/components/discover/CategoryChips';
 import HorizontalSection from '@/components/discover/HorizontalSection';
 import {
-  Search, Loader2, MapPin, Users, CheckCircle2, Mail, Phone, ExternalLink, Filter, X
+  Search, Loader2, MapPin, Users, CheckCircle2, Mail, Phone, ExternalLink, Filter, X, Lock
 } from 'lucide-react';
 import { BRAZIL_STATES, getStateLabel } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
@@ -243,6 +243,13 @@ export default function DiscoverCreators() {
   );
 }
 
+function maskHandle(handle) {
+  if (!handle) return '@•••';
+  const clean = handle.replace('@', '');
+  if (clean.length <= 4) return `@${clean[0]}•••`;
+  return `@${clean.slice(0, 2)}•••${clean.slice(-2)}`;
+}
+
 function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall }) {
   return (
     <div className="space-y-6 py-4">
@@ -293,11 +300,24 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
                 <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{p.name}</span>
-                    <span className="text-primary">@{p.handle}</span>
+                    {isSubscribed ? (
+                      <span className="text-primary">@{p.handle}</span>
+                    ) : (
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <Lock className="w-3 h-3" />
+                        {maskHandle(p.handle)}
+                      </span>
+                    )}
                   </div>
                   <Badge variant="outline">{formatFollowers(p.followers || 0)}</Badge>
                 </div>
               ))}
+              {!isSubscribed && (
+                <div className="text-center pt-1">
+                  <p className="text-[10px] text-muted-foreground mb-1.5">Perfis completos disponíveis no plano premium</p>
+                  <Button size="sm" variant="outline" onClick={onPaywall}>Desbloquear</Button>
+                </div>
+              )}
             </div>
           </div>
         )}
