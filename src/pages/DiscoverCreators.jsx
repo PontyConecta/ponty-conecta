@@ -68,7 +68,7 @@ export default function DiscoverCreators() {
   }, [creators, searchTerm, filterNiche, filterSize, filterState]);
 
   const featuredCreators = useMemo(() => creators.filter(c => c.featured), [creators]);
-  const newCreators = useMemo(() => [...creators].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 10), [creators]);
+  const newCreators = useMemo(() => [...creators].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 12), [creators]);
 
   const nicheCreators = useMemo(() => {
     if (filterNiche === 'all') return [];
@@ -76,6 +76,20 @@ export default function DiscoverCreators() {
   }, [creators, filterNiche]);
 
   const showSections = filterNiche === 'all' && !searchTerm && filterSize === 'all' && filterState === 'all';
+
+  // IDs shown in horizontal sections — exclude from grid to avoid duplication
+  const sectionIds = useMemo(() => {
+    if (!showSections) return new Set();
+    const ids = new Set();
+    featuredCreators.forEach(c => ids.add(c.id));
+    newCreators.forEach(c => ids.add(c.id));
+    return ids;
+  }, [showSections, featuredCreators, newCreators]);
+
+  const gridCreators = useMemo(() => {
+    if (!showSections) return filteredCreators;
+    return filteredCreators.filter(c => !sectionIds.has(c.id));
+  }, [filteredCreators, sectionIds, showSections]);
 
   const formatFollowers = (num) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -188,9 +202,9 @@ export default function DiscoverCreators() {
         <h2 className="text-sm font-semibold text-foreground mb-3">
           {showSections ? 'Todos os creators' : `Resultados (${filteredCreators.length})`}
         </h2>
-        {filteredCreators.length > 0 ? (
+        {(showSections ? gridCreators : filteredCreators).length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {filteredCreators.map(c => (
+            {(showSections ? gridCreators : filteredCreators).map(c => (
               <DiscoverCreatorCard key={c.id} creator={c} isSubscribed={isSubscribed}
                 onClick={() => setSelectedCreator(c)} />
             ))}
