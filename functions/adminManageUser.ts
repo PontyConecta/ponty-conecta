@@ -239,6 +239,34 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case 'set_feedback_beta': {
+        const newFeedbackStatus = data?.feedback_status;
+        const validFbStatuses = ['none', 'eligible', 'invited', 'submitted'];
+        if (!newFeedbackStatus || !validFbStatuses.includes(newFeedbackStatus)) {
+          return Response.json({ error: `feedback_status must be one of: ${validFbStatuses.join(', ')}` }, { status: 400 });
+        }
+
+        const fbUpdate = { feedback_status: newFeedbackStatus };
+        if (data?.feedback_tags) fbUpdate.feedback_tags = data.feedback_tags;
+        if (newFeedbackStatus === 'invited') {
+          fbUpdate.feedback_invited_at = data?.invited_at || new Date().toISOString();
+        }
+        if (newFeedbackStatus === 'submitted') {
+          fbUpdate.feedback_submitted_at = data?.submitted_at || new Date().toISOString();
+        }
+        if (newFeedbackStatus === 'none') {
+          fbUpdate.feedback_invited_at = null;
+          fbUpdate.feedback_submitted_at = null;
+          fbUpdate.feedback_tags = [];
+        }
+
+        await base44.asServiceRole.entities.User.update(userId, fbUpdate);
+        auditAction = 'feedback_beta_changed';
+        auditDetails = `Feedback beta status changed to "${newFeedbackStatus}" for user ${userId}`;
+        result = fbUpdate;
+        break;
+      }
+
       case 'flag_review': {
         auditAction = 'user_flagged';
         auditDetails = `User flagged for review`;
