@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, Megaphone, CheckCircle2, Lock } from 'lucide-react';
+import { Building2, MapPin, Megaphone, CheckCircle2, Lock, EyeOff } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 const INDUSTRY_LABELS = {
@@ -10,7 +10,7 @@ const INDUSTRY_LABELS = {
   retail: 'Varejo', automotive: 'Automotivo', other: 'Outros',
 };
 
-export default function DiscoverBrandCard({ brand, isSubscribed, onClick }) {
+export default function DiscoverBrandCard({ brand, isSubscribed, onClick, onHide }) {
   return (
     <div
       onClick={onClick}
@@ -50,12 +50,23 @@ export default function DiscoverBrandCard({ brand, isSubscribed, onClick }) {
             <Lock className="w-3 h-3 text-white/80" />
           </div>
         )}
+
+        {onHide && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onHide(); }}
+            className="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors z-10"
+            title="Ocultar"
+            style={!isSubscribed ? { left: '2.25rem' } : {}}
+          >
+            <EyeOff className="w-3 h-3 text-white/80" />
+          </button>
+        )}
       </div>
 
       {/* Content */}
       <div className="p-2.5 space-y-1.5 flex-1 flex flex-col">
         <p className="text-[11px] text-muted-foreground line-clamp-2 min-h-[2rem] flex-1">
-          {brand.description || '\u00A0'}
+          {brand.description || 'Marca parceira'}
         </p>
 
         <div className="flex items-center justify-between">
