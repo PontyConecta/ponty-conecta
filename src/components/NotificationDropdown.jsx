@@ -163,18 +163,18 @@ export default function NotificationDropdown({ triggerClassName }) {
       }
 
       // ── Feedback beta invite notification (all profile types) ──
-      if (user.feedback_status === 'invited') {
+      if (user.feedback_status === 'invited' || user.feedback_status === 'eligible') {
         const fbKey = `feedback-invite-${user.id}`;
         if (!dismissedSet.has(fbKey)) {
           notificationsList.push({
             id: fbKey,
             type: 'feedback',
-            title: 'Queremos sua opinião',
-            message: 'Leva 30 segundos. Ajude a melhorar o app.',
+            title: 'Pesquisa rápida (2 min)',
+            message: '6 perguntas objetivas para melhorar a experiência.',
             icon: MessageSquarePlus,
-            color: 'text-purple-600',
+            color: 'text-foreground',
             timestamp: user.feedback_invited_at || user.created_date,
-            read: !!readMap[fbKey],
+            read: false,
             actionUrl: createPageUrl('Feedback'),
             relatedEntityId: user.id,
           });
