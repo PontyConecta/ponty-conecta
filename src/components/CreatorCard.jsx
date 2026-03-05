@@ -153,7 +153,7 @@ export default function CreatorCard({
           </div>
 
           <p className="text-sm line-clamp-2 min-h-[2.5rem] text-muted-foreground">
-            {creator.bio ? (isSubscribed ? creator.bio : creator.bio.slice(0, 50) + '...') : '\u00A0'}
+            {creator.bio || '\u00A0'}
           </p>
 
           {/* Stats */}
