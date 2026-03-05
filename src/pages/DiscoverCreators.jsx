@@ -52,8 +52,7 @@ export default function DiscoverCreators() {
 
   const loadData = async () => {
     const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date');
-    const valid = allCreators.filter(c => c.avatar_url && c.bio && c.niche?.length > 0 && c.platforms?.length > 0);
-    setCreators(valid);
+    setCreators(allCreators);
     setLoading(false);
   };
 
