@@ -19,14 +19,12 @@ export default function BetaFeedbackNudge() {
   useEffect(() => {
     if (!isEligible) return;
 
-    // Check snooze
     const snoozedUntil = user.feedback_snoozed_until;
     if (snoozedUntil && new Date(snoozedUntil) > new Date()) {
       setShowBanner(true);
       return;
     }
 
-    // Session flag — only show modal once per session
     const sessionKey = `ponty_fb_nudge_${user.id}`;
     if (sessionStorage.getItem(sessionKey)) {
       setShowBanner(true);
@@ -65,13 +63,13 @@ export default function BetaFeedbackNudge() {
             <div className="flex items-center gap-2.5 min-w-0">
               <MessageSquare className="w-4 h-4 text-muted-foreground flex-shrink-0" />
               <p className="text-xs text-foreground">
-                <span className="font-medium">Pesquisa beta pendente</span>
-                <span className="text-muted-foreground ml-1">(2 min)</span>
+                Ajude a melhorar sua experiência na plataforma.
+                <span className="text-muted-foreground ml-1">Leva menos de 2 minutos.</span>
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <Button size="sm" className="h-7 text-xs" onClick={() => setShowModal(true)}>
-                Abrir
+                Responder pesquisa
               </Button>
               <button onClick={() => setShowBanner(false)} className="text-muted-foreground hover:text-foreground p-1">
                 <X className="w-3.5 h-3.5" />
@@ -84,7 +82,7 @@ export default function BetaFeedbackNudge() {
       {/* ── Modal ── */}
       <Dialog open={showModal} onOpenChange={(open) => { if (!open) handleSnooze(); }}>
         <DialogContent className="max-w-md bg-card border border-border shadow-xl rounded-2xl p-0 sm:p-0 gap-0">
-          <DialogTitle className="sr-only">Pesquisa Beta</DialogTitle>
+          <DialogTitle className="sr-only">Pesquisa de experiência</DialogTitle>
 
           {/* Header */}
           <div className="px-6 pt-6 pb-4 border-b border-border">
@@ -92,9 +90,12 @@ export default function BetaFeedbackNudge() {
               <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
                 <MessageSquare className="w-4.5 h-4.5 text-foreground" />
               </div>
-              <div className="space-y-0.5">
-                <h2 className="text-base font-semibold text-foreground">Seu feedback melhora a Ponty</h2>
-                <p className="text-xs text-muted-foreground">6 perguntas objetivas · Menos de 2 minutos</p>
+              <div className="space-y-1">
+                <h2 className="text-base font-semibold text-foreground">Queremos ouvir você</h2>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Sua experiência é essencial para continuarmos aprimorando a plataforma.
+                  Preparamos algumas perguntas objetivas. Leva menos de 2 minutos.
+                </p>
               </div>
             </div>
           </div>
@@ -104,10 +105,10 @@ export default function BetaFeedbackNudge() {
             <BetaFeedbackForm channel="modal" onComplete={handleComplete} onClose={handleSnooze} />
           </div>
 
-          {/* Footer microcopy */}
+          {/* Footer */}
           <div className="px-6 pb-4 pt-0">
             <p className="text-[10px] text-muted-foreground text-center">
-              Você pode responder em qualquer momento pelo menu Feedback.
+              Sua resposta ajuda a orientar melhorias no produto.
             </p>
           </div>
         </DialogContent>

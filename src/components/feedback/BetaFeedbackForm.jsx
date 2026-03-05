@@ -10,22 +10,22 @@ const TOTAL_STEPS = 6;
 const EXPERIENCE_SCALE = [
   { value: 'hard', label: 'Muito difícil', num: 1 },
   { value: 'confused', label: 'Difícil', num: 2 },
-  { value: 'neutral', label: 'Ok', num: 3 },
+  { value: 'neutral', label: 'Regular', num: 3 },
   { value: 'good', label: 'Boa', num: 4 },
   { value: 'love', label: 'Muito boa', num: 5 },
 ];
 
 const CLARITY_OPTIONS = [
   { value: 'none', label: 'Sim' },
-  { value: 'some', label: 'Mais ou menos' },
+  { value: 'some', label: 'Parcialmente' },
   { value: 'yes', label: 'Não' },
 ];
 
 const FAVORITE_OPTIONS = [
   { value: 'campaigns', label: 'Campanhas' },
-  { value: 'organization', label: 'Organização' },
-  { value: 'ease', label: 'Facilidade de uso' },
-  { value: 'concept', label: 'Proposta' },
+  { value: 'organization', label: 'Organização das oportunidades' },
+  { value: 'ease', label: 'Facilidade de navegação' },
+  { value: 'concept', label: 'Proposta da plataforma' },
   { value: 'other', label: 'Outro' },
 ];
 
@@ -36,14 +36,21 @@ const RECOMMEND_OPTIONS = [
 ];
 
 const FRICTION_OPTIONS = [
-  { value: 'signup', label: 'Cadastro / Login' },
-  { value: 'first_steps', label: 'Primeiros passos' },
-  { value: 'finding', label: 'Encontrar algo' },
+  { value: 'signup', label: 'Cadastro ou acesso' },
+  { value: 'first_steps', label: 'Primeiros passos na plataforma' },
+  { value: 'finding', label: 'Encontrar oportunidades' },
   { value: 'campaigns', label: 'Entender campanhas' },
   { value: 'other', label: 'Outro' },
 ];
 
-export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClose }) {
+const RECOMMEND_PROMPTS = {
+  yes: 'Qual é o principal motivo da sua resposta?',
+  maybe: 'O que precisaria melhorar para que você recomendasse com segurança?',
+  no: 'Qual foi o principal motivo da sua resposta?',
+};
+
+export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClose, showIntro = false }) {
+  const [started, setStarted] = useState(!showIntro);
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -112,16 +119,13 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
     if (!validateStep()) return;
     setSubmitting(true);
     const platform = /Mobi|Android/i.test(navigator.userAgent) ? 'android' : 'web';
-    await base44.functions.invoke('submitBetaFeedback', {
-      ...answers,
-      channel,
-      platform,
-    });
+    await base44.functions.invoke('submitBetaFeedback', { ...answers, channel, platform });
     setDone(true);
     setSubmitting(false);
     onComplete?.();
   };
 
+  // ── Tela final ──
   if (done) {
     return (
       <div className="text-center py-10 space-y-5">
@@ -129,12 +133,33 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
           <CheckCircle2 className="w-7 h-7 text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Feedback registrado</h2>
-          <p className="text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
-            Suas respostas foram enviadas diretamente para a equipe. Obrigada por contribuir.
+          <h2 className="text-lg font-semibold text-foreground">Obrigado por compartilhar sua opinião</h2>
+          <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
+            Sua resposta foi registrada e será analisada pela equipe responsável pelo desenvolvimento da plataforma.
+          </p>
+          <p className="text-xs text-muted-foreground mt-1.5 max-w-sm mx-auto">
+            Essas contribuições ajudam diretamente na evolução do produto.
           </p>
         </div>
-        <Button variant="outline" onClick={onClose}>Fechar</Button>
+        <Button variant="outline" onClick={onClose}>Voltar para a plataforma</Button>
+      </div>
+    );
+  }
+
+  // ── Tela intro ──
+  if (!started) {
+    return (
+      <div className="text-center py-6 space-y-5">
+        <div>
+          <h2 className="text-base font-semibold text-foreground">Pesquisa rápida de experiência</h2>
+          <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
+            Suas respostas ajudam nossa equipe a entender melhor o que está funcionando e o que pode melhorar.
+          </p>
+          <p className="text-xs text-muted-foreground mt-1.5">
+            A pesquisa é breve e leva cerca de 2 minutos.
+          </p>
+        </div>
+        <Button onClick={() => setStarted(true)}>Começar</Button>
       </div>
     );
   }
@@ -146,15 +171,15 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
       {/* Progress */}
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Passo {step + 1} de {TOTAL_STEPS}</span>
+          <span className="text-xs font-medium text-muted-foreground">Pergunta {step + 1} de {TOTAL_STEPS}</span>
           <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
         </div>
         <Progress value={progress} className="h-1.5" />
       </div>
 
-      {/* Steps */}
+      {/* Step 0 */}
       {step === 0 && (
-        <StepBlock title="Como foi sua experiência geral com a Ponty?" error={errors.experience_rating}>
+        <StepBlock title="Como foi sua experiência geral utilizando a plataforma?" error={errors.experience_rating}>
           <div className="flex gap-2">
             {EXPERIENCE_SCALE.map(o => (
               <ScaleButton key={o.value} selected={answers.experience_rating === o.value}
@@ -164,60 +189,71 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
         </StepBlock>
       )}
 
+      {/* Step 1 */}
       {step === 1 && (
-        <StepBlock title="Você entendeu claramente o que fazer no app?" error={errors.confusion_level}>
+        <StepBlock title="Você conseguiu entender claramente como utilizar as funcionalidades principais?" error={errors.confusion_level}>
           <OptionGroup options={CLARITY_OPTIONS} value={answers.confusion_level}
             onChange={(v) => set('confusion_level', v)} />
           {(answers.confusion_level === 'some' || answers.confusion_level === 'yes') && (
             <div className="mt-3">
-              <RequiredTextarea label="O que ficou confuso especificamente?" value={answers.confusion_text}
-                onChange={(v) => set('confusion_text', v)} error={errors.confusion_text} max={500} min={10} />
+              <RequiredTextarea label="O que ficou confuso ou difícil de entender?"
+                value={answers.confusion_text} onChange={(v) => set('confusion_text', v)}
+                error={errors.confusion_text} max={600} min={10} />
             </div>
           )}
         </StepBlock>
       )}
 
+      {/* Step 2 */}
       {step === 2 && (
-        <StepBlock title="Qual parte mais contribuiu para seu uso?" error={errors.favorite_thing}>
+        <StepBlock title="Qual parte da plataforma mais contribuiu para sua experiência até agora?" error={errors.favorite_thing}>
           <OptionGroup options={FAVORITE_OPTIONS} value={answers.favorite_thing}
             onChange={(v) => set('favorite_thing', v)} />
           {answers.favorite_thing === 'other' && (
             <div className="mt-3">
               <RequiredTextarea label="Qual?" value={answers.favorite_thing_text}
-                onChange={(v) => set('favorite_thing_text', v)} error={errors.favorite_thing_text} max={500} min={3} rows={2} />
+                onChange={(v) => set('favorite_thing_text', v)} error={errors.favorite_thing_text}
+                max={600} min={3} rows={2} />
             </div>
           )}
         </StepBlock>
       )}
 
+      {/* Step 3 */}
       {step === 3 && (
-        <StepBlock title="Se pudesse melhorar UMA coisa agora, qual seria?">
+        <StepBlock title="Se você pudesse melhorar apenas uma coisa na plataforma agora, qual seria?">
           <RequiredTextarea value={answers.improvement_one_thing}
             onChange={(v) => set('improvement_one_thing', v)} error={errors.improvement_one_thing}
-            max={600} min={10} rows={4} placeholder="Seja direta — queremos ouvir de verdade." />
+            max={600} min={10} rows={4} />
         </StepBlock>
       )}
 
+      {/* Step 4 */}
       {step === 4 && (
-        <StepBlock title="Você recomendaria a Ponty para outra criadora hoje?" error={errors.recommend_ponty}>
+        <StepBlock title="Você recomendaria a plataforma para outra criadora hoje?" error={errors.recommend_ponty}>
           <OptionGroup options={RECOMMEND_OPTIONS} value={answers.recommend_ponty}
             onChange={(v) => set('recommend_ponty', v)} />
-          <div className="mt-3">
-            <RequiredTextarea label="Qual é o principal motivo da sua resposta?" value={answers.recommend_to_yes}
-              onChange={(v) => set('recommend_to_yes', v)} error={errors.recommend_to_yes}
-              max={400} min={10} rows={3} />
-          </div>
+          {answers.recommend_ponty && (
+            <div className="mt-3">
+              <RequiredTextarea
+                label={RECOMMEND_PROMPTS[answers.recommend_ponty] || 'Qual é o principal motivo da sua resposta?'}
+                value={answers.recommend_to_yes} onChange={(v) => set('recommend_to_yes', v)}
+                error={errors.recommend_to_yes} max={400} min={10} rows={3} />
+            </div>
+          )}
         </StepBlock>
       )}
 
+      {/* Step 5 */}
       {step === 5 && (
-        <StepBlock title="Em que momento você mais travou ou perdeu tempo?" error={errors.friction_point}>
+        <StepBlock title="Em qual momento você encontrou mais dificuldade durante o uso?" error={errors.friction_point}>
           <OptionGroup options={FRICTION_OPTIONS} value={answers.friction_point}
             onChange={(v) => set('friction_point', v)} />
           {answers.friction_point === 'other' && (
             <div className="mt-3">
-              <RequiredTextarea label="Descreva" value={answers.friction_text}
-                onChange={(v) => set('friction_text', v)} error={errors.friction_text} max={500} min={3} rows={2} />
+              <RequiredTextarea label="Qual foi a dificuldade?" value={answers.friction_text}
+                onChange={(v) => set('friction_text', v)} error={errors.friction_text}
+                max={600} min={3} rows={2} />
             </div>
           )}
         </StepBlock>
@@ -292,7 +328,7 @@ function ScaleButton({ selected, onClick, num, label }) {
   );
 }
 
-function RequiredTextarea({ label, value, onChange, error, max = 500, min = 10, rows = 3, placeholder }) {
+function RequiredTextarea({ label, value, onChange, error, max = 600, min = 10, rows = 3, placeholder }) {
   const len = (value || '').length;
   return (
     <div className="space-y-1.5">

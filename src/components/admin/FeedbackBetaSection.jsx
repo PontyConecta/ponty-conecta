@@ -65,7 +65,7 @@ export default function FeedbackBetaSection({ user, onActionComplete, handleActi
     <div className="space-y-3 p-4 rounded-xl border border-border bg-background/50">
       <div className="flex items-center gap-2">
         <MessageSquarePlus className="w-4 h-4 text-primary" />
-        <Label className="font-semibold text-foreground">Feedback Beta</Label>
+        <Label className="font-semibold text-foreground">Pesquisa de Experiência</Label>
       </div>
 
       {/* Status */}
@@ -98,7 +98,7 @@ export default function FeedbackBetaSection({ user, onActionComplete, handleActi
         {status !== 'none' && (
           <Button size="sm" variant="outline" onClick={() => setShowRemoveConfirm(true)} disabled={actionLoading}
             className="text-red-600 border-red-200 hover:bg-red-50">
-            <UserMinus className="w-3.5 h-3.5 mr-1" /> Remover do beta
+            <UserMinus className="w-3.5 h-3.5 mr-1" /> Remover da pesquisa
           </Button>
         )}
       </div>
@@ -146,9 +146,9 @@ export default function FeedbackBetaSection({ user, onActionComplete, handleActi
       <AlertDialog open={showRemoveConfirm} onOpenChange={setShowRemoveConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remover do Feedback Beta?</AlertDialogTitle>
+            <AlertDialogTitle>Remover da pesquisa de experiência?</AlertDialogTitle>
             <AlertDialogDescription>
-              O status será resetado para "não participante", timestamps e tags serão limpos.
+              O status será resetado para "não participante" e os dados de convite serão limpos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

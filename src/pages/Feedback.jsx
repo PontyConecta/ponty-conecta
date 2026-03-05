@@ -24,9 +24,9 @@ export default function Feedback() {
     return (
       <div className="max-w-md mx-auto text-center py-16">
         <Lock className="w-10 h-10 mx-auto mb-4 text-muted-foreground/40" />
-        <h2 className="text-lg font-semibold text-foreground mb-1">Acesso não habilitado</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-1">Acesso não disponível</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          O programa de feedback beta ainda não está disponível para sua conta.
+          A pesquisa de experiência ainda não está disponível para sua conta.
         </p>
         <Link to={createPageUrl('Home')}>
           <Button variant="outline" size="sm">
@@ -44,14 +44,15 @@ export default function Feedback() {
           <MessageSquare className="w-5 h-5 text-foreground" />
         </div>
         <div>
-          <h1 className="text-lg font-semibold tracking-tight text-foreground">Pesquisa Beta</h1>
-          <p className="text-xs text-muted-foreground">6 perguntas · Menos de 2 minutos</p>
+          <h1 className="text-lg font-semibold tracking-tight text-foreground">Pesquisa de experiência</h1>
+          <p className="text-xs text-muted-foreground">Leva cerca de 2 minutos</p>
         </div>
       </div>
 
       <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
         <BetaFeedbackForm
           channel="link"
+          showIntro={true}
           onComplete={() => {}}
           onClose={() => window.history.back()}
         />

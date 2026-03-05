@@ -13,8 +13,8 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  MessageSquare, Search, Download, Upload, Heart, ThumbsUp, Meh,
-  HelpCircle, Frown, Loader2, Filter, ChevronDown
+  MessageSquare, Search, Download, Upload,
+  Loader2, Filter, ChevronDown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import FeedbackImportDialog from './FeedbackImportDialog';
@@ -39,15 +39,15 @@ const CATEGORY_CFG = {
   monetization: 'Monetização', campaigns: 'Campanhas', other: 'Outro',
 };
 
-const EXPERIENCE_ICONS = {
-  love: { emoji: '😍', label: 'Amando' },
-  good: { emoji: '😊', label: 'Bom' },
-  neutral: { emoji: '😐', label: 'Normal' },
-  confused: { emoji: '🤔', label: 'Confusa' },
-  hard: { emoji: '😓', label: 'Difícil' },
+const EXPERIENCE_LABELS = {
+  love: { num: '5', label: 'Muito boa' },
+  good: { num: '4', label: 'Boa' },
+  neutral: { num: '3', label: 'Regular' },
+  confused: { num: '2', label: 'Difícil' },
+  hard: { num: '1', label: 'Muito difícil' },
 };
 
-const RECOMMEND_LABELS = { yes: '✅ Sim', maybe: '🤔 Talvez', no: '❌ Não' };
+const RECOMMEND_LABELS = { yes: 'Sim', maybe: 'Talvez', no: 'Não' };
 
 export default function FeedbackResponseInbox() {
   const [rows, setRows] = useState([]);
@@ -127,7 +127,7 @@ export default function FeedbackResponseInbox() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-foreground">Pesquisa Beta</h3>
+          <h3 className="text-sm font-semibold text-foreground">Pesquisa de Experiência</h3>
           {newCount > 0 && <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px]">{newCount} novo(s)</Badge>}
           <Badge variant="outline" className="text-[10px]">{total} total</Badge>
         </div>
@@ -177,9 +177,9 @@ export default function FeedbackResponseInbox() {
           <FilterSelect label="Categoria" value={filters.category} onChange={(v) => setFilters(f => ({ ...f, category: v }))}
             options={[{ v: 'all', l: 'Todas' }, ...Object.entries(CATEGORY_CFG).map(([v, l]) => ({ v, l }))]} />
           <FilterSelect label="Experiência" value={filters.experience_rating} onChange={(v) => setFilters(f => ({ ...f, experience_rating: v }))}
-            options={[{ v: 'all', l: 'Todas' }, ...Object.entries(EXPERIENCE_ICONS).map(([v, c]) => ({ v, l: `${c.emoji} ${c.label}` }))]} />
+            options={[{ v: 'all', l: 'Todas' }, ...Object.entries(EXPERIENCE_LABELS).map(([v, c]) => ({ v, l: `${c.num} — ${c.label}` }))]} />
           <FilterSelect label="Recomenda" value={filters.recommend_ponty} onChange={(v) => setFilters(f => ({ ...f, recommend_ponty: v }))}
-            options={[{ v: 'all', l: 'Todos' }, { v: 'yes', l: '✅ Sim' }, { v: 'maybe', l: '🤔 Talvez' }, { v: 'no', l: '❌ Não' }]} />
+            options={[{ v: 'all', l: 'Todos' }, { v: 'yes', l: 'Sim' }, { v: 'maybe', l: 'Talvez' }, { v: 'no', l: 'Não' }]} />
         </div>
       )}
 
@@ -194,7 +194,7 @@ export default function FeedbackResponseInbox() {
       ) : (
         <div className="space-y-2">
           {rows.map(fb => {
-            const expCfg = EXPERIENCE_ICONS[fb.experience_rating] || {};
+            const expCfg = EXPERIENCE_LABELS[fb.experience_rating] || {};
             const statusCfg = STATUS_CFG[fb.status] || STATUS_CFG.new;
             const priCfg = PRIORITY_CFG[fb.priority] || PRIORITY_CFG.med;
             return (
@@ -202,8 +202,8 @@ export default function FeedbackResponseInbox() {
                 onClick={() => openDetail(fb)}>
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-lg">
-                      {expCfg.emoji || '📝'}
+                    <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-foreground">{expCfg.num || '—'}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -268,7 +268,7 @@ export default function FeedbackResponseInbox() {
 
               {/* Answers */}
               <div className="grid grid-cols-2 gap-2">
-                <FieldCell label="Experiência" value={`${EXPERIENCE_ICONS[selectedFb.experience_rating]?.emoji || ''} ${EXPERIENCE_ICONS[selectedFb.experience_rating]?.label || selectedFb.experience_rating}`} />
+                <FieldCell label="Experiência" value={`${EXPERIENCE_LABELS[selectedFb.experience_rating]?.num || '—'} — ${EXPERIENCE_LABELS[selectedFb.experience_rating]?.label || selectedFb.experience_rating}`} />
                 <FieldCell label="Confusão" value={selectedFb.confusion_level} />
                 <FieldCell label="Favorito" value={selectedFb.favorite_thing} />
                 <FieldCell label="Recomenda" value={RECOMMEND_LABELS[selectedFb.recommend_ponty] || 'N/A'} />

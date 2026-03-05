@@ -8,7 +8,7 @@ const FILTERS = [
   { key: 'inactive', label: 'Inativos' },
   { key: 'hidden', label: 'Ocultos' },
   { key: 'premium', label: 'Premium' },
-  { key: 'feedback_beta', label: 'Beta Feedback' },
+  { key: 'feedback_beta', label: 'Pesquisa' },
 ];
 
 export default function UserQuickFilters({ value, onChange }) {

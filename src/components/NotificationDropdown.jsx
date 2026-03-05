@@ -162,15 +162,15 @@ export default function NotificationDropdown({ triggerClassName }) {
         });
       }
 
-      // ── Feedback beta invite notification (all profile types) ──
+      // ── Feedback experience survey notification (all profile types) ──
       if (user.feedback_status === 'invited' || user.feedback_status === 'eligible') {
         const fbKey = `feedback-invite-${user.id}`;
         if (!dismissedSet.has(fbKey)) {
           notificationsList.push({
             id: fbKey,
             type: 'feedback',
-            title: 'Pesquisa rápida (2 min)',
-            message: '6 perguntas objetivas para melhorar a experiência.',
+            title: 'Sua opinião é importante',
+            message: 'Estamos melhorando continuamente a experiência da plataforma. Leva menos de 2 minutos para compartilhar sua percepção.',
             icon: MessageSquarePlus,
             color: 'text-foreground',
             timestamp: user.feedback_invited_at || user.created_date,
