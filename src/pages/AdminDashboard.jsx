@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, BarChart3, FolderOpen, FolderCheck, Target, ThumbsUp, Timer, ArrowRight } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -234,43 +234,10 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* ── Operações do Marketplace ── */}
-              <div>
-                <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Operações do Marketplace</h3>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                  <DashboardMetricCard
-                    label="Total de Campanhas"
-                    value={analytics.marketplace?.total_campaigns ?? 0}
-                    icon={FolderOpen}
-                    iconColor="text-indigo-500"
-                    tooltip="Total de campanhas criadas na plataforma."
-                    secondaryLabel={`${analytics.marketplace?.active_campaigns ?? 0} ativas agora`}
-                  />
-                  <DashboardMetricCard
-                    label="Campanhas Ativas"
-                    value={analytics.marketplace?.active_campaigns ?? analytics.activeCampaigns ?? 0}
-                    icon={Megaphone}
-                    iconColor="text-blue-500"
-                    tooltip="Campanhas com status 'ativa' atualmente."
-                    secondaryLabel={`de ${analytics.marketplace?.total_campaigns ?? 0} campanhas`}
-                  />
-                  <DashboardMetricCard
-                    label="Campanhas Concluídas"
-                    value={analytics.pipeline?.completed ?? 0}
-                    icon={FolderCheck}
-                    iconColor="text-emerald-500"
-                    tooltip="Campanhas finalizadas com sucesso."
-                    secondaryLabel={(analytics.marketplace?.total_campaigns ?? 0) > 0 ? `${Math.round(((analytics.pipeline?.completed ?? 0) / (analytics.marketplace?.total_campaigns ?? 1)) * 100)}% do total` : '—'}
-                  />
-                </div>
-              </div>
-
-              <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
-
-              {/* ── Saúde do Marketplace ── */}
+              {/* ── Resumo do Marketplace ── */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider">Saúde do Marketplace</h3>
+                  <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider">Resumo do Marketplace</h3>
                   <button
                     onClick={() => setActiveTab('marketplace')}
                     className="flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 transition-colors"
@@ -278,46 +245,15 @@ export default function AdminDashboard() {
                     Ver métricas completas <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   <DashboardMetricCard
-                    label="Aplicações por Campanha"
-                    value={analytics.marketplace?.avg_apps_per_campaign != null ? Number(analytics.marketplace.avg_apps_per_campaign).toFixed(1) : '—'}
-                    icon={Target}
-                    iconColor="text-indigo-500"
-                    tooltip="Número médio de candidaturas por campanha ativa."
-                    secondaryLabel="média de candidaturas por campanha ativa"
+                    label="Campanhas Ativas"
+                    value={analytics.marketplace?.active_campaigns ?? analytics.activeCampaigns ?? 0}
+                    icon={Megaphone}
+                    iconColor="text-blue-500"
+                    tooltip="Campanhas com status 'ativa' atualmente."
+                    secondaryLabel={`de ${analytics.marketplace?.total_campaigns ?? 0} total`}
                   />
-                  <DashboardMetricCard
-                    label="Taxa de Aprovação"
-                    value={analytics.marketplace?.approval_rate != null ? `${analytics.marketplace.approval_rate}%` : '—'}
-                    icon={ThumbsUp}
-                    iconColor="text-emerald-500"
-                    tooltip="Percentual de candidaturas aceitas pelas marcas."
-                    secondaryLabel="percentual de candidaturas aceitas"
-                  />
-                  <DashboardMetricCard
-                    label="Tempo Médio de Resposta"
-                    value={analytics.marketplace?.avg_brand_response_time_hours != null ? `${Math.round(analytics.marketplace.avg_brand_response_time_hours)}h` : '—'}
-                    icon={Timer}
-                    iconColor="text-amber-500"
-                    tooltip="Tempo médio que marcas levam para responder candidaturas."
-                    secondaryLabel="tempo médio de resposta das marcas"
-                  />
-                  <DashboardMetricCard
-                    label="Campanhas Sem Candidaturas"
-                    value={analytics.marketplace?.campaigns_zero_apps ?? analytics.alerts?.campaigns_zero_apps ?? 0}
-                    icon={AlertCircle}
-                    iconColor="text-red-500"
-                    tooltip="Campanhas ativas sem nenhuma candidatura recebida."
-                    secondaryLabel="campanhas ativas sem nenhuma candidatura"
-                  />
-                </div>
-              </div>
-
-              {/* ── Alertas Operacionais ── */}
-              <div>
-                <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Alertas Operacionais</h3>
-                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <DashboardMetricCard
                     label="Candidaturas Pendentes"
                     value={analytics.alerts?.pending_applications ?? 0}
@@ -327,7 +263,7 @@ export default function AdminDashboard() {
                     secondaryLabel={`Taxa aprovação: ${analytics.conversionRate || 0}%`}
                   />
                   <DashboardMetricCard
-                    label="Entregas Aguardando Aprovação"
+                    label="Entregas Aguardando"
                     value={analytics.alerts?.submitted_deliveries_awaiting_review ?? 0}
                     icon={CheckCircle}
                     iconColor="text-cyan-500"
