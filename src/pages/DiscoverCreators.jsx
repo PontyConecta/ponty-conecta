@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
-import { useAuth } from '@/components/contexts/AuthContext';
+import { useAuth } from "@/components/contexts/AuthContext";
 
 const NICHES = [
   { value: 'Moda', label: 'Moda' },
