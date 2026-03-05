@@ -37,7 +37,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [trialDays, setTrialDays] = useState(30);
   const [newRole, setNewRole] = useState(user?.role || 'user');
   const [excludeFromFinancials, setExcludeFromFinancials] = useState(user?.exclude_from_financials || false);
-  const [visibilityStatus, setVisibilityStatus] = useState(user?.visibility_status || 'visible');
+  const [isHidden, setIsHidden] = useState(profile?.is_hidden || false);
   const [hiddenReason, setHiddenReason] = useState('');
   const [showHideForm, setShowHideForm] = useState(false);
 
@@ -48,7 +48,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
       setNewVerified(profile.is_verified || false);
       setNewRole(user.role || 'user');
       setExcludeFromFinancials(user.exclude_from_financials || false);
-      setVisibilityStatus(user.visibility_status || 'visible');
+      setIsHidden(profile.is_hidden || false);
       setHiddenReason('');
       setShowHideForm(false);
       setAuditNote('');
@@ -275,16 +275,11 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
           <SectionCard icon={EyeOff} label="Visibilidade Pública">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Badge className={`border-0 text-xs px-2 py-0.5 ${visibilityStatus === 'hidden' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-                  {visibilityStatus === 'hidden' ? 'Oculto' : 'Visível'}
+                <Badge className={`border-0 text-xs px-2 py-0.5 ${isHidden ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                  {isHidden ? 'Oculto' : 'Visível'}
                 </Badge>
-                {visibilityStatus === 'hidden' && user?.hidden_reason && (
-                  <span className="text-xs text-muted-foreground italic truncate max-w-[200px]" title={user.hidden_reason}>
-                    {user.hidden_reason}
-                  </span>
-                )}
               </div>
-              {visibilityStatus === 'visible' ? (
+              {!isHidden ? (
                 <Button
                   onClick={() => setShowHideForm(prev => !prev)}
                   disabled={actionLoading}
@@ -297,8 +292,8 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
               ) : (
                 <Button
                   onClick={async () => {
-                    await handleAction('set_visibility_status', { visibility_status: 'visible' });
-                    setVisibilityStatus('visible');
+                    await handleAction('set_hidden', { is_hidden: false });
+                    setIsHidden(false);
                     setHiddenReason('');
                     setShowHideForm(false);
                   }}
@@ -310,10 +305,10 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                 </Button>
               )}
             </div>
-            {showHideForm && visibilityStatus === 'visible' && (
+            {showHideForm && !isHidden && (
               <div className="space-y-2 mt-2">
                 <Textarea
-                  placeholder="Motivo para ocultar o usuário (opcional)"
+                  placeholder="Motivo para ocultar (opcional, apenas para auditoria)"
                   value={hiddenReason}
                   onChange={(e) => setHiddenReason(e.target.value)}
                   rows={2}
@@ -321,8 +316,8 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                 />
                 <Button
                   onClick={async () => {
-                    await handleAction('set_visibility_status', { visibility_status: 'hidden', hidden_reason: hiddenReason });
-                    setVisibilityStatus('hidden');
+                    await handleAction('set_hidden', { is_hidden: true, hidden_reason: hiddenReason });
+                    setIsHidden(true);
                     setShowHideForm(false);
                   }}
                   disabled={actionLoading}

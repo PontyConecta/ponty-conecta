@@ -216,26 +216,19 @@ Deno.serve(async (req) => {
         break;
       }
 
-      case 'set_visibility_status': {
-        const newVisibility = data?.visibility_status;
-        if (!newVisibility || !['visible', 'hidden'].includes(newVisibility)) {
-          return Response.json({ error: 'visibility_status must be "visible" or "hidden"' }, { status: 400 });
+      case 'set_hidden': {
+        const isHidden = !!data?.is_hidden;
+
+        if (!profile) {
+          return Response.json({ error: 'User profile not found' }, { status: 404 });
         }
 
-        const visibilityUpdate = { visibility_status: newVisibility };
-        if (newVisibility === 'hidden' && data?.hidden_reason) {
-          visibilityUpdate.hidden_reason = String(data.hidden_reason).trim().slice(0, 500);
-        }
-        if (newVisibility === 'visible') {
-          visibilityUpdate.hidden_reason = '';
-        }
-
-        await base44.asServiceRole.entities.User.update(userId, visibilityUpdate);
-        auditAction = newVisibility === 'hidden' ? 'user_deactivated' : 'user_activated';
-        auditDetails = newVisibility === 'hidden'
-          ? `User hidden from public discovery. Reason: ${data?.hidden_reason || 'N/A'}`
-          : 'User made visible in public discovery';
-        result = { visibility_status: newVisibility };
+        await base44.asServiceRole.entities[entityName].update(profile.id, { is_hidden: isHidden });
+        auditAction = isHidden ? 'user_deactivated' : 'user_activated';
+        auditDetails = isHidden
+          ? `Profile hidden from public discovery. Reason: ${data?.hidden_reason || 'N/A'}`
+          : 'Profile made visible in public discovery';
+        result = { is_hidden: isHidden };
         break;
       }
 
