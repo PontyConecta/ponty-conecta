@@ -61,6 +61,7 @@ import Deliveries from './pages/Deliveries';
 import DeliveriesManager from './pages/DeliveriesManager';
 import DiscoverBrands from './pages/DiscoverBrands';
 import DiscoverCreators from './pages/DiscoverCreators';
+import Feedback from './pages/Feedback';
 import Home from './pages/Home';
 import MissionsAchievements from './pages/MissionsAchievements';
 import MyApplications from './pages/MyApplications';
@@ -73,7 +74,6 @@ import SelectProfile from './pages/SelectProfile';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import SubscriptionPage from './pages/SubscriptionPage';
-import Feedback from './pages/Feedback';
 import __Layout from './Layout.jsx';
 
 
@@ -92,6 +92,7 @@ export const PAGES = {
     "DeliveriesManager": DeliveriesManager,
     "DiscoverBrands": DiscoverBrands,
     "DiscoverCreators": DiscoverCreators,
+    "Feedback": Feedback,
     "Home": Home,
     "MissionsAchievements": MissionsAchievements,
     "MyApplications": MyApplications,
@@ -104,7 +105,6 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "SubscriptionPage": SubscriptionPage,
-    "Feedback": Feedback,
 }
 
 export const pagesConfig = {

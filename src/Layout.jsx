@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ThemeSelector from '@/components/ThemeSelector';
+import BetaFeedbackNudge from '@/components/feedback/BetaFeedbackNudge';
 
 function LayoutContent({ children, currentPageName }) {
   const { user, profile, profileType, loading, logout } = useAuth();
@@ -184,6 +185,9 @@ function LayoutContent({ children, currentPageName }) {
           {children}
         </div>
       </main>
+
+      {/* ── Beta Feedback Nudge ── */}
+      <BetaFeedbackNudge />
 
       {/* ── Bottom Nav ── Mobile only: hidden at lg+ */}
       <BottomNav profileType={profileType} currentPageName={currentPageName} />

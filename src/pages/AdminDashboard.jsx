@@ -17,6 +17,7 @@ import DashboardPipeline from '../components/admin/DashboardPipeline';
 import DashboardFinancials from '../components/admin/DashboardFinancials';
 import UserKpiBar from '../components/admin/UserKpiBar';
 import AdminFeedbackList from '../components/admin/AdminFeedbackList';
+import FeedbackResponseInbox from '../components/admin/FeedbackResponseInbox';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -305,7 +306,15 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="feedback" className="space-y-6">
-          {activeTab === 'feedback' && <AdminFeedbackList />}
+          {activeTab === 'feedback' && (
+            <div className="space-y-8">
+              <FeedbackResponseInbox />
+              <div className="border-t pt-6">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Feedbacks Legados (sistema anterior)</h3>
+                <AdminFeedbackList />
+              </div>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>
