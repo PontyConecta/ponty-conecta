@@ -49,6 +49,7 @@
  */
 import AdminAuditLogs from './pages/AdminAuditLogs';
 import AdminCampaigns from './pages/AdminCampaigns';
+import AdminDashboard from './pages/AdminDashboard';
 import AdminDisputes from './pages/AdminDisputes';
 import AdminUsers from './pages/AdminUsers';
 import Applications from './pages/Applications';
@@ -72,13 +73,14 @@ import SelectProfile from './pages/SelectProfile';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import SubscriptionPage from './pages/SubscriptionPage';
-import AdminDashboard from './pages/AdminDashboard';
+import Feedback from './pages/Feedback';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AdminAuditLogs": AdminAuditLogs,
     "AdminCampaigns": AdminCampaigns,
+    "AdminDashboard": AdminDashboard,
     "AdminDisputes": AdminDisputes,
     "AdminUsers": AdminUsers,
     "Applications": Applications,
@@ -102,7 +104,7 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "SubscriptionPage": SubscriptionPage,
-    "AdminDashboard": AdminDashboard,
+    "Feedback": Feedback,
 }
 
 export const pagesConfig = {
