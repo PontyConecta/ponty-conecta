@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, ArrowRight } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -234,44 +234,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* ── Resumo do Marketplace ── */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider">Resumo do Marketplace</h3>
-                  <button
-                    onClick={() => setActiveTab('marketplace')}
-                    className="flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 transition-colors"
-                  >
-                    Ver métricas completas <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                  <DashboardMetricCard
-                    label="Campanhas Ativas"
-                    value={analytics.marketplace?.active_campaigns ?? analytics.activeCampaigns ?? 0}
-                    icon={Megaphone}
-                    iconColor="text-blue-500"
-                    tooltip="Campanhas com status 'ativa' atualmente."
-                    secondaryLabel={`de ${analytics.marketplace?.total_campaigns ?? 0} total`}
-                  />
-                  <DashboardMetricCard
-                    label="Candidaturas Pendentes"
-                    value={analytics.alerts?.pending_applications ?? 0}
-                    icon={Clock}
-                    iconColor="text-orange-500"
-                    tooltip="Candidaturas aguardando resposta da marca."
-                    secondaryLabel={`Taxa aprovação: ${analytics.conversionRate || 0}%`}
-                  />
-                  <DashboardMetricCard
-                    label="Entregas Aguardando"
-                    value={analytics.alerts?.submitted_deliveries_awaiting_review ?? 0}
-                    icon={CheckCircle}
-                    iconColor="text-cyan-500"
-                    tooltip="Entregas submetidas aguardando aprovação da marca."
-                    secondaryLabel={`${analytics.completedDeliveries || 0} já aprovadas`}
-                  />
-                </div>
-              </div>
+              {/* ── Pipeline & Funil ── */}
+              <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
 
               <DashboardEngagementChart data={analytics.engagementChart} />
             </>

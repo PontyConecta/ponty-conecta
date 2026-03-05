@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Trophy, AlertTriangle, FolderOpen, Megaphone, FolderCheck, Target, ThumbsUp, Timer, AlertCircle, Clock, CheckCircle } from 'lucide-react';
 import DashboardMetricCard from './DashboardMetricCard';
-import DashboardPipeline from './DashboardPipeline';
+
 
 const COLORS = ['#818cf8', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6', '#ef4444'];
 
@@ -96,9 +96,6 @@ export default function DashboardMarketplace({ analytics }) {
           />
         </div>
       </div>
-
-      {/* Pipeline + Funnel */}
-      <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
 
       {/* Marketplace Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
