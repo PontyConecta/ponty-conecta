@@ -306,18 +306,10 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* ── Alertas do Marketplace ── */}
+              {/* ── Alertas Operacionais ── */}
               <div>
-                <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Alertas do Marketplace</h3>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                  <DashboardMetricCard
-                    label="Campanhas Sem Candidaturas"
-                    value={analytics.alerts?.campaigns_zero_apps ?? 0}
-                    icon={AlertCircle}
-                    iconColor="text-yellow-500"
-                    tooltip="Campanhas ativas sem nenhuma candidatura."
-                    secondaryLabel={`de ${analytics.marketplace?.active_campaigns ?? 0} ativas`}
-                  />
+                <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Alertas Operacionais</h3>
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <DashboardMetricCard
                     label="Candidaturas Pendentes"
                     value={analytics.alerts?.pending_applications ?? 0}

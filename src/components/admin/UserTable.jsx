@@ -162,7 +162,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                     </p>
                     {user.role === 'admin' && <Shield className="w-3 h-3 text-red-500" />}
                   </div>
-                  <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{user.email}</p>
+                  <p className="text-xs truncate text-muted-foreground">{user.email}</p>
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                       {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
