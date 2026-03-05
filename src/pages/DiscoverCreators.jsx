@@ -58,7 +58,6 @@ export default function DiscoverCreators() {
     setLoading(false);
   };
 
-  // Filter out is_hidden for non-admin users
   const visibleCreators = useMemo(() => {
     if (isAdmin) return creators;
     return creators.filter(c => !c.is_hidden);
