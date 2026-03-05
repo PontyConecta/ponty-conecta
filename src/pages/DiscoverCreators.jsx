@@ -292,6 +292,7 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
           </div>
         )}
 
+        {/* Platforms */}
         {creator.platforms?.length > 0 && (
           <div>
             <h4 className="font-medium mb-2">Plataformas</h4>
@@ -301,7 +302,7 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{p.name}</span>
                     {isSubscribed ? (
-                      <span className="text-primary">@{p.handle}</span>
+                      <a href={p.url || `https://${p.name.toLowerCase()}.com/${(p.handle || '').replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" onClick={e => e.stopPropagation()}>@{p.handle}</a>
                     ) : (
                       <span className="text-muted-foreground flex items-center gap-1">
                         <Lock className="w-3 h-3" />
@@ -312,16 +313,11 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
                   <Badge variant="outline">{formatFollowers(p.followers || 0)}</Badge>
                 </div>
               ))}
-              {!isSubscribed && (
-                <div className="text-center pt-1">
-                  <p className="text-[10px] text-muted-foreground mb-1.5">Perfis completos disponíveis no plano premium</p>
-                  <Button size="sm" variant="outline" onClick={onPaywall}>Desbloquear</Button>
-                </div>
-              )}
             </div>
           </div>
         )}
 
+        {/* Portfolio */}
         {creator.portfolio_images?.length > 0 && (
           <div>
             <h4 className="font-medium mb-2">Portfólio</h4>
@@ -333,46 +329,29 @@ function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalF
           </div>
         )}
 
-        {/* Rates — premium gated */}
-        {(creator.rate_cash_min || creator.rate_cash_max) && (
-          isSubscribed ? (
-            <div className="p-4 rounded-xl bg-emerald-500/10">
-              <h4 className="font-medium text-emerald-600 mb-1">Faixa de Valores</h4>
-              <p className="text-emerald-500">R$ {creator.rate_cash_min || 0} - R$ {creator.rate_cash_max || 0}</p>
-              {creator.accepts_barter && <Badge className="mt-2 bg-emerald-500/15 text-emerald-600 border-0">Aceita permutas</Badge>}
-            </div>
-          ) : (
-            <div className="p-4 rounded-xl bg-muted relative overflow-hidden">
-              <div className="blur-sm select-none">
-                <h4 className="font-medium mb-1">Faixa de Valores</h4>
-                <p>R$ ••• - R$ •••</p>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/80">
-                <p className="text-xs text-muted-foreground mb-2">Dados completos disponíveis no plano premium</p>
-                <Button size="sm" onClick={onPaywall}>Desbloquear</Button>
-              </div>
-            </div>
-          )
-        )}
-
-        {/* Contact — premium gated */}
+        {/* Premium content: Rates + Contact */}
         {isSubscribed ? (
-          <div className="p-4 rounded-xl space-y-3 bg-primary/5">
-            <h4 className="font-medium text-primary">Contato</h4>
-            {creator.contact_email && <a href={`mailto:${creator.contact_email}`} className="flex items-center gap-2 text-primary hover:underline"><Mail className="w-4 h-4" />{creator.contact_email}</a>}
-            {creator.contact_whatsapp && <a href={`https://wa.me/${creator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{creator.contact_whatsapp}</a>}
-            {creator.portfolio_url && <a href={creator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><ExternalLink className="w-4 h-4" />Ver Media Kit</a>}
-          </div>
+          <>
+            {(creator.rate_cash_min || creator.rate_cash_max) && (
+              <div className="p-4 rounded-xl bg-emerald-500/10">
+                <h4 className="font-medium text-emerald-600 mb-1">Faixa de Valores</h4>
+                <p className="text-emerald-500">R$ {creator.rate_cash_min || 0} - R$ {creator.rate_cash_max || 0}</p>
+                {creator.accepts_barter && <Badge className="mt-2 bg-emerald-500/15 text-emerald-600 border-0">Aceita permutas</Badge>}
+              </div>
+            )}
+            <div className="p-4 rounded-xl space-y-3 bg-primary/5">
+              <h4 className="font-medium text-primary">Contato</h4>
+              {creator.contact_email && <a href={`mailto:${creator.contact_email}`} className="flex items-center gap-2 text-primary hover:underline"><Mail className="w-4 h-4" />{creator.contact_email}</a>}
+              {creator.contact_whatsapp && <a href={`https://wa.me/${creator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{creator.contact_whatsapp}</a>}
+              {creator.portfolio_url && <a href={creator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><ExternalLink className="w-4 h-4" />Ver Media Kit</a>}
+            </div>
+          </>
         ) : (
-          <div className="p-4 rounded-xl text-center bg-muted relative overflow-hidden">
-            <div className="blur-sm select-none mb-2">
-              <p>email@exemplo.com</p>
-              <p>+55 (11) 9xxxx-xxxx</p>
-            </div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/80">
-              <p className="text-xs text-muted-foreground mb-2">Dados completos disponíveis no plano premium</p>
-              <Button size="sm" onClick={onPaywall}>Desbloquear</Button>
-            </div>
+          <div className="p-4 rounded-xl bg-muted/60 border border-border text-center space-y-2">
+            <Lock className="w-5 h-5 text-muted-foreground mx-auto" />
+            <p className="text-sm font-medium">Valores, contato e redes completas</p>
+            <p className="text-xs text-muted-foreground">Disponíveis no plano Premium</p>
+            <Button size="sm" onClick={onPaywall} className="mt-1">Desbloquear</Button>
           </div>
         )}
       </div>
