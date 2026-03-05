@@ -15,10 +15,12 @@ import PaywallModal from '@/components/PaywallModal';
 import DiscoverCreatorCard from '@/components/cards/DiscoverCreatorCard';
 import CategoryChips from '@/components/discover/CategoryChips';
 import HorizontalSection from '@/components/discover/HorizontalSection';
+import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
+import { useHidden } from '@/components/hooks/useHidden';
 import {
   Search, Loader2, MapPin, Users, CheckCircle2, Mail, Phone, ExternalLink, Filter, X, Lock
 } from 'lucide-react';
-import { BRAZIL_STATES, getStateLabel } from '@/components/common/BrazilStateSelect';
+import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
 
@@ -47,6 +49,7 @@ export default function DiscoverCreators() {
   const [showPaywall, setShowPaywall] = useState(false);
 
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
+  const { hiddenIds, loaded: hiddenLoaded, toggleHide, isHidden } = useHidden('HiddenCreator', authProfile?.id);
 
   useEffect(() => { loadData(); }, []);
 
@@ -56,27 +59,31 @@ export default function DiscoverCreators() {
     setLoading(false);
   };
 
+  // All visible creators (hidden filtered out)
+  const visibleCreators = useMemo(() => {
+    return creators.filter(c => !hiddenIds.has(c.id));
+  }, [creators, hiddenIds]);
+
   const filteredCreators = useMemo(() => {
-    return creators.filter(c => {
+    return visibleCreators.filter(c => {
       const matchSearch = !searchTerm || c.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) || c.bio?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchNiche = filterNiche === 'all' || c.niche?.includes(filterNiche);
       const matchSize = filterSize === 'all' || c.profile_size === filterSize;
       const matchState = filterState === 'all' || c.state === filterState;
       return matchSearch && matchNiche && matchSize && matchState;
     });
-  }, [creators, searchTerm, filterNiche, filterSize, filterState]);
+  }, [visibleCreators, searchTerm, filterNiche, filterSize, filterState]);
 
-  const featuredCreators = useMemo(() => creators.filter(c => c.featured), [creators]);
-  const newCreators = useMemo(() => [...creators].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 12), [creators]);
+  const featuredCreators = useMemo(() => visibleCreators.filter(c => c.featured), [visibleCreators]);
+  const newCreators = useMemo(() => [...visibleCreators].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 12), [visibleCreators]);
 
   const nicheCreators = useMemo(() => {
     if (filterNiche === 'all') return [];
-    return creators.filter(c => c.niche?.includes(filterNiche)).slice(0, 10);
-  }, [creators, filterNiche]);
+    return visibleCreators.filter(c => c.niche?.includes(filterNiche)).slice(0, 10);
+  }, [visibleCreators, filterNiche]);
 
   const showSections = filterNiche === 'all' && !searchTerm && filterSize === 'all' && filterState === 'all';
 
-  // IDs shown in horizontal sections — exclude from grid to avoid duplication
   const sectionIds = useMemo(() => {
     if (!showSections) return new Set();
     const ids = new Set();
@@ -98,7 +105,12 @@ export default function DiscoverCreators() {
 
   const getTotalFollowers = (creator) => (creator.platforms || []).reduce((s, p) => s + (p.followers || 0), 0);
 
-  if (loading) {
+  const handleToggleHide = async (creatorId) => {
+    await toggleHide(creatorId);
+    if (selectedCreator?.id === creatorId) setSelectedCreator(null);
+  };
+
+  if (loading || !hiddenLoaded) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -114,10 +126,8 @@ export default function DiscoverCreators() {
         <p className="text-sm text-muted-foreground mt-0.5">Explore criadoras de conteúdo</p>
       </div>
 
-      {/* Category chips */}
       <CategoryChips categories={NICHES} value={filterNiche} onChange={setFilterNiche} />
 
-      {/* Search + filters */}
       <div className="flex gap-2">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -159,14 +169,15 @@ export default function DiscoverCreators() {
         </div>
       )}
 
-      {/* Horizontal sections when no active filter */}
       {showSections && (
         <div className="space-y-6">
           {featuredCreators.length > 0 && (
             <HorizontalSection title="Em destaque">
               {featuredCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
-                  <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed} onClick={() => setSelectedCreator(c)} />
+                  <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
+                    onClick={() => setSelectedCreator(c)}
+                    onHide={() => handleToggleHide(c.id)} isHidden={false} />
                 </div>
               ))}
             </HorizontalSection>
@@ -175,7 +186,9 @@ export default function DiscoverCreators() {
             <HorizontalSection title="Novas criadoras">
               {newCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
-                  <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed} onClick={() => setSelectedCreator(c)} />
+                  <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
+                    onClick={() => setSelectedCreator(c)}
+                    onHide={() => handleToggleHide(c.id)} isHidden={false} />
                 </div>
               ))}
             </HorizontalSection>
@@ -183,18 +196,18 @@ export default function DiscoverCreators() {
         </div>
       )}
 
-      {/* Niche section */}
       {filterNiche !== 'all' && nicheCreators.length > 0 && showSections && (
         <HorizontalSection title={filterNiche}>
           {nicheCreators.map(c => (
             <div key={c.id} className="w-[160px] flex-shrink-0">
-              <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed} onClick={() => setSelectedCreator(c)} />
+              <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
+                onClick={() => setSelectedCreator(c)}
+                onHide={() => handleToggleHide(c.id)} isHidden={false} />
             </div>
           ))}
         </HorizontalSection>
       )}
 
-      {/* Grid */}
       <div>
         <h2 className="text-sm font-semibold text-foreground mb-3">
           {showSections ? 'Todos os creators' : 'Resultados'}
@@ -203,7 +216,8 @@ export default function DiscoverCreators() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {(showSections ? gridCreators : filteredCreators).map(c => (
               <DiscoverCreatorCard key={c.id} creator={c} isSubscribed={isSubscribed}
-                onClick={() => setSelectedCreator(c)} />
+                onClick={() => setSelectedCreator(c)}
+                onHide={() => handleToggleHide(c.id)} isHidden={false} />
             ))}
           </div>
         ) : (
@@ -217,7 +231,6 @@ export default function DiscoverCreators() {
         )}
       </div>
 
-      {/* Creator Profile Modal */}
       <Dialog open={!!selectedCreator} onOpenChange={() => setSelectedCreator(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>Perfil do Creator</DialogTitle></DialogHeader>
@@ -228,6 +241,8 @@ export default function DiscoverCreators() {
               formatFollowers={formatFollowers}
               getTotalFollowers={getTotalFollowers}
               onPaywall={() => setShowPaywall(true)}
+              onHide={() => handleToggleHide(selectedCreator.id)}
+              isHidden={false}
             />
           )}
         </DialogContent>
@@ -236,128 +251,6 @@ export default function DiscoverCreators() {
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)}
         title="Contato Premium" description="Assine para entrar em contato direto com criadores."
         feature="Ver email e WhatsApp do criador" isAuthenticated={true} />
-    </div>
-  );
-}
-
-function maskHandle(handle) {
-  if (!handle) return '@•••';
-  const clean = handle.replace('@', '');
-  if (clean.length <= 4) return `@${clean[0]}•••`;
-  return `@${clean.slice(0, 2)}•••${clean.slice(-2)}`;
-}
-
-function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall }) {
-  return (
-    <div className="space-y-6 py-4">
-      <div className="relative">
-        <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
-          {creator.cover_image_url && <img src={creator.cover_image_url} alt="" className="w-full h-full object-cover" />}
-        </div>
-        <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-background shadow-lg">
-          <AvatarImage src={creator.avatar_url} />
-          <AvatarFallback className="bg-primary/10 text-primary text-2xl">{creator.display_name?.[0]}</AvatarFallback>
-        </Avatar>
-      </div>
-
-      <div className="pt-10 space-y-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold">{creator.display_name}</h2>
-            {creator.is_verified && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
-          </div>
-          {(creator.state || creator.location) && (
-            <p className="flex items-center gap-1 mt-1 text-muted-foreground">
-              <MapPin className="w-4 h-4" />
-              {creator.city ? `${creator.city}, ` : ''}{getStateLabel(creator.state) || creator.location}
-            </p>
-          )}
-        </div>
-
-        <p className="text-muted-foreground">{creator.bio || 'Criadora de conteúdo'}</p>
-
-        <div className="flex items-center gap-6">
-          <div><div className="text-2xl font-bold">{formatFollowers(getTotalFollowers(creator))}</div><div className="text-sm text-muted-foreground">Seguidores</div></div>
-          <div><div className="text-2xl font-bold">{creator.completed_campaigns || 0}</div><div className="text-sm text-muted-foreground">Campanhas</div></div>
-          <div><div className="text-2xl font-bold">{creator.on_time_rate || 100}%</div><div className="text-sm text-muted-foreground">No Prazo</div></div>
-        </div>
-
-        {creator.niche?.length > 0 ? (
-          <div>
-            <h4 className="font-medium mb-2">Nichos</h4>
-            <div className="flex flex-wrap gap-2">{creator.niche.map((n, i) => <Badge key={i} variant="outline">{n}</Badge>)}</div>
-          </div>
-        ) : (
-          <div>
-            <h4 className="font-medium mb-2">Nichos</h4>
-            <Badge variant="outline" className="text-muted-foreground">Sem nicho informado</Badge>
-          </div>
-        )}
-
-        {/* Platforms */}
-        <div>
-          <h4 className="font-medium mb-2">Plataformas</h4>
-          {creator.platforms?.length > 0 ? (
-            <div className="space-y-2">
-              {creator.platforms.map((p, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{p.name}</span>
-                    {isSubscribed ? (
-                      <a href={p.url || `https://${p.name.toLowerCase()}.com/${(p.handle || '').replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" onClick={e => e.stopPropagation()}>@{p.handle}</a>
-                    ) : (
-                      <span className="text-muted-foreground flex items-center gap-1">
-                        <Lock className="w-3 h-3" />
-                      </span>
-                    )}
-                  </div>
-                  <Badge variant="outline">{formatFollowers(p.followers || 0)}</Badge>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">Plataformas não informadas</p>
-          )}
-        </div>
-
-        {/* Portfolio */}
-        {creator.portfolio_images?.length > 0 && (
-          <div>
-            <h4 className="font-medium mb-2">Portfólio</h4>
-            <div className="grid grid-cols-3 gap-2">
-              {creator.portfolio_images.slice(0, 6).map((url, i) => (
-                <img key={i} src={url} alt="" className="aspect-square rounded-lg object-cover" />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Premium content: Rates + Contact */}
-        {isSubscribed ? (
-          <>
-            {(creator.rate_cash_min || creator.rate_cash_max) && (
-              <div className="p-4 rounded-xl bg-emerald-500/10">
-                <h4 className="font-medium text-emerald-600 mb-1">Faixa de Valores</h4>
-                <p className="text-emerald-500">R$ {creator.rate_cash_min || 0} - R$ {creator.rate_cash_max || 0}</p>
-                {creator.accepts_barter && <Badge className="mt-2 bg-emerald-500/15 text-emerald-600 border-0">Aceita permutas</Badge>}
-              </div>
-            )}
-            <div className="p-4 rounded-xl space-y-3 bg-primary/5">
-              <h4 className="font-medium text-primary">Contato</h4>
-              {creator.contact_email && <a href={`mailto:${creator.contact_email}`} className="flex items-center gap-2 text-primary hover:underline"><Mail className="w-4 h-4" />{creator.contact_email}</a>}
-              {creator.contact_whatsapp && <a href={`https://wa.me/${creator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{creator.contact_whatsapp}</a>}
-              {creator.portfolio_url && <a href={creator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><ExternalLink className="w-4 h-4" />Ver Media Kit</a>}
-            </div>
-          </>
-        ) : (
-          <div className="p-4 rounded-xl bg-muted/60 border border-border text-center space-y-2">
-            <Lock className="w-5 h-5 text-muted-foreground mx-auto" />
-            <p className="text-sm font-medium">Valores, contato e redes completas</p>
-            <p className="text-xs text-muted-foreground">Disponíveis no plano Premium</p>
-            <Button size="sm" onClick={onPaywall} className="mt-1">Desbloquear</Button>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
