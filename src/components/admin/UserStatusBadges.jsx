@@ -26,7 +26,7 @@ export function getUserBadgeKeys(user, profile) {
   const now = Date.now();
   const keys = [];
 
-  if (user.visibility_status === 'hidden') keys.push('hidden');
+  if (profile?.is_hidden) keys.push('hidden');
   if (!user.first_active) keys.push('never_active');
 
   const lastActive = user.last_active ? new Date(user.last_active).getTime() : 0;
