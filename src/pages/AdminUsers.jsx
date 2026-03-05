@@ -122,7 +122,7 @@ export default function AdminUsers() {
         if (quickFilter === 'new' && (!created || (now.getTime() - created) >= 7 * DAY_MS)) return false;
         if (quickFilter === 'never_active' && user.first_active) return false;
         if (quickFilter === 'inactive' && lastActive && (now.getTime() - lastActive) <= 30 * DAY_MS) return false;
-        if (quickFilter === 'hidden' && user.visibility_status !== 'hidden') return false;
+        if (quickFilter === 'hidden' && !profile?.is_hidden) return false;
         if (quickFilter === 'premium') {
           const sub = profile?.subscription_status;
           if (sub !== 'premium' && sub !== 'legacy' && sub !== 'trial') return false;
@@ -222,8 +222,8 @@ export default function AdminUsers() {
       }
 
       if (visibilityFilter && visibilityFilter !== 'all') {
-        if (visibilityFilter === 'hidden' && user.visibility_status !== 'hidden') return false;
-        if (visibilityFilter === 'visible' && user.visibility_status === 'hidden') return false;
+        if (visibilityFilter === 'hidden' && !profile?.is_hidden) return false;
+        if (visibilityFilter === 'visible' && profile?.is_hidden) return false;
       }
       
       return true;
