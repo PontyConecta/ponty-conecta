@@ -40,8 +40,8 @@ export default function BottomNav({ profileType, currentPageName }) {
 
   return (
     /* fixed bottom, HIDDEN at lg+ (desktop uses sidebar) */
-    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t shadow-[0_-2px_8px_rgba(0,0,0,0.06)] safe-area-bottom">
-      <div className="flex items-stretch h-[72px]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t shadow-[0_-2px_8px_rgba(0,0,0,0.06)]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <div className="flex items-stretch" style={{ height: 'var(--bottom-nav-height, 72px)' }}>
         {navItems.map((item) => {
           const isActive = currentPageName === item.page;
           return (

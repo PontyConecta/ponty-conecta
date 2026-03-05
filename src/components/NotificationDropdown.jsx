@@ -33,95 +33,7 @@ export default function NotificationDropdown({ triggerClassName }) {
       setLoading(true);
       const notificationsList = [];
 
-      if (profileType === 'brand') {
-        const [applications, deliveries, campaigns] = await Promise.all([
-          base44.entities.Application.filter({ brand_id: profile.id, status: 'pending' }),
-          base44.entities.Delivery.filter({ brand_id: profile.id, status: 'submitted' }),
-          base44.entities.Campaign.filter({ brand_id: profile.id })
-        ]);
-
-        applications.slice(0, 5).forEach(app => {
-          notificationsList.push({
-            id: `app-${app.id}`, type: 'application', title: 'Nova Candidatura',
-            message: `Um criador se candidatou para sua campanha`, icon: MessageSquare,
-            color: 'text-blue-600', timestamp: app.created_date, read: false,
-            actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
-          });
-        });
-
-        deliveries.slice(0, 5).forEach(del => {
-          notificationsList.push({
-            id: `delivery-${del.id}`, type: 'delivery', title: 'Entrega Pendente',
-            message: `Criador enviou conteúdo para revisão`, icon: CheckCircle2,
-            color: 'text-green-600', timestamp: del.submitted_at, read: false,
-            actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
-          });
-        });
-
-        campaigns.forEach(camp => {
-          if (camp.deadline && new Date(camp.deadline) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) {
-            const daysLeft = Math.ceil((new Date(camp.deadline) - new Date()) / (24 * 60 * 60 * 1000));
-            if (daysLeft > 0) {
-              notificationsList.push({
-                id: `campaign-${camp.id}`, type: 'campaign', title: 'Campanha Próxima do Prazo',
-                message: `${camp.title} vence em ${daysLeft} dias`, icon: Clock,
-                color: 'text-orange-600', timestamp: camp.created_date, read: false,
-                actionUrl: createPageUrl('CampaignManager'), relatedEntityId: camp.id
-              });
-            }
-          }
-        });
-
-      } else if (profileType === 'creator') {
-        const [applications, deliveries, campaigns] = await Promise.all([
-          base44.entities.Application.filter({ creator_id: profile.id }),
-          base44.entities.Delivery.filter({ creator_id: profile.id }),
-          base44.entities.Campaign.filter({ status: 'active' })
-        ]);
-
-        const campaignIds = campaigns.slice(0, 3).map(c => c.brand_id);
-        const brands = campaignIds.length > 0 ? await base44.entities.Brand.list() : [];
-        const brandMap = {};
-        brands.forEach(b => { brandMap[b.id] = b; });
-
-        campaigns.slice(0, 3).forEach(opp => {
-          const brand = brandMap[opp.brand_id];
-          notificationsList.push({
-            id: `opp-${opp.id}`, type: 'opportunity', title: 'Nova Oportunidade',
-            message: `${brand?.company_name || 'Uma marca'} lançou uma nova campanha`, icon: Megaphone,
-            color: 'text-purple-600', timestamp: opp.created_date, read: false,
-            actionUrl: createPageUrl('OpportunityFeed'), relatedEntityId: opp.id
-          });
-        });
-
-        applications.filter(app => app.status === 'accepted').slice(0, 3).forEach(app => {
-          notificationsList.push({
-            id: `app-accepted-${app.id}`, type: 'application_accepted', title: 'Candidatura Aceita! 🎉',
-            message: `Sua candidatura foi aceita para uma campanha`, icon: CheckCircle2,
-            color: 'text-green-600', timestamp: app.accepted_at || app.created_date, read: false,
-            actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
-          });
-        });
-
-        deliveries.filter(del => del.status === 'approved').slice(0, 3).forEach(del => {
-          notificationsList.push({
-            id: `delivery-approved-${del.id}`, type: 'delivery_approved', title: 'Entrega Aprovada',
-            message: `Sua entrega foi aprovada pela marca`, icon: CheckCircle2,
-            color: 'text-green-600', timestamp: del.approved_at || del.created_date, read: false,
-            actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
-          });
-        });
-
-        deliveries.filter(del => del.status === 'contested').slice(0, 3).forEach(del => {
-          notificationsList.push({
-            id: `delivery-contested-${del.id}`, type: 'delivery_contested', title: 'Entrega Contestada',
-            message: `A marca contestou sua entrega. Revise os comentários.`, icon: AlertCircle,
-            color: 'text-red-600', timestamp: del.contested_at || del.created_date, read: false,
-            actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
-          });
-        });
-      }
-
+      // Fetch persisted notification state first (read/dismissed)
       const existingNotifications = await base44.entities.Notification.filter({ user_id: user.id });
       const readMap = {};
       const dismissedSet = new Set();
@@ -130,16 +42,131 @@ export default function NotificationDropdown({ triggerClassName }) {
         if (n.dismissed_at) dismissedSet.add(n.notification_key);
       });
 
-      const filteredNotifications = notificationsList
-        .filter(n => !dismissedSet.has(n.id))
-        .map(n => ({ ...n, read: readMap[n.id] || false }));
-      filteredNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      if (profileType === 'brand') {
+        const [applications, deliveries, campaigns] = await Promise.all([
+          base44.entities.Application.filter({ brand_id: profile.id, status: 'pending' }),
+          base44.entities.Delivery.filter({ brand_id: profile.id, status: 'submitted' }),
+          base44.entities.Campaign.filter({ brand_id: profile.id })
+        ]);
 
-      setNotifications(filteredNotifications);
-      setUnreadCount(filteredNotifications.filter(n => !n.read).length);
+        applications.slice(0, 5).forEach(app => {
+          const key = `app-${app.id}`;
+          if (!dismissedSet.has(key)) {
+            notificationsList.push({
+              id: key, type: 'application', title: 'Nova Candidatura',
+              message: 'Um criador se candidatou para sua campanha', icon: MessageSquare,
+              color: 'text-blue-600', timestamp: app.created_date, read: !!readMap[key],
+              actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
+            });
+          }
+        });
+
+        deliveries.slice(0, 5).forEach(del => {
+          const key = `delivery-${del.id}`;
+          if (!dismissedSet.has(key)) {
+            notificationsList.push({
+              id: key, type: 'delivery', title: 'Entrega Pendente',
+              message: 'Criador enviou conteúdo para revisão', icon: CheckCircle2,
+              color: 'text-green-600', timestamp: del.submitted_at || del.created_date, read: !!readMap[key],
+              actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
+            });
+          }
+        });
+
+        campaigns.forEach(camp => {
+          if (camp.deadline && new Date(camp.deadline) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) {
+            const daysLeft = Math.ceil((new Date(camp.deadline) - new Date()) / (24 * 60 * 60 * 1000));
+            if (daysLeft > 0) {
+              const key = `campaign-${camp.id}`;
+              if (!dismissedSet.has(key)) {
+                notificationsList.push({
+                  id: key, type: 'campaign', title: 'Campanha Próxima do Prazo',
+                  message: `${camp.title} vence em ${daysLeft} dias`, icon: Clock,
+                  color: 'text-orange-600', timestamp: camp.created_date, read: !!readMap[key],
+                  actionUrl: createPageUrl('CampaignManager'), relatedEntityId: camp.id
+                });
+              }
+            }
+          }
+        });
+
+      } else if (profileType === 'creator') {
+        const [applications, deliveries] = await Promise.all([
+          base44.entities.Application.filter({ creator_id: profile.id }),
+          base44.entities.Delivery.filter({ creator_id: profile.id }),
+        ]);
+
+        // Recent opportunities — only show campaigns created in last 7 days
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const recentCampaigns = await base44.entities.Campaign.filter({ status: 'active' }, '-created_date', 5);
+        const recentOpps = recentCampaigns.filter(c => c.created_date >= sevenDaysAgo);
+
+        recentOpps.forEach(opp => {
+          const key = `opp-${opp.id}`;
+          if (!dismissedSet.has(key)) {
+            notificationsList.push({
+              id: key, type: 'opportunity', title: 'Nova Oportunidade',
+              message: 'Uma marca lançou uma nova campanha', icon: Megaphone,
+              color: 'text-purple-600', timestamp: opp.created_date, read: !!readMap[key],
+              actionUrl: createPageUrl('OpportunityFeed'), relatedEntityId: opp.id
+            });
+          }
+        });
+
+        applications.filter(app => app.status === 'accepted').slice(0, 5).forEach(app => {
+          const key = `app-accepted-${app.id}`;
+          if (!dismissedSet.has(key)) {
+            notificationsList.push({
+              id: key, type: 'application_accepted', title: 'Candidatura Aceita! 🎉',
+              message: 'Sua candidatura foi aceita para uma campanha', icon: CheckCircle2,
+              color: 'text-green-600', timestamp: app.accepted_at || app.created_date, read: !!readMap[key],
+              actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
+            });
+          }
+        });
+
+        applications.filter(app => app.status === 'rejected').slice(0, 3).forEach(app => {
+          const key = `app-rejected-${app.id}`;
+          if (!dismissedSet.has(key)) {
+            notificationsList.push({
+              id: key, type: 'application_rejected', title: 'Candidatura Recusada',
+              message: app.rejection_reason || 'Sua candidatura não foi aceita desta vez.', icon: AlertCircle,
+              color: 'text-red-600', timestamp: app.rejected_at || app.created_date, read: !!readMap[key],
+              actionUrl: createPageUrl('MyApplications'), relatedEntityId: app.id
+            });
+          }
+        });
+
+        deliveries.filter(del => del.status === 'approved').slice(0, 5).forEach(del => {
+          const key = `delivery-approved-${del.id}`;
+          if (!dismissedSet.has(key)) {
+            notificationsList.push({
+              id: key, type: 'delivery_approved', title: 'Entrega Aprovada',
+              message: 'Sua entrega foi aprovada pela marca', icon: CheckCircle2,
+              color: 'text-green-600', timestamp: del.approved_at || del.created_date, read: !!readMap[key],
+              actionUrl: createPageUrl('MyDeliveries'), relatedEntityId: del.id
+            });
+          }
+        });
+
+        deliveries.filter(del => del.status === 'contested').slice(0, 3).forEach(del => {
+          const key = `delivery-contested-${del.id}`;
+          if (!dismissedSet.has(key)) {
+            notificationsList.push({
+              id: key, type: 'delivery_contested', title: 'Entrega Contestada',
+              message: 'A marca contestou sua entrega. Revise os comentários.', icon: AlertCircle,
+              color: 'text-red-600', timestamp: del.contested_at || del.created_date, read: !!readMap[key],
+              actionUrl: createPageUrl('MyDeliveries'), relatedEntityId: del.id
+            });
+          }
+        });
+      }
+
+      notificationsList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      setNotifications(notificationsList);
+      setUnreadCount(notificationsList.filter(n => !n.read).length);
     } catch (error) {
       console.error('Error loading notifications:', error);
-      toast?.error?.('Erro ao carregar notificações');
     } finally {
       setLoading(false);
     }
