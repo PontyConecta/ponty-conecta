@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Users, CheckCircle2, Lock } from 'lucide-react';
+import { MapPin, Users, CheckCircle2, Lock, EyeOff } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 function formatFollowers(num) {
@@ -10,7 +10,7 @@ function formatFollowers(num) {
   return num;
 }
 
-export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) {
+export default function DiscoverCreatorCard({ creator, isSubscribed, onClick, onHide }) {
   const totalFollowers = (creator.platforms || []).reduce((s, p) => s + (p.followers || 0), 0);
 
   return (
@@ -58,6 +58,18 @@ export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) 
           <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/40 flex items-center justify-center">
             <Lock className="w-3 h-3 text-white/80" />
           </div>
+        )}
+
+        {/* Hide button */}
+        {onHide && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onHide(); }}
+            className="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors z-10"
+            title="Ocultar"
+            style={!isSubscribed ? { left: '2.25rem' } : {}}
+          >
+            <EyeOff className="w-3 h-3 text-white/80" />
+          </button>
         )}
       </div>
 
