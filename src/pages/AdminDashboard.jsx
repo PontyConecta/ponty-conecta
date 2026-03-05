@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, BarChart3, FolderOpen, FolderCheck, Target, ThumbsUp, Timer } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, BarChart3, FolderOpen, FolderCheck, Target, ThumbsUp, Timer, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -269,7 +269,15 @@ export default function AdminDashboard() {
 
               {/* ── Saúde do Marketplace ── */}
               <div>
-                <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Saúde do Marketplace</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider">Saúde do Marketplace</h3>
+                  <button
+                    onClick={() => setActiveTab('marketplace')}
+                    className="flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Ver métricas completas <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
                   <DashboardMetricCard
                     label="Aplicações por Campanha"
@@ -277,7 +285,7 @@ export default function AdminDashboard() {
                     icon={Target}
                     iconColor="text-indigo-500"
                     tooltip="Número médio de candidaturas por campanha ativa."
-                    secondaryLabel="média por campanha ativa"
+                    secondaryLabel="média de candidaturas por campanha ativa"
                   />
                   <DashboardMetricCard
                     label="Taxa de Aprovação"
@@ -285,7 +293,7 @@ export default function AdminDashboard() {
                     icon={ThumbsUp}
                     iconColor="text-emerald-500"
                     tooltip="Percentual de candidaturas aceitas pelas marcas."
-                    secondaryLabel="candidaturas aceitas"
+                    secondaryLabel="percentual de candidaturas aceitas"
                   />
                   <DashboardMetricCard
                     label="Tempo Médio de Resposta"
@@ -293,7 +301,7 @@ export default function AdminDashboard() {
                     icon={Timer}
                     iconColor="text-amber-500"
                     tooltip="Tempo médio que marcas levam para responder candidaturas."
-                    secondaryLabel="horas até primeira resposta"
+                    secondaryLabel="tempo médio de resposta das marcas"
                   />
                   <DashboardMetricCard
                     label="Campanhas Sem Candidaturas"
@@ -301,7 +309,7 @@ export default function AdminDashboard() {
                     icon={AlertCircle}
                     iconColor="text-red-500"
                     tooltip="Campanhas ativas sem nenhuma candidatura recebida."
-                    secondaryLabel={`de ${analytics.marketplace?.active_campaigns ?? 0} ativas`}
+                    secondaryLabel="campanhas ativas sem nenhuma candidatura"
                   />
                 </div>
               </div>
