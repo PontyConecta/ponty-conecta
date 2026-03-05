@@ -16,9 +16,8 @@ import DiscoverCreatorCard from '@/components/cards/DiscoverCreatorCard';
 import CategoryChips from '@/components/discover/CategoryChips';
 import HorizontalSection from '@/components/discover/HorizontalSection';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
-import { useHidden } from '@/components/hooks/useHidden';
 import {
-  Search, Loader2, MapPin, Users, CheckCircle2, Mail, Phone, ExternalLink, Filter, X, Lock
+  Search, Loader2, Users, Filter, X
 } from 'lucide-react';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
@@ -49,7 +48,7 @@ export default function DiscoverCreators() {
   const [showPaywall, setShowPaywall] = useState(false);
 
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
-  const { hiddenIds, loaded: hiddenLoaded, toggleHide, isHidden } = useHidden('HiddenCreator', authProfile?.id);
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => { loadData(); }, []);
 
@@ -59,10 +58,11 @@ export default function DiscoverCreators() {
     setLoading(false);
   };
 
-  // All visible creators (hidden filtered out)
+  // Filter out is_hidden for non-admin users
   const visibleCreators = useMemo(() => {
-    return creators.filter(c => !hiddenIds.has(c.id));
-  }, [creators, hiddenIds]);
+    if (isAdmin) return creators;
+    return creators.filter(c => !c.is_hidden);
+  }, [creators, isAdmin]);
 
   const filteredCreators = useMemo(() => {
     return visibleCreators.filter(c => {
@@ -105,12 +105,7 @@ export default function DiscoverCreators() {
 
   const getTotalFollowers = (creator) => (creator.platforms || []).reduce((s, p) => s + (p.followers || 0), 0);
 
-  const handleToggleHide = async (creatorId) => {
-    await toggleHide(creatorId);
-    if (selectedCreator?.id === creatorId) setSelectedCreator(null);
-  };
-
-  if (loading || !hiddenLoaded) {
+  if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -120,7 +115,6 @@ export default function DiscoverCreators() {
 
   return (
     <div className="space-y-5 pb-[calc(var(--bottom-nav-height,72px)+env(safe-area-inset-bottom,0px)+24px)] lg:pb-0">
-      {/* Header */}
       <div>
         <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Descobrir Creators</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Explore criadoras de conteúdo</p>
@@ -176,8 +170,7 @@ export default function DiscoverCreators() {
               {featuredCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
                   <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)}
-                    onHide={() => handleToggleHide(c.id)} isHidden={false} />
+                    onClick={() => setSelectedCreator(c)} />
                 </div>
               ))}
             </HorizontalSection>
@@ -187,8 +180,7 @@ export default function DiscoverCreators() {
               {newCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
                   <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)}
-                    onHide={() => handleToggleHide(c.id)} isHidden={false} />
+                    onClick={() => setSelectedCreator(c)} />
                 </div>
               ))}
             </HorizontalSection>
@@ -201,8 +193,7 @@ export default function DiscoverCreators() {
           {nicheCreators.map(c => (
             <div key={c.id} className="w-[160px] flex-shrink-0">
               <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                onClick={() => setSelectedCreator(c)}
-                onHide={() => handleToggleHide(c.id)} isHidden={false} />
+                onClick={() => setSelectedCreator(c)} />
             </div>
           ))}
         </HorizontalSection>
@@ -216,8 +207,7 @@ export default function DiscoverCreators() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {(showSections ? gridCreators : filteredCreators).map(c => (
               <DiscoverCreatorCard key={c.id} creator={c} isSubscribed={isSubscribed}
-                onClick={() => setSelectedCreator(c)}
-                onHide={() => handleToggleHide(c.id)} isHidden={false} />
+                onClick={() => setSelectedCreator(c)} />
             ))}
           </div>
         ) : (
@@ -241,8 +231,6 @@ export default function DiscoverCreators() {
               formatFollowers={formatFollowers}
               getTotalFollowers={getTotalFollowers}
               onPaywall={() => setShowPaywall(true)}
-              onHide={() => handleToggleHide(selectedCreator.id)}
-              isHidden={false}
             />
           )}
         </DialogContent>

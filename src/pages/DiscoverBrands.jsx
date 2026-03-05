@@ -14,7 +14,6 @@ import DiscoverBrandCard from '@/components/cards/DiscoverBrandCard';
 import CategoryChips from '@/components/discover/CategoryChips';
 import HorizontalSection from '@/components/discover/HorizontalSection';
 import BrandProfileModal from '@/components/modals/BrandProfileModal';
-import { useHidden } from '@/components/hooks/useHidden';
 import {
   Search, Loader2, Building2, Filter, X
 } from 'lucide-react';
@@ -32,7 +31,6 @@ const INDUSTRIES = [
 ];
 
 export default function DiscoverBrands() {
-  const [creatorProfile, setCreatorProfile] = useState(null);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,7 +48,6 @@ export default function DiscoverBrands() {
     const creators = await base44.entities.Creator.filter({ user_id: userData.id });
     if (creators.length > 0) {
       const c = creators[0];
-      setCreatorProfile(c);
       setIsSubscribed(c.subscription_status === 'premium' || c.subscription_status === 'legacy' || (c.subscription_status === 'trial' && c.trial_end_date && new Date(c.trial_end_date) > new Date()));
     }
     const allBrands = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date');
@@ -58,24 +55,17 @@ export default function DiscoverBrands() {
     setLoading(false);
   };
 
-  const { hiddenIds, loaded: hiddenLoaded, toggleHide, isHidden } = useHidden('HiddenBrand', creatorProfile?.id);
-
-  // All visible brands (hidden filtered out)
-  const visibleBrands = useMemo(() => {
-    return brands.filter(b => !hiddenIds.has(b.id));
-  }, [brands, hiddenIds]);
-
   const filteredBrands = useMemo(() => {
-    return visibleBrands.filter(b => {
+    return brands.filter(b => {
       const matchSearch = !searchTerm || b.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) || b.description?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchIndustry = filterIndustry === 'all' || b.industry === filterIndustry;
       const matchState = filterState === 'all' || b.state === filterState;
       return matchSearch && matchIndustry && matchState;
     });
-  }, [visibleBrands, searchTerm, filterIndustry, filterState]);
+  }, [brands, searchTerm, filterIndustry, filterState]);
 
-  const activeBrands = useMemo(() => visibleBrands.filter(b => b.active_campaigns > 0).slice(0, 10), [visibleBrands]);
-  const newBrands = useMemo(() => [...visibleBrands].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 10), [visibleBrands]);
+  const activeBrands = useMemo(() => brands.filter(b => b.active_campaigns > 0).slice(0, 10), [brands]);
+  const newBrands = useMemo(() => [...brands].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 10), [brands]);
 
   const showSections = filterIndustry === 'all' && !searchTerm && filterState === 'all';
 
@@ -92,12 +82,7 @@ export default function DiscoverBrands() {
     return filteredBrands.filter(b => !sectionIds.has(b.id));
   }, [filteredBrands, sectionIds, showSections]);
 
-  const handleToggleHide = async (brandId) => {
-    await toggleHide(brandId);
-    if (selectedBrand?.id === brandId) setSelectedBrand(null);
-  };
-
-  if (loading || !hiddenLoaded) {
+  if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -150,8 +135,7 @@ export default function DiscoverBrands() {
               {activeBrands.map(b => (
                 <div key={b.id} className="w-[160px] flex-shrink-0">
                   <DiscoverBrandCard brand={b} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedBrand(b)}
-                    onHide={() => handleToggleHide(b.id)} />
+                    onClick={() => setSelectedBrand(b)} />
                 </div>
               ))}
             </HorizontalSection>
@@ -161,8 +145,7 @@ export default function DiscoverBrands() {
               {newBrands.map(b => (
                 <div key={b.id} className="w-[160px] flex-shrink-0">
                   <DiscoverBrandCard brand={b} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedBrand(b)}
-                    onHide={() => handleToggleHide(b.id)} />
+                    onClick={() => setSelectedBrand(b)} />
                 </div>
               ))}
             </HorizontalSection>
@@ -178,8 +161,7 @@ export default function DiscoverBrands() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {(showSections ? gridBrands : filteredBrands).map(b => (
               <DiscoverBrandCard key={b.id} brand={b} isSubscribed={isSubscribed}
-                onClick={() => setSelectedBrand(b)}
-                onHide={() => handleToggleHide(b.id)} />
+                onClick={() => setSelectedBrand(b)} />
             ))}
           </div>
         ) : (
@@ -198,9 +180,7 @@ export default function DiscoverBrands() {
           <DialogHeader><DialogTitle>Perfil da Marca</DialogTitle></DialogHeader>
           {selectedBrand && (
             <BrandProfileModal brand={selectedBrand} isSubscribed={isSubscribed}
-              onPaywall={() => setShowPaywall(true)}
-              onHide={() => handleToggleHide(selectedBrand.id)}
-              isHidden={false} />
+              onPaywall={() => setShowPaywall(true)} />
           )}
         </DialogContent>
       </Dialog>

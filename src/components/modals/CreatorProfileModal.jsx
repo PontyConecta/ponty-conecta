@@ -2,10 +2,10 @@ import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock, EyeOff, Eye } from 'lucide-react';
+import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
-export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall, onHide, isHidden }) {
+export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall }) {
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
@@ -19,24 +19,16 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
       </div>
 
       <div className="pt-10 space-y-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold">{creator.display_name || 'Criadora'}</h2>
-              {creator.is_verified && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
-            </div>
-            {(creator.state || creator.location) && (
-              <p className="flex items-center gap-1 mt-1 text-muted-foreground">
-                <MapPin className="w-4 h-4" />
-                {creator.city ? `${creator.city}, ` : ''}{getStateLabel(creator.state) || creator.location}
-              </p>
-            )}
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">{creator.display_name || 'Criadora'}</h2>
+            {creator.is_verified && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
           </div>
-          {onHide && (
-            <Button variant="ghost" size="sm" onClick={onHide} className="text-muted-foreground hover:text-foreground gap-1.5">
-              {isHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-              {isHidden ? 'Mostrar' : 'Ocultar'}
-            </Button>
+          {(creator.state || creator.location) && (
+            <p className="flex items-center gap-1 mt-1 text-muted-foreground">
+              <MapPin className="w-4 h-4" />
+              {creator.city ? `${creator.city}, ` : ''}{getStateLabel(creator.state) || creator.location}
+            </p>
           )}
         </div>
 
@@ -60,7 +52,6 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
           </div>
         )}
 
-        {/* Platforms */}
         <div>
           <h4 className="font-medium mb-2">Plataformas</h4>
           {creator.platforms?.length > 0 ? (
@@ -86,7 +77,6 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
           )}
         </div>
 
-        {/* Portfolio */}
         {creator.portfolio_images?.length > 0 && (
           <div>
             <h4 className="font-medium mb-2">Portfólio</h4>
@@ -98,7 +88,6 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
           </div>
         )}
 
-        {/* Premium content: Rates + Contact */}
         {isSubscribed ? (
           <>
             {(creator.rate_cash_min || creator.rate_cash_max) && (
