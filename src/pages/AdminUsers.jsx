@@ -32,6 +32,17 @@ export default function AdminUsers() {
   const [tagFilter, setTagFilter] = useState('all');
   const [excludeFinancialsFilter, setExcludeFinancialsFilter] = useState('all');
 
+  // Date-key filters
+  const [createdFrom, setCreatedFrom] = useState('');
+  const [createdTo, setCreatedTo] = useState('');
+  const [firstActiveFrom, setFirstActiveFrom] = useState('');
+  const [firstActiveTo, setFirstActiveTo] = useState('');
+  const [noFirstActive, setNoFirstActive] = useState(false);
+  const [lastActiveFrom, setLastActiveFrom] = useState('');
+  const [lastActiveTo, setLastActiveTo] = useState('');
+  const [noLastActive, setNoLastActive] = useState(false);
+  const [visibilityFilter, setVisibilityFilter] = useState('all');
+
   // Table state
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -188,10 +199,33 @@ export default function AdminUsers() {
         if (dateFilter === 'month' && (now - created) > 30 * dayMs) return false;
         if (dateFilter === 'quarter' && (now - created) > 90 * dayMs) return false;
       }
+
+      // Date-key filters
+      if (createdFrom && user.created_date && new Date(user.created_date) < new Date(createdFrom)) return false;
+      if (createdTo && user.created_date && new Date(user.created_date) > new Date(createdTo + 'T23:59:59')) return false;
+
+      if (noFirstActive) {
+        if (user.first_active) return false;
+      } else {
+        if (firstActiveFrom && (!user.first_active || new Date(user.first_active) < new Date(firstActiveFrom))) return false;
+        if (firstActiveTo && (!user.first_active || new Date(user.first_active) > new Date(firstActiveTo + 'T23:59:59'))) return false;
+      }
+
+      if (noLastActive) {
+        if (user.last_active) return false;
+      } else {
+        if (lastActiveFrom && (!user.last_active || new Date(user.last_active) < new Date(lastActiveFrom))) return false;
+        if (lastActiveTo && (!user.last_active || new Date(user.last_active) > new Date(lastActiveTo + 'T23:59:59'))) return false;
+      }
+
+      if (visibilityFilter && visibilityFilter !== 'all') {
+        if (visibilityFilter === 'hidden' && user.visibility_status !== 'hidden') return false;
+        if (visibilityFilter === 'visible' && user.visibility_status === 'hidden') return false;
+      }
       
       return true;
     });
-  }, [users, brands, creators, searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter]);
+  }, [users, brands, creators, searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter, createdFrom, createdTo, firstActiveFrom, firstActiveTo, noFirstActive, lastActiveFrom, lastActiveTo, noLastActive, visibilityFilter]);
 
   // Sorting
   const sortedUsers = useMemo(() => {
@@ -224,7 +258,7 @@ export default function AdminUsers() {
   const totalPages = Math.ceil(sortedUsers.length / PAGE_SIZE);
   const paginatedUsers = sortedUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter, sortField, sortDir]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter, createdFrom, createdTo, firstActiveFrom, firstActiveTo, noFirstActive, lastActiveFrom, lastActiveTo, noLastActive, visibilityFilter, sortField, sortDir]);
 
   // Collect all unique tags from users
   const availableTags = useMemo(() => {
@@ -308,6 +342,15 @@ export default function AdminUsers() {
         tagFilter={tagFilter} onTagChange={setTagFilter}
         excludeFinancialsFilter={excludeFinancialsFilter} onExcludeFinancialsChange={setExcludeFinancialsFilter}
         availableTags={availableTags}
+        createdFrom={createdFrom} onCreatedFromChange={setCreatedFrom}
+        createdTo={createdTo} onCreatedToChange={setCreatedTo}
+        firstActiveFrom={firstActiveFrom} onFirstActiveFromChange={setFirstActiveFrom}
+        firstActiveTo={firstActiveTo} onFirstActiveToChange={setFirstActiveTo}
+        noFirstActive={noFirstActive} onNoFirstActiveChange={setNoFirstActive}
+        lastActiveFrom={lastActiveFrom} onLastActiveFromChange={setLastActiveFrom}
+        lastActiveTo={lastActiveTo} onLastActiveToChange={setLastActiveTo}
+        noLastActive={noLastActive} onNoLastActiveChange={setNoLastActive}
+        visibilityFilter={visibilityFilter} onVisibilityChange={setVisibilityFilter}
       />
 
       {/* Bulk Actions */}
