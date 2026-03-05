@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { UserTagBadges } from './UserTagManager';
 import UserStatusBadges from './UserStatusBadges';
+import UserRowActions from './UserRowActions';
 
 function SortHeader({ label, field, sortField, sortDir, onSort }) {
   const active = sortField === field;
@@ -32,7 +33,7 @@ const SUB_BADGE = {
   pending: { label: 'Pendente', cls: 'bg-red-100 text-red-700' },
 };
 
-export default function UserTable({ users, brands, creators, selectedIds, onSelectIds, onUserClick, sortField, sortDir, onSort, density = 'default' }) {
+export default function UserTable({ users, brands, creators, selectedIds, onSelectIds, onUserClick, sortField, sortDir, onSort, density = 'default', onActionComplete }) {
   const getUserProfile = (userId) => {
     const brand = brands.find(b => b.user_id === userId);
     const creator = creators.find(c => c.user_id === userId);
@@ -141,9 +142,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                   </span>
                 </div>
                 <div>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onUserClick(user)}>
-                    <Eye className="w-3.5 h-3.5" />
-                  </Button>
+                  <UserRowActions user={user} profile={profile} onView={() => onUserClick(user)} onActionComplete={onActionComplete} />
                 </div>
               </div>
 

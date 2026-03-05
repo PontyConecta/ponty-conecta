@@ -25,6 +25,7 @@ import {
 import { toast } from 'sonner';
 import UserTagManager from './UserTagManager';
 import { UserTagBadges } from './UserTagManager';
+import UserActivityTimeline from './UserActivityTimeline';
 
 export default function UserManageDialog({ open, onOpenChange, user, profile, profileType, onActionComplete }) {
   const [actionLoading, setActionLoading] = useState(false);
@@ -332,6 +333,9 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
               </div>
             )}
           </SectionCard>
+
+          {/* Timeline */}
+          <UserActivityTimeline user={user} profile={profile} profileType={profileType} />
 
           {/* Tags */}
           <UserTagManager

@@ -366,6 +366,7 @@ export default function AdminUsers() {
         onUserClick={setSelectedUser}
         sortField={sortField} sortDir={sortDir} onSort={handleSort}
         density={density}
+        onActionComplete={loadUsers}
       />
 
       {/* Pagination */}

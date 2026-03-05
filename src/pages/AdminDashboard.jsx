@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, BarChart3, FolderOpen, FolderCheck } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, BarChart3, FolderOpen, FolderCheck, Target, ThumbsUp, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -266,6 +266,45 @@ export default function AdminDashboard() {
               </div>
 
               <DashboardPipeline pipeline={analytics.pipeline} funnelData={analytics.funnelData} />
+
+              {/* ── Saúde do Marketplace ── */}
+              <div>
+                <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Saúde do Marketplace</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                  <DashboardMetricCard
+                    label="Aplicações por Campanha"
+                    value={analytics.marketplace?.avg_apps_per_campaign != null ? Number(analytics.marketplace.avg_apps_per_campaign).toFixed(1) : '—'}
+                    icon={Target}
+                    iconColor="text-indigo-500"
+                    tooltip="Número médio de candidaturas por campanha ativa."
+                    secondaryLabel="média por campanha ativa"
+                  />
+                  <DashboardMetricCard
+                    label="Taxa de Aprovação"
+                    value={analytics.marketplace?.approval_rate != null ? `${analytics.marketplace.approval_rate}%` : '—'}
+                    icon={ThumbsUp}
+                    iconColor="text-emerald-500"
+                    tooltip="Percentual de candidaturas aceitas pelas marcas."
+                    secondaryLabel="candidaturas aceitas"
+                  />
+                  <DashboardMetricCard
+                    label="Tempo Médio de Resposta"
+                    value={analytics.marketplace?.avg_brand_response_time_hours != null ? `${Math.round(analytics.marketplace.avg_brand_response_time_hours)}h` : '—'}
+                    icon={Timer}
+                    iconColor="text-amber-500"
+                    tooltip="Tempo médio que marcas levam para responder candidaturas."
+                    secondaryLabel="horas até primeira resposta"
+                  />
+                  <DashboardMetricCard
+                    label="Campanhas Sem Candidaturas"
+                    value={analytics.marketplace?.campaigns_zero_apps ?? analytics.alerts?.campaigns_zero_apps ?? 0}
+                    icon={AlertCircle}
+                    iconColor="text-red-500"
+                    tooltip="Campanhas ativas sem nenhuma candidatura recebida."
+                    secondaryLabel={`de ${analytics.marketplace?.active_campaigns ?? 0} ativas`}
+                  />
+                </div>
+              </div>
 
               {/* ── Alertas do Marketplace ── */}
               <div>
