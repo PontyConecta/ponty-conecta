@@ -12,7 +12,10 @@ export function useHidden(entityName, hiderId) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (!hiderId) return;
+    if (!hiderId) {
+      setLoaded(true);
+      return;
+    }
     loadHidden();
   }, [hiderId]);
 
