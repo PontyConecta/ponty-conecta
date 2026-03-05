@@ -132,16 +132,22 @@ export default function CreatorCard({
                   {creator.city ? `${creator.city}, ` : ''}{creator.state ? getStateLabel(creator.state) : creator.location}
                 </span>
               )}
-              {isSubscribed && creator.platforms?.find(p => p.name === 'Instagram') && (
-                <a 
-                  href={`https://instagram.com/${creator.platforms.find(p => p.name === 'Instagram')?.handle?.replace('@', '') || ''}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-pink-600 hover:underline"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Instagram
-                </a>
+              {creator.platforms?.find(p => p.name === 'Instagram') && (
+                isSubscribed ? (
+                  <a 
+                    href={`https://instagram.com/${creator.platforms.find(p => p.name === 'Instagram')?.handle?.replace('@', '') || ''}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-pink-600 hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Instagram
+                  </a>
+                ) : (
+                  <span className="flex items-center gap-0.5 text-muted-foreground">
+                    <Lock className="w-3 h-3" /> Redes
+                  </span>
+                )
               )}
             </div>
           </div>
