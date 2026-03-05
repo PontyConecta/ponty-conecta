@@ -23,6 +23,7 @@ import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
 
+
 const NICHES = [
   { value: 'Moda', label: 'Moda' },
   { value: 'Beleza', label: 'Beleza' },
