@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 export default function UserRowActions({ user, profile, onView, onActionComplete }) {
   const [loading, setLoading] = useState(false);
   const [flagged, setFlagged] = useState(false);
-  const isHidden = user.visibility_status === 'hidden';
+  const isHidden = profile?.is_hidden || false;
   const feedbackStatus = user.feedback_status || 'none';
 
   const handleFeedbackInvite = async () => {
@@ -54,13 +54,12 @@ export default function UserRowActions({ user, profile, onView, onActionComplete
   const handleToggleVisibility = async () => {
     setLoading(true);
     try {
-      const newStatus = isHidden ? 'visible' : 'hidden';
       await base44.functions.invoke('adminManageUser', {
         userId: user.id,
-        action: 'set_visibility_status',
-        data: { visibility_status: newStatus, auditNote: `Alterado via ação rápida na tabela` }
+        action: 'set_hidden',
+        data: { is_hidden: !isHidden, auditNote: `Alterado via ação rápida na tabela` }
       });
-      toast.success(isHidden ? 'Usuário reativado' : 'Usuário ocultado');
+      toast.success(isHidden ? 'Perfil reativado' : 'Perfil ocultado');
       onActionComplete?.();
     } catch (err) {
       console.error('Visibility toggle error:', err);
