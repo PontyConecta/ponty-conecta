@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { MessageSquarePlus, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { MessageSquare, X } from 'lucide-react';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { base44 } from '@/api/base44Client';
 import BetaFeedbackForm from './BetaFeedbackForm';
@@ -22,18 +22,17 @@ export default function BetaFeedbackNudge() {
     // Check snooze
     const snoozedUntil = user.feedback_snoozed_until;
     if (snoozedUntil && new Date(snoozedUntil) > new Date()) {
-      setShowBanner(true); // Still show banner, just no modal
+      setShowBanner(true);
       return;
     }
 
-    // Check session flag
+    // Session flag — only show modal once per session
     const sessionKey = `ponty_fb_nudge_${user.id}`;
     if (sessionStorage.getItem(sessionKey)) {
       setShowBanner(true);
       return;
     }
 
-    // Show modal after 3 seconds
     const timer = setTimeout(() => {
       setShowModal(true);
       setShowBanner(true);
@@ -59,45 +58,57 @@ export default function BetaFeedbackNudge() {
 
   return (
     <>
-      {/* Banner fixo no topo */}
+      {/* ── Banner ── */}
       {showBanner && !showModal && (
-        <div className="fixed top-14 lg:top-16 left-0 right-0 z-40 bg-primary/10 border-b border-primary/20 px-4 py-2">
+        <div className="fixed top-14 lg:top-16 left-0 right-0 z-40 border-b border-border bg-card px-4 py-2.5">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <MessageSquarePlus className="w-4 h-4 text-primary flex-shrink-0" />
-              <p className="text-xs text-foreground truncate">
-                <strong>Queremos sua opinião!</strong> Leva menos de 2 minutos.
+            <div className="flex items-center gap-2.5 min-w-0">
+              <MessageSquare className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <p className="text-xs text-foreground">
+                <span className="font-medium">Pesquisa beta pendente</span>
+                <span className="text-muted-foreground ml-1">(2 min)</span>
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Button size="sm" className="h-7 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
-                onClick={() => setShowModal(true)}>
-                Responder
+              <Button size="sm" className="h-7 text-xs" onClick={() => setShowModal(true)}>
+                Abrir
               </Button>
-              <button onClick={() => setShowBanner(false)} className="text-muted-foreground hover:text-foreground">
-                <X className="w-4 h-4" />
+              <button onClick={() => setShowBanner(false)} className="text-muted-foreground hover:text-foreground p-1">
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal */}
+      {/* ── Modal ── */}
       <Dialog open={showModal} onOpenChange={(open) => { if (!open) handleSnooze(); }}>
-        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto bg-card p-0 sm:p-0">
-          <div className="px-6 pt-6 pb-2 space-y-1">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <MessageSquarePlus className="w-4 h-4 text-primary" />
+        <DialogContent className="max-w-md bg-card border border-border shadow-xl rounded-2xl p-0 sm:p-0 gap-0">
+          <DialogTitle className="sr-only">Pesquisa Beta</DialogTitle>
+
+          {/* Header */}
+          <div className="px-6 pt-6 pb-4 border-b border-border">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
+                <MessageSquare className="w-4.5 h-4.5 text-foreground" />
               </div>
-              <div>
-                <h2 className="text-base font-semibold text-foreground">Feedback Beta 💜</h2>
-                <p className="text-xs text-muted-foreground">Leva menos de 2 minutos</p>
+              <div className="space-y-0.5">
+                <h2 className="text-base font-semibold text-foreground">Seu feedback melhora a Ponty</h2>
+                <p className="text-xs text-muted-foreground">6 perguntas objetivas · Menos de 2 minutos</p>
               </div>
             </div>
           </div>
-          <div className="px-6 pb-6">
-            <BetaFeedbackForm channel="modal" onComplete={handleComplete} onClose={() => handleSnooze()} />
+
+          {/* Form */}
+          <div className="px-6 py-5 max-h-[60vh] overflow-y-auto">
+            <BetaFeedbackForm channel="modal" onComplete={handleComplete} onClose={handleSnooze} />
+          </div>
+
+          {/* Footer microcopy */}
+          <div className="px-6 pb-4 pt-0">
+            <p className="text-[10px] text-muted-foreground text-center">
+              Você pode responder em qualquer momento pelo menu Feedback.
+            </p>
           </div>
         </DialogContent>
       </Dialog>

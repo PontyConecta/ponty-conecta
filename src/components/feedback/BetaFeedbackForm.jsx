@@ -2,44 +2,52 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, ArrowRight, ArrowLeft, Send, Heart, ThumbsUp, Meh, HelpCircle, Frown } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ArrowLeft, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-const EXPERIENCE_OPTIONS = [
-  { value: 'love', label: 'Amando!', emoji: '😍', icon: Heart, color: 'text-pink-500 bg-pink-50 border-pink-200 hover:bg-pink-100' },
-  { value: 'good', label: 'Bom', emoji: '😊', icon: ThumbsUp, color: 'text-emerald-500 bg-emerald-50 border-emerald-200 hover:bg-emerald-100' },
-  { value: 'neutral', label: 'Normal', emoji: '😐', icon: Meh, color: 'text-amber-500 bg-amber-50 border-amber-200 hover:bg-amber-100' },
-  { value: 'confused', label: 'Confusa', emoji: '🤔', icon: HelpCircle, color: 'text-blue-500 bg-blue-50 border-blue-200 hover:bg-blue-100' },
-  { value: 'hard', label: 'Difícil', emoji: '😓', icon: Frown, color: 'text-red-500 bg-red-50 border-red-200 hover:bg-red-100' },
+const TOTAL_STEPS = 6;
+
+const EXPERIENCE_SCALE = [
+  { value: 'hard', label: 'Muito difícil', num: 1 },
+  { value: 'confused', label: 'Difícil', num: 2 },
+  { value: 'neutral', label: 'Ok', num: 3 },
+  { value: 'good', label: 'Boa', num: 4 },
+  { value: 'love', label: 'Muito boa', num: 5 },
 ];
 
-const CONFUSION_OPTIONS = [
-  { value: 'none', label: 'Nenhuma', emoji: '✨' },
-  { value: 'some', label: 'Um pouco', emoji: '🤏' },
-  { value: 'yes', label: 'Sim, bastante', emoji: '😵‍💫' },
+const CLARITY_OPTIONS = [
+  { value: 'none', label: 'Sim' },
+  { value: 'some', label: 'Mais ou menos' },
+  { value: 'yes', label: 'Não' },
 ];
 
 const FAVORITE_OPTIONS = [
-  { value: 'campaigns', label: 'Campanhas', emoji: '📢' },
-  { value: 'organization', label: 'Organização', emoji: '📋' },
-  { value: 'ease', label: 'Facilidade', emoji: '🎯' },
-  { value: 'concept', label: 'O conceito', emoji: '💡' },
-  { value: 'didnt_get_it', label: 'Ainda não entendi', emoji: '🤷' },
-  { value: 'other', label: 'Outra coisa', emoji: '✨' },
+  { value: 'campaigns', label: 'Campanhas' },
+  { value: 'organization', label: 'Organização' },
+  { value: 'ease', label: 'Facilidade de uso' },
+  { value: 'concept', label: 'Proposta' },
+  { value: 'other', label: 'Outro' },
 ];
 
 const RECOMMEND_OPTIONS = [
-  { value: 'yes', label: 'Sim!', emoji: '🙌', color: 'text-emerald-600 bg-emerald-50 border-emerald-200 hover:bg-emerald-100' },
-  { value: 'maybe', label: 'Talvez', emoji: '🤔', color: 'text-amber-600 bg-amber-50 border-amber-200 hover:bg-amber-100' },
-  { value: 'no', label: 'Ainda não', emoji: '😕', color: 'text-red-500 bg-red-50 border-red-200 hover:bg-red-100' },
+  { value: 'yes', label: 'Sim' },
+  { value: 'maybe', label: 'Talvez' },
+  { value: 'no', label: 'Não' },
 ];
 
-const TOTAL_STEPS = 6;
+const FRICTION_OPTIONS = [
+  { value: 'signup', label: 'Cadastro / Login' },
+  { value: 'first_steps', label: 'Primeiros passos' },
+  { value: 'finding', label: 'Encontrar algo' },
+  { value: 'campaigns', label: 'Entender campanhas' },
+  { value: 'other', label: 'Outro' },
+];
 
 export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClose }) {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [answers, setAnswers] = useState({
     experience_rating: '',
@@ -50,23 +58,65 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
     improvement_one_thing: '',
     recommend_ponty: '',
     recommend_to_yes: '',
+    friction_point: '',
+    friction_text: '',
   });
 
-  const set = (key, val) => setAnswers(prev => ({ ...prev, [key]: val }));
-
-  const canNext = () => {
-    if (step === 0) return !!answers.experience_rating;
-    if (step === 1) return !!answers.confusion_level;
-    if (step === 2) return !!answers.favorite_thing;
-    if (step === 3) return !!answers.improvement_one_thing.trim();
-    if (step === 4) return !!answers.recommend_ponty;
-    return true;
+  const set = (key, val) => {
+    setAnswers(prev => ({ ...prev, [key]: val }));
+    setErrors(prev => ({ ...prev, [key]: undefined }));
   };
 
+  const validateStep = () => {
+    const errs = {};
+    if (step === 0 && !answers.experience_rating) {
+      errs.experience_rating = 'Selecione uma opção';
+    }
+    if (step === 1) {
+      if (!answers.confusion_level) errs.confusion_level = 'Selecione uma opção';
+      if ((answers.confusion_level === 'some' || answers.confusion_level === 'yes') && (!answers.confusion_text || answers.confusion_text.trim().length < 10)) {
+        errs.confusion_text = 'Descreva com ao menos 10 caracteres';
+      }
+    }
+    if (step === 2) {
+      if (!answers.favorite_thing) errs.favorite_thing = 'Selecione uma opção';
+      if (answers.favorite_thing === 'other' && (!answers.favorite_thing_text || answers.favorite_thing_text.trim().length < 3)) {
+        errs.favorite_thing_text = 'Preencha este campo';
+      }
+    }
+    if (step === 3) {
+      if (!answers.improvement_one_thing || answers.improvement_one_thing.trim().length < 10) {
+        errs.improvement_one_thing = 'Mínimo de 10 caracteres';
+      }
+    }
+    if (step === 4) {
+      if (!answers.recommend_ponty) errs.recommend_ponty = 'Selecione uma opção';
+      if (!answers.recommend_to_yes || answers.recommend_to_yes.trim().length < 10) {
+        errs.recommend_to_yes = 'Mínimo de 10 caracteres';
+      }
+    }
+    if (step === 5) {
+      if (!answers.friction_point) errs.friction_point = 'Selecione uma opção';
+      if (answers.friction_point === 'other' && (!answers.friction_text || answers.friction_text.trim().length < 3)) {
+        errs.friction_text = 'Preencha este campo';
+      }
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const goNext = () => { if (validateStep()) setStep(s => s + 1); };
+  const goBack = () => { if (step > 0) setStep(s => s - 1); else onClose?.(); };
+
   const handleSubmit = async () => {
+    if (!validateStep()) return;
     setSubmitting(true);
     const platform = /Mobi|Android/i.test(navigator.userAgent) ? 'android' : 'web';
-    await base44.functions.invoke('submitBetaFeedback', { ...answers, channel, platform });
+    await base44.functions.invoke('submitBetaFeedback', {
+      ...answers,
+      channel,
+      platform,
+    });
     setDone(true);
     setSubmitting(false);
     onComplete?.();
@@ -74,14 +124,16 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
 
   if (done) {
     return (
-      <div className="text-center py-8 space-y-4">
-        <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
-          <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+      <div className="text-center py-10 space-y-5">
+        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+          <CheckCircle2 className="w-7 h-7 text-primary" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">Recebido! Obrigada 💜</h2>
-        <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-          Seu feedback vai direto para quem constrói a Ponty. Cada resposta importa.
-        </p>
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Feedback registrado</h2>
+          <p className="text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
+            Suas respostas foram enviadas diretamente para a equipe. Obrigada por contribuir.
+          </p>
+        </div>
         <Button variant="outline" onClick={onClose}>Fechar</Button>
       </div>
     );
@@ -90,142 +142,106 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-5">
+      {/* Progress */}
       <div>
-        <p className="text-xs text-muted-foreground mb-1">Pergunta {step + 1} de {TOTAL_STEPS}</p>
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-xs font-medium text-muted-foreground">Passo {step + 1} de {TOTAL_STEPS}</span>
+          <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
+        </div>
         <Progress value={progress} className="h-1.5" />
       </div>
 
-      {/* Step 0: Experience */}
+      {/* Steps */}
       {step === 0 && (
-        <StepContainer title="Como está sendo sua experiência com a Ponty?">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {EXPERIENCE_OPTIONS.map(o => (
-              <ChipButton key={o.value} selected={answers.experience_rating === o.value}
-                onClick={() => set('experience_rating', o.value)} className={o.color}>
-                <span className="text-lg">{o.emoji}</span>
-                <span className="text-xs font-medium">{o.label}</span>
-              </ChipButton>
+        <StepBlock title="Como foi sua experiência geral com a Ponty?" error={errors.experience_rating}>
+          <div className="flex gap-2">
+            {EXPERIENCE_SCALE.map(o => (
+              <ScaleButton key={o.value} selected={answers.experience_rating === o.value}
+                onClick={() => set('experience_rating', o.value)} num={o.num} label={o.label} />
             ))}
           </div>
-        </StepContainer>
+        </StepBlock>
       )}
 
-      {/* Step 1: Confusion */}
       {step === 1 && (
-        <StepContainer title="Você sentiu confusão ao usar o app?">
-          <div className="grid grid-cols-3 gap-2">
-            {CONFUSION_OPTIONS.map(o => (
-              <ChipButton key={o.value} selected={answers.confusion_level === o.value}
-                onClick={() => set('confusion_level', o.value)}>
-                <span className="text-lg">{o.emoji}</span>
-                <span className="text-xs font-medium">{o.label}</span>
-              </ChipButton>
-            ))}
-          </div>
+        <StepBlock title="Você entendeu claramente o que fazer no app?" error={errors.confusion_level}>
+          <OptionGroup options={CLARITY_OPTIONS} value={answers.confusion_level}
+            onChange={(v) => set('confusion_level', v)} />
           {(answers.confusion_level === 'some' || answers.confusion_level === 'yes') && (
-            <Textarea placeholder="Onde ficou confuso? (opcional)" value={answers.confusion_text}
-              onChange={(e) => set('confusion_text', e.target.value.slice(0, 500))}
-              rows={2} className="mt-3 text-sm resize-none" />
-          )}
-        </StepContainer>
-      )}
-
-      {/* Step 2: Favorite */}
-      {step === 2 && (
-        <StepContainer title="O que mais te chamou atenção até agora?">
-          <div className="grid grid-cols-2 gap-2">
-            {FAVORITE_OPTIONS.map(o => (
-              <ChipButton key={o.value} selected={answers.favorite_thing === o.value}
-                onClick={() => set('favorite_thing', o.value)}>
-                <span className="text-lg">{o.emoji}</span>
-                <span className="text-xs font-medium">{o.label}</span>
-              </ChipButton>
-            ))}
-          </div>
-          {answers.favorite_thing === 'other' && (
-            <Textarea placeholder="Conta pra gente!" value={answers.favorite_thing_text}
-              onChange={(e) => set('favorite_thing_text', e.target.value.slice(0, 500))}
-              rows={2} className="mt-3 text-sm resize-none" />
-          )}
-        </StepContainer>
-      )}
-
-      {/* Step 3: Improvement */}
-      {step === 3 && (
-        <StepContainer title="Se pudesse mudar uma coisa, o que seria?">
-          <Textarea placeholder="Pode ser sincera — queremos ouvir de verdade 💜"
-            value={answers.improvement_one_thing}
-            onChange={(e) => set('improvement_one_thing', e.target.value.slice(0, 2000))}
-            rows={4} className="text-sm resize-none" />
-          <p className="text-[10px] text-muted-foreground text-right">{answers.improvement_one_thing.length}/2000</p>
-        </StepContainer>
-      )}
-
-      {/* Step 4: Recommend */}
-      {step === 4 && (
-        <StepContainer title="Recomendaria a Ponty para outra criadora?">
-          <div className="grid grid-cols-3 gap-2">
-            {RECOMMEND_OPTIONS.map(o => (
-              <ChipButton key={o.value} selected={answers.recommend_ponty === o.value}
-                onClick={() => set('recommend_ponty', o.value)} className={o.color}>
-                <span className="text-lg">{o.emoji}</span>
-                <span className="text-xs font-medium">{o.label}</span>
-              </ChipButton>
-            ))}
-          </div>
-          {(answers.recommend_ponty === 'maybe' || answers.recommend_ponty === 'no') && (
-            <Textarea placeholder="O que faltaria pra você recomendar?"
-              value={answers.recommend_to_yes}
-              onChange={(e) => set('recommend_to_yes', e.target.value.slice(0, 1000))}
-              rows={2} className="mt-3 text-sm resize-none" />
-          )}
-        </StepContainer>
-      )}
-
-      {/* Step 5: Confirmation */}
-      {step === 5 && (
-        <StepContainer title="Pronta para enviar?">
-          <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 space-y-2">
-            <p className="text-sm text-foreground">Esse feedback vai direto para o time Ponty. Ninguém além dos admins vai ver.</p>
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {answers.experience_rating && <MiniTag>Experiência: {answers.experience_rating}</MiniTag>}
-              {answers.confusion_level && <MiniTag>Confusão: {answers.confusion_level}</MiniTag>}
-              {answers.favorite_thing && <MiniTag>Favorito: {answers.favorite_thing}</MiniTag>}
-              {answers.recommend_ponty && <MiniTag>Recomenda: {answers.recommend_ponty}</MiniTag>}
+            <div className="mt-3">
+              <RequiredTextarea label="O que ficou confuso especificamente?" value={answers.confusion_text}
+                onChange={(v) => set('confusion_text', v)} error={errors.confusion_text} max={500} min={10} />
             </div>
-            {answers.improvement_one_thing && (
-              <p className="text-xs text-muted-foreground mt-2 italic line-clamp-2">
-                "{answers.improvement_one_thing}"
-              </p>
-            )}
+          )}
+        </StepBlock>
+      )}
+
+      {step === 2 && (
+        <StepBlock title="Qual parte mais contribuiu para seu uso?" error={errors.favorite_thing}>
+          <OptionGroup options={FAVORITE_OPTIONS} value={answers.favorite_thing}
+            onChange={(v) => set('favorite_thing', v)} />
+          {answers.favorite_thing === 'other' && (
+            <div className="mt-3">
+              <RequiredTextarea label="Qual?" value={answers.favorite_thing_text}
+                onChange={(v) => set('favorite_thing_text', v)} error={errors.favorite_thing_text} max={500} min={3} rows={2} />
+            </div>
+          )}
+        </StepBlock>
+      )}
+
+      {step === 3 && (
+        <StepBlock title="Se pudesse melhorar UMA coisa agora, qual seria?">
+          <RequiredTextarea value={answers.improvement_one_thing}
+            onChange={(v) => set('improvement_one_thing', v)} error={errors.improvement_one_thing}
+            max={600} min={10} rows={4} placeholder="Seja direta — queremos ouvir de verdade." />
+        </StepBlock>
+      )}
+
+      {step === 4 && (
+        <StepBlock title="Você recomendaria a Ponty para outra criadora hoje?" error={errors.recommend_ponty}>
+          <OptionGroup options={RECOMMEND_OPTIONS} value={answers.recommend_ponty}
+            onChange={(v) => set('recommend_ponty', v)} />
+          <div className="mt-3">
+            <RequiredTextarea label="Qual é o principal motivo da sua resposta?" value={answers.recommend_to_yes}
+              onChange={(v) => set('recommend_to_yes', v)} error={errors.recommend_to_yes}
+              max={400} min={10} rows={3} />
           </div>
-        </StepContainer>
+        </StepBlock>
+      )}
+
+      {step === 5 && (
+        <StepBlock title="Em que momento você mais travou ou perdeu tempo?" error={errors.friction_point}>
+          <OptionGroup options={FRICTION_OPTIONS} value={answers.friction_point}
+            onChange={(v) => set('friction_point', v)} />
+          {answers.friction_point === 'other' && (
+            <div className="mt-3">
+              <RequiredTextarea label="Descreva" value={answers.friction_text}
+                onChange={(v) => set('friction_text', v)} error={errors.friction_text} max={500} min={3} rows={2} />
+            </div>
+          )}
+        </StepBlock>
       )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between pt-2">
-        <Button variant="ghost" size="sm" onClick={() => step > 0 ? setStep(step - 1) : onClose?.()}
-          className="text-muted-foreground">
+      <div className="flex items-center justify-between pt-1 border-t border-border">
+        <Button variant="ghost" size="sm" onClick={goBack} className="text-muted-foreground h-9">
           <ArrowLeft className="w-4 h-4 mr-1" />
           {step === 0 ? 'Fechar' : 'Voltar'}
         </Button>
 
         {step < TOTAL_STEPS - 1 ? (
-          <Button size="sm" onClick={() => setStep(step + 1)} disabled={!canNext()}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            Próxima <ArrowRight className="w-4 h-4 ml-1" />
+          <Button size="sm" onClick={goNext} className="h-9">
+            Continuar <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         ) : (
-          <Button size="sm" onClick={handleSubmit} disabled={submitting}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button size="sm" onClick={handleSubmit} disabled={submitting} className="h-9">
             {submitting ? (
               <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-1" />
             ) : (
               <Send className="w-4 h-4 mr-1" />
             )}
-            Enviar feedback
+            Enviar
           </Button>
         )}
       </div>
@@ -233,32 +249,65 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
   );
 }
 
-function StepContainer({ title, children }) {
+/* ── Subcomponents ── */
+
+function StepBlock({ title, error, children }) {
   return (
-    <div className="space-y-4">
-      <h3 className="text-base font-semibold text-foreground">{title}</h3>
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-foreground leading-snug">{title}</h3>
       {children}
+      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }
 
-function ChipButton({ children, selected, onClick, className = '' }) {
+function OptionGroup({ options, value, onChange }) {
   return (
-    <button onClick={onClick} type="button"
-      className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
+    <div className="flex flex-wrap gap-2">
+      {options.map(o => (
+        <button key={o.value} type="button" onClick={() => onChange(o.value)}
+          className={`px-4 py-2 rounded-lg text-xs font-medium border transition-all ${
+            value === o.value
+              ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary/30'
+              : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/40'
+          }`}>
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ScaleButton({ selected, onClick, num, label }) {
+  return (
+    <button type="button" onClick={onClick}
+      className={`flex-1 flex flex-col items-center gap-1 py-3 px-1 rounded-lg border transition-all ${
         selected
-          ? 'border-primary bg-primary/10 ring-2 ring-primary/20 scale-[1.02]'
-          : `border-border bg-card hover:border-primary/30 ${className}`
+          ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
+          : 'border-border bg-card hover:border-muted-foreground/40'
       }`}>
-      {children}
+      <span className={`text-base font-bold ${selected ? 'text-foreground' : 'text-muted-foreground'}`}>{num}</span>
+      <span className="text-[10px] text-muted-foreground leading-tight text-center">{label}</span>
     </button>
   );
 }
 
-function MiniTag({ children }) {
+function RequiredTextarea({ label, value, onChange, error, max = 500, min = 10, rows = 3, placeholder }) {
+  const len = (value || '').length;
   return (
-    <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-      {children}
-    </span>
+    <div className="space-y-1.5">
+      {label && <p className="text-xs font-medium text-muted-foreground">{label}</p>}
+      <Textarea
+        value={value || ''}
+        onChange={(e) => onChange(e.target.value.slice(0, max))}
+        rows={rows}
+        placeholder={placeholder}
+        className={`text-sm resize-none bg-card ${error ? 'border-destructive' : ''}`}
+      />
+      <div className="flex items-center justify-between">
+        {error ? <p className="text-[10px] text-destructive">{error}</p> : <span />}
+        <span className="text-[10px] text-muted-foreground">{len}/{max}</span>
+      </div>
+    </div>
   );
 }
