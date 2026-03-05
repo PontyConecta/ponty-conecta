@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale } from 'lucide-react';
+import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,6 +16,7 @@ import DashboardMarketplace from '../components/admin/DashboardMarketplace';
 import DashboardPipeline from '../components/admin/DashboardPipeline';
 import DashboardFinancials from '../components/admin/DashboardFinancials';
 import UserKpiBar from '../components/admin/UserKpiBar';
+import AdminFeedbackList from '../components/admin/AdminFeedbackList';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -143,6 +144,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="users" className="text-xs">Usuários</TabsTrigger>
           <TabsTrigger value="engagement" className="text-xs">Engajamento</TabsTrigger>
           <TabsTrigger value="marketplace" className="text-xs">Marketplace</TabsTrigger>
+          <TabsTrigger value="feedback" className="text-xs">Feedback</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -300,6 +302,10 @@ export default function AdminDashboard() {
               <p className="text-sm text-muted-foreground">Carregando dados do marketplace...</p>
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="feedback" className="space-y-6">
+          {activeTab === 'feedback' && <AdminFeedbackList />}
         </TabsContent>
       </Tabs>
     </div>

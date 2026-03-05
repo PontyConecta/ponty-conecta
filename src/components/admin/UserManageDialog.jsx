@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import UserTagManager from './UserTagManager';
 import { UserTagBadges } from './UserTagManager';
 import UserActivityTimeline from './UserActivityTimeline';
+import FeedbackBetaSection from './FeedbackBetaSection';
 
 export default function UserManageDialog({ open, onOpenChange, user, profile, profileType, onActionComplete }) {
   const [actionLoading, setActionLoading] = useState(false);
@@ -333,6 +334,9 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
               </div>
             )}
           </SectionCard>
+
+          {/* Feedback Beta */}
+          <FeedbackBetaSection user={user} onActionComplete={onActionComplete} handleAction={handleAction} actionLoading={actionLoading} />
 
           {/* Timeline */}
           <UserActivityTimeline user={user} profile={profile} profileType={profileType} />

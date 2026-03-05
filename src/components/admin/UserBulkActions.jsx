@@ -77,6 +77,14 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
             actionName = 'bulk_remove_tag';
             data = { tag: bulkTag.trim() };
             break;
+          case 'feedback_invite':
+            actionName = 'set_feedback_beta';
+            data = { feedback_status: 'invited' };
+            break;
+          case 'feedback_remove':
+            actionName = 'set_feedback_beta';
+            data = { feedback_status: 'none', feedback_tags: [] };
+            break;
           default:
             continue;
         }
@@ -125,6 +133,8 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
           <SelectItem value="include_financials">Incluir nos Financeiros</SelectItem>
           <SelectItem value="add_tag">Adicionar Tag</SelectItem>
           <SelectItem value="remove_tag">Remover Tag</SelectItem>
+          <SelectItem value="feedback_invite">Convidar p/ Feedback Beta</SelectItem>
+          <SelectItem value="feedback_remove">Remover do Feedback Beta</SelectItem>
         </SelectContent>
       </Select>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, X, CheckCircle2, AlertCircle, MessageSquare, Megaphone, Clock } from 'lucide-react';
+import { Bell, X, CheckCircle2, AlertCircle, MessageSquare, Megaphone, Clock, MessageSquarePlus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -160,6 +160,25 @@ export default function NotificationDropdown({ triggerClassName }) {
             });
           }
         });
+      }
+
+      // ── Feedback beta invite notification (all profile types) ──
+      if (user.feedback_status === 'invited') {
+        const fbKey = `feedback-invite-${user.id}`;
+        if (!dismissedSet.has(fbKey)) {
+          notificationsList.push({
+            id: fbKey,
+            type: 'feedback',
+            title: 'Queremos sua opinião',
+            message: 'Leva 30 segundos. Ajude a melhorar o app.',
+            icon: MessageSquarePlus,
+            color: 'text-purple-600',
+            timestamp: user.feedback_invited_at || user.created_date,
+            read: !!readMap[fbKey],
+            actionUrl: createPageUrl('Feedback'),
+            relatedEntityId: user.id,
+          });
+        }
       }
 
       notificationsList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));

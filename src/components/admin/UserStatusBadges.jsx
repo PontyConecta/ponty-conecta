@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { EyeOff, Ghost, Moon, Sparkles, Crown } from 'lucide-react';
+import { EyeOff, Ghost, Moon, Sparkles, Crown, MessageSquarePlus } from 'lucide-react';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -16,10 +16,11 @@ const BADGE_CONFIG = {
   inactive:     { label: 'Inativo',       icon: Moon,     cls: 'bg-orange-100 text-orange-700', tip: 'Inativo: sem acesso há mais de 30 dias' },
   new_user:     { label: 'Novo',          icon: Sparkles, cls: 'bg-emerald-100 text-emerald-700', tip: 'Novo: conta criada nos últimos 7 dias' },
   premium:      { label: 'Premium',       icon: Crown,    cls: 'bg-amber-100 text-amber-700', tip: 'Premium: assinatura ativa' },
+  feedback_beta:{ label: 'Feedback',      icon: MessageSquarePlus, cls: 'bg-purple-100 text-purple-700', tip: 'Feedback Beta: participando do programa de feedback' },
 };
 
 // Priority order for badge display
-const PRIORITY = ['hidden', 'never_active', 'inactive', 'new_user', 'premium'];
+const PRIORITY = ['hidden', 'never_active', 'inactive', 'new_user', 'premium', 'feedback_beta'];
 
 export function getUserBadgeKeys(user, profile) {
   const now = Date.now();
@@ -36,6 +37,8 @@ export function getUserBadgeKeys(user, profile) {
 
   const sub = profile?.subscription_status;
   if (sub === 'premium' || sub === 'legacy' || sub === 'trial') keys.push('premium');
+
+  if (user.feedback_status && user.feedback_status !== 'none') keys.push('feedback_beta');
 
   return keys.sort((a, b) => PRIORITY.indexOf(a) - PRIORITY.indexOf(b));
 }
