@@ -18,6 +18,8 @@ import {
   Search, Loader2, Building2, Filter, X
 } from 'lucide-react';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
+import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
+import { useAuth } from '@/components/contexts/AuthContext';
 
 const INDUSTRIES = [
   { value: 'fashion', label: 'Moda' },
@@ -31,6 +33,7 @@ const INDUSTRIES = [
 ];
 
 export default function DiscoverBrands() {
+  const { user, profile: authProfile, profileType } = useAuth();
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,33 +42,34 @@ export default function DiscoverBrands() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
-    const userData = await base44.auth.me();
-    const creators = await base44.entities.Creator.filter({ user_id: userData.id });
-    if (creators.length > 0) {
-      const c = creators[0];
-      setIsSubscribed(c.subscription_status === 'premium' || c.subscription_status === 'legacy' || (c.subscription_status === 'trial' && c.trial_end_date && new Date(c.trial_end_date) > new Date()));
-    }
     const allBrands = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date');
     setBrands(allBrands);
     setLoading(false);
   };
 
+  const visibleBrands = useMemo(() => {
+    if (isAdmin) return brands;
+    return brands.filter(b => !b.is_hidden);
+  }, [brands, isAdmin]);
+
   const filteredBrands = useMemo(() => {
-    return brands.filter(b => {
+    return visibleBrands.filter(b => {
       const matchSearch = !searchTerm || b.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) || b.description?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchIndustry = filterIndustry === 'all' || b.industry === filterIndustry;
       const matchState = filterState === 'all' || b.state === filterState;
       return matchSearch && matchIndustry && matchState;
     });
-  }, [brands, searchTerm, filterIndustry, filterState]);
+  }, [visibleBrands, searchTerm, filterIndustry, filterState]);
 
-  const activeBrands = useMemo(() => brands.filter(b => b.active_campaigns > 0).slice(0, 10), [brands]);
-  const newBrands = useMemo(() => [...brands].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 10), [brands]);
+  const activeBrands = useMemo(() => visibleBrands.filter(b => b.active_campaigns > 0).slice(0, 10), [visibleBrands]);
+  const newBrands = useMemo(() => [...visibleBrands].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 10), [visibleBrands]);
 
   const showSections = filterIndustry === 'all' && !searchTerm && filterState === 'all';
 
