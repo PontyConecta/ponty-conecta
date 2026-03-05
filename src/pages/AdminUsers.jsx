@@ -6,7 +6,6 @@ import { Download, Loader2, RefreshCw, LayoutGrid, List } from 'lucide-react';
 import { toast } from 'sonner';
 
 import AdminHeader from '../components/admin/AdminHeader';
-import UserKpiBar from '../components/admin/UserKpiBar';
 import UserQuickFilters from '../components/admin/UserQuickFilters';
 import UserFilters from '../components/admin/UserFilters';
 import UserBulkActions from '../components/admin/UserBulkActions';
@@ -293,9 +292,6 @@ export default function AdminUsers() {
           </Button>
         </div>
       </div>
-
-      {/* KPI Bar */}
-      <UserKpiBar users={users} brands={brands} creators={creators} />
 
       {/* Quick Filters */}
       <UserQuickFilters value={quickFilter} onChange={setQuickFilter} />

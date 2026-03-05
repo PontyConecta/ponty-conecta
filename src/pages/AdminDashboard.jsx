@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AlertCircle, Users, TrendingUp, Activity, RefreshCw, Shield, UserX, Ghost, Crown, Scale, Megaphone, Clock, CheckCircle, BarChart3, FolderOpen, FolderCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +15,7 @@ import DashboardEngagementChart from '../components/admin/DashboardEngagementCha
 import DashboardMarketplace from '../components/admin/DashboardMarketplace';
 import DashboardPipeline from '../components/admin/DashboardPipeline';
 import DashboardFinancials from '../components/admin/DashboardFinancials';
+import UserKpiBar from '../components/admin/UserKpiBar';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -27,6 +28,11 @@ export default function AdminDashboard() {
   const isAdmin = user?.role === 'admin';
 
   const [analyticsError, setAnalyticsError] = useState(false);
+
+  // User list data for KPI bar in Users tab
+  const [userListData, setUserListData] = useState({ users: [], brands: [], creators: [] });
+  const [userListLoading, setUserListLoading] = useState(false);
+  const [userListLoaded, setUserListLoaded] = useState(false);
 
   // Map v1 dateRange keys to v2 range values
   const rangeMap = { day: '7d', week: '7d', month: '30d', year: '90d' };
@@ -65,6 +71,38 @@ export default function AdminDashboard() {
       loadAnalytics();
     }
   }, [isAdmin, loadAnalytics]);
+
+  // Lazy-load user list when Users tab is activated
+  const loadUserList = useCallback(async () => {
+    if (userListLoaded || userListLoading) return;
+    setUserListLoading(true);
+    try {
+      const response = await base44.functions.invoke('adminAnalyticsV2', {
+        mode: 'lists', list_type: 'list_users', range: '30d'
+      });
+      const { users: u, brands: b, creators: c } = response.data;
+      setUserListData({ users: u || [], brands: b || [], creators: c || [] });
+      setUserListLoaded(true);
+    } catch (err) {
+      console.error('Error loading user list for dashboard:', err);
+      try {
+        const fallback = await base44.functions.invoke('adminListUsers', {});
+        const { users: u, brands: b, creators: c } = fallback.data;
+        setUserListData({ users: u || [], brands: b || [], creators: c || [] });
+        setUserListLoaded(true);
+      } catch (err2) {
+        console.error('User list fallback also failed:', err2);
+      }
+    } finally {
+      setUserListLoading(false);
+    }
+  }, [userListLoaded, userListLoading]);
+
+  useEffect(() => {
+    if (activeTab === 'users' && isAdmin) {
+      loadUserList();
+    }
+  }, [activeTab, isAdmin, loadUserList]);
 
   if (!isAdmin) {
     return (
@@ -270,6 +308,23 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="users" className="space-y-6">
+          {/* Saúde de Usuários - KPI Bar */}
+          <div>
+            <h3 className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">Saúde de Usuários</h3>
+            {userListLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2">
+                {[1,2,3,4,5,6].map(i => <Skeleton key={i} className="h-20" />)}
+              </div>
+            ) : userListLoaded ? (
+              <UserKpiBar users={userListData.users} brands={userListData.brands} creators={userListData.creators} />
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-xs text-muted-foreground">Carregando dados de saúde...</p>
+              </div>
+            )}
+          </div>
+
+          {/* Existing analytics charts */}
           {analytics ? (
             <DashboardUserStats analytics={analytics} />
           ) : (

@@ -3,7 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, SlidersHorizontal, X, MapPin, Tag, Calendar } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Search, SlidersHorizontal, X, MapPin, Tag, Calendar, Eye } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -33,8 +35,20 @@ export default function UserFilters({
   tagFilter, onTagChange,
   excludeFinancialsFilter, onExcludeFinancialsChange,
   availableTags = [],
+  // Date-key filters
+  createdFrom, onCreatedFromChange,
+  createdTo, onCreatedToChange,
+  firstActiveFrom, onFirstActiveFromChange,
+  firstActiveTo, onFirstActiveToChange,
+  noFirstActive, onNoFirstActiveChange,
+  lastActiveFrom, onLastActiveFromChange,
+  lastActiveTo, onLastActiveToChange,
+  noLastActive, onNoLastActiveChange,
+  visibilityFilter, onVisibilityChange,
 }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const hasDateKeys = !!(createdFrom || createdTo || firstActiveFrom || firstActiveTo || noFirstActive || lastActiveFrom || lastActiveTo || noLastActive || (visibilityFilter && visibilityFilter !== 'all'));
 
   const activeFilterCount = [
     roleFilter !== 'all' ? 1 : 0,
@@ -45,6 +59,7 @@ export default function UserFilters({
     verifiedFilter && verifiedFilter !== 'all' ? 1 : 0,
     tagFilter && tagFilter !== 'all' ? 1 : 0,
     excludeFinancialsFilter && excludeFinancialsFilter !== 'all' ? 1 : 0,
+    hasDateKeys ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
 
   const handleClearAll = () => {
@@ -57,6 +72,15 @@ export default function UserFilters({
     onTagChange?.('all');
     onExcludeFinancialsChange?.('all');
     onSearchChange('');
+    onCreatedFromChange?.('');
+    onCreatedToChange?.('');
+    onFirstActiveFromChange?.('');
+    onFirstActiveToChange?.('');
+    onNoFirstActiveChange?.(false);
+    onLastActiveFromChange?.('');
+    onLastActiveToChange?.('');
+    onNoLastActiveChange?.(false);
+    onVisibilityChange?.('all');
   };
 
   return (
@@ -206,6 +230,60 @@ export default function UserFilters({
                     <SelectItem value="included">Incluídos</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Date-key filters */}
+              <div className="space-y-3">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <Calendar className="w-3 h-3" /> Filtros por Datas-Chave
+                </p>
+
+                {/* Created date range */}
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                  <span className="text-xs text-muted-foreground w-28 flex-shrink-0">Criação da conta:</span>
+                  <Input type="date" value={createdFrom || ''} onChange={(e) => onCreatedFromChange?.(e.target.value)} className="h-8 text-xs w-full sm:w-36" placeholder="De" />
+                  <span className="text-xs text-muted-foreground">até</span>
+                  <Input type="date" value={createdTo || ''} onChange={(e) => onCreatedToChange?.(e.target.value)} className="h-8 text-xs w-full sm:w-36" placeholder="Até" />
+                </div>
+
+                {/* First active range */}
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                  <span className="text-xs text-muted-foreground w-28 flex-shrink-0">Primeiro acesso:</span>
+                  <Input type="date" value={firstActiveFrom || ''} onChange={(e) => onFirstActiveFromChange?.(e.target.value)} className="h-8 text-xs w-full sm:w-36" disabled={!!noFirstActive} />
+                  <span className="text-xs text-muted-foreground">até</span>
+                  <Input type="date" value={firstActiveTo || ''} onChange={(e) => onFirstActiveToChange?.(e.target.value)} className="h-8 text-xs w-full sm:w-36" disabled={!!noFirstActive} />
+                  <div className="flex items-center gap-1.5 ml-1">
+                    <Checkbox id="noFirstActive" checked={!!noFirstActive} onCheckedChange={(v) => onNoFirstActiveChange?.(!!v)} className="h-3.5 w-3.5" />
+                    <Label htmlFor="noFirstActive" className="text-[10px] text-muted-foreground cursor-pointer">Sem primeiro acesso</Label>
+                  </div>
+                </div>
+
+                {/* Last active range */}
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                  <span className="text-xs text-muted-foreground w-28 flex-shrink-0">Último acesso:</span>
+                  <Input type="date" value={lastActiveFrom || ''} onChange={(e) => onLastActiveFromChange?.(e.target.value)} className="h-8 text-xs w-full sm:w-36" disabled={!!noLastActive} />
+                  <span className="text-xs text-muted-foreground">até</span>
+                  <Input type="date" value={lastActiveTo || ''} onChange={(e) => onLastActiveToChange?.(e.target.value)} className="h-8 text-xs w-full sm:w-36" disabled={!!noLastActive} />
+                  <div className="flex items-center gap-1.5 ml-1">
+                    <Checkbox id="noLastActive" checked={!!noLastActive} onCheckedChange={(v) => onNoLastActiveChange?.(!!v)} className="h-3.5 w-3.5" />
+                    <Label htmlFor="noLastActive" className="text-[10px] text-muted-foreground cursor-pointer">Sem último acesso</Label>
+                  </div>
+                </div>
+
+                {/* Visibility filter */}
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                  <span className="text-xs text-muted-foreground w-28 flex-shrink-0 flex items-center gap-1"><Eye className="w-3 h-3" /> Visibilidade:</span>
+                  <Select value={visibilityFilter || 'all'} onValueChange={onVisibilityChange}>
+                    <SelectTrigger className="w-full sm:w-40 h-8 text-xs">
+                      <SelectValue placeholder="Todos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="visible">Visíveis</SelectItem>
+                      <SelectItem value="hidden">Ocultos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* Active filters + clear */}
