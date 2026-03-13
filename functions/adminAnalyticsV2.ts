@@ -727,7 +727,6 @@ async function handleUser360(base44, targetId) {
       id: user.id, email: user.email, full_name: user.full_name, role: user.role,
       created_date: user.created_date, first_active: user.first_active, last_active: user.last_active,
       tags: user.tags || [], exclude_from_financials: user.exclude_from_financials || false,
-      visibility_status: user.visibility_status || 'visible',
     },
     profile: {
       type: profileType, id: profile.id,

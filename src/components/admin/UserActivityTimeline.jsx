@@ -52,8 +52,8 @@ export default function UserActivityTimeline({ user, profile, profileType }) {
     if (user.last_active && user.last_active !== user.first_active) {
       timeline.push({ type: 'last_active', date: user.last_active });
     }
-    if (user.visibility_status === 'hidden') {
-      timeline.push({ type: 'hidden', date: user.updated_date || user.created_date, subtitle: user.hidden_reason || '' });
+    if (profile?.is_hidden) {
+      timeline.push({ type: 'hidden', date: profile.updated_date || user.created_date, subtitle: 'Perfil oculto pelo admin' });
     }
 
     // Fetch related entities

@@ -19,9 +19,10 @@ async function batchFetch(entityApi, ids) {
 }
 
 /**
- * Paginated opportunities feed with shadow mode.
- * Each page: PAGE_SIZE campaigns + brands + users (shadow check) + applications.
- * Requests per page: campaigns(1) + brands(1) + users(1) + apps(1) = 4 max
+ * Paginated opportunities feed.
+ * Each page: PAGE_SIZE campaigns + brands + applications.
+ * Filters out campaigns from hidden brands (brand.is_hidden).
+ * Requests per page: campaigns(1) + brands(1) + apps(1) = 3 max
  */
 export function useOpportunitiesPaginated(creatorId) {
   return useInfiniteQuery({
