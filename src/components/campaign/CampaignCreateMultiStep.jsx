@@ -97,7 +97,7 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
       donts: formData.donts.filter(d => d.trim()),
       hashtags: formData.hashtags.filter(h => h.trim()),
       mentions: formData.mentions.filter(m => m.trim()),
-      status: editingCampaign ? editingCampaign.status : 'draft'
+      status: editingCampaign ? editingCampaign.status : 'active'
     };
 
     const validation = validate(campaignSchema, campaignData);
