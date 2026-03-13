@@ -67,15 +67,22 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   const [refreshing, setRefreshing] = useState(false);
 
   // Filtered campaigns (memoized, client-side on loaded pages)
+  // Featured campaigns are sorted first, then by recency within each group
   const filteredCampaigns = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();
-    return campaigns.filter(c => {
+    const filtered = campaigns.filter(c => {
       const matchesSearch = !searchTerm ||
         c.title?.toLowerCase().includes(lowerSearch) ||
         c.description?.toLowerCase().includes(lowerSearch);
       const matchesPlatform = filterPlatform === 'all' || c.platforms?.includes(filterPlatform);
       const matchesRemuneration = filterRemuneration === 'all' || c.remuneration_type === filterRemuneration;
       return matchesSearch && matchesPlatform && matchesRemuneration;
+    });
+    // Sort: featured first, then by created_date descending within each group
+    return filtered.sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return new Date(b.created_date) - new Date(a.created_date);
     });
   }, [campaigns, searchTerm, filterPlatform, filterRemuneration]);
 

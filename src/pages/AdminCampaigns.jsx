@@ -187,48 +187,51 @@ export default function AdminCampaigns() {
                   </p>
 
                   <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="w-4 h-4" className="text-muted-foreground" />
-                      <span className="text-muted-foreground">
-                        {getBrandName(campaign.brand_id)}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4" className="text-muted-foreground" />
-                      <span className="text-muted-foreground">
-                        Prazo: {new Date(campaign.deadline).toLocaleDateString('pt-BR')}
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Users className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {getBrandName(campaign.brand_id)}
+                    </span>
+                  </div>
 
-                    <div className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="w-4 h-4" className="text-muted-foreground" />
-                      <span className="text-muted-foreground">
-                        {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      Prazo: {new Date(campaign.deadline).toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
 
-                    <div className="flex items-center gap-2 text-sm">
-                      <AlertCircle className="w-4 h-4" className="text-muted-foreground" />
-                      <span className="text-muted-foreground">
-                        {campaign.total_applications || 0} candidaturas
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm">
+                    <AlertCircle className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {campaign.total_applications || 0} candidaturas
+                    </span>
+                  </div>
                   </div>
 
                   <div className="flex items-center gap-2 mt-4">
+                  <Badge variant="outline" className="text-xs">
+                    {campaign.remuneration_type === 'cash' ? '💵 Pago' : 
+                     campaign.remuneration_type === 'barter' ? '🎁 Permuta' : '📦 Misto'}
+                  </Badge>
+                  {campaign.budget_min && campaign.budget_max && (
                     <Badge variant="outline" className="text-xs">
-                      {campaign.remuneration_type === 'cash' ? '💵 Pago' : 
-                       campaign.remuneration_type === 'barter' ? '🎁 Permuta' : '📦 Misto'}
+                      R$ {campaign.budget_min} - R$ {campaign.budget_max}
                     </Badge>
-                    {campaign.budget_min && campaign.budget_max && (
-                      <Badge variant="outline" className="text-xs">
-                        R$ {campaign.budget_min} - R$ {campaign.budget_max}
-                      </Badge>
-                    )}
-                    <span className="text-xs" className="text-muted-foreground">
-                      Criada em {new Date(campaign.created_date).toLocaleDateString('pt-BR')}
-                    </span>
+                  )}
+                  {campaign.featured && (
+                    <Badge className="bg-amber-100 text-amber-700 border-0 text-xs">⭐ Destaque</Badge>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    Criada em {new Date(campaign.created_date).toLocaleDateString('pt-BR')}
+                  </span>
                   </div>
                 </div>
 

@@ -12,6 +12,7 @@ import {
   Building2,
   CheckCircle2,
   Eye,
+  Sparkles,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -43,8 +44,20 @@ export default function OpportunityCard({ campaign, brand, applied, index, onVie
         onClick={() => onView(campaign)}
       >
         {campaign.cover_image_url && (
-          <div className="h-36 overflow-hidden">
+          <div className="h-36 overflow-hidden relative">
             <img src={campaign.cover_image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+            {campaign.featured && (
+              <Badge className="absolute top-2 left-2 bg-amber-500 text-white border-0 text-[10px] px-2 py-0.5 gap-1 shadow-sm">
+                <Sparkles className="w-3 h-3" /> Destaque
+              </Badge>
+            )}
+          </div>
+        )}
+        {!campaign.cover_image_url && campaign.featured && (
+          <div className="px-4 pt-3">
+            <Badge className="bg-amber-500 text-white border-0 text-[10px] px-2 py-0.5 gap-1">
+              <Sparkles className="w-3 h-3" /> Destaque
+            </Badge>
           </div>
         )}
 

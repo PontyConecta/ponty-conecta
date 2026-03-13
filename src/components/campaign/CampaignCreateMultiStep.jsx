@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from '@/components/utils/toast';
 import { campaignSchema, validate } from '@/components/utils/validationSchemas';
-import { ArrowLeft, ArrowRight, Loader2, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Check, Rocket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import CampaignFormStep1 from './CampaignFormStep1';
@@ -138,7 +138,7 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
   };
 
   return (
-    <div className="space-y-6 pb-24 lg:pb-6">
+    <div className="space-y-6 pb-28 lg:pb-6">
       <OnboardingProgress steps={STEPS} currentStep={step} accentColor="indigo" />
 
       <Card className="border-0 shadow-lg bg-card">
@@ -166,12 +166,12 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
           )}
 
           {step < 4 ? (
-            <Button onClick={() => setStep(s => s + 1)} disabled={!isStepValid()} className="bg-indigo-600 hover:bg-indigo-700 gap-2 min-h-[44px]">
+            <Button onClick={() => setStep(s => s + 1)} disabled={!isStepValid()} className="bg-[#9038fa] hover:bg-[#7a2de0] text-white gap-2 min-h-[44px]">
               Próximo <ArrowRight className="w-4 h-4" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} disabled={saving || !formData.title || !formData.description || !formData.deadline} className="bg-indigo-600 hover:bg-indigo-700 gap-2 min-h-[44px]">
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Salvar Campanha</>}
+            <Button onClick={handleSubmit} disabled={saving || !formData.title || !formData.description || !formData.deadline} className="bg-[#9038fa] hover:bg-[#7a2de0] text-white gap-2 min-h-[44px]">
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> {editingCampaign ? 'Salvar Alterações' : 'Publicar Campanha'}</>}
             </Button>
           )}
         </div>
