@@ -138,41 +138,44 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24 lg:pb-6">
       <OnboardingProgress steps={STEPS} currentStep={step} accentColor="indigo" />
 
-      <Card className="border-0 shadow-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <Card className="border-0 shadow-lg bg-card">
         <CardContent className="p-6">
           <AnimatePresence mode="wait">
-            <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
+            <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }} style={{ pointerEvents: 'auto' }}>
               {step === 1 && <CampaignFormStep1 formData={formData} onChange={handleChange} onCoverUpload={handleCoverUpload} />}
               {step === 2 && <CampaignFormStep2 formData={formData} onChange={handleChange} toggleArrayItem={toggleArrayItem} />}
               {step === 3 && <CampaignFormStep3 formData={formData} onChange={handleChange} />}
               {step === 4 && <CampaignFormStep4 formData={formData} onChange={handleChange} onArrayFieldChange={handleArrayFieldChange} addArrayField={addArrayField} removeArrayField={removeArrayField} />}
             </motion.div>
           </AnimatePresence>
-
-          <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
-            {step > 1 ? (
-              <Button variant="ghost" onClick={() => setStep(s => s - 1)} className="gap-2">
-                <ArrowLeft className="w-4 h-4" /> Voltar
-              </Button>
-            ) : (
-              <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-            )}
-
-            {step < 4 ? (
-              <Button onClick={() => setStep(s => s + 1)} disabled={!isStepValid()} className="bg-indigo-600 hover:bg-indigo-700 gap-2">
-                Próximo <ArrowRight className="w-4 h-4" />
-              </Button>
-            ) : (
-              <Button onClick={handleSubmit} disabled={saving || !formData.title || !formData.description || !formData.deadline} className="bg-indigo-600 hover:bg-indigo-700 gap-2">
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Salvar Campanha</>}
-              </Button>
-            )}
-          </div>
         </CardContent>
       </Card>
+
+      {/* Sticky action bar — sits above BottomNav (z-50) */}
+      <div className="fixed bottom-0 left-0 right-0 z-[60] lg:static lg:z-auto bg-card border-t lg:border lg:rounded-xl shadow-[0_-2px_12px_rgba(0,0,0,0.08)] lg:shadow-sm" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="flex items-center justify-between px-4 py-3 lg:px-6 lg:py-4 max-w-7xl mx-auto">
+          {step > 1 ? (
+            <Button variant="ghost" onClick={() => setStep(s => s - 1)} className="gap-2 min-h-[44px]">
+              <ArrowLeft className="w-4 h-4" /> Voltar
+            </Button>
+          ) : (
+            <Button variant="ghost" onClick={onClose} className="min-h-[44px]">Cancelar</Button>
+          )}
+
+          {step < 4 ? (
+            <Button onClick={() => setStep(s => s + 1)} disabled={!isStepValid()} className="bg-indigo-600 hover:bg-indigo-700 gap-2 min-h-[44px]">
+              Próximo <ArrowRight className="w-4 h-4" />
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit} disabled={saving || !formData.title || !formData.description || !formData.deadline} className="bg-indigo-600 hover:bg-indigo-700 gap-2 min-h-[44px]">
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Salvar Campanha</>}
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
