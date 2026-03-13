@@ -171,7 +171,7 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
             </Button>
           ) : (
             <Button onClick={handleSubmit} disabled={saving || !formData.title || !formData.description || !formData.deadline} className="bg-[#9038fa] hover:bg-[#7a2de0] text-white gap-2 min-h-[44px]">
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> {editingCampaign ? 'Salvar Alterações' : 'Publicar Campanha'}</>}
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingCampaign ? <><Check className="w-4 h-4" /> Salvar Alterações</> : <><Rocket className="w-4 h-4" /> Publicar Campanha</>}
             </Button>
           )}
         </div>
