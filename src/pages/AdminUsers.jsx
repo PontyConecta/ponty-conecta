@@ -12,6 +12,7 @@ import UserBulkActions from '../components/admin/UserBulkActions';
 import UserTable from '../components/admin/UserTable';
 import UserPagination from '../components/admin/UserPagination';
 import UserManageDialog from '../components/admin/UserManageDialog';
+import SelectAllFilteredBanner from '../components/admin/SelectAllFilteredBanner';
 
 const PAGE_SIZE = 20;
 
@@ -46,6 +47,7 @@ export default function AdminUsers() {
   // Table state
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [selectionScope, setSelectionScope] = useState('page'); // 'page' | 'filtered'
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState('date');
   const [sortDir, setSortDir] = useState('desc');
@@ -261,7 +263,12 @@ export default function AdminUsers() {
   const totalPages = Math.ceil(sortedUsers.length / PAGE_SIZE);
   const paginatedUsers = sortedUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  useEffect(() => { setCurrentPage(1); }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter, createdFrom, createdTo, firstActiveFrom, firstActiveTo, noFirstActive, lastActiveFrom, lastActiveTo, noLastActive, visibilityFilter, sortField, sortDir]);
+  // Reset page and selection on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+    setSelectedIds([]);
+    setSelectionScope('page');
+  }, [searchTerm, roleFilter, statusFilter, stateFilter, nicheFilter, dateFilter, verifiedFilter, tagFilter, excludeFinancialsFilter, quickFilter, createdFrom, createdTo, firstActiveFrom, firstActiveTo, noFirstActive, lastActiveFrom, lastActiveTo, noLastActive, visibilityFilter, sortField, sortDir]);
 
   // Collect all unique tags from users
   const availableTags = useMemo(() => {
@@ -359,13 +366,30 @@ export default function AdminUsers() {
       {/* Bulk Actions */}
       <UserBulkActions
         selectedIds={selectedIds} users={users} brands={brands} creators={creators}
-        onClear={() => setSelectedIds([])} onComplete={loadUsers}
+        onClear={() => { setSelectedIds([]); setSelectionScope('page'); }} onComplete={loadUsers}
+        selectionScope={selectionScope}
+      />
+
+      {/* Select All Filtered Banner */}
+      <SelectAllFilteredBanner
+        pageSelectedCount={paginatedUsers.filter(u => selectedIds.includes(u.id)).length}
+        pageTotal={paginatedUsers.length}
+        filteredTotal={sortedUsers.length}
+        selectionScope={selectionScope}
+        onSelectAllFiltered={() => {
+          setSelectedIds(sortedUsers.map(u => u.id));
+          setSelectionScope('filtered');
+        }}
+        onClearToPage={() => {
+          setSelectedIds(paginatedUsers.map(u => u.id));
+          setSelectionScope('page');
+        }}
       />
 
       {/* Table */}
       <UserTable
         users={paginatedUsers} brands={brands} creators={creators}
-        selectedIds={selectedIds} onSelectIds={setSelectedIds}
+        selectedIds={selectedIds} onSelectIds={(ids) => { setSelectedIds(ids); setSelectionScope('page'); }}
         onUserClick={setSelectedUser}
         sortField={sortField} sortDir={sortDir} onSort={handleSort}
         density={density}
