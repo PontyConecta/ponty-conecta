@@ -52,24 +52,14 @@ export function useOpportunitiesPaginated(creatorId) {
           : Promise.resolve([]),
       ]);
 
-      // 4) Shadow mode: fetch Users of these brands to check visibility_status
-      //    +1 request per page (User $in), only when brands exist
-      const brandUserIds = [...new Set(
-        Object.values(brands).map(b => b.user_id).filter(Boolean)
-      )];
+      // 4) Filter out campaigns from hidden brands (using brand.is_hidden)
       const hiddenBrandIds = new Set();
-
-      if (brandUserIds.length > 0) {
-        const usersMap = await batchFetch(base44.entities.User, brandUserIds);
-        for (const brand of Object.values(brands)) {
-          const owner = usersMap[brand.user_id];
-          if (owner?.visibility_status === 'hidden') {
-            hiddenBrandIds.add(brand.id);
-          }
+      for (const brand of Object.values(brands)) {
+        if (brand.is_hidden) {
+          hiddenBrandIds.add(brand.id);
         }
       }
 
-      // 5) Filter out campaigns from hidden brands
       const visibleCampaigns = hiddenBrandIds.size > 0
         ? campaigns.filter(c => !hiddenBrandIds.has(c.brand_id))
         : campaigns;
