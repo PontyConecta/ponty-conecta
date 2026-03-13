@@ -40,8 +40,20 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
     return { profile: brand || creator, type: brand ? 'brand' : creator ? 'creator' : 'unknown' };
   };
 
+  const allPageSelected = users.length > 0 && users.every(u => selectedIds.includes(u.id));
+  const somePageSelected = users.some(u => selectedIds.includes(u.id)) && !allPageSelected;
+
   const toggleAll = () => {
-    onSelectIds(selectedIds.length === users.length ? [] : users.map(u => u.id));
+    if (allPageSelected) {
+      // Deselect all page users from the current selection
+      const pageIds = new Set(users.map(u => u.id));
+      onSelectIds(selectedIds.filter(id => !pageIds.has(id)));
+    } else {
+      // Add all page users to current selection (preserving any other selected)
+      const currentSet = new Set(selectedIds);
+      users.forEach(u => currentSet.add(u.id));
+      onSelectIds([...currentSet]);
+    }
   };
 
   const toggleOne = (id) => {
@@ -70,7 +82,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
     <Card className="bg-card border">
       {/* Desktop Header */}
       <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_80px_80px_70px_110px_80px_80px_50px] gap-2 px-4 py-3 border-b items-center">
-        <div><Checkbox checked={selectedIds.length === users.length && users.length > 0} onCheckedChange={toggleAll} /></div>
+        <div><Checkbox checked={allPageSelected ? true : somePageSelected ? 'indeterminate' : false} onCheckedChange={toggleAll} /></div>
         <SortHeader label="Usuário" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Tipo" field="type" sortField={sortField} sortDir={sortDir} onSort={onSort} />
         <SortHeader label="Plano" field="subscription" sortField={sortField} sortDir={sortDir} onSort={onSort} />
