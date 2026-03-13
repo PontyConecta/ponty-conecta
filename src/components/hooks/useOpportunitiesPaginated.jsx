@@ -42,7 +42,7 @@ export function useOpportunitiesPaginated(creatorId) {
       // 3) Batch fetch creator's applications for THESE campaigns only
       const campaignIds = campaigns.map(c => c.id).filter(Boolean);
 
-      // Fetch brands first (needed for shadow mode user_id lookup)
+      // Fetch brands + creator's applications in parallel
       const [brands, myApplications] = await Promise.all([
         batchFetch(base44.entities.Brand, brandIds),
         creatorId && campaignIds.length > 0
