@@ -58,17 +58,31 @@ export default function DiscoverCreators() {
     setLoading(false);
   };
 
-  const hasValidAvatar = (c) => {
-    const url = c.avatar_url;
+  // ── Ranking tier logic ──
+  // Tier 1 (score 3): valid avatar + bio + portfolio → display-ready
+  // Tier 2 (score 2): valid avatar only → present but minimal
+  // Tier 3 (score 1): no/invalid avatar → placeholder/fallback
+  const hasValidAvatarUrl = (url) => {
     if (!url || typeof url !== 'string') return false;
-    const trimmed = url.trim();
-    return trimmed.startsWith('http://') || trimmed.startsWith('https://');
+    const t = url.trim();
+    if (!t.startsWith('https://')) return false;
+    // Must have a path beyond just the domain
+    try { return new URL(t).pathname.length > 1; } catch { return false; }
   };
 
-  const avatarSort = (a, b) => {
-    const scoreA = hasValidAvatar(a) ? 1 : 0;
-    const scoreB = hasValidAvatar(b) ? 1 : 0;
-    if (scoreB !== scoreA) return scoreB - scoreA;
+  const getCreatorRankScore = (c) => {
+    if (!hasValidAvatarUrl(c.avatar_url)) return 1; // Tier 3 — fallback/placeholder
+    const hasBio = c.bio && c.bio.trim().length > 10;
+    const hasPortfolio = c.portfolio_images && c.portfolio_images.length > 0;
+    if (hasBio && hasPortfolio) return 3; // Tier 1 — display-ready
+    return 2; // Tier 2 — avatar present, profile minimal
+  };
+
+  const isTopEligible = (c) => getCreatorRankScore(c) >= 2;
+
+  const rankSort = (a, b) => {
+    const diff = getCreatorRankScore(b) - getCreatorRankScore(a);
+    if (diff !== 0) return diff;
     return new Date(b.created_date) - new Date(a.created_date);
   };
 
@@ -85,20 +99,20 @@ export default function DiscoverCreators() {
       const matchState = filterState === 'all' || c.state === filterState;
       return matchSearch && matchNiche && matchSize && matchState;
     });
-    return filtered.sort(avatarSort);
+    return filtered.sort(rankSort);
   }, [visibleCreators, searchTerm, filterNiche, filterSize, filterState]);
 
   const featuredCreators = useMemo(() =>
-    [...visibleCreators.filter(c => c.featured)].sort(avatarSort),
+    [...visibleCreators.filter(c => c.featured && isTopEligible(c))].sort(rankSort),
   [visibleCreators]);
 
   const newCreators = useMemo(() =>
-    [...visibleCreators].sort(avatarSort).slice(0, 12),
+    [...visibleCreators].filter(isTopEligible).sort(rankSort).slice(0, 12),
   [visibleCreators]);
 
   const nicheCreators = useMemo(() => {
     if (filterNiche === 'all') return [];
-    return [...visibleCreators.filter(c => c.niche?.includes(filterNiche))].sort(avatarSort).slice(0, 10);
+    return [...visibleCreators.filter(c => c.niche?.includes(filterNiche) && isTopEligible(c))].sort(rankSort).slice(0, 10);
   }, [visibleCreators, filterNiche]);
 
   const showSections = filterNiche === 'all' && !searchTerm && filterSize === 'all' && filterState === 'all';
