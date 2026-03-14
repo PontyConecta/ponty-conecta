@@ -54,7 +54,7 @@ export default function DiscoverCreators() {
 
   const loadData = async () => {
     const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date');
-    setCreators(allCreators);
+    setCreators(allCreators.filter(c => c.display_name?.trim()));
     setLoading(false);
   };
 
@@ -211,27 +211,33 @@ export default function DiscoverCreators() {
         </HorizontalSection>
       )}
 
-      <div>
-        <h2 className="text-sm font-semibold text-foreground mb-3">
-          {showSections ? 'Todos os creators' : 'Resultados'}
-        </h2>
-        {(showSections ? gridCreators : filteredCreators).length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {(showSections ? gridCreators : filteredCreators).map(c => (
-              <DiscoverCreatorCard key={c.id} creator={c} isSubscribed={isSubscribed}
-                onClick={() => setSelectedCreator(c)} />
-            ))}
+      {(() => {
+        const displayCreators = showSections ? gridCreators : filteredCreators;
+        if (showSections && displayCreators.length === 0 && visibleCreators.length > 0) return null;
+        return (
+          <div>
+            <h2 className="text-sm font-semibold text-foreground mb-3">
+              {showSections ? 'Todos os creators' : 'Resultados'}
+            </h2>
+            {displayCreators.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {displayCreators.map(c => (
+                  <DiscoverCreatorCard key={c.id} creator={c} isSubscribed={isSubscribed}
+                    onClick={() => setSelectedCreator(c)} />
+                ))}
+              </div>
+            ) : (
+              <Card className="border bg-card">
+                <CardContent className="p-12 text-center">
+                  <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                  <h3 className="font-semibold mb-1">Nenhum creator encontrado</h3>
+                  <p className="text-sm text-muted-foreground">Tente ajustar seus filtros</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
-        ) : (
-          <Card className="border bg-card">
-            <CardContent className="p-12 text-center">
-              <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-              <h3 className="font-semibold mb-1">Nenhum creator encontrado</h3>
-              <p className="text-sm text-muted-foreground">Tente ajustar seus filtros</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+        );
+      })()}
 
       <Dialog open={!!selectedCreator} onOpenChange={() => setSelectedCreator(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
