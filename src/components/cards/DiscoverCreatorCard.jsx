@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Users, CheckCircle2, Lock } from 'lucide-react';
@@ -10,8 +10,17 @@ function formatFollowers(num) {
   return num;
 }
 
+function ImagePlaceholder({ name }) {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/15 via-primary/5 to-primary/20">
+      <span className="text-3xl font-bold text-primary/60">{name?.[0]?.toUpperCase() || '?'}</span>
+    </div>
+  );
+}
+
 export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) {
   const totalFollowers = (creator.platforms || []).reduce((s, p) => s + (p.followers || 0), 0);
+  const [imgFailed, setImgFailed] = useState(false);
 
   return (
     <div
@@ -20,12 +29,15 @@ export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) 
     >
       {/* Image */}
       <div className="aspect-[4/5] relative bg-muted overflow-hidden">
-        {creator.avatar_url ? (
-          <img src={creator.avatar_url} alt={creator.display_name} className="w-full h-full object-cover" />
+        {creator.avatar_url && !imgFailed ? (
+          <img
+            src={creator.avatar_url}
+            alt={creator.display_name}
+            className="w-full h-full object-cover"
+            onError={() => setImgFailed(true)}
+          />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-primary/10">
-            <span className="text-3xl font-bold text-primary">{creator.display_name?.[0]}</span>
-          </div>
+          <ImagePlaceholder name={creator.display_name} />
         )}
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
         
