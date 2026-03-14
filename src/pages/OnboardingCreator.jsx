@@ -297,9 +297,6 @@ export default function OnboardingCreator() {
                         <Label className="text-sm font-medium text-foreground">Nome Artístico *</Label>
                         <Input value={formData.display_name} onChange={(e) => handleChange('display_name', e.target.value)} placeholder="Como você quer ser conhecido" className="mt-2 h-12" />
                         <FieldHint text="O nome que será exibido no seu perfil público." />
-                        {!formData.avatar_url && (
-                          <p className="text-xs mt-2 text-amber-600 font-medium">📸 Adicionar uma foto de perfil aumenta suas chances de receber campanhas.</p>
-                        )}
                         </div>
                     </div>
                     <div>
