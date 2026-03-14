@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { 
   Loader2, Building2, Star, Shield, CheckCircle2, Crown, 
-  AlertTriangle, Eye, Calendar, Mail, EyeOff
+  AlertTriangle, Eye, Calendar, Mail, EyeOff, ArrowLeftRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import UserTagManager from './UserTagManager';
@@ -40,6 +40,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [isHidden, setIsHidden] = useState(profile?.is_hidden || false);
   const [hiddenReason, setHiddenReason] = useState('');
   const [showHideForm, setShowHideForm] = useState(false);
+  const [showConvertConfirm, setShowConvertConfirm] = useState(false);
 
   React.useEffect(() => {
     if (user && profile) {
@@ -167,6 +168,62 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
               A plataforma restringe essa alteração via app por segurança.
             </p>
           </SectionCard>
+
+          {/* Entity Type Conversion */}
+          {profileType && profileType !== 'unknown' && (
+            <SectionCard icon={ArrowLeftRight} label="Tipo de Perfil">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    Atualmente: <Badge className={profileType === 'brand' ? 'bg-indigo-100 text-indigo-700 border-0 ml-1' : 'bg-orange-100 text-orange-700 border-0 ml-1'}>
+                      {profileType === 'brand' ? 'Marca' : 'Criador'}
+                    </Badge>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Converte o perfil para {profileType === 'brand' ? 'Criador' : 'Marca'}. O perfil antigo será excluído e o usuário precisará refazer o onboarding.
+                  </p>
+                </div>
+              </div>
+              {!showConvertConfirm ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowConvertConfirm(true)}
+                  className="text-amber-700 border-amber-200 hover:bg-amber-50"
+                >
+                  <ArrowLeftRight className="w-3.5 h-3.5 mr-1.5" />
+                  Converter para {profileType === 'brand' ? 'Criador' : 'Marca'}
+                </Button>
+              ) : (
+                <div className="space-y-2 p-3 rounded-lg bg-amber-50 border border-amber-200">
+                  <p className="text-xs font-semibold text-amber-800 flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5" /> Ação irreversível
+                  </p>
+                  <p className="text-xs text-amber-700">
+                    Dados específicos do perfil atual (campanhas, aplicações, etc.) não serão migrados automaticamente. 
+                    Dados compartilhados (assinatura, localização, contato) serão preservados.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      disabled={actionLoading}
+                      className="bg-amber-600 hover:bg-amber-700 text-white"
+                      onClick={async () => {
+                        const targetType = profileType === 'brand' ? 'creator' : 'brand';
+                        await handleAction('convert_profile_type', { target_type: targetType });
+                        setShowConvertConfirm(false);
+                      }}
+                    >
+                      {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Conversão'}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setShowConvertConfirm(false)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </SectionCard>
+          )}
 
           {/* Info Grid */}
           <div className="grid grid-cols-2 gap-3">
