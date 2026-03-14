@@ -12,7 +12,7 @@ function formatFollowers(num) {
 
 function ImagePlaceholder({ name }) {
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/15 via-primary/5 to-primary/20">
+    <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/15 via-primary/5 to-primary/20">
       <span className="text-3xl font-bold text-primary/60">{name?.[0]?.toUpperCase() || '?'}</span>
     </div>
   );
@@ -33,7 +33,7 @@ export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) 
           <img
             src={creator.avatar_url}
             alt={creator.display_name}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-center"
             onError={() => setImgFailed(true)}
           />
         ) : (
