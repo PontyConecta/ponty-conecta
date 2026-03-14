@@ -50,7 +50,8 @@ export default function DiscoverBrands() {
 
   const loadData = async () => {
     const allBrands = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date');
-    setBrands(allBrands);
+    // Exclude brands without a company_name (system/orphan entities)
+    setBrands(allBrands.filter(b => b.company_name?.trim()));
     setLoading(false);
   };
 
@@ -157,27 +158,35 @@ export default function DiscoverBrands() {
         </div>
       )}
 
-      <div>
-        <h2 className="text-sm font-semibold text-foreground mb-3">
-          {showSections ? 'Todas as marcas' : 'Resultados'}
-        </h2>
-        {(showSections ? gridBrands : filteredBrands).length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {(showSections ? gridBrands : filteredBrands).map(b => (
-              <DiscoverBrandCard key={b.id} brand={b} isSubscribed={isSubscribed}
-                onClick={() => setSelectedBrand(b)} />
-            ))}
+      {/* "Todas as marcas" grid — only show when there are brands NOT already in sections, OR when filters are active */}
+      {(() => {
+        const displayBrands = showSections ? gridBrands : filteredBrands;
+        // When sections are showing and all brands are covered by them, skip the empty grid entirely
+        if (showSections && displayBrands.length === 0 && visibleBrands.length > 0) return null;
+        return (
+          <div>
+            <h2 className="text-sm font-semibold text-foreground mb-3">
+              {showSections ? 'Todas as marcas' : 'Resultados'}
+            </h2>
+            {displayBrands.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {displayBrands.map(b => (
+                  <DiscoverBrandCard key={b.id} brand={b} isSubscribed={isSubscribed}
+                    onClick={() => setSelectedBrand(b)} />
+                ))}
+              </div>
+            ) : (
+              <Card className="border bg-card">
+                <CardContent className="p-12 text-center">
+                  <Building2 className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                  <h3 className="font-semibold mb-1">Nenhuma marca encontrada</h3>
+                  <p className="text-sm text-muted-foreground">Tente ajustar seus filtros</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
-        ) : (
-          <Card className="border bg-card">
-            <CardContent className="p-12 text-center">
-              <Building2 className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-              <h3 className="font-semibold mb-1">Nenhuma marca encontrada</h3>
-              <p className="text-sm text-muted-foreground">Tente ajustar seus filtros</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+        );
+      })()}
 
       <Dialog open={!!selectedBrand} onOpenChange={() => setSelectedBrand(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
