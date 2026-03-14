@@ -260,6 +260,68 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case 'convert_profile_type': {
+        // Convert Brand → Creator or Creator → Brand
+        const targetType = data?.target_type;
+        if (!targetType || !['brand', 'creator'].includes(targetType)) {
+          return Response.json({ error: 'target_type must be "brand" or "creator"' }, { status: 400 });
+        }
+        if (targetType === profileType) {
+          return Response.json({ error: `User is already a ${targetType}` }, { status: 400 });
+        }
+        if (!profile) {
+          return Response.json({ error: 'User profile not found' }, { status: 404 });
+        }
+
+        // Shared fields that transfer between Brand and Creator
+        const sharedData = {
+          user_id: userId,
+          state: profile.state || null,
+          city: profile.city || null,
+          contact_email: profile.contact_email || null,
+          is_verified: false, // Reset verification on conversion
+          is_hidden: false,
+          subscription_status: profile.subscription_status || 'starter',
+          plan_level: profile.plan_level || null,
+          stripe_customer_id: profile.stripe_customer_id || null,
+          trial_end_date: profile.trial_end_date || null,
+          account_state: 'incomplete', // Require re-onboarding
+          onboarding_step: 1,
+        };
+
+        if (targetType === 'creator') {
+          // Brand → Creator: map company_name to display_name
+          const creatorData = {
+            ...sharedData,
+            display_name: profile.company_name || '',
+            bio: profile.description || '',
+            avatar_url: profile.logo_url || null,
+            cover_image_url: profile.cover_image_url || null,
+          };
+          await base44.asServiceRole.entities.Creator.create(creatorData);
+        } else {
+          // Creator → Brand: map display_name to company_name
+          const brandData = {
+            ...sharedData,
+            company_name: profile.display_name || '',
+            description: profile.bio || '',
+            logo_url: profile.avatar_url || null,
+            cover_image_url: profile.cover_image_url || null,
+          };
+          await base44.asServiceRole.entities.Brand.create(brandData);
+        }
+
+        // Delete old profile
+        await base44.asServiceRole.entities[entityName].delete(profile.id);
+
+        console.log(`[adminManageUser] Converted ${profileType} → ${targetType} for user ${userId}`);
+
+        auditAction = 'role_switch';
+        auditDetails = `Profile converted from ${profileType} to ${targetType}. Old profile (${entityName} ${profile.id}) deleted. Account set to incomplete for re-onboarding.`;
+        result = { from: profileType, to: targetType };
+        break;
+      }
+
       case 'flag_review': {
         auditAction = 'user_flagged';
         auditDetails = `User flagged for review`;
