@@ -58,6 +58,20 @@ export default function DiscoverCreators() {
     setLoading(false);
   };
 
+  const hasValidAvatar = (c) => {
+    const url = c.avatar_url;
+    if (!url || typeof url !== 'string') return false;
+    const trimmed = url.trim();
+    return trimmed.startsWith('http://') || trimmed.startsWith('https://');
+  };
+
+  const avatarSort = (a, b) => {
+    const scoreA = hasValidAvatar(a) ? 1 : 0;
+    const scoreB = hasValidAvatar(b) ? 1 : 0;
+    if (scoreB !== scoreA) return scoreB - scoreA;
+    return new Date(b.created_date) - new Date(a.created_date);
+  };
+
   const visibleCreators = useMemo(() => {
     if (isAdmin) return creators;
     return creators.filter(c => !c.is_hidden);
@@ -71,27 +85,20 @@ export default function DiscoverCreators() {
       const matchState = filterState === 'all' || c.state === filterState;
       return matchSearch && matchNiche && matchSize && matchState;
     });
-    // Rank creators with avatar_url before those without
-    return filtered.sort((a, b) => {
-      const avatarA = a.avatar_url ? 1 : 0;
-      const avatarB = b.avatar_url ? 1 : 0;
-      if (avatarB !== avatarA) return avatarB - avatarA;
-      // Secondary: recency
-      return new Date(b.created_date) - new Date(a.created_date);
-    });
+    return filtered.sort(avatarSort);
   }, [visibleCreators, searchTerm, filterNiche, filterSize, filterState]);
 
-  const featuredCreators = useMemo(() => visibleCreators.filter(c => c.featured), [visibleCreators]);
-  const newCreators = useMemo(() => [...visibleCreators].sort((a, b) => {
-    const avatarA = a.avatar_url ? 1 : 0;
-    const avatarB = b.avatar_url ? 1 : 0;
-    if (avatarB !== avatarA) return avatarB - avatarA;
-    return new Date(b.created_date) - new Date(a.created_date);
-  }).slice(0, 12), [visibleCreators]);
+  const featuredCreators = useMemo(() =>
+    [...visibleCreators.filter(c => c.featured)].sort(avatarSort),
+  [visibleCreators]);
+
+  const newCreators = useMemo(() =>
+    [...visibleCreators].sort(avatarSort).slice(0, 12),
+  [visibleCreators]);
 
   const nicheCreators = useMemo(() => {
     if (filterNiche === 'all') return [];
-    return visibleCreators.filter(c => c.niche?.includes(filterNiche)).slice(0, 10);
+    return [...visibleCreators.filter(c => c.niche?.includes(filterNiche))].sort(avatarSort).slice(0, 10);
   }, [visibleCreators, filterNiche]);
 
   const showSections = filterNiche === 'all' && !searchTerm && filterSize === 'all' && filterState === 'all';
