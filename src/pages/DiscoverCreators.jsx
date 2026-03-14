@@ -64,17 +64,30 @@ export default function DiscoverCreators() {
   }, [creators, isAdmin]);
 
   const filteredCreators = useMemo(() => {
-    return visibleCreators.filter(c => {
+    const filtered = visibleCreators.filter(c => {
       const matchSearch = !searchTerm || c.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) || c.bio?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchNiche = filterNiche === 'all' || c.niche?.includes(filterNiche);
       const matchSize = filterSize === 'all' || c.profile_size === filterSize;
       const matchState = filterState === 'all' || c.state === filterState;
       return matchSearch && matchNiche && matchSize && matchState;
     });
+    // Rank creators with avatar_url before those without
+    return filtered.sort((a, b) => {
+      const avatarA = a.avatar_url ? 1 : 0;
+      const avatarB = b.avatar_url ? 1 : 0;
+      if (avatarB !== avatarA) return avatarB - avatarA;
+      // Secondary: recency
+      return new Date(b.created_date) - new Date(a.created_date);
+    });
   }, [visibleCreators, searchTerm, filterNiche, filterSize, filterState]);
 
   const featuredCreators = useMemo(() => visibleCreators.filter(c => c.featured), [visibleCreators]);
-  const newCreators = useMemo(() => [...visibleCreators].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 12), [visibleCreators]);
+  const newCreators = useMemo(() => [...visibleCreators].sort((a, b) => {
+    const avatarA = a.avatar_url ? 1 : 0;
+    const avatarB = b.avatar_url ? 1 : 0;
+    if (avatarB !== avatarA) return avatarB - avatarA;
+    return new Date(b.created_date) - new Date(a.created_date);
+  }).slice(0, 12), [visibleCreators]);
 
   const nicheCreators = useMemo(() => {
     if (filterNiche === 'all') return [];
