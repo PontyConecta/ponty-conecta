@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
+function SafeImage({ src, alt, className, fallback }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return fallback || null;
+  return <img src={src} alt={alt || ''} className={className} onError={() => setFailed(true)} />;
+}
+
 export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall }) {
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
         <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
-          {creator.cover_image_url && <img src={creator.cover_image_url} alt="" className="w-full h-full object-cover" />}
+          <SafeImage src={creator.cover_image_url} className="w-full h-full object-cover" />
         </div>
         <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-background shadow-lg">
           <AvatarImage src={creator.avatar_url} />
@@ -82,7 +88,12 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
             <h4 className="font-medium mb-2">Portfólio</h4>
             <div className="grid grid-cols-3 gap-2">
               {creator.portfolio_images.slice(0, 6).map((url, i) => (
-                <img key={i} src={url} alt="" className="aspect-square rounded-lg object-cover" />
+                <SafeImage
+                  key={i}
+                  src={url}
+                  className="aspect-square rounded-lg object-cover w-full"
+                  fallback={<div className="aspect-square rounded-lg bg-muted" />}
+                />
               ))}
             </div>
           </div>
