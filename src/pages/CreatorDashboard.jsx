@@ -129,13 +129,12 @@ export default function CreatorDashboard() {
         </div>
       )}
 
-      {/* Profile Incomplete Alert */}
-      {!profileValidation.isComplete && (
-        <ProfileIncompleteAlert 
-          missingFields={profileValidation.missingFields} 
-          profileType="creator"
-        />
-      )}
+      {/* Profile Incomplete Alert / Avatar Hint */}
+      <ProfileIncompleteAlert 
+        missingFields={profileValidation.missingFields} 
+        profileType="creator"
+        profile={creator}
+      />
 
       {/* Onboarding Missions */}
       <DashboardMissions userId={user?.id} profileType="creator" />
