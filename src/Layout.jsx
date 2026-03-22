@@ -93,11 +93,11 @@ function LayoutContent({ children, currentPageName }) {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform bg-[#9038fa]">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform bg-[#7DB04B]">
                 <span className="text-white font-bold text-base lg:text-lg">P</span>
               </div>
               <div className="hidden sm:flex flex-col">
-                <span className="text-base lg:text-lg font-bold leading-tight text-[#9038fa]">Ponty</span>
+                <span className="text-base lg:text-lg font-bold leading-tight text-[#7DB04B]">Ponty</span>
                 <span className="text-[10px] lg:text-xs font-medium text-muted-foreground leading-tight">
                   {profileType === 'brand' ? 'Marcas' : 'Creators'}
                 </span>
@@ -123,7 +123,7 @@ function LayoutContent({ children, currentPageName }) {
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
-                    className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
+                    className="bg-[#7DB04B] hover:bg-[#5C8036] text-white"
                   >
                     Abrir WhatsApp
                   </AlertDialogAction>
@@ -137,8 +137,8 @@ function LayoutContent({ children, currentPageName }) {
             {/* Admin Link */}
             {isAdmin && (
               <Link to={createPageUrl('AdminDashboard')}>
-                <button className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center hover:bg-[#9038fa]/10 transition-colors">
-                  <Shield className="w-5 h-5" style={{ color: '#9038fa' }} />
+                <button className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center hover:bg-[#7DB04B]/10 transition-colors">
+                  <Shield className="w-5 h-5" style={{ color: '#7DB04B' }} />
                 </button>
               </Link>
             )}
@@ -147,7 +147,7 @@ function LayoutContent({ children, currentPageName }) {
             {!isSubscribed && (
               <Button 
                 onClick={() => window.location.href = createPageUrl('Subscription')}
-                className="h-10 px-4 font-bold rounded-lg shadow-sm bg-[#9038fa] hover:bg-[#7a2de0] text-white min-h-[44px]"
+                className="h-10 px-4 font-bold rounded-lg shadow-sm bg-[#7DB04B] hover:bg-[#5C8036] text-white min-h-[44px]"
               >
                 <Crown className="w-4 h-4" />
                 <span className="hidden sm:inline">Assinar</span>
