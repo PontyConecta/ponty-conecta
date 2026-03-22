@@ -39,11 +39,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-4 lg:mb-10">
             <div className="flex items-center gap-2 lg:gap-3 group">
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform" style={{ backgroundColor: '#9038fa' }}>
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform" style={{ backgroundColor: '#7DB04B' }}>
                 <span className="text-white font-bold text-xl lg:text-2xl">P</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold leading-tight" style={{ color: '#9038fa' }}>Ponty</span>
+                <span className="text-xl lg:text-2xl font-bold leading-tight" style={{ color: '#7DB04B' }}>Ponty</span>
                 <span className="text-xs lg:text-sm font-medium text-muted-foreground leading-tight">Conecta</span>
               </div>
             </div>
@@ -51,13 +51,13 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-8 lg:mb-16">
             <div className="flex flex-col gap-4 sm:gap-5 lg:gap-7">
-              <div className="hidden lg:inline-flex items-center gap-2 bg-[#9038fa]/10 text-[#9038fa] px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
+              <div className="hidden lg:inline-flex items-center gap-2 bg-[#7DB04B]/10 text-[#7DB04B] px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
                 <Zap className="w-4 h-4 animate-pulse" />
                 <span>Mediação Profissional de Última Geração</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight tracking-tight">
-                A <span style={{ color: '#9038fa' }}>Ponte Profissional</span> Entre Marcas e Criadores
+                A <span style={{ color: '#7DB04B' }}>Ponte Profissional</span> Entre Marcas e Criadores
               </h1>
 
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-md">
@@ -72,7 +72,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   size="lg" 
-                  className="bg-[#9038fa] text-white hover:bg-[#7a2de0] w-full sm:w-auto shadow-lg shadow-[#9038fa]/25 h-11 sm:h-12"
+                  className="bg-[#7DB04B] text-white hover:bg-[#5C8036] w-full sm:w-auto shadow-lg shadow-[#7DB04B]/25 h-11 sm:h-12"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                 >
                   Sou uma Marca
@@ -80,7 +80,7 @@ export default function Home() {
                 </Button>
                 <Button 
                   size="lg" 
-                  className="w-full sm:w-auto border-2 border-[#9038fa] text-[#9038fa] bg-background hover:bg-[#9038fa]/5 h-11 sm:h-12"
+                  className="w-full sm:w-auto border-2 border-[#7DB04B] text-[#7DB04B] bg-background hover:bg-[#7DB04B]/5 h-11 sm:h-12"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                 >
                   Sou Criador
@@ -90,7 +90,7 @@ export default function Home() {
             </div>
 
             <div className="relative hidden lg:flex min-h-[420px] items-center justify-center">
-              <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ backgroundColor: 'rgba(144, 56, 250, 0.05)' }}>
+              <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ backgroundColor: 'rgba(125, 176, 75, 0.05)' }}>
               </div>
 
               <div className="relative z-10 grid grid-cols-2 gap-3 p-6 w-full max-w-lg">
@@ -144,7 +144,7 @@ export default function Home() {
 
             <TabsContent value="brands" className="mt-8">
               <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(144, 56, 250, 0.06)' }}></div>
+                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(125, 176, 75, 0.06)' }}></div>
 
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
@@ -164,8 +164,8 @@ export default function Home() {
                          { icon: Shield, title: 'Gestão Simplificada', description: 'Acompanhe entregas em um só lugar' }
                         ].map((feature, idx) => (
                          <div key={idx} className="flex gap-3 bg-card/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-9 h-9 bg-[#9038fa]/10 rounded-lg flex items-center justify-center">
-                             <feature.icon className="w-4 h-4 text-[#9038fa]" />
+                            <div className="flex-shrink-0 w-9 h-9 bg-[#7DB04B]/10 rounded-lg flex items-center justify-center">
+                             <feature.icon className="w-4 h-4 text-[#7DB04B]" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-foreground">{feature.title}</h4>
@@ -177,7 +177,7 @@ export default function Home() {
 
                       <Button 
                         size="lg" 
-                        className="bg-[#9038fa] hover:bg-[#7a2de0] text-white w-full"
+                        className="bg-[#7DB04B] hover:bg-[#5C8036] text-white w-full"
                         onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                       >
                         Começar como Marca
@@ -190,7 +190,7 @@ export default function Home() {
 
             <TabsContent value="creators" className="mt-8">
               <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(183, 122, 255, 0.06)' }}></div>
+                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(181, 149, 106, 0.06)' }}></div>
 
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
@@ -210,8 +210,8 @@ export default function Home() {
                           { icon: TrendingUp, title: 'Reputação Verificada', description: 'Construa histórico profissional' }
                         ].map((feature, idx) => (
                           <div key={idx} className="flex gap-3 bg-card/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-9 h-9 bg-[#b77aff]/10 rounded-lg flex items-center justify-center">
-                              <feature.icon className="w-4 h-4 text-[#b77aff]" />
+                            <div className="flex-shrink-0 w-9 h-9 bg-[#B5956A]/10 rounded-lg flex items-center justify-center">
+                              <feature.icon className="w-4 h-4 text-[#B5956A]" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-foreground">{feature.title}</h4>
@@ -223,7 +223,7 @@ export default function Home() {
 
                       <Button 
                         size="lg" 
-                        className="bg-[#b77aff] hover:bg-[#a055ff] text-white w-full"
+                        className="bg-[#B5956A] hover:bg-[#9A7D57] text-white w-full"
                         onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                       >
                         Começar como Criador
@@ -271,7 +271,7 @@ export default function Home() {
             ].map((step, idx) => (
               <Card key={idx} className="bg-card hover:shadow-lg transition-all hover:-translate-y-1">
                 <CardContent className="p-4 sm:pt-6 lg:pt-8">
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black mb-2 sm:mb-4" style={{ color: '#9038fa' }}>
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black mb-2 sm:mb-4" style={{ color: '#7DB04B' }}>
                     {step.number}
                   </div>
                   <h3 className="text-sm sm:text-base lg:text-xl font-bold mb-1.5 sm:mb-3">{step.title}</h3>
@@ -283,7 +283,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#9038fa' }}>
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#7DB04B' }}>
         <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-4 tracking-tight">
             Pronto para começar?
@@ -294,7 +294,7 @@ export default function Home() {
 
           <Button 
             size="lg" 
-            className="bg-background text-[#9038fa] hover:bg-secondary"
+            className="bg-background text-[#7DB04B] hover:bg-secondary"
             onClick={scrollToSection}
           >
             Começar Agora

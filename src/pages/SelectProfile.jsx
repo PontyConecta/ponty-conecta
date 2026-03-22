@@ -86,7 +86,7 @@ export default function SelectProfile() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#9038fa]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#7DB04B]" />
       </div>
     );
   }
@@ -97,8 +97,8 @@ export default function SelectProfile() {
       icon: Building2,
       title: 'Sou uma Marca',
       subtitle: 'Quero contratar criadores',
-      bgColor: '#9038fa',
-      shadowColor: 'shadow-purple-500/25',
+      bgColor: '#7DB04B',
+      shadowColor: 'shadow-primary/25',
       features: [
         'Crie campanhas estruturadas',
         'Selecione criadores ideais',
@@ -111,8 +111,8 @@ export default function SelectProfile() {
       icon: Sparkles,
       title: 'Sou Criador',
       subtitle: 'Quero trabalhar com marcas',
-      bgColor: '#b77aff',
-      shadowColor: 'shadow-purple-500/25',
+      bgColor: '#B5956A',
+      shadowColor: 'shadow-primary/25',
       features: [
         'Acesse oportunidades filtradas',
         'Candidate-se a campanhas',
@@ -127,7 +127,7 @@ export default function SelectProfile() {
       {/* Header */}
       <div className="text-center mb-12">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20" style={{ backgroundColor: '#9038fa' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20" style={{ backgroundColor: '#7DB04B' }}>
             <span className="text-white font-bold text-xl">P</span>
           </div>
           <span className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Ponty</span>
@@ -204,9 +204,9 @@ export default function SelectProfile() {
       <div className="max-w-2xl mx-auto mt-12 text-center">
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           Ao continuar, você concorda com nossos{' '}
-          <a href="#" className="text-[#9038fa] hover:underline">Termos de Uso</a>
+          <a href="#" className="text-[#7DB04B] hover:underline">Termos de Uso</a>
           {' '}e{' '}
-          <a href="#" className="text-[#9038fa] hover:underline">Política de Privacidade</a>.
+          <a href="#" className="text-[#7DB04B] hover:underline">Política de Privacidade</a>.
         </p>
       </div>
     </div>

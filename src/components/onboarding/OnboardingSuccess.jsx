@@ -17,8 +17,8 @@ export default function OnboardingSuccess({ profileType, onContinue }) {
       animate={{ opacity: 1, scale: 1 }}
       className="text-center py-12 px-6"
     >
-      <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 bg-[#9038fa]/10">
-        <CheckCircle2 className="w-10 h-10 text-[#9038fa]" />
+      <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 bg-[#7DB04B]/10">
+        <CheckCircle2 className="w-10 h-10 text-[#7DB04B]" />
       </div>
 
       <h2 className="text-3xl font-bold mb-3 text-foreground">
@@ -33,7 +33,7 @@ export default function OnboardingSuccess({ profileType, onContinue }) {
       <div className="space-y-3 max-w-sm mx-auto">
         <Button
           onClick={onContinue}
-          className="w-full h-12 text-base gap-2 bg-[#9038fa] hover:bg-[#7a2de0]"
+          className="w-full h-12 text-base gap-2 bg-[#7DB04B] hover:bg-[#5C8036]"
         >
           <Sparkles className="w-5 h-5" />
           Ir para o Dashboard

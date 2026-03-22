@@ -44,7 +44,7 @@ export default function PaywallModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center pb-4">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-[#9038fa] to-[#b77aff] flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7DB04B] to-[#B5956A] flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
             <Lock className="w-8 h-8 text-white" />
           </div>
           <DialogTitle className="text-2xl">{title}</DialogTitle>
@@ -92,7 +92,7 @@ export default function PaywallModal({
         <div className="flex flex-col gap-3">
           <Button
             onClick={handleAction}
-            className="w-full h-12 text-base bg-[#9038fa] hover:bg-[#9038fa]/90"
+            className="w-full h-12 text-base bg-[#7DB04B] hover:bg-[#7DB04B]/90"
           >
             <Crown className="w-5 h-5 mr-2" />
             {isAuthenticated ? 'Assinar Agora' : 'Criar Conta e Assinar'}

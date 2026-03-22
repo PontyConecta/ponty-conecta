@@ -241,7 +241,7 @@ export default function OnboardingCreator() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#9038fa]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#7DB04B]" />
       </div>
     );
   }
@@ -262,7 +262,7 @@ export default function OnboardingCreator() {
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg bg-[#9038fa]">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg bg-[#7DB04B]">
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
@@ -285,10 +285,10 @@ export default function OnboardingCreator() {
                           <img src={formData.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
                         ) : (
                           <div className="w-24 h-24 rounded-full flex items-center justify-center border-4 border-card shadow-lg bg-primary/10">
-                            <User className="w-10 h-10 text-[#9038fa]/60" />
+                            <User className="w-10 h-10 text-[#7DB04B]/60" />
                           </div>
                         )}
-                        <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#9038fa] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#7a2de0] transition-colors shadow-lg">
+                        <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#7DB04B] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#5C8036] transition-colors shadow-lg">
                           <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                           <Upload className="w-4 h-4 text-white" />
                         </label>
@@ -302,7 +302,7 @@ export default function OnboardingCreator() {
                     <div>
                       <Label className="text-sm font-medium text-foreground">Bio * (mínimo 20 caracteres)</Label>
                       <Textarea value={formData.bio} onChange={(e) => handleChange('bio', e.target.value)} placeholder="Conte sobre você, seu estilo de conteúdo..." className="mt-2 min-h-[120px]" />
-                      <p className={`text-xs mt-1 font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-[#9038fa]'}`}>
+                      <p className={`text-xs mt-1 font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-[#7DB04B]'}`}>
                         {formData.bio.length}/20
                       </p>
                     </div>
@@ -334,7 +334,7 @@ export default function OnboardingCreator() {
                       <div className="flex flex-wrap gap-2">
                         {NICHES.map(niche => (
                           <Badge key={niche} variant={formData.niche.includes(niche) ? "default" : "outline"}
-                            className={`cursor-pointer transition-all ${formData.niche.includes(niche) ? 'bg-[#9038fa] hover:bg-[#7a2de0] text-white' : 'hover:bg-purple-50 hover:border-purple-300'}`}
+                            className={`cursor-pointer transition-all ${formData.niche.includes(niche) ? 'bg-[#7DB04B] hover:bg-[#5C8036] text-white' : 'hover:bg-green-50 hover:border-green-300'}`}
                             onClick={() => { if (formData.niche.length < 5 || formData.niche.includes(niche)) toggleArrayItem('niche', niche); }}>
                             {niche}
                           </Badge>
@@ -347,7 +347,7 @@ export default function OnboardingCreator() {
                       <div className="flex flex-wrap gap-2 mt-3">
                         {CONTENT_TYPES.map(type => (
                           <Badge key={type} variant={formData.content_types.includes(type) ? "default" : "outline"}
-                            className={`cursor-pointer transition-all ${formData.content_types.includes(type) ? 'bg-[#b77aff] hover:bg-[#a055ff] text-white' : 'hover:bg-purple-50 hover:border-purple-300'}`}
+                            className={`cursor-pointer transition-all ${formData.content_types.includes(type) ? 'bg-[#B5956A] hover:bg-[#9A7D57] text-white' : 'hover:bg-amber-50 hover:border-amber-300'}`}
                             onClick={() => toggleArrayItem('content_types', type)}>
                             {type}
                           </Badge>
@@ -475,7 +475,7 @@ export default function OnboardingCreator() {
                 <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
                   <ArrowLeft className="w-4 h-4" /> Voltar
                 </Button>
-                <Button onClick={handleNext} disabled={!isStepValid() || saving} className="bg-[#9038fa] hover:bg-[#7a2de0] gap-2 disabled:opacity-50">
+                <Button onClick={handleNext} disabled={!isStepValid() || saving} className="bg-[#7DB04B] hover:bg-[#5C8036] gap-2 disabled:opacity-50">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                     <>Próximo <ArrowRight className="w-4 h-4" /></>
                   )}
