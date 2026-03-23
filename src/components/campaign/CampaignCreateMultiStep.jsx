@@ -155,7 +155,7 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
       </Card>
 
       {/* Sticky action bar — sits above BottomNav (z-50) */}
-      <div className="fixed bottom-0 left-0 right-0 z-[60] lg:static lg:z-auto bg-card border-t lg:border lg:rounded-xl shadow-[0_-2px_12px_rgba(0,0,0,0.08)] lg:shadow-sm" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <div className="fixed bottom-0 left-0 right-0 z-[60] lg:static lg:z-auto bg-card border-t lg:border lg:rounded-xl shadow-[0_-2px_12px_rgba(0,0,0,0.08)] lg:shadow-sm" style={{ paddingBottom: 'calc(var(--bottom-nav-height, 72px) + env(safe-area-inset-bottom, 0px))' }}>
         <div className="flex items-center justify-between px-4 py-3 lg:px-6 lg:py-4 max-w-7xl mx-auto">
           {step > 1 ? (
             <Button variant="ghost" onClick={() => setStep(s => s - 1)} className="gap-2 min-h-[44px]">

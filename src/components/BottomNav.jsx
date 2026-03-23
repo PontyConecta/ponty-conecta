@@ -16,16 +16,16 @@ export default function BottomNav({ profileType, currentPageName, unreadCount = 
   const brandNavItems = [
     { name: 'Início', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
-    { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
+    { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
   const creatorNavItems = [
     { name: 'Início', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone },
-    { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
+    { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
