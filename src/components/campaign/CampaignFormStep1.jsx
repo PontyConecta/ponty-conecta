@@ -19,7 +19,7 @@ export default function CampaignFormStep1({ formData, onChange, onCoverUpload })
               </Button>
             </div>
           ) : (
-            <label className="flex items-center justify-center h-36 border-2 border-dashed rounded-xl cursor-pointer hover:border-indigo-400 transition-colors" style={{ borderColor: 'var(--border-color)' }}>
+            <label className="flex items-center justify-center h-36 border-2 border-dashed rounded-xl cursor-pointer hover:border-primary transition-colors" style={{ borderColor: 'var(--border-color)' }}>
               <input type="file" accept="image/*" className="hidden" onChange={onCoverUpload} />
               <div className="text-center">
                 <Upload className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--text-secondary)' }} />

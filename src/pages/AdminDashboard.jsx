@@ -171,7 +171,7 @@ export default function AdminDashboard() {
                   value={analytics.totalUsers || 0}
                   subtitle={`${analytics.totalBrands || 0} marcas · ${analytics.totalCreators || 0} criadores`}
                   icon={Users}
-                  iconColor="text-indigo-600"
+                  iconColor="text-primary"
                   tooltip="Número total de usuários cadastrados na plataforma."
                 />
                 <DashboardMetricCard

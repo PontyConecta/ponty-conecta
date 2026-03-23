@@ -101,14 +101,14 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
           const location = profile?.state || '';
 
           return (
-            <div key={user.id} className={`${rowPadding} transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-purple-50/50' : ''}`}>
+            <div key={user.id} className={`${rowPadding} transition-colors hover:bg-black/[0.02] ${isSelected ? 'bg-primary/5' : ''}`}>
               {/* Desktop Row */}
               <div className="hidden lg:grid lg:grid-cols-[36px_1fr_90px_80px_80px_70px_110px_80px_80px_50px] gap-2 px-4 items-center">
                 <div><Checkbox checked={isSelected} onCheckedChange={() => toggleOne(user.id)} /></div>
                 <div className="flex items-center gap-2 min-w-0">
                   <Avatar className={`${compact ? 'w-7 h-7' : 'w-8 h-8'} flex-shrink-0`}>
                     <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                    <AvatarFallback className={`text-[10px] ${type === 'brand' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}`}>
+                    <AvatarFallback className={`text-[10px] ${type === 'brand' ? 'bg-muted text-muted-foreground' : 'bg-orange-100 text-orange-700'}`}>
                       {type === 'brand' ? <Building2 className="w-3.5 h-3.5" /> : <Star className="w-3.5 h-3.5" />}
                     </AvatarFallback>
                   </Avatar>

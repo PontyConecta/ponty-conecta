@@ -95,7 +95,7 @@ export default function UserRowActions({ user, profile, onView, onActionComplete
         )}
         <DropdownMenuSeparator />
         {feedbackStatus === 'none' || feedbackStatus === 'eligible' ? (
-          <DropdownMenuItem onClick={handleFeedbackInvite} className="text-xs gap-2 text-purple-600">
+          <DropdownMenuItem onClick={handleFeedbackInvite} className="text-xs gap-2 text-primary">
             <MessageSquarePlus className="w-3.5 h-3.5" />
             Convidar p/ Feedback
           </DropdownMenuItem>

@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 const STATUS_CONFIG = {
   none: { label: 'Não participante', cls: 'bg-muted text-muted-foreground' },
   eligible: { label: 'Elegível', cls: 'bg-blue-100 text-blue-700' },
-  invited: { label: 'Convidado', cls: 'bg-purple-100 text-purple-700' },
+  invited: { label: 'Convidado', cls: 'bg-primary/10 text-primary' },
   submitted: { label: 'Enviou feedback', cls: 'bg-emerald-100 text-emerald-700' },
 };
 

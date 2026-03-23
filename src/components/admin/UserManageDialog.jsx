@@ -128,7 +128,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                 <span className="truncate">{user.email}</span>
               </div>
               <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                <Badge className={profileType === 'brand' ? 'bg-indigo-100 text-indigo-700 border-0' : 'bg-orange-100 text-orange-700 border-0'}>
+                <Badge className={profileType === 'brand' ? 'bg-muted text-muted-foreground border-0' : 'bg-orange-100 text-orange-700 border-0'}>
                   {profileType === 'brand' ? <><Building2 className="w-3 h-3 mr-1" /> Marca</> : <><Star className="w-3 h-3 mr-1" /> Criador</>}
                 </Badge>
                 {user.role === 'admin' && (

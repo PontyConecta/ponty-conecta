@@ -107,7 +107,7 @@ export default function NotificationDropdown({ triggerClassName }) {
             notificationsList.push({
               id: key, type: 'opportunity', title: 'Nova Oportunidade',
               message: 'Uma marca lançou uma nova campanha', icon: Megaphone,
-              color: 'text-purple-600', timestamp: opp.created_date, read: !!readMap[key],
+              color: 'text-primary', timestamp: opp.created_date, read: !!readMap[key],
               actionUrl: createPageUrl('OpportunityFeed'), relatedEntityId: opp.id
             });
           }

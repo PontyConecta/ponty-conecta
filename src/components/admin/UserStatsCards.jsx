@@ -40,7 +40,7 @@ export default function UserStatsCards({ brands, creators, onStatClick }) {
   const stats = [
     { 
       label: 'Marcas', value: brands.length, icon: Building2, 
-      iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600',
+      iconBg: 'bg-primary/10', iconColor: 'text-primary',
       sub: recentBrands > 0 ? `+${recentBrands} esta semana` : null,
       filter: { role: 'brand', status: 'all' }
     },

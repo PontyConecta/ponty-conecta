@@ -156,7 +156,7 @@ export default function MyDeliveries() {
       approved: { label: 'Aprovada', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle2 },
       contested: { label: 'Contestada', color: 'bg-red-100 text-red-700', icon: AlertTriangle },
       in_dispute: { label: 'Em Disputa', color: 'bg-orange-100 text-orange-700', icon: AlertTriangle },
-      resolved: { label: 'Resolvida', color: 'bg-violet-100 text-violet-700', icon: CheckCircle2 },
+      resolved: { label: 'Resolvida', color: 'bg-slate-100 text-slate-600', icon: CheckCircle2 },
       closed: { label: 'Encerrada', color: 'bg-slate-100 text-slate-700', icon: CheckCircle2 }
     };
     return configs[status] || configs.pending;

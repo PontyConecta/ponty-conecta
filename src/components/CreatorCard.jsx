@@ -35,8 +35,8 @@ export default function CreatorCard({
   const profileSizeColors = {
     nano: 'bg-slate-100 text-slate-700',
     micro: 'bg-blue-100 text-blue-700',
-    mid: 'bg-violet-100 text-violet-700',
-    macro: 'bg-purple-100 text-purple-700',
+    mid: 'bg-sky-100 text-sky-700',
+    macro: 'bg-blue-100 text-blue-700',
     mega: 'bg-rose-100 text-rose-700'
   };
 

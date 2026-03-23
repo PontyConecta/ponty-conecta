@@ -6,7 +6,7 @@ import { Trophy, AlertTriangle, FolderOpen, Megaphone, FolderCheck, Target, Thum
 import DashboardMetricCard from './DashboardMetricCard';
 
 
-const COLORS = ['#818cf8', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6', '#ef4444'];
+const COLORS = ['#B5956A', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#3b82f6', '#ef4444'];
 
 export default function DashboardMarketplace({ analytics }) {
   if (!analytics) return null;
@@ -27,7 +27,7 @@ export default function DashboardMarketplace({ analytics }) {
             label="Total de Campanhas"
             value={analytics.marketplace?.total_campaigns ?? 0}
             icon={FolderOpen}
-            iconColor="text-indigo-500"
+            iconColor="text-primary"
             tooltip="Total de campanhas criadas na plataforma."
             secondaryLabel={`${analytics.marketplace?.active_campaigns ?? 0} ativas agora`}
           />
@@ -66,7 +66,7 @@ export default function DashboardMarketplace({ analytics }) {
             label="Aplicações por Campanha"
             value={analytics.marketplace?.avg_apps_per_campaign != null ? Number(analytics.marketplace.avg_apps_per_campaign).toFixed(1) : '—'}
             icon={Target}
-            iconColor="text-indigo-500"
+            iconColor="text-primary"
             tooltip="Número médio de candidaturas por campanha ativa."
             secondaryLabel="média de candidaturas por campanha ativa"
           />
@@ -120,7 +120,7 @@ export default function DashboardMarketplace({ analytics }) {
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               <DisputeStat label="Abertas" value={disputes.open || 0} color="text-amber-600" />
               <DisputeStat label="Em Análise" value={disputes.under_review || 0} color="text-blue-600" />
-              <DisputeStat label="Favor Marca" value={disputes.resolved_brand || 0} color="text-indigo-600" />
+              <DisputeStat label="Favor Marca" value={disputes.resolved_brand || 0} color="text-primary" />
               <DisputeStat label="Favor Criador" value={disputes.resolved_creator || 0} color="text-orange-600" />
               <DisputeStat label="Total" value={disputes.total || 0} color="text-slate-600" />
             </div>
@@ -177,7 +177,7 @@ export default function DashboardMarketplace({ analytics }) {
           <Card className="bg-card border shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Trophy className="w-4 h-4 text-indigo-500" />
+                <Trophy className="w-4 h-4 text-primary" />
                 <h3 className="text-sm font-semibold text-foreground">Top Marcas (por campanhas)</h3>
               </div>
               <div className="space-y-2">

@@ -270,7 +270,7 @@ export default function CampaignManager() {
                                     Fechar Inscrições
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
-                                    <CheckCircle2 className="w-4 h-4 mr-2 text-violet-600" />
+                                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
                                     Marcar como Concluída
                                   </DropdownMenuItem>
                                 </>
@@ -288,7 +288,7 @@ export default function CampaignManager() {
                                     Reabrir Inscrições
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
-                                    <CheckCircle2 className="w-4 h-4 mr-2 text-violet-600" />
+                                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
                                     Marcar como Concluída
                                   </DropdownMenuItem>
                                 </>
@@ -325,7 +325,7 @@ export default function CampaignManager() {
                             {campaign.remuneration_type === 'mixed' && 'Misto'}
                           </span>
                           {campaign.total_applications > 0 && (
-                            <span className="flex items-center gap-1 text-indigo-600">
+                            <span className="flex items-center gap-1 text-primary">
                               <Target className="w-4 h-4" />
                               {campaign.total_applications} candidaturas
                             </span>

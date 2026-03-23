@@ -9,8 +9,8 @@ export default function CreatorCardHeader({ creator, compact = false }) {
       <div className="flex items-center gap-3">
         <Avatar className="w-12 h-12">
           <AvatarImage src={creator.avatar_url} alt={creator.display_name} />
-          <AvatarFallback className="bg-indigo-100">
-            <User className="w-6 h-6 text-indigo-600" />
+          <AvatarFallback className="bg-muted">
+            <User className="w-6 h-6 text-muted-foreground" />
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
@@ -32,8 +32,8 @@ export default function CreatorCardHeader({ creator, compact = false }) {
     <div className="flex items-start gap-4">
       <Avatar className="w-16 h-16">
         <AvatarImage src={creator.avatar_url} alt={creator.display_name} />
-        <AvatarFallback className="bg-indigo-100">
-          <User className="w-8 h-8 text-indigo-600" />
+        <AvatarFallback className="bg-muted">
+          <User className="w-8 h-8 text-muted-foreground" />
         </AvatarFallback>
       </Avatar>
       <div className="flex-1">

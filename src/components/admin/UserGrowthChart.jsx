@@ -46,8 +46,8 @@ export default function UserGrowthChart({ brands, creators }) {
               <AreaChart data={growthData}>
                 <defs>
                   <linearGradient id="colorBrands" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#818cf8" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#818cf8" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#B5956A" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#B5956A" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorCreators" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#fb923c" stopOpacity={0.3} />
@@ -60,7 +60,7 @@ export default function UserGrowthChart({ brands, creators }) {
                 <Tooltip 
                   contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '12px' }}
                 />
-                <Area type="monotone" dataKey="marcas" stroke="#818cf8" fill="url(#colorBrands)" strokeWidth={2} />
+                <Area type="monotone" dataKey="marcas" stroke="#B5956A" fill="url(#colorBrands)" strokeWidth={2} />
                 <Area type="monotone" dataKey="criadores" stroke="#fb923c" fill="url(#colorCreators)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>

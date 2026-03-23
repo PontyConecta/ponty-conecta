@@ -63,7 +63,7 @@ export default function MissionTracker({ missions = [] }) {
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                   isCompleted 
                     ? 'bg-emerald-100' 
-                    : 'bg-purple-100'
+                    : 'bg-primary/10'
                 }`}>
                   {isCompleted ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-600" />

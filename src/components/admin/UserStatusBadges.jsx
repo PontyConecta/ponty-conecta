@@ -16,7 +16,7 @@ const BADGE_CONFIG = {
   inactive:     { label: 'Inativo',       icon: Moon,     cls: 'bg-orange-100 text-orange-700', tip: 'Inativo: sem acesso há mais de 30 dias' },
   new_user:     { label: 'Novo',          icon: Sparkles, cls: 'bg-emerald-100 text-emerald-700', tip: 'Novo: conta criada nos últimos 7 dias' },
   premium:      { label: 'Premium',       icon: Crown,    cls: 'bg-amber-100 text-amber-700', tip: 'Premium: assinatura ativa' },
-  feedback_beta:{ label: 'Pesquisa',      icon: MessageSquarePlus, cls: 'bg-purple-100 text-purple-700', tip: 'Pesquisa de experiência: participando da pesquisa' },
+  feedback_beta:{ label: 'Pesquisa',      icon: MessageSquarePlus, cls: 'bg-primary/10 text-primary', tip: 'Pesquisa de experiência: participando da pesquisa' },
 };
 
 // Priority order for badge display

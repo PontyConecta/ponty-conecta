@@ -18,7 +18,7 @@ import { motion } from 'framer-motion';
 
 const REMUNERATION_CONFIG = {
   barter: { icon: Gift, label: 'Permuta', color: 'text-pink-600 bg-pink-50' },
-  mixed: { icon: Package, label: 'Misto', color: 'text-violet-600 bg-violet-50' },
+  mixed: { icon: Package, label: 'Misto', color: 'text-amber-600 bg-amber-50' },
 };
 
 function getRemunerationLabel(type, campaign) {

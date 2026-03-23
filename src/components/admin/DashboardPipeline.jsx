@@ -6,7 +6,7 @@ const PIPELINE_CONFIG = {
   draft: { label: 'Rascunho', color: '#94a3b8' },
   under_review: { label: 'Em Revisão', color: '#f59e0b' },
   active: { label: 'Ativas', color: '#10b981' },
-  applications_closed: { label: 'Inscr. Fechadas', color: '#6366f1' },
+  applications_closed: { label: 'Inscr. Fechadas', color: '#94a3b8' },
   completed: { label: 'Concluídas', color: '#3b82f6' },
   paused: { label: 'Pausadas', color: '#fb923c' },
   cancelled: { label: 'Canceladas', color: '#ef4444' },

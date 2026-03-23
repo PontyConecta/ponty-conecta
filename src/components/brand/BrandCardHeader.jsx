@@ -9,8 +9,8 @@ export default function BrandCardHeader({ brand, compact = false }) {
       <div className="flex items-center gap-3">
         <Avatar className="w-12 h-12">
           <AvatarImage src={brand.logo_url} alt={brand.company_name} />
-          <AvatarFallback className="bg-indigo-100">
-            <Building2 className="w-6 h-6 text-indigo-600" />
+          <AvatarFallback className="bg-muted">
+            <Building2 className="w-6 h-6 text-muted-foreground" />
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
@@ -32,8 +32,8 @@ export default function BrandCardHeader({ brand, compact = false }) {
     <div className="flex items-start gap-4">
       <Avatar className="w-16 h-16">
         <AvatarImage src={brand.logo_url} alt={brand.company_name} />
-        <AvatarFallback className="bg-indigo-100">
-          <Building2 className="w-8 h-8 text-indigo-600" />
+        <AvatarFallback className="bg-muted">
+          <Building2 className="w-8 h-8 text-muted-foreground" />
         </AvatarFallback>
       </Avatar>
       <div className="flex-1">

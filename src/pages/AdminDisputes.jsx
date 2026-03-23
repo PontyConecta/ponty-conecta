@@ -249,8 +249,8 @@ export default function AdminDisputes() {
                           {brand?.logo_url ? (
                             <img src={brand.logo_url} alt="" className="w-10 h-10 rounded-lg object-cover" />
                           ) : (
-                            <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                              <Building2 className="w-5 h-5 text-indigo-600" />
+                            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                              <Building2 className="w-5 h-5 text-muted-foreground" />
                             </div>
                           )}
                           <span className="font-medium" className="text-foreground">{brand?.company_name || 'Marca'}</span>
@@ -352,18 +352,18 @@ export default function AdminDisputes() {
             <div className="space-y-6 py-4">
               {/* Parties */}
               <div className="grid grid-cols-2 gap-4">
-                <Card className="bg-indigo-500/10 border-indigo-500/20">
+                <Card className="bg-muted/50 border-border">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       {brands[selectedDispute.brand_id]?.logo_url ? (
                         <img src={brands[selectedDispute.brand_id].logo_url} alt="" className="w-12 h-12 rounded-lg object-cover" />
                       ) : (
-                        <div className="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center">
-                          <Building2 className="w-6 h-6 text-indigo-600" />
+                        <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                          <Building2 className="w-6 h-6 text-muted-foreground" />
                         </div>
                       )}
                       <div>
-                        <p className="text-xs text-indigo-600 font-medium">MARCA</p>
+                        <p className="text-xs text-primary font-medium">MARCA</p>
                         <p className="font-semibold text-foreground">
                           {brands[selectedDispute.brand_id]?.company_name}
                         </p>
@@ -487,7 +487,7 @@ export default function AdminDisputes() {
                             href={url} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-sm text-indigo-600 hover:underline"
+                            className="flex items-center gap-1 text-sm text-primary hover:underline"
                           >
                             <ExternalLink className="w-3 h-3" />
                             {url}

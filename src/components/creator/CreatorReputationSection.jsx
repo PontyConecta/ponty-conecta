@@ -95,14 +95,14 @@ export default function CreatorReputationSection({ reputation, delCounts = {}, t
           >
             <div className="rounded-xl p-4 border bg-muted/30">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-violet-600" />
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-primary" />
                 </div>
                 <span className="text-sm font-medium">Taxa no Prazo</span>
               </div>
 
               <div className="mb-4">
-                <div className="text-3xl font-bold text-violet-600 mb-2">{onTimeRate}%</div>
+                <div className="text-3xl font-bold text-primary mb-2">{onTimeRate}%</div>
                 <Progress value={onTimeRate} className="h-2" />
               </div>
 
@@ -116,7 +116,7 @@ export default function CreatorReputationSection({ reputation, delCounts = {}, t
                 <p className="text-xs mb-2 font-medium text-muted-foreground">Badges</p>
                 <div className="flex flex-wrap gap-2">
                   {reputation.badges.slice(0, 3).map((badge, i) => (
-                    <Badge key={i} variant="outline" className="bg-violet-50 border-violet-200 text-violet-700 text-xs">
+                    <Badge key={i} variant="outline" className="bg-primary/5 border-primary/20 text-primary text-xs">
                       {badge}
                     </Badge>
                   ))}

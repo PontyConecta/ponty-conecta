@@ -48,8 +48,8 @@ function SubscriptionCard({ plan, planKey, isSelected, onSelect }) {
     <Card
       className={`cursor-pointer transition-all ${
         isSelected
-          ? 'border-indigo-600 shadow-lg ring-2 ring-indigo-600'
-          : 'border-slate-200 hover:border-indigo-300'
+          ? 'border-primary shadow-lg ring-2 ring-primary'
+          : 'border-slate-200 hover:border-primary/50'
       }`}
       onClick={onSelect}
     >
@@ -64,7 +64,7 @@ function SubscriptionCard({ plan, planKey, isSelected, onSelect }) {
             )}
           </div>
           {isSelected && (
-            <Check className="w-6 h-6 text-indigo-600" />
+            <Check className="w-6 h-6 text-primary" />
           )}
         </div>
       </CardHeader>
@@ -199,7 +199,7 @@ export default function SubscriptionPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -265,7 +265,7 @@ export default function SubscriptionPage() {
             className={`
               w-full px-12 h-14 text-lg
               ${isBrand 
-                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700' 
+                ? 'bg-primary hover:bg-primary/90' 
                 : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600'}
               shadow-xl
             `}

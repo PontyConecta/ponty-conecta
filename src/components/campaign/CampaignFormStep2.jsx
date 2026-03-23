@@ -16,7 +16,7 @@ export default function CampaignFormStep2({ formData, onChange, toggleArrayItem 
         <div className="flex flex-wrap gap-2 mt-2">
           {PLATFORMS.map(p => (
             <Badge key={p} variant={formData.platforms.includes(p) ? "default" : "outline"}
-              className={`cursor-pointer transition-all ${formData.platforms.includes(p) ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : ''}`}
+              className={`cursor-pointer transition-all ${formData.platforms.includes(p) ? 'bg-primary hover:bg-primary/90 text-white' : ''}`}
               onClick={() => toggleArrayItem('platforms', p)}>
               {p}
             </Badge>
@@ -29,7 +29,7 @@ export default function CampaignFormStep2({ formData, onChange, toggleArrayItem 
         <div className="flex flex-wrap gap-2 mt-2">
           {CONTENT_TYPES.map(ct => (
             <Badge key={ct} variant={formData.content_type.includes(ct) ? "default" : "outline"}
-              className={`cursor-pointer transition-all ${formData.content_type.includes(ct) ? 'bg-violet-600 hover:bg-violet-700 text-white' : ''}`}
+              className={`cursor-pointer transition-all ${formData.content_type.includes(ct) ? 'bg-accent hover:bg-accent/90 text-white' : ''}`}
               onClick={() => toggleArrayItem('content_type', ct)}>
               {ct}
             </Badge>

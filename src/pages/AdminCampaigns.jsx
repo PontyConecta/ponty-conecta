@@ -93,7 +93,7 @@ export default function AdminCampaigns() {
       active: { label: 'Ativa', className: 'bg-emerald-100 text-emerald-700' },
       paused: { label: 'Pausada', className: 'bg-orange-100 text-orange-700' },
       applications_closed: { label: 'Fechada', className: 'bg-blue-100 text-blue-700' },
-      completed: { label: 'Concluída', className: 'bg-indigo-100 text-indigo-700' },
+      completed: { label: 'Concluída', className: 'bg-emerald-100 text-emerald-700' },
       cancelled: { label: 'Cancelada', className: 'bg-red-100 text-red-700' }
     };
     
@@ -114,7 +114,7 @@ export default function AdminCampaigns() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }

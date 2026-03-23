@@ -121,7 +121,7 @@ export default function OpportunityDetailDialog({
             </Badge>
           ))}
           {campaign.mentions?.filter(m => m).map((mention, i) => (
-            <Badge key={i} className="bg-violet-100 text-violet-700 border-0">
+            <Badge key={i} className="bg-amber-100 text-amber-700 border-0">
               <AtSign className="w-3 h-3 mr-1" />{mention}
             </Badge>
           ))}
@@ -155,7 +155,7 @@ export default function OpportunityDetailDialog({
         )}
         {campaign.remuneration_type === 'mixed' && (
           <div>
-            <Badge className="bg-violet-100 text-violet-700 border-0 mb-2">Misto</Badge>
+            <Badge className="bg-amber-100 text-amber-700 border-0 mb-2">Misto</Badge>
             <p className="text-muted-foreground">
               R$ {campaign.budget_min || 0} - {campaign.budget_max || 0} + Permuta
             </p>
