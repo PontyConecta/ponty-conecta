@@ -74,6 +74,8 @@ import SelectProfile from './pages/SelectProfile';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import SubscriptionPage from './pages/SubscriptionPage';
+import Inbox from './pages/Inbox';
+import InboxThread from './pages/InboxThread';
 import __Layout from './Layout.jsx';
 
 
@@ -105,6 +107,8 @@ export const PAGES = {
     "Settings": Settings,
     "Subscription": Subscription,
     "SubscriptionPage": SubscriptionPage,
+    "Inbox": Inbox,
+    "InboxThread": InboxThread,
 }
 
 export const pagesConfig = {
