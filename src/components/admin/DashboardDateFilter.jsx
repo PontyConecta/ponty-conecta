@@ -42,7 +42,7 @@ export default function DashboardDateFilter({ value, onChange }) {
             className={`h-8 px-3 gap-1.5 text-xs font-medium rounded-md transition-all ${
               active ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
             }`}
-            style={active ? { backgroundColor: 'var(--bg-secondary)', color: '#9038fa' } : { color: 'var(--text-secondary)' }}
+            style={active ? { backgroundColor: 'var(--bg-secondary)', color: '#7DB04B' } : { color: 'var(--text-secondary)' }}
           >
             <r.icon className="w-3.5 h-3.5" />
             {r.label}
@@ -59,7 +59,7 @@ export default function DashboardDateFilter({ value, onChange }) {
             className={`h-8 px-3 gap-1.5 text-xs font-medium rounded-md transition-all ${
               isCustom ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
             }`}
-            style={isCustom ? { backgroundColor: 'var(--bg-secondary)', color: '#9038fa' } : { color: 'var(--text-secondary)' }}
+            style={isCustom ? { backgroundColor: 'var(--bg-secondary)', color: '#7DB04B' } : { color: 'var(--text-secondary)' }}
           >
             <Settings2 className="w-3.5 h-3.5" />
             {customLabel}
@@ -95,7 +95,7 @@ export default function DashboardDateFilter({ value, onChange }) {
               onClick={handleApplyCustom}
               disabled={!customFrom || !customTo}
               size="sm"
-              className="w-full h-8 text-xs bg-[#9038fa] hover:bg-[#7a2de0] text-white"
+              className="w-full h-8 text-xs bg-[#7DB04B] hover:bg-[#5C8036] text-white"
             >
               Aplicar
             </Button>

@@ -15,7 +15,7 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
-        <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
+        <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#7DB04B] to-[#B5956A]">
           <SafeImage src={creator.cover_image_url} className="w-full h-full object-cover" />
         </div>
         <Avatar className="w-24 h-24 absolute -bottom-12 left-6 border-4 border-background shadow-lg">

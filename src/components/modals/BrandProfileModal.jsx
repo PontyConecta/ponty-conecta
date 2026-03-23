@@ -16,7 +16,7 @@ export default function BrandProfileModal({ brand, isSubscribed, onPaywall }) {
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
-        <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#9038fa] to-[#b77aff]">
+        <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-[#7DB04B] to-[#B5956A]">
           {brand.cover_image_url && <img src={brand.cover_image_url} alt="" className="w-full h-full object-cover" />}
         </div>
         <div className="absolute -bottom-12 left-6">

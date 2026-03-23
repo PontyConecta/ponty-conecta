@@ -68,7 +68,7 @@ export default function MissionTracker({ missions = [] }) {
                   {isCompleted ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                   ) : isActive ? (
-                    <Unlock className="w-5 h-5 text-[#9038fa]" />
+                    <Unlock className="w-5 h-5 text-[#7DB04B]" />
                   ) : (
                     <Lock className="w-5 h-5 text-slate-400" />
                   )}

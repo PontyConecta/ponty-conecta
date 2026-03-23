@@ -79,10 +79,10 @@ ring-ring           — focus ring
 - `style={{ color: 'var(--text-primary)' }}` or any inline `style` for theming
 - `var(--bg-primary)`, `var(--bg-secondary)` — use shadcn classes instead
 - `!important` on theme tokens
-- Hardcoded hex colors for text/backgrounds (except brand `#9038fa` for special elements like logo)
+- Hardcoded hex colors for text/backgrounds (except brand `#7DB04B` for special elements like logo)
 
 ### ✅ Exceptions (Allowed)
-- `bg-[#9038fa]` for brand-specific elements (CTA banners, logo, premium badge)
+- `bg-[#7DB04B]` for brand-specific elements (CTA banners, logo, premium badge)
 - `text-emerald-*`, `text-red-*` for semantic status colors (green=success, red=error)
 - `bg-emerald-50`, `bg-red-50` for status tint backgrounds (these are semantic, not theme)
 
@@ -122,7 +122,7 @@ Already themed via CSS variables. Just use:
 
 ### Buttons
 - **Primary**: `<Button>` — uses `bg-primary text-primary-foreground`
-- **Brand CTA**: `<Button className="bg-[#9038fa] hover:bg-[#9038fa]/90">` — for special CTAs
+- **Brand CTA**: `<Button className="bg-[#7DB04B] hover:bg-[#7DB04B]/90">` — for special CTAs
 - **Secondary**: `<Button variant="secondary">`
 - **Outline**: `<Button variant="outline">`
 - **Ghost**: `<Button variant="ghost">`

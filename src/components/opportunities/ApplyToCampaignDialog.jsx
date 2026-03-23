@@ -64,7 +64,7 @@ export default function ApplyToCampaignDialog({
         <Button
           onClick={onSubmit}
           disabled={applying || !applicationMessage}
-          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm min-h-[44px]"
+          className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm min-h-[44px]"
         >
           {applying ? (
             <Loader2 className="w-4 h-4 animate-spin" />

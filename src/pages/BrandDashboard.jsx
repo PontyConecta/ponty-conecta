@@ -92,14 +92,14 @@ export default function BrandDashboard() {
       value: activeCampaignsCount,
       total: totalCampaigns,
       icon: Megaphone,
-      color: 'bg-[#9038fa]'
+      color: 'bg-[#7DB04B]'
     },
     { 
       label: 'Candidaturas Pendentes', 
       value: pendingAppsCount,
       total: totalApps,
       icon: Users,
-      color: 'bg-[#b77aff]'
+      color: 'bg-[#B5956A]'
     },
     { 
       label: 'Entregas Aguardando', 
@@ -113,7 +113,7 @@ export default function BrandDashboard() {
       value: approvedDelCount,
       total: totalDeliveries,
       icon: TrendingUp,
-      color: 'bg-[#7a2de0]'
+      color: 'bg-[#5C8036]'
     }
   ];
 
@@ -140,7 +140,7 @@ export default function BrandDashboard() {
             </p>
           </div>
           <Link to={createPageUrl(isSubscribed ? 'CampaignManager' : 'Subscription')}>
-            <Button className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm">
+            <Button className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm">
               {isSubscribed ? <><Plus className="w-4 h-4 mr-2" />Nova Campanha</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
             </Button>
           </Link>

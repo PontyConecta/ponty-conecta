@@ -170,7 +170,7 @@ export default function OpportunityDetailDialog({
           Fechar
         </Button>
         {!applied && (
-          <Button onClick={onStartApplication} className="flex-1 bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm min-h-[44px]">
+          <Button onClick={onStartApplication} className="flex-1 bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm min-h-[44px]">
             <Send className="w-4 h-4 mr-2" />
             Candidatar-se
           </Button>

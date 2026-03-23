@@ -397,7 +397,7 @@ export default function MyDeliveries() {
                         className="hidden"
                         onChange={handleFileUpload}
                       />
-                      <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg hover:border-[#9038fa] transition-colors">
+                      <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg hover:border-[#7DB04B] transition-colors">
                         <Upload className="w-5 h-5" />
                         <span className="text-sm">Clique para fazer upload</span>
                       </div>

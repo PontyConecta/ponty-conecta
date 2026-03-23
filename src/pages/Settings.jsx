@@ -115,7 +115,7 @@ export default function Settings() {
             </Button>
           ) : (
             <Button 
-              className="w-full bg-[#9038fa] hover:bg-[#9038fa]/90"
+              className="w-full bg-[#7DB04B] hover:bg-[#7DB04B]/90"
               onClick={() => navigate(createPageUrl('Subscription'))}
             >
               <Crown className="w-4 h-4 mr-2" />

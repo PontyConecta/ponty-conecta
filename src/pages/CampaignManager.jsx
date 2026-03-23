@@ -154,7 +154,7 @@ export default function CampaignManager() {
         </div>
         
         <Button 
-          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm min-h-[44px]"
+          className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm min-h-[44px]"
           onClick={() => { 
             if (!profileValidation.isComplete) {
               toast.error('Complete seu perfil antes de criar campanhas');
@@ -366,7 +366,7 @@ export default function CampaignManager() {
                   setIsCreateOpen(true);
                 }
               }} 
-              className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm"
+              className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Campanha

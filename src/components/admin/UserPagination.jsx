@@ -39,7 +39,7 @@ export default function UserPagination({ currentPage, totalPages, totalItems, pa
               key={pageNum}
               variant={pageNum === currentPage ? 'default' : 'outline'}
               size="icon"
-              className={`h-8 w-8 text-xs ${pageNum === currentPage ? 'bg-[#9038fa] hover:bg-[#7a2de0] text-white' : ''}`}
+              className={`h-8 w-8 text-xs ${pageNum === currentPage ? 'bg-[#7DB04B] hover:bg-[#5C8036] text-white' : ''}`}
               onClick={() => onPageChange(pageNum)}
             >
               {pageNum}

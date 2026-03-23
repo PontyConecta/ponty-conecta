@@ -134,10 +134,10 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-3 p-3 rounded-xl border flex-wrap" style={{ backgroundColor: 'rgba(144, 56, 250, 0.05)', borderColor: 'rgba(144, 56, 250, 0.2)' }}>
+      <div className="flex items-center gap-3 p-3 rounded-xl border flex-wrap" style={{ backgroundColor: 'rgba(125, 176, 75, 0.05)', borderColor: 'rgba(125, 176, 75, 0.2)' }}>
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4" style={{ color: '#9038fa' }} />
-          <Badge className="bg-[#9038fa] text-white border-0">
+          <Users className="w-4 h-4" style={{ color: '#7DB04B' }} />
+          <Badge className="bg-[#7DB04B] text-white border-0">
             {selectedIds.length} selecionado(s)
           </Badge>
           <span className="text-[10px] text-muted-foreground">({scopeLabel})</span>
@@ -180,7 +180,7 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
         <Button 
           onClick={handleExecute} 
           disabled={loading || !action || ((needsTag || needsTrialDays) && !bulkTag.trim())}
-          className="bg-[#9038fa] hover:bg-[#7a2de0] text-white"
+          className="bg-[#7DB04B] hover:bg-[#5C8036] text-white"
           size="sm"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
@@ -198,7 +198,7 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
               <div 
-                className="h-full rounded-full bg-[#9038fa] transition-all duration-300"
+                className="h-full rounded-full bg-[#7DB04B] transition-all duration-300"
                 style={{ width: `${Math.round((progress.done / progress.total) * 100)}%` }}
               />
             </div>

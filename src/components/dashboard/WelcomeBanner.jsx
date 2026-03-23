@@ -37,7 +37,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
               <div className="flex flex-wrap gap-3">
                 {isSubscribed ? (
                   <Link to={createPageUrl(isBrand ? 'CampaignManager' : 'OpportunityFeed')}>
-                    <Button className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm">
+                    <Button className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm">
                       <Sparkles className="w-4 h-4 mr-2" />
                       {isBrand ? 'Criar Campanha' : 'Ver Campanhas'}
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -45,7 +45,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
                   </Link>
                 ) : (
                   <Link to={createPageUrl('Subscription')}>
-                    <Button className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm">
+                    <Button className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm">
                       <Sparkles className="w-4 h-4 mr-2" />
                       Desbloquear Acesso Completo
                       <ArrowRight className="w-4 h-4 ml-2" />

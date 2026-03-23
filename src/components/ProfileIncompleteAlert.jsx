@@ -18,10 +18,10 @@ export default function ProfileIncompleteAlert({ missingFields, profileType, pro
       : 'se candidatar a oportunidades e aparecer no expositor de criadores';
 
     return (
-      <div className="rounded-xl border border-[#9038fa]/20 bg-[#9038fa]/[0.04] p-4 lg:p-5">
+      <div className="rounded-xl border border-[#7DB04B]/20 bg-[#7DB04B]/[0.04] p-4 lg:p-5">
         <div className="flex items-start gap-3.5">
-          <div className="w-10 h-10 rounded-lg bg-[#9038fa]/10 flex items-center justify-center flex-shrink-0">
-            <UserCircle className="w-5 h-5 text-[#9038fa]" />
+          <div className="w-10 h-10 rounded-lg bg-[#7DB04B]/10 flex items-center justify-center flex-shrink-0">
+          <UserCircle className="w-5 h-5 text-[#7DB04B]" />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm lg:text-base text-foreground leading-tight">
@@ -30,13 +30,13 @@ export default function ProfileIncompleteAlert({ missingFields, profileType, pro
             <p className="text-sm mt-1 text-muted-foreground">
               Preencha as informações básicas antes de {actionLabel}.
             </p>
-            <div className="mt-3 p-2.5 rounded-lg bg-[#9038fa]/[0.06] border border-[#9038fa]/10">
+            <div className="mt-3 p-2.5 rounded-lg bg-[#7DB04B]/[0.06] border border-[#7DB04B]/10">
               <p className="text-xs font-medium text-muted-foreground">
                 📋 {message}
               </p>
             </div>
             <Link to={createPageUrl('Profile')} className="inline-block mt-3">
-              <Button size="sm" className="bg-[#9038fa] hover:bg-[#7a2de0] text-white shadow-sm h-9 px-4 text-xs font-semibold">
+              <Button size="sm" className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm h-9 px-4 text-xs font-semibold">
                 Completar Perfil
                 <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>

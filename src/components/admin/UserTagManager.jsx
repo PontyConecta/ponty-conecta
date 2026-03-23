@@ -79,7 +79,7 @@ export default function UserTagManager({ tags = [], onSave, loading }) {
   return (
     <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
       <div className="flex items-center gap-2">
-        <Tag className="w-4 h-4" style={{ color: '#9038fa' }} />
+        <Tag className="w-4 h-4" style={{ color: '#7DB04B' }} />
         <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Tags</span>
       </div>
 
@@ -134,7 +134,7 @@ export default function UserTagManager({ tags = [], onSave, loading }) {
         <Button
           onClick={() => onSave(currentTags)}
           disabled={loading}
-          className="w-full bg-[#9038fa] hover:bg-[#7a2de0] text-white"
+          className="w-full bg-[#7DB04B] hover:bg-[#5C8036] text-white"
           size="sm"
         >
           Salvar Tags

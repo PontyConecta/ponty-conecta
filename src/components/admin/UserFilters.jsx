@@ -133,7 +133,7 @@ export default function UserFilters({
               <SlidersHorizontal className="w-4 h-4" />
               <span className="hidden sm:inline">Filtros</span>
               {activeFilterCount > 0 && (
-                <Badge className="bg-[#9038fa] text-white border-0 text-[10px] h-4 w-4 p-0 flex items-center justify-center absolute -top-1 -right-1">
+                <Badge className="bg-[#7DB04B] text-white border-0 text-[10px] h-4 w-4 p-0 flex items-center justify-center absolute -top-1 -right-1">
                   {activeFilterCount}
                 </Badge>
               )}
