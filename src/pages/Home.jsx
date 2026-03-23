@@ -90,7 +90,7 @@ export default function Home() {
             </div>
 
             <div className="relative hidden lg:flex min-h-[420px] items-center justify-center">
-              <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ backgroundColor: 'rgba(125, 176, 75, 0.05)' }}>
+              <div className="absolute inset-0 rounded-3xl overflow-hidden bg-primary/5">
               </div>
 
               <div className="relative z-10 grid grid-cols-2 gap-3 p-6 w-full max-w-lg">
@@ -144,7 +144,7 @@ export default function Home() {
 
             <TabsContent value="brands" className="mt-8">
               <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(125, 176, 75, 0.06)' }}></div>
+                  <div className="absolute inset-0 bg-primary/5"></div>
 
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
@@ -190,7 +190,7 @@ export default function Home() {
 
             <TabsContent value="creators" className="mt-8">
               <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(181, 149, 106, 0.06)' }}></div>
+                  <div className="absolute inset-0 bg-[#B5956A]/5"></div>
 
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
@@ -271,7 +271,7 @@ export default function Home() {
             ].map((step, idx) => (
               <Card key={idx} className="bg-card hover:shadow-lg transition-all hover:-translate-y-1">
                 <CardContent className="p-4 sm:pt-6 lg:pt-8">
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black mb-2 sm:mb-4" style={{ color: '#7DB04B' }}>
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black mb-2 sm:mb-4 text-primary">
                     {step.number}
                   </div>
                   <h3 className="text-sm sm:text-base lg:text-xl font-bold mb-1.5 sm:mb-3">{step.title}</h3>
@@ -283,7 +283,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#7DB04B' }}>
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-primary">
         <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-4 tracking-tight">
             Pronto para começar?

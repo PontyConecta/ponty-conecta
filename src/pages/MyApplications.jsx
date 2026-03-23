@@ -65,7 +65,8 @@ export default function MyApplications() {
     try {
       const applicationsData = await base44.entities.Application.filter(
         { creator_id: creatorProfile.id }, 
-        '-created_date'
+        '-created_date',
+        500
       );
       setApplications(applicationsData);
 

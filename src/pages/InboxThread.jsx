@@ -36,9 +36,58 @@ export default function InboxThread() {
 
   useEffect(() => {
     if (!applicationId || !user) return;
+    let isMounted = true;
+
+    const loadThread = async () => {
+      // Load application
+      const apps = await base44.entities.Application.filter({ id: applicationId });
+      if (!isMounted) return;
+      if (apps.length === 0) { setLoading(false); return; }
+      const app = apps[0];
+      setApplication(app);
+
+      // Load campaign
+      const camps = await base44.entities.Campaign.filter({ id: app.campaign_id });
+      if (!isMounted) return;
+      if (camps.length > 0) setCampaign(camps[0]);
+
+      // Load other participant name
+      if (profileType === 'brand') {
+        const creators = await base44.entities.Creator.filter({ id: app.creator_id });
+        if (!isMounted) return;
+        setOtherName(creators[0]?.display_name || 'Criador');
+      } else {
+        const brands = await base44.entities.Brand.filter({ id: app.brand_id });
+        if (!isMounted) return;
+        setOtherName(brands[0]?.company_name || 'Marca');
+      }
+
+      // Load messages
+      const msgs = await base44.entities.Message.filter({ application_id: applicationId }, 'created_date', 100);
+      if (!isMounted) return;
+      setMessages(msgs);
+
+      // Mark unread as read
+      const unread = msgs.filter(m => m.recipient_id === user.id && !m.read_at);
+      if (unread.length > 0) {
+        try {
+          await Promise.all(
+            unread.map(m =>
+              base44.entities.Message.update(m.id, { read_at: new Date().toISOString() })
+            )
+          );
+        } catch (error) {
+          console.error('Falha ao marcar mensagens como lidas:', error);
+        }
+      }
+
+      if (isMounted) setLoading(false);
+    };
+
     loadThread();
 
     const unsub = base44.entities.Message.subscribe((event) => {
+      if (!isMounted) return;
       if (event.type === 'create' && event.data?.application_id === applicationId) {
         setMessages(prev => {
           if (prev.some(m => m.id === event.data.id)) return prev;
@@ -46,50 +95,22 @@ export default function InboxThread() {
         });
         // Mark as read if it's for me
         if (event.data.recipient_id === user.id && !event.data.read_at) {
-          base44.entities.Message.update(event.data.id, { read_at: new Date().toISOString() });
+          base44.entities.Message.update(event.data.id, { read_at: new Date().toISOString() }).catch(() => {});
         }
       }
     });
 
-    return () => unsub?.();
+    return () => {
+      isMounted = false;
+      unsub?.();
+    };
   }, [applicationId, user?.id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const loadThread = async () => {
-    // Load application
-    const apps = await base44.entities.Application.filter({ id: applicationId });
-    if (apps.length === 0) { setLoading(false); return; }
-    const app = apps[0];
-    setApplication(app);
-
-    // Load campaign
-    const camps = await base44.entities.Campaign.filter({ id: app.campaign_id });
-    if (camps.length > 0) setCampaign(camps[0]);
-
-    // Load other participant name
-    if (profileType === 'brand') {
-      const creators = await base44.entities.Creator.filter({ id: app.creator_id });
-      setOtherName(creators[0]?.display_name || 'Criador');
-    } else {
-      const brands = await base44.entities.Brand.filter({ id: app.brand_id });
-      setOtherName(brands[0]?.company_name || 'Marca');
-    }
-
-    // Load messages
-    const msgs = await base44.entities.Message.filter({ application_id: applicationId }, 'created_date', 100);
-    setMessages(msgs);
-
-    // Mark unread as read
-    const unread = msgs.filter(m => m.recipient_id === user.id && !m.read_at);
-    for (const m of unread) {
-      base44.entities.Message.update(m.id, { read_at: new Date().toISOString() });
-    }
-
-    setLoading(false);
-  };
+  // loadThread is now inside the useEffect above
 
   const handleSend = async () => {
     if (!newMessage.trim() || sending) return;

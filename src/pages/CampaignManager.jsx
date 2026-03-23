@@ -60,7 +60,7 @@ export default function CampaignManager() {
       const validation = validateBrandProfile(brand);
       setProfileValidation(validation);
       
-      const campaignsData = await base44.entities.Campaign.filter({ brand_id: brand.id }, '-created_date');
+      const campaignsData = await base44.entities.Campaign.filter({ brand_id: brand.id }, '-created_date', 500);
       setCampaigns(campaignsData);
     } catch (error) {
       console.error('Error loading data:', error);

@@ -40,6 +40,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../components/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { toast } from 'sonner';
 
 export default function MyDeliveries() {
   const { user, profile: authProfile, profileType, loading: authLoading } = useAuth();
@@ -75,7 +76,8 @@ export default function MyDeliveries() {
     try {
       const deliveriesData = await base44.entities.Delivery.filter(
         { creator_id: creatorProfile.id }, 
-        '-created_date'
+        '-created_date',
+        500
       );
       setDeliveries(deliveriesData);
 
@@ -102,8 +104,18 @@ export default function MyDeliveries() {
 
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'image/gif'];
     
     for (const file of files) {
+      if (file.size > MAX_SIZE) {
+        toast.error(`${file.name} excede o limite de 10MB`);
+        continue;
+      }
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        toast.error(`Tipo de arquivo não permitido: ${file.name}`);
+        continue;
+      }
       try {
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
         setProofUrls(prev => [...prev, file_url]);
@@ -265,7 +277,7 @@ export default function MyDeliveries() {
                           <div className="flex flex-wrap gap-3 mt-2 text-sm">
                             <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : 'text-muted-foreground'}`}>
                               <Calendar className="w-4 h-4" />
-                              {delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}
+                              {delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
                               {isOverdue && <span className="font-medium">(Atrasado!)</span>}
                             </span>
                           </div>

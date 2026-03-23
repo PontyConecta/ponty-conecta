@@ -148,7 +148,7 @@ function LayoutContent({ children, currentPageName }) {
             {/* Subscription Button */}
             {!isSubscribed && (
               <Button 
-                onClick={() => window.location.href = createPageUrl('Subscription')}
+                onClick={() => navigate(createPageUrl('Subscription'))}
                 className="h-10 px-4 font-bold rounded-lg shadow-sm bg-primary hover:bg-primary/80 text-primary-foreground min-h-[44px]"
               >
                 <Crown className="w-4 h-4" />
@@ -176,6 +176,7 @@ function LayoutContent({ children, currentPageName }) {
         isSubscribed={isSubscribed}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
+        unreadCount={unreadCount}
       />
 
       {/* ── Main Content ──

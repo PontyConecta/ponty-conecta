@@ -22,7 +22,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 
-export default function Sidebar({ profileType, currentPageName, isSubscribed, isCollapsed, onToggleCollapse }) {
+export default function Sidebar({ profileType, currentPageName, isSubscribed, isCollapsed, onToggleCollapse, unreadCount = 0 }) {
   const brandNavItems = [
     { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Descobrir Criadores', page: 'DiscoverCreators', icon: Search },
@@ -82,7 +82,14 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                     : 'text-muted-foreground hover:bg-accent/10 hover:text-foreground'
                 )}
               >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <div className="relative flex-shrink-0">
+                  <item.icon className="w-5 h-5" />
+                  {item.page === 'Inbox' && unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
+                </div>
                 {!isCollapsed && <span>{item.name}</span>}
               </Link>
             );

@@ -8,7 +8,7 @@ export function useUnreadCount(userId) {
     if (!userId) return;
 
     const load = async () => {
-      const msgs = await base44.entities.Message.filter({ recipient_id: userId, read_at: null });
+      const msgs = await base44.entities.Message.filter({ recipient_id: userId, read_at: null }, '-created_date', 200);
       setCount(msgs.length);
     };
 

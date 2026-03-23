@@ -19,62 +19,70 @@ export default function Inbox() {
 
   useEffect(() => {
     if (!user) return;
-    loadMessages();
+    let aborted = false;
 
-    const unsub = base44.entities.Message.subscribe(() => {
-      loadMessages();
-    });
-    return () => unsub?.();
-  }, [user?.id]);
-
-  const loadMessages = async () => {
-    const [sent, received] = await Promise.all([
-      base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 200),
-      base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 200),
-    ]);
-    const myMsgs = [...sent, ...received].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);
-    setMessages(myMsgs);
-
-    // Get unique application IDs
-    const appIds = [...new Set(myMsgs.map(m => m.application_id))];
-    
-    if (appIds.length > 0) {
-      // Load applications in parallel
-      const apps = await Promise.all(appIds.map(id => base44.entities.Application.filter({ id }).then(r => r[0])));
-      const appMap = {};
-      const campaignIds = new Set();
-      const brandIds = new Set();
-      const creatorIds = new Set();
-      apps.filter(Boolean).forEach(app => {
-        appMap[app.id] = app;
-        if (app.campaign_id) campaignIds.add(app.campaign_id);
-        if (app.brand_id) brandIds.add(app.brand_id);
-        if (app.creator_id) creatorIds.add(app.creator_id);
-      });
-      setApplications(appMap);
-
-      // Load campaigns, brands, creators in parallel
-      const [campsArr, brandsArr, creatorsArr] = await Promise.all([
-        Promise.all([...campaignIds].map(id => base44.entities.Campaign.filter({ id }).then(r => r[0]))),
-        Promise.all([...brandIds].map(id => base44.entities.Brand.filter({ id }).then(r => r[0]))),
-        Promise.all([...creatorIds].map(id => base44.entities.Creator.filter({ id }).then(r => r[0]))),
+    const load = async () => {
+      const [sent, received] = await Promise.all([
+        base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 200),
+        base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 200),
       ]);
+      if (aborted) return;
+      const myMsgs = [...sent, ...received].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);
+      setMessages(myMsgs);
 
-      const campMap = {};
-      campsArr.filter(Boolean).forEach(c => { campMap[c.id] = c; });
-      setCampaigns(campMap);
+      // Get unique application IDs
+      const appIds = [...new Set(myMsgs.map(m => m.application_id))];
+      
+      if (appIds.length > 0) {
+        const apps = await Promise.all(appIds.map(id => base44.entities.Application.filter({ id }).then(r => r[0])));
+        if (aborted) return;
+        const appMap = {};
+        const campaignIds = new Set();
+        const brandIds = new Set();
+        const creatorIds = new Set();
+        apps.filter(Boolean).forEach(app => {
+          appMap[app.id] = app;
+          if (app.campaign_id) campaignIds.add(app.campaign_id);
+          if (app.brand_id) brandIds.add(app.brand_id);
+          if (app.creator_id) creatorIds.add(app.creator_id);
+        });
+        setApplications(appMap);
 
-      const brandMap = {};
-      brandsArr.filter(Boolean).forEach(b => { brandMap[b.id] = b; });
-      setBrands(brandMap);
+        const [campsArr, brandsArr, creatorsArr] = await Promise.all([
+          Promise.all([...campaignIds].map(id => base44.entities.Campaign.filter({ id }).then(r => r[0]))),
+          Promise.all([...brandIds].map(id => base44.entities.Brand.filter({ id }).then(r => r[0]))),
+          Promise.all([...creatorIds].map(id => base44.entities.Creator.filter({ id }).then(r => r[0]))),
+        ]);
+        if (aborted) return;
 
-      const creatorMap = {};
-      creatorsArr.filter(Boolean).forEach(c => { creatorMap[c.id] = c; });
-      setCreators(creatorMap);
-    }
+        const campMap = {};
+        campsArr.filter(Boolean).forEach(c => { campMap[c.id] = c; });
+        setCampaigns(campMap);
 
-    setLoading(false);
-  };
+        const brandMap = {};
+        brandsArr.filter(Boolean).forEach(b => { brandMap[b.id] = b; });
+        setBrands(brandMap);
+
+        const creatorMap = {};
+        creatorsArr.filter(Boolean).forEach(c => { creatorMap[c.id] = c; });
+        setCreators(creatorMap);
+      }
+
+      setLoading(false);
+    };
+
+    load();
+    const unsub = base44.entities.Message.subscribe((event) => {
+      if (!aborted && (event.data?.sender_id === user.id || event.data?.recipient_id === user.id)) {
+        load();
+      }
+    });
+
+    return () => {
+      aborted = true;
+      unsub?.();
+    };
+  }, [user?.id]);
 
   // Group messages by application_id into threads
   const threads = useMemo(() => {
@@ -112,7 +120,7 @@ export default function Inbox() {
       .sort((a, b) => new Date(b.lastMessage.created_date) - new Date(a.lastMessage.created_date));
   }, [messages, applications, campaigns, brands, creators, user?.id, profileType]);
 
-  const totalUnread = threads.reduce((acc, t) => acc + t.unreadCount, 0);
+  const totalUnread = useMemo(() => threads.reduce((acc, t) => acc + t.unreadCount, 0), [threads]);
 
   if (loading) {
     return (
