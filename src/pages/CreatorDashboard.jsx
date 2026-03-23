@@ -88,14 +88,14 @@ export default function CreatorDashboard() {
       value: activeAppsCount,
       total: totalApps,
       icon: Target,
-      color: 'bg-[#7DB04B]'
+      color: 'bg-primary'
     },
     { 
       label: 'Trabalhos em Andamento', 
       value: activeDelCount,
       total: totalDeliveries,
       icon: FileText,
-      color: 'bg-[#B5956A]'
+      color: 'bg-primary/60'
     }
   ];
 
@@ -122,7 +122,7 @@ export default function CreatorDashboard() {
             </p>
           </div>
           <Link to={createPageUrl(isSubscribed ? 'OpportunityFeed' : 'Subscription')}>
-            <Button className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm">
+            <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm">
               {isSubscribed ? <><Megaphone className="w-4 h-4 mr-2" />Campanhas</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
             </Button>
           </Link>

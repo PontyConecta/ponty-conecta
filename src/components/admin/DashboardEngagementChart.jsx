@@ -34,8 +34,8 @@ export default function DashboardEngagementChart({ data }) {
             <AreaChart data={data}>
               <defs>
                 <linearGradient id="engApps" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#7DB04B" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#7DB04B" stopOpacity={0} />
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="engDel" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -51,7 +51,7 @@ export default function DashboardEngagementChart({ data }) {
               <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: '11px' }} />
-              <Area type="monotone" dataKey="candidaturas" name="Candidaturas" stroke="#7DB04B" fill="url(#engApps)" strokeWidth={2} />
+              <Area type="monotone" dataKey="candidaturas" name="Candidaturas" stroke="hsl(var(--primary))" fill="url(#engApps)" strokeWidth={2} />
               <Area type="monotone" dataKey="aceitas" name="Aceitas" stroke="#fb923c" fill="url(#engAccepted)" strokeWidth={2} />
               <Area type="monotone" dataKey="entregas" name="Entregas" stroke="#10b981" fill="url(#engDel)" strokeWidth={2} />
             </AreaChart>

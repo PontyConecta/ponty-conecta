@@ -46,12 +46,12 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="revTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7DB04B" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#7DB04B" stopOpacity={0} />
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="revBrands" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7DB04B" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#7DB04B" stopOpacity={0} />
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="revCreators" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#fb923c" stopOpacity={0.3} />
@@ -65,11 +65,11 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
                 {showSegmented ? (
                   <>
-                    <Area type="monotone" dataKey="marcas" name="Marcas" stroke="#7DB04B" fill="url(#revBrands)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="marcas" name="Marcas" stroke="hsl(var(--primary))" fill="url(#revBrands)" strokeWidth={2} />
                     <Area type="monotone" dataKey="criadores" name="Criadores" stroke="#fb923c" fill="url(#revCreators)" strokeWidth={2} />
                   </>
                 ) : (
-                  <Area type="monotone" dataKey="total" name="Total" stroke="#7DB04B" fill="url(#revTotal)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="total" name="Total" stroke="hsl(var(--primary))" fill="url(#revTotal)" strokeWidth={2} />
                 )}
               </AreaChart>
             ) : (
@@ -81,11 +81,11 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
                 {showSegmented ? (
                   <>
-                    <Bar dataKey="marcas" name="Marcas" fill="#7DB04B" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="marcas" name="Marcas" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="criadores" name="Criadores" fill="#fb923c" radius={[4, 4, 0, 0]} />
                   </>
                 ) : (
-                  <Bar dataKey="total" name="Total" fill="#7DB04B" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="total" name="Total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                 )}
               </BarChart>
             )}

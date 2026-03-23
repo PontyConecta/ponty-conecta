@@ -7,7 +7,7 @@ import {
 } from 'recharts';
 import { Building2, Star, Crown, CheckCircle2, UserPlus, TrendingUp } from 'lucide-react';
 
-const COLORS = ['#7DB04B', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'];
+const COLORS = ['hsl(90,40%,49%)', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'];
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -63,8 +63,8 @@ export default function DashboardUserStats({ analytics }) {
                   <AreaChart data={userGrowthData}>
                     <defs>
                       <linearGradient id="ugBrands" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#7DB04B" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#7DB04B" stopOpacity={0} />
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="ugCreators" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#fb923c" stopOpacity={0.3} />
@@ -76,7 +76,7 @@ export default function DashboardUserStats({ analytics }) {
                     <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend wrapperStyle={{ fontSize: '11px' }} />
-                    <Area type="monotone" dataKey="marcas_total" name="Marcas" stroke="#7DB04B" fill="url(#ugBrands)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="marcas_total" name="Marcas" stroke="hsl(var(--primary))" fill="url(#ugBrands)" strokeWidth={2} />
                     <Area type="monotone" dataKey="criadores_total" name="Criadores" stroke="#fb923c" fill="url(#ugCreators)" strokeWidth={2} />
                   </AreaChart>
                 ) : (
@@ -86,7 +86,7 @@ export default function DashboardUserStats({ analytics }) {
                     <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend wrapperStyle={{ fontSize: '11px' }} />
-                    <Bar dataKey="novos_marcas" name="Novas Marcas" fill="#7DB04B" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="novos_marcas" name="Novas Marcas" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="novos_criadores" name="Novos Criadores" fill="#fb923c" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 )}
@@ -155,7 +155,7 @@ export default function DashboardUserStats({ analytics }) {
                     <XAxis type="number" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                     <YAxis dataKey="name" type="category" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} width={35} />
                     <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '11px' }} />
-                    <Bar dataKey="value" name="Usuários" fill="#7DB04B" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="value" name="Usuários" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
