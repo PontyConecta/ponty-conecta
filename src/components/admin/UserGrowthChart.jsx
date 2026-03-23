@@ -58,10 +58,11 @@ export default function UserGrowthChart({ brands, creators }) {
                 <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                 <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px', color: 'hsl(var(--foreground))' }}
+                  cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
                 />
-                <Area type="monotone" dataKey="marcas" stroke="#B5956A" fill="url(#colorBrands)" strokeWidth={2} />
-                <Area type="monotone" dataKey="criadores" stroke="#fb923c" fill="url(#colorCreators)" strokeWidth={2} />
+                <Area type="monotone" dataKey="marcas" stroke="#B5956A" fill="url(#colorBrands)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: '#B5956A', strokeWidth: 2 }} />
+                <Area type="monotone" dataKey="criadores" stroke="#fb923c" fill="url(#colorCreators)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: '#fb923c', strokeWidth: 2 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -93,7 +94,7 @@ export default function UserGrowthChart({ brands, creators }) {
                   formatter={(value) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{value}</span>}
                 />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px', color: 'hsl(var(--foreground))' }}
                 />
               </PieChart>
             </ResponsiveContainer>

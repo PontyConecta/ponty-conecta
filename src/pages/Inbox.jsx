@@ -131,7 +131,7 @@ export default function Inbox() {
       {/* Header */}
       <div className="flex items-center gap-3">
         <MessageCircle className="w-6 h-6 text-primary" />
-        <h1 className="text-xl font-bold text-foreground">Mensagens</h1>
+        <h1 className="text-xl font-bold text-foreground">Direct</h1>
         {totalUnread > 0 && (
           <Badge className="bg-primary text-primary-foreground border-0">
             {totalUnread}

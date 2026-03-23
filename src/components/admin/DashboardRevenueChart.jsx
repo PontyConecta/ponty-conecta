@@ -61,15 +61,15 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                 <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={v => `R$${v}`} />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }} />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
                 {showSegmented ? (
                   <>
-                    <Area type="monotone" dataKey="marcas" name="Marcas" stroke="hsl(var(--primary))" fill="url(#revBrands)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="criadores" name="Criadores" stroke="#fb923c" fill="url(#revCreators)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="marcas" name="Marcas" stroke="hsl(var(--primary))" fill="url(#revBrands)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: 'hsl(var(--primary))', strokeWidth: 2 }} />
+                    <Area type="monotone" dataKey="criadores" name="Criadores" stroke="#fb923c" fill="url(#revCreators)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: '#fb923c', strokeWidth: 2 }} />
                   </>
                 ) : (
-                  <Area type="monotone" dataKey="total" name="Total" stroke="hsl(var(--primary))" fill="url(#revTotal)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="total" name="Total" stroke="hsl(var(--primary))" fill="url(#revTotal)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: 'hsl(var(--primary))', strokeWidth: 2 }} />
                 )}
               </AreaChart>
             ) : (
@@ -77,15 +77,15 @@ export default function DashboardRevenueChart({ data, profileFilter }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                 <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={v => `R$${v}`} />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }} />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
                 {showSegmented ? (
                   <>
-                    <Bar dataKey="marcas" name="Marcas" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="criadores" name="Criadores" fill="#fb923c" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="marcas" name="Marcas" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} activeBar={{ fillOpacity: 0.8 }} />
+                    <Bar dataKey="criadores" name="Criadores" fill="#fb923c" radius={[4, 4, 0, 0]} activeBar={{ fillOpacity: 0.8 }} />
                   </>
                 ) : (
-                  <Bar dataKey="total" name="Total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="total" name="Total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} activeBar={{ fillOpacity: 0.8 }} />
                 )}
               </BarChart>
             )}

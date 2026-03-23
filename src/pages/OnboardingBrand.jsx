@@ -44,6 +44,11 @@ const INDUSTRIES = [
   { value: 'education', label: 'Educação' },
   { value: 'retail', label: 'Varejo' },
   { value: 'automotive', label: 'Automotivo' },
+  { value: 'real_estate', label: 'Imobiliário' },
+  { value: 'pets', label: 'Pets & Animais' },
+  { value: 'home_decor', label: 'Casa & Decoração' },
+  { value: 'ecommerce', label: 'E-commerce' },
+  { value: 'mental_health', label: 'Saúde Mental' },
   { value: 'other', label: 'Outros' }
 ];
 

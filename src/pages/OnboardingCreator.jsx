@@ -35,7 +35,9 @@ const STEPS = [
 
 const NICHES = [
   'Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde',
-  'Viagens', 'Gastronomia', 'Pets', 'Família', 'Educação', 'Finanças', 'Humor', 'Música', 'Arte'
+  'Viagens', 'Gastronomia', 'Pets', 'Família', 'Educação', 'Finanças', 'Humor', 'Música', 'Arte',
+  'Negócios', 'Casa & Decoração', 'Maternidade', 'Sustentabilidade',
+  'Automotivo', 'Espiritualidade', 'Culinária', 'Esportes'
 ];
 
 const CONTENT_TYPES = [

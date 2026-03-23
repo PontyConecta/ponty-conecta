@@ -49,11 +49,11 @@ export default function DashboardEngagementChart({ data }) {
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
               <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }} />
               <Legend wrapperStyle={{ fontSize: '11px' }} />
-              <Area type="monotone" dataKey="candidaturas" name="Candidaturas" stroke="hsl(var(--primary))" fill="url(#engApps)" strokeWidth={2} />
-              <Area type="monotone" dataKey="aceitas" name="Aceitas" stroke="#fb923c" fill="url(#engAccepted)" strokeWidth={2} />
-              <Area type="monotone" dataKey="entregas" name="Entregas" stroke="#10b981" fill="url(#engDel)" strokeWidth={2} />
+              <Area type="monotone" dataKey="candidaturas" name="Candidaturas" stroke="hsl(var(--primary))" fill="url(#engApps)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: 'hsl(var(--primary))', strokeWidth: 2 }} />
+              <Area type="monotone" dataKey="aceitas" name="Aceitas" stroke="#fb923c" fill="url(#engAccepted)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: '#fb923c', strokeWidth: 2 }} />
+              <Area type="monotone" dataKey="entregas" name="Entregas" stroke="#10b981" fill="url(#engDel)" strokeWidth={2} activeDot={{ r: 4, fill: 'hsl(var(--background))', stroke: '#10b981', strokeWidth: 2 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

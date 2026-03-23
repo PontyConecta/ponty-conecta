@@ -17,7 +17,7 @@ export default function BottomNav({ profileType, currentPageName, unreadCount = 
     { name: 'Início', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
-    { name: 'Inbox', page: 'Inbox', icon: MessageCircle },
+    { name: 'Direct', page: 'Inbox', icon: MessageCircle },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
@@ -25,7 +25,7 @@ export default function BottomNav({ profileType, currentPageName, unreadCount = 
     { name: 'Início', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone },
     { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
-    { name: 'Inbox', page: 'Inbox', icon: MessageCircle },
+    { name: 'Direct', page: 'Inbox', icon: MessageCircle },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
