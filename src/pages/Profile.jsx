@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import ThemeSelector from "@/components/ThemeSelector";
+import SettingsTab from "@/components/SettingsTab";
 import { 
   User, 
   Building2,
@@ -295,6 +296,7 @@ export default function Profile() {
           {!isBrand && <TabsTrigger value="portfolio" className="flex-1 lg:flex-none">Portfólio</TabsTrigger>}
           <TabsTrigger value="contact" className="flex-1 lg:flex-none">Contato</TabsTrigger>
           <TabsTrigger value="account" className="flex-1 lg:flex-none">Conta</TabsTrigger>
+          <TabsTrigger value="settings" className="flex-1 lg:flex-none">Configurações</TabsTrigger>
         </TabsList>
 
         {/* Profile Tab */}
@@ -339,7 +341,7 @@ export default function Profile() {
                         </AvatarFallback>
                       </Avatar>
                     )}
-                    <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#7DB04B] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#5C8036] transition-colors shadow-lg">
+                    <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/80 transition-colors shadow-lg">
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, isBrand ? 'logo_url' : 'avatar_url')} />
                       <Upload className="w-4 h-4 text-white" />
                     </label>
@@ -780,7 +782,7 @@ export default function Profile() {
                        <CreditCard className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                        <h4 className="font-semibold mb-2">Sem assinatura ativa</h4>
                        <p className="mb-4 text-sm text-muted-foreground">Assine para acessar todas as funcionalidades</p>
-                    <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-[#7DB04B] hover:bg-[#5C8036]">
+                    <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-primary hover:bg-primary/80 text-primary-foreground">
                       Ver Planos
                     </Button>
                   </div>
@@ -848,6 +850,10 @@ export default function Profile() {
             </Card>
           </div>
         </TabsContent>
+        {/* Settings Tab */}
+        <TabsContent value="settings">
+          <SettingsTab />
+        </TabsContent>
       </Tabs>
 
       {/* Save Button - Fixed on Mobile */}
@@ -855,7 +861,7 @@ export default function Profile() {
         <Button 
           onClick={handleSave} 
           disabled={saving} 
-          className="w-full lg:w-auto bg-[#7DB04B] hover:bg-[#5C8036] text-white h-12 shadow-sm"
+          className="w-full lg:w-auto bg-primary hover:bg-primary/80 text-primary-foreground h-12 shadow-sm"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
           Salvar Alterações

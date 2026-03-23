@@ -32,7 +32,6 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
     { type: 'divider' },
     { name: 'Meu Perfil', page: 'Profile', icon: User },
-    { name: 'Configurações', page: 'Settings', icon: Settings },
   ];
 
   const creatorNavItems = [
@@ -44,7 +43,6 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
     { type: 'divider' },
     { name: 'Meu Perfil', page: 'Profile', icon: User },
-    { name: 'Configurações', page: 'Settings', icon: Settings },
   ];
 
   const navItems = profileType === 'brand' ? brandNavItems : creatorNavItems;
