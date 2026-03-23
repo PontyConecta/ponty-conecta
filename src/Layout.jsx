@@ -29,6 +29,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ThemeSelector from '@/components/ThemeSelector';
 import BetaFeedbackNudge from '@/components/feedback/BetaFeedbackNudge';
+import { useUnreadCount } from '@/hooks/useUnreadCount';
 
 function LayoutContent({ children, currentPageName }) {
   const { user, profile, profileType, loading, logout } = useAuth();
@@ -36,6 +37,7 @@ function LayoutContent({ children, currentPageName }) {
   const navigate = useNavigate();
   const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const unreadCount = useUnreadCount(user?.id);
 
   const isAdmin = user?.role === 'admin';
   const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
@@ -190,7 +192,7 @@ function LayoutContent({ children, currentPageName }) {
       <BetaFeedbackNudge />
 
       {/* ── Bottom Nav ── Mobile only: hidden at lg+ */}
-      <BottomNav profileType={profileType} currentPageName={currentPageName} />
+      <BottomNav profileType={profileType} currentPageName={currentPageName} unreadCount={unreadCount} />
     </div>
   );
 }

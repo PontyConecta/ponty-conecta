@@ -7,22 +7,26 @@ import {
   Megaphone, 
   FileText, 
   Search,
-  Building2
+  Building2,
+  MessageCircle,
+  User
 } from 'lucide-react';
 
-export default function BottomNav({ profileType, currentPageName }) {
+export default function BottomNav({ profileType, currentPageName, unreadCount = 0 }) {
   const brandNavItems = [
     { name: 'Início', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
-    { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
+    { name: 'Inbox', page: 'Inbox', icon: MessageCircle },
+    { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
   const creatorNavItems = [
     { name: 'Início', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone },
     { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
-    { name: 'Entregas', page: 'MyDeliveries', icon: FileText },
+    { name: 'Inbox', page: 'Inbox', icon: MessageCircle },
+    { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
   const guestNavItems = [
@@ -55,7 +59,14 @@ export default function BottomNav({ profileType, currentPageName }) {
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              <item.icon className={cn("w-5 h-5 transition-colors duration-150", isActive && "w-[22px] h-[22px]")} />
+              <div className="relative">
+                <item.icon className={cn("w-5 h-5 transition-colors duration-150", isActive && "w-[22px] h-[22px]")} />
+                {item.page === 'Inbox' && unreadCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2.5 bg-primary text-primary-foreground text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </div>
               <span className={cn("text-[10px] font-medium leading-none transition-colors duration-150", isActive && "font-semibold")}>{item.name}</span>
             </Link>
           );

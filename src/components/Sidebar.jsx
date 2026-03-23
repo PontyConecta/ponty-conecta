@@ -18,7 +18,8 @@ import {
   PackageCheck,
   Compass,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  MessageCircle
 } from 'lucide-react';
 
 export default function Sidebar({ profileType, currentPageName, isSubscribed, isCollapsed, onToggleCollapse }) {
@@ -28,6 +29,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
     { name: 'Candidaturas', page: 'Applications', icon: Users },
     { name: 'Entregas de Criadores', page: 'Deliveries', icon: FileText },
+    { name: 'Inbox', page: 'Inbox', icon: MessageCircle },
     { type: 'divider' },
     { name: 'Meu Perfil', page: 'Profile', icon: User },
     { name: 'Configurações', page: 'Settings', icon: Settings },
@@ -39,6 +41,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Compass },
     { name: 'Minhas Candidaturas', page: 'MyApplications', icon: Send },
     { name: 'Minhas Entregas', page: 'MyDeliveries', icon: PackageCheck },
+    { name: 'Inbox', page: 'Inbox', icon: MessageCircle },
     { type: 'divider' },
     { name: 'Meu Perfil', page: 'Profile', icon: User },
     { name: 'Configurações', page: 'Settings', icon: Settings },
