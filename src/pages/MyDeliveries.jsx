@@ -34,7 +34,8 @@ import {
   Link as LinkIcon,
   Plus,
   X,
-  Eye
+  Eye,
+  Gift
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../components/contexts/AuthContext';
@@ -57,6 +58,7 @@ export default function MyDeliveries() {
   const [proofUrls, setProofUrls] = useState([]);
   const [contentUrls, setContentUrls] = useState(['']);
   const [proofNotes, setProofNotes] = useState('');
+  const [vouchers, setVouchers] = useState({});
 
   useEffect(() => {
     if (!authLoading && profileType && profileType !== 'creator') {
@@ -95,6 +97,17 @@ export default function MyDeliveries() {
       const brandsMap = {};
       brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
       setBrands(brandsMap);
+
+      // Load vouchers for approved deliveries
+      const approvedIds = deliveriesData.filter(d => d.status === 'approved').map(d => d.id);
+      if (approvedIds.length > 0) {
+        const vouchersData = await Promise.all(
+          approvedIds.map(id => base44.entities.Voucher.filter({ delivery_id: id }).then(r => r[0]))
+        );
+        const voucherMap = {};
+        vouchersData.filter(Boolean).forEach(v => { voucherMap[v.delivery_id] = v; });
+        setVouchers(voucherMap);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -320,6 +333,25 @@ export default function MyDeliveries() {
                         <p className="text-sm text-amber-800">
                           <strong>Requisitos:</strong> {campaign.proof_requirements.slice(0, 150)}...
                         </p>
+                      </div>
+                    )}
+
+                    {/* Voucher */}
+                    {delivery.status === 'approved' && vouchers[delivery.id] && (
+                      <div className="mt-3 p-3 bg-accent/10 border border-accent/30 rounded-lg">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Gift className="w-4 h-4 text-accent" />
+                          <span className="text-sm font-semibold text-accent">Voucher Recebido</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{vouchers[delivery.id].benefit_description}</p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <code className="text-xs font-mono bg-card px-2 py-1 rounded border font-bold tracking-wider">
+                            {vouchers[delivery.id].code}
+                          </code>
+                          <Badge variant="outline" className="text-[10px]">
+                            {vouchers[delivery.id].status === 'redeemed' ? 'Utilizado' : 'Disponível'}
+                          </Badge>
+                        </div>
                       </div>
                     )}
 

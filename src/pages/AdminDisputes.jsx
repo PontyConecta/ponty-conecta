@@ -34,6 +34,7 @@ import {
 import AdminHeader from '../components/admin/AdminHeader';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../components/utils/formatters';
 import { arrayToMap } from '../components/utils/entityHelpers';
 import { disputeResolutionSchema, validate } from '../components/utils/validationSchemas';
@@ -46,6 +47,7 @@ import DisputeStatsCards from '../components/disputes/DisputeStatsCards';
 import Pagination from '../components/common/Pagination';
 
 export default function AdminDisputes() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [disputes, setDisputes] = useState([]);
   const [deliveries, setDeliveries] = useState({});
@@ -73,7 +75,7 @@ export default function AdminDisputes() {
 
       // Check if user is admin
       if (userData.role !== 'admin') {
-        window.location.href = '/';
+        navigate('/');
         return;
       }
 
@@ -253,7 +255,7 @@ export default function AdminDisputes() {
                               <Building2 className="w-5 h-5 text-muted-foreground" />
                             </div>
                           )}
-                          <span className="font-medium" className="text-foreground">{brand?.company_name || 'Marca'}</span>
+                          <span className="font-medium text-foreground">{brand?.company_name || 'Marca'}</span>
                         </div>
                         
                         <Scale className="w-5 h-5 text-muted-foreground" />
@@ -265,7 +267,7 @@ export default function AdminDisputes() {
                               {creator?.display_name?.[0] || 'C'}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="font-medium" className="text-foreground">{creator?.display_name || 'Criador'}</span>
+                          <span className="font-medium text-foreground">{creator?.display_name || 'Criador'}</span>
                         </div>
                       </div>
 
@@ -294,10 +296,10 @@ export default function AdminDisputes() {
 
                     {/* Reason Preview */}
                     <div className="mt-4 pt-4 border-t">
-                      <p className="text-sm line-clamp-2" className="text-muted-foreground">
+                      <p className="text-sm line-clamp-2 text-muted-foreground">
                         <strong>Motivo:</strong> {dispute.reason}
                       </p>
-                      <p className="text-sm mt-1" className="text-muted-foreground">
+                      <p className="text-sm mt-1 text-muted-foreground">
                         Campanha: {campaign?.title || '-'}
                       </p>
                     </div>

@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { downloadBlob } from '@/lib/platform';
 import { 
   Search, 
   Download, 
@@ -65,14 +66,7 @@ export default function AdminCampaigns() {
       const response = await base44.functions.invoke('adminExportData', { exportType: 'campaigns' });
       
       const blob = new Blob([response.data], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'campaigns_export.csv';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
+      downloadBlob(blob, 'campaigns_export.csv');
       
       toast.success('Dados exportados com sucesso');
     } catch (error) {

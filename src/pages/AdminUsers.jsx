@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Loader2, RefreshCw, LayoutGrid, List } from 'lucide-react';
 import { toast } from 'sonner';
+import { downloadBlob } from '@/lib/platform';
 
 import AdminHeader from '../components/admin/AdminHeader';
 import UserQuickFilters from '../components/admin/UserQuickFilters';
@@ -89,14 +90,7 @@ export default function AdminUsers() {
       toast.info('Exportando dados...');
       const response = await base44.functions.invoke('adminExportData', { exportType: 'users' });
       const blob = new Blob([response.data], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'users_export.csv';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
+      downloadBlob(blob, 'users_export.csv');
       toast.success('Exportado com sucesso');
     } catch (error) {
       console.error('Export error:', error);

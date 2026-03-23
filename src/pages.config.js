@@ -76,6 +76,7 @@ import Subscription from './pages/Subscription';
 import SubscriptionPage from './pages/SubscriptionPage';
 import Inbox from './pages/Inbox';
 import InboxThread from './pages/InboxThread';
+import DiscoverCommunity from './pages/DiscoverCommunity';
 import __Layout from './Layout.jsx';
 
 
@@ -109,6 +110,7 @@ export const PAGES = {
     "SubscriptionPage": SubscriptionPage,
     "Inbox": Inbox,
     "InboxThread": InboxThread,
+    "DiscoverCommunity": DiscoverCommunity,
 }
 
 export const pagesConfig = {

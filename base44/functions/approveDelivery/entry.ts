@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -103,13 +103,39 @@ Deno.serve(async (req) => {
         });
       }
 
+      // Step D: Generate voucher for barter/mixed campaigns
+      let voucher = null;
+      try {
+        const campaignResults = await base44.entities.Campaign.filter({ id: delivery.campaign_id });
+        const campaign = campaignResults[0];
+        if (campaign && (campaign.remuneration_type === 'barter' || campaign.remuneration_type === 'mixed')) {
+          const code = `PONTY-${brand.id.slice(-4).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+          console.log(`[approveDelivery] Generating voucher for barter/mixed campaign. Code: ${code}`);
+          voucher = await base44.entities.Voucher.create({
+            delivery_id: delivery.id,
+            campaign_id: delivery.campaign_id,
+            brand_id: delivery.brand_id,
+            creator_id: delivery.creator_id,
+            benefit_description: campaign.barter_description || campaign.title,
+            benefit_value: String(campaign.barter_value || ''),
+            code,
+            status: 'pending',
+          });
+          console.log(`[approveDelivery] Voucher created: ${voucher.id}`);
+        }
+      } catch (voucherError) {
+        // Non-blocking: voucher creation failure should not rollback the approval
+        console.error(`[approveDelivery] Voucher creation failed (non-blocking): ${voucherError.message}`);
+      }
+
       console.log(`[approveDelivery] SUCCESS: delivery=${delivery_id}, application=${delivery.application_id}, on_time=${isOnTime}`);
 
       return Response.json({
         success: true,
         delivery: updatedDelivery,
         application: updatedApplication,
-        creator: updatedCreator
+        creator: updatedCreator,
+        voucher
       });
 
     } catch (opError) {
