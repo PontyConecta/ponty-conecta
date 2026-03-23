@@ -174,6 +174,7 @@ export default function MyApplications() {
                 <SelectItem value="accepted">Aceitas</SelectItem>
                 <SelectItem value="rejected">Recusadas</SelectItem>
                 <SelectItem value="withdrawn">Canceladas</SelectItem>
+                <SelectItem value="completed">Concluídas</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -29,7 +29,9 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
               </h2>
               <p className="text-muted-foreground mb-5 max-w-lg">
                 {isBrand
-                  ? 'Sua marca está configurada. Comece criando sua primeira campanha para encontrar criadores perfeitos.'
+                  ? isSubscribed
+                    ? 'Sua marca está configurada. Comece criando sua primeira campanha para encontrar criadores perfeitos.'
+                    : 'Sua marca está configurada. Assine para criar campanhas e encontrar criadores perfeitos.'
                   : 'Seu perfil está pronto. Explore campanhas e candidate-se para trabalhar com grandes marcas.'
                 }
               </p>
@@ -37,7 +39,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
               <div className="flex flex-wrap gap-3">
                 {isSubscribed ? (
                   <Link to={createPageUrl(isBrand ? 'CampaignManager' : 'OpportunityFeed')}>
-                    <Button className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm">
+                    <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm">
                       <Sparkles className="w-4 h-4 mr-2" />
                       {isBrand ? 'Criar Campanha' : 'Ver Campanhas'}
                       <ArrowRight className="w-4 h-4 ml-2" />
@@ -45,7 +47,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
                   </Link>
                 ) : (
                   <Link to={createPageUrl('Subscription')}>
-                    <Button className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm">
+                    <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm">
                       <Sparkles className="w-4 h-4 mr-2" />
                       Desbloquear Acesso Completo
                       <ArrowRight className="w-4 h-4 ml-2" />
