@@ -175,7 +175,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">
-                    Atualmente: <Badge className={profileType === 'brand' ? 'bg-indigo-100 text-indigo-700 border-0 ml-1' : 'bg-orange-100 text-orange-700 border-0 ml-1'}>
+                    Atualmente: <Badge className={profileType === 'brand' ? 'bg-muted text-muted-foreground border-0 ml-1' : 'bg-orange-100 text-orange-700 border-0 ml-1'}>
                       {profileType === 'brand' ? 'Marca' : 'Criador'}
                     </Badge>
                   </p>

@@ -42,7 +42,7 @@ export const campaignStatusConfig = {
   },
   completed: { 
     label: 'Concluída', 
-    color: 'bg-violet-100 text-violet-700', 
+    color: 'bg-emerald-100 text-emerald-700', 
     icon: CheckCircle2 
   },
   cancelled: { 
@@ -75,7 +75,7 @@ export const applicationStatusConfig = {
   },
   completed: { 
     label: 'Concluída', 
-    color: 'bg-violet-100 text-violet-700', 
+    color: 'bg-slate-100 text-slate-600', 
     icon: CheckCircle2 
   }
 };
@@ -108,7 +108,7 @@ export const deliveryStatusConfig = {
   },
   resolved: { 
     label: 'Resolvida', 
-    color: 'bg-violet-100 text-violet-700', 
+    color: 'bg-slate-100 text-slate-600', 
     icon: CheckCircle2 
   },
   closed: { 
@@ -131,7 +131,7 @@ export const disputeStatusConfig = {
   },
   resolved_brand_favor: { 
     label: 'Favorável à Marca', 
-    color: 'bg-indigo-100 text-indigo-700', 
+    color: 'bg-emerald-100 text-emerald-700', 
     icon: Building2 
   },
   resolved_creator_favor: { 
@@ -149,7 +149,7 @@ export const disputeStatusConfig = {
 export const auditLogActionConfig = {
   role_switch: { 
     label: 'Troca de Perfil', 
-    color: 'bg-violet-100 text-violet-700' 
+    color: 'bg-slate-100 text-slate-600' 
   },
   user_role_change: {
     label: 'Papel Alterado',
@@ -173,11 +173,11 @@ export const auditLogActionConfig = {
   },
   data_export: { 
     label: 'Exportação de Dados', 
-    color: 'bg-indigo-100 text-indigo-700' 
+    color: 'bg-slate-100 text-slate-600' 
   },
   campaign_status_change: { 
     label: 'Status de Campanha', 
-    color: 'bg-purple-100 text-purple-700' 
+    color: 'bg-slate-100 text-slate-600' 
   },
   dispute_resolved: { 
     label: 'Disputa Resolvida', 

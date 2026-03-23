@@ -7,7 +7,7 @@ import {
 } from 'recharts';
 import { Building2, Star, Crown, CheckCircle2, UserPlus, TrendingUp } from 'lucide-react';
 
-const COLORS = ['hsl(90,40%,49%)', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'];
+const COLORS = ['hsl(var(--primary))', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'];
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -40,9 +40,9 @@ export default function DashboardUserStats({ analytics }) {
     <div className="space-y-6">
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatMiniCard icon={Building2} iconBg="bg-indigo-100" iconColor="text-indigo-600" label="Marcas" value={analytics.totalBrands || 0} subtitle={`${analytics.brandActiveUsers || 0} ativas`} />
+        <StatMiniCard icon={Building2} iconBg="bg-primary/10" iconColor="text-primary" label="Marcas" value={analytics.totalBrands || 0} subtitle={`${analytics.brandActiveUsers || 0} ativas`} />
         <StatMiniCard icon={Star} iconBg="bg-orange-100" iconColor="text-orange-600" label="Criadores" value={analytics.totalCreators || 0} subtitle={`${analytics.creatorActiveUsers || 0} ativos`} />
-        <StatMiniCard icon={UserPlus} iconBg="bg-purple-100" iconColor="text-purple-600" label="Novos no Período" value={analytics.newUsers || 0} subtitle={`${analytics.newBrands || 0} marcas, ${analytics.newCreators || 0} criadores`} />
+        <StatMiniCard icon={UserPlus} iconBg="bg-primary/10" iconColor="text-primary" label="Novos no Período" value={analytics.newUsers || 0} subtitle={`${analytics.newBrands || 0} marcas, ${analytics.newCreators || 0} criadores`} />
         <StatMiniCard icon={TrendingUp} iconBg="bg-emerald-100" iconColor="text-emerald-600" label="Crescimento" value={`${analytics.growthRate || 0}%`} subtitle="vs período anterior" />
       </div>
 
