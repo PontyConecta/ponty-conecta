@@ -89,5 +89,13 @@ module.exports = {
   		}
   	}
   },
+  safelist: [
+    'bg-primary',
+    'bg-primary/60',
+    'bg-primary/40',
+    'bg-primary/80',
+    'bg-primary/10',
+    'bg-emerald-500',
+  ],
   plugins: [require("tailwindcss-animate")],
 }
