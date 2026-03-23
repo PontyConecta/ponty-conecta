@@ -77,10 +77,10 @@ export default function UserTagManager({ tags = [], onSave, loading }) {
   };
 
   return (
-    <div className="space-y-3 p-4 rounded-xl border" style={{ borderColor: 'var(--border-color)' }}>
+    <div className="space-y-3 p-4 rounded-xl border border-border">
       <div className="flex items-center gap-2">
-        <Tag className="w-4 h-4" style={{ color: '#7DB04B' }} />
-        <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Tags</span>
+        <Tag className="w-4 h-4 text-primary" />
+        <span className="font-semibold text-sm text-foreground">Tags</span>
       </div>
 
       {/* Current tags */}
@@ -94,7 +94,7 @@ export default function UserTagManager({ tags = [], onSave, loading }) {
           </Badge>
         ))}
         {currentTags.length === 0 && (
-          <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Nenhuma tag adicionada</p>
+          <p className="text-xs text-muted-foreground">Nenhuma tag adicionada</p>
         )}
       </div>
 
@@ -106,7 +106,7 @@ export default function UserTagManager({ tags = [], onSave, loading }) {
           onChange={(e) => setNewTag(e.target.value)}
           onKeyDown={handleKeyDown}
           className="flex-1 h-8 text-sm"
-          style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+          className="flex-1 h-8 text-sm"
         />
         <Button size="sm" variant="outline" className="h-8" onClick={() => addTag(newTag)} disabled={!newTag.trim()}>
           <Plus className="w-3 h-3" />
@@ -115,7 +115,7 @@ export default function UserTagManager({ tags = [], onSave, loading }) {
 
       {/* Suggested tags */}
       <div>
-        <p className="text-[10px] uppercase font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Sugestões</p>
+        <p className="text-[10px] uppercase font-semibold mb-1.5 text-muted-foreground">Sugestões</p>
         <div className="flex flex-wrap gap-1">
           {SUGGESTED_TAGS.filter(t => !currentTags.includes(t.label)).map(t => (
             <button

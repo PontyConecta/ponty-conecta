@@ -6,7 +6,7 @@ import { Trophy, AlertTriangle, FolderOpen, Megaphone, FolderCheck, Target, Thum
 import DashboardMetricCard from './DashboardMetricCard';
 
 
-const COLORS = ['#B5956A', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#3b82f6', '#ef4444'];
+const COLORS = ['#B5956A', '#fb923c', '#10b981', '#f59e0b', '#ec4899', '#94a3b8', '#3b82f6', '#ef4444'];
 
 export default function DashboardMarketplace({ analytics }) {
   if (!analytics) return null;

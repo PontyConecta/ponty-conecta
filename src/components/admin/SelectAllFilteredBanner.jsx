@@ -19,15 +19,15 @@ export default function SelectAllFilteredBanner({
 
   if (selectionScope === 'filtered') {
     return (
-      <div className="flex items-center justify-center gap-3 py-2 px-4 rounded-lg text-sm bg-[#7DB04B]/5 border border-[#7DB04B]/20">
-        <CheckCheck className="w-4 h-4 text-[#7DB04B]" />
+      <div className="flex items-center justify-center gap-3 py-2 px-4 rounded-lg text-sm bg-primary/5 border border-primary/20">
+        <CheckCheck className="w-4 h-4 text-primary" />
         <span className="text-foreground">
           Todos os <strong>{filteredTotal}</strong> usuários filtrados estão selecionados.
         </span>
         <Button
           variant="link"
           size="sm"
-          className="h-auto p-0 text-[#7DB04B] underline"
+          className="h-auto p-0 text-primary underline"
           onClick={onClearToPage}
         >
           Selecionar apenas esta página
@@ -44,7 +44,7 @@ export default function SelectAllFilteredBanner({
       <Button
         variant="link"
         size="sm"
-        className="h-auto p-0 text-[#7DB04B] underline font-semibold"
+        className="h-auto p-0 text-primary underline font-semibold"
         onClick={onSelectAllFiltered}
       >
         Selecionar todos os {filteredTotal} resultados filtrados

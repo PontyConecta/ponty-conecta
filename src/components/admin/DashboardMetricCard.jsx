@@ -70,7 +70,7 @@ export default function DashboardMetricCard({ label, value, subtitle, secondaryL
             <p className="text-[10px] mt-0.5 text-muted-foreground/50 leading-tight">{secondaryLabel || '—'}</p>
           </div>
           {Icon && (
-            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${iconColor.replace('text-', 'bg-').replace('-600', '-100').replace('-500', '-100').replace('-400', '-100')}`}>
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${iconColor.includes('primary') ? 'bg-primary/10' : iconColor.replace('text-', 'bg-').replace('-600', '-100').replace('-500', '-100').replace('-400', '-100')}`}>
               <Icon className={`w-4 h-4 sm:w-[18px] sm:h-[18px] ${iconColor}`} />
             </div>
           )}

@@ -35,12 +35,12 @@ export default function AdminMenu({ currentPageName }) {
           size="icon"
           className="h-10 w-10 rounded-full hover:bg-primary/10"
         >
-          <Shield className="w-5 h-5 text-[#7DB04B]" />
+          <Shield className="w-5 h-5 text-primary" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 p-1.5" sideOffset={8}>
         <div className="px-2.5 py-2 mb-1">
-          <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#7DB04B' }}>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">
             Admin
           </p>
         </div>
@@ -50,16 +50,13 @@ export default function AdminMenu({ currentPageName }) {
             <DropdownMenuItem key={item.page} asChild className="p-0">
               <Link 
                 to={createPageUrl(item.page)} 
-                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md cursor-pointer transition-all w-full"
-                style={{
-                  backgroundColor: isActive ? 'rgba(125, 176, 75, 0.12)' : 'transparent',
-                  color: isActive ? '#7DB04B' : undefined,
-                  fontWeight: isActive ? 600 : 400,
-                }}
-                onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(125, 176, 75, 0.06)'; }}
-                onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md cursor-pointer transition-all w-full ${
+                  isActive
+                    ? 'bg-primary/10 text-primary font-semibold'
+                    : 'text-foreground font-normal hover:bg-primary/5'
+                }`}
               >
-                <item.icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-[#7DB04B]' : 'text-muted-foreground'}`} />
+                <item.icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
                 <span className="text-sm">{item.name}</span>
               </Link>
             </DropdownMenuItem>

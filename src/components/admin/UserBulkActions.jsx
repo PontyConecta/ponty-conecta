@@ -136,7 +136,7 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
     <div className="space-y-2">
       <div className="flex items-center gap-3 p-3 rounded-xl border flex-wrap" style={{ backgroundColor: 'rgba(125, 176, 75, 0.05)', borderColor: 'rgba(125, 176, 75, 0.2)' }}>
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4" style={{ color: '#7DB04B' }} />
+          <Users className="w-4 h-4 text-primary" />
           <Badge className="bg-primary text-primary-foreground border-0">
             {selectedIds.length} selecionado(s)
           </Badge>
