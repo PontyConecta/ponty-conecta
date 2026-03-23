@@ -10,7 +10,7 @@ import {
 const EVENT_CONFIG = {
   created:     { icon: UserPlus,     color: 'bg-emerald-500', label: 'Conta criada' },
   first_active:{ icon: LogIn,        color: 'bg-blue-500',    label: 'Primeiro acesso' },
-  last_active: { icon: Activity,     color: 'bg-cyan-500',    label: 'Última atividade' },
+  last_active: { icon: Activity,     color: 'bg-blue-500',    label: 'Última atividade' },
   application: { icon: Send,         color: 'bg-primary',  label: 'Aplicou em campanha' },
   delivery:    { icon: PackageCheck,  color: 'bg-amber-500',   label: 'Entrega enviada' },
   dispute:     { icon: Scale,         color: 'bg-red-500',     label: 'Disputa aberta' },

@@ -18,7 +18,7 @@ function TrendIndicator({ current, previous }) {
     </span>
   );
   return (
-    <span className="flex items-center gap-0.5 text-[10px]" style={{ color: 'var(--text-secondary)' }}>
+    <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
       <Minus className="w-3 h-3" /> 0%
     </span>
   );
@@ -69,8 +69,7 @@ export default function UserStatsCards({ brands, creators, onStatClick }) {
       {stats.map((stat) => (
         <Card 
           key={stat.label}
-          className="cursor-pointer hover:shadow-md transition-all"
-          style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
+          className="cursor-pointer hover:shadow-md transition-all bg-card border"
           onClick={() => onStatClick?.(stat.filter)}
         >
           <CardContent className="p-4">
@@ -79,10 +78,10 @@ export default function UserStatsCards({ brands, creators, onStatClick }) {
                 <stat.icon className={`w-5 h-5 ${stat.iconColor}`} />
               </div>
               <div className="min-w-0">
-                <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{stat.value}</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{stat.label}</p>
+                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
                 {stat.sub && (
-                  <p className="text-[10px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{stat.sub}</p>
+                  <p className="text-[10px] mt-0.5 text-muted-foreground">{stat.sub}</p>
                 )}
               </div>
             </div>

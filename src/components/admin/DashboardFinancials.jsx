@@ -137,7 +137,7 @@ export default function DashboardFinancials() {
           value={`R$ ${ltv.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
           subtitle={`Retenção ${retentionRate}%`}
           icon={Target}
-          iconColor="text-purple-600"
+          iconColor="text-emerald-600"
           tooltip="Lifetime Value — valor estimado que cada assinante gera durante o tempo de vida na plataforma."
         />
         <DashboardMetricCard
@@ -157,7 +157,7 @@ export default function DashboardFinancials() {
           value={subscribers}
           subtitle={f === 'all' ? `${d.brandSubscribers} marcas · ${d.creatorSubscribers} creators` : undefined}
           icon={Users}
-          iconColor="text-indigo-600"
+          iconColor="text-blue-600"
           tooltip="Número total de assinaturas ativas (pagas) no Stripe."
         />
         <DashboardMetricCard
@@ -173,7 +173,7 @@ export default function DashboardFinancials() {
           value={d.monthlySubscribers}
           subtitle={`${d.annualSubscribers} anuais`}
           icon={CreditCard}
-          iconColor="text-cyan-600"
+          iconColor="text-primary"
           tooltip="Distribuição dos assinantes entre planos mensais e anuais."
         />
         <DashboardMetricCard

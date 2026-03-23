@@ -95,7 +95,7 @@ export default function DashboardDateFilter({ value, onChange }) {
               onClick={handleApplyCustom}
               disabled={!customFrom || !customTo}
               size="sm"
-              className="w-full h-8 text-xs bg-[#7DB04B] hover:bg-[#5C8036] text-white"
+              className="w-full h-8 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               Aplicar
             </Button>

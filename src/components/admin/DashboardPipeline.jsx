@@ -131,7 +131,7 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
                     ? Math.round((funnelData[funnelData.length - 1].value / funnelData[0].value) * 100)
                     : 0;
                   return (
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded text-white ${rate >= 50 ? 'bg-emerald-600' : rate >= 20 ? 'bg-amber-500' : 'bg-red-500'}`}>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${rate >= 50 ? 'bg-emerald-100 text-emerald-700' : rate >= 20 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
                       {rate}%
                     </span>
                   );

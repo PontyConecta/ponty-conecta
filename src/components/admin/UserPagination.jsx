@@ -10,7 +10,7 @@ export default function UserPagination({ currentPage, totalPages, totalItems, pa
 
   return (
     <div className="flex items-center justify-between px-1">
-      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+      <p className="text-xs text-muted-foreground">
         {startItem}-{endItem} de {totalItems}
       </p>
       <div className="flex items-center gap-1">
@@ -39,7 +39,7 @@ export default function UserPagination({ currentPage, totalPages, totalItems, pa
               key={pageNum}
               variant={pageNum === currentPage ? 'default' : 'outline'}
               size="icon"
-              className={`h-8 w-8 text-xs ${pageNum === currentPage ? 'bg-[#7DB04B] hover:bg-[#5C8036] text-white' : ''}`}
+              className={`h-8 w-8 text-xs ${pageNum === currentPage ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}`}
               onClick={() => onPageChange(pageNum)}
             >
               {pageNum}

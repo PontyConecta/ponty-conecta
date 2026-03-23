@@ -134,7 +134,7 @@ export default function UserTagManager({ tags = [], onSave, loading }) {
         <Button
           onClick={() => onSave(currentTags)}
           disabled={loading}
-          className="w-full bg-[#7DB04B] hover:bg-[#5C8036] text-white"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
           size="sm"
         >
           Salvar Tags

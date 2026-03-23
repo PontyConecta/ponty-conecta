@@ -163,7 +163,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                 <Checkbox checked={isSelected} onCheckedChange={(e) => { e?.stopPropagation?.(); toggleOne(user.id); }} />
                 <Avatar className="w-10 h-10 flex-shrink-0">
                   <AvatarImage src={profile?.avatar_url || profile?.logo_url} />
-                  <AvatarFallback className={type === 'brand' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}>
+                  <AvatarFallback className={type === 'brand' ? 'bg-muted text-muted-foreground' : 'bg-orange-100 text-orange-700'}>
                     {type === 'brand' ? <Building2 className="w-4 h-4" /> : <Star className="w-4 h-4" />}
                   </AvatarFallback>
                 </Avatar>

@@ -356,7 +356,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
                   }}
                   disabled={actionLoading}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
                 >
                   {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Tornar Visível'}
                 </Button>
