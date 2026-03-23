@@ -23,8 +23,8 @@ export default function Inbox() {
 
     const load = async () => {
       const [sent, received] = await Promise.all([
-        base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 200),
-        base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 200),
+        base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 100),
+        base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 100),
       ]);
       if (aborted) return;
       const myMsgs = [...sent, ...received].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);

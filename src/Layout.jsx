@@ -95,11 +95,11 @@ function LayoutContent({ children, currentPageName }) {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform bg-[#7DB04B]">
-                <span className="text-white font-bold text-base lg:text-lg">P</span>
+              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform bg-primary">
+                <span className="text-primary-foreground font-bold text-base lg:text-lg">P</span>
               </div>
               <div className="hidden sm:flex flex-col">
-                <span className="text-base lg:text-lg font-bold leading-tight text-[#7DB04B]">Ponty</span>
+                <span className="text-base lg:text-lg font-bold leading-tight text-primary">Ponty</span>
                 <span className="text-[10px] lg:text-xs font-medium text-muted-foreground leading-tight">
                   {profileType === 'brand' ? 'Marcas' : 'Creators'}
                 </span>

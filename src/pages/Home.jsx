@@ -39,11 +39,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-4 lg:mb-10">
             <div className="flex items-center gap-2 lg:gap-3 group">
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform" style={{ backgroundColor: '#7DB04B' }}>
-                <span className="text-white font-bold text-xl lg:text-2xl">P</span>
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform bg-primary">
+                <span className="text-primary-foreground font-bold text-xl lg:text-2xl">P</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold leading-tight" style={{ color: '#7DB04B' }}>Ponty</span>
+                <span className="text-xl lg:text-2xl font-bold leading-tight text-primary">Ponty</span>
                 <span className="text-xs lg:text-sm font-medium text-muted-foreground leading-tight">Conecta</span>
               </div>
             </div>
@@ -57,7 +57,7 @@ export default function Home() {
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight tracking-tight">
-                A <span style={{ color: '#7DB04B' }}>Ponte Profissional</span> Entre Marcas e Criadores
+                A <span className="text-primary">Ponte Profissional</span> Entre Marcas e Criadores
               </h1>
 
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-md">
@@ -190,7 +190,7 @@ export default function Home() {
 
             <TabsContent value="creators" className="mt-8">
               <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0 bg-[#B5956A]/5"></div>
+                  <div className="absolute inset-0 bg-accent/5"></div>
 
                   <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
                     <div className="space-y-6 max-w-md w-full">
@@ -210,8 +210,8 @@ export default function Home() {
                           { icon: TrendingUp, title: 'Reputação Verificada', description: 'Construa histórico profissional' }
                         ].map((feature, idx) => (
                           <div key={idx} className="flex gap-3 bg-card/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-9 h-9 bg-[#B5956A]/10 rounded-lg flex items-center justify-center">
-                              <feature.icon className="w-4 h-4 text-[#B5956A]" />
+                            <div className="flex-shrink-0 w-9 h-9 bg-accent/10 rounded-lg flex items-center justify-center">
+                              <feature.icon className="w-4 h-4 text-accent" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-foreground">{feature.title}</h4>
@@ -223,7 +223,7 @@ export default function Home() {
 
                       <Button 
                         size="lg" 
-                        className="bg-[#B5956A] hover:bg-[#9A7D57] text-white w-full"
+                        className="bg-accent hover:bg-accent/80 text-accent-foreground w-full"
                         onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                       >
                         Começar como Criador
@@ -284,7 +284,7 @@ export default function Home() {
       </section>
 
       <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-primary">
-        <div className="max-w-3xl mx-auto text-center text-white">
+        <div className="max-w-3xl mx-auto text-center text-primary-foreground">
           <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-4 tracking-tight">
             Pronto para começar?
           </h2>

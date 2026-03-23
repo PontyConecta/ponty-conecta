@@ -91,6 +91,11 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
                   )}
                 </div>
                 {!isCollapsed && <span>{item.name}</span>}
+                {!isCollapsed && item.page === 'Inbox' && unreadCount > 0 && (
+                  <span className="ml-auto bg-primary text-primary-foreground text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </Link>
             );
 
