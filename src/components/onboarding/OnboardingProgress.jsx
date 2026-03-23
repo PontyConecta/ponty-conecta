@@ -3,9 +3,9 @@ import { CheckCircle2 } from 'lucide-react';
 
 export default function OnboardingProgress({ steps, currentStep, accentColor = 'indigo', onStepClick }) {
   const colorMap = {
-    indigo: { active: 'bg-[#7DB04B]', line: 'bg-[#7DB04B]' },
-    orange: { active: 'bg-[#B5956A]', line: 'bg-[#B5956A]' },
-    purple: { active: 'bg-[#7DB04B]', line: 'bg-[#7DB04B]' },
+    indigo: { active: 'bg-primary', line: 'bg-primary' },
+    orange: { active: 'bg-accent', line: 'bg-accent' },
+    purple: { active: 'bg-primary', line: 'bg-primary' },
   };
   const colors = colorMap[accentColor] || colorMap.indigo;
 
@@ -26,16 +26,16 @@ export default function OnboardingProgress({ steps, currentStep, accentColor = '
             <div className={`
               w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-all flex-shrink-0
               ${currentStep >= s.number ? `${colors.active} text-white` : 'bg-muted'}
-              ${s.number < currentStep && onStepClick ? 'group-hover:scale-110 group-hover:ring-2 group-hover:ring-[#7DB04B]/30' : ''}
+              ${s.number < currentStep && onStepClick ? 'group-hover:scale-110 group-hover:ring-2 group-hover:ring-primary/30' : ''}
             `}>
               {currentStep > s.number ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : s.number}
             </div>
-            <span className={`hidden sm:block text-xs sm:text-sm whitespace-nowrap ${currentStep >= s.number ? 'font-medium text-foreground' : 'text-muted-foreground'} ${s.number < currentStep && onStepClick ? 'group-hover:text-[#7DB04B]' : ''}`}>
+            <span className={`hidden sm:block text-xs sm:text-sm whitespace-nowrap ${currentStep >= s.number ? 'font-medium text-foreground' : 'text-muted-foreground'} ${s.number < currentStep && onStepClick ? 'group-hover:text-primary' : ''}`}>
               {s.title}
             </span>
           </div>
           {index < steps.length - 1 && (
-            <div className={`w-4 sm:w-8 h-0.5 flex-shrink-0 ${currentStep > s.number ? 'bg-[#7DB04B]' : 'bg-border'}`} />
+            <div className={`w-4 sm:w-8 h-0.5 flex-shrink-0 ${currentStep > s.number ? 'bg-primary' : 'bg-border'}`} />
           )}
         </React.Fragment>
       ))}

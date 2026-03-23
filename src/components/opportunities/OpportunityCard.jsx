@@ -122,7 +122,7 @@ export default function OpportunityCard({ campaign, brand, applied, index, onVie
               <Button
                 size="sm"
                 onClick={(e) => { e.stopPropagation(); onView(campaign); }}
-                className="bg-[#7DB04B] hover:bg-[#5C8036] text-white text-xs h-9 px-3 min-h-[44px]"
+                className="bg-primary hover:bg-primary/80 text-primary-foreground text-xs h-9 px-3 min-h-[44px]"
               >
                 <Eye className="w-3.5 h-3.5 mr-1" />
                 Ver

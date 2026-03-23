@@ -166,11 +166,11 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
           )}
 
           {step < 4 ? (
-            <Button onClick={() => setStep(s => s + 1)} disabled={!isStepValid()} className="bg-[#7DB04B] hover:bg-[#5C8036] text-white gap-2 min-h-[44px]">
+            <Button onClick={() => setStep(s => s + 1)} disabled={!isStepValid()} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2 min-h-[44px]">
               Próximo <ArrowRight className="w-4 h-4" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} disabled={saving || !formData.title || !formData.description || !formData.deadline} className="bg-[#7DB04B] hover:bg-[#5C8036] text-white gap-2 min-h-[44px]">
+            <Button onClick={handleSubmit} disabled={saving || !formData.title || !formData.description || !formData.deadline} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2 min-h-[44px]">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingCampaign ? <><Check className="w-4 h-4" /> Salvar Alterações</> : <><Rocket className="w-4 h-4" /> Publicar Campanha</>}
             </Button>
           )}
