@@ -80,7 +80,7 @@ export default function AdminDisputes() {
       }
 
       // Load disputes
-      const disputesData = await base44.entities.Dispute.list('-created_date');
+      const disputesData = await base44.entities.Dispute.list('-created_date', 200);
       setDisputes(disputesData);
 
       // Load related entities

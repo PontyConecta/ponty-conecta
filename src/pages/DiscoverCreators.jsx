@@ -53,7 +53,7 @@ export default function DiscoverCreators() {
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
-    const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date');
+    const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 500);
     setCreators(allCreators.filter(c => c.display_name?.trim()));
     setLoading(false);
   };

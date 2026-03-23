@@ -29,7 +29,7 @@ export default function AdminAuditLogs() {
 
   const loadLogs = async () => {
     try {
-      const logsData = await base44.entities.AuditLog.list('-timestamp');
+      const logsData = await base44.entities.AuditLog.list('-timestamp', 500);
       setLogs(logsData);
     } catch (error) {
       console.error('Error loading logs:', error);

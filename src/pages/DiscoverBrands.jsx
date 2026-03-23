@@ -49,7 +49,7 @@ export default function DiscoverBrands() {
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
-    const allBrands = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date');
+    const allBrands = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date', 500);
     // Exclude brands without a company_name (system/orphan entities)
     setBrands(allBrands.filter(b => b.company_name?.trim()));
     setLoading(false);

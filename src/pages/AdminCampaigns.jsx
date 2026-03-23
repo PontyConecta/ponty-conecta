@@ -47,8 +47,8 @@ export default function AdminCampaigns() {
   const loadCampaigns = async () => {
     try {
       const [campaignsData, brandsData] = await Promise.all([
-        base44.entities.Campaign.list('-created_date'),
-        base44.entities.Brand.list()
+        base44.entities.Campaign.list('-created_date', 500),
+        base44.entities.Brand.list('-created_date', 500)
       ]);
       setCampaigns(campaignsData);
       setBrands(brandsData);

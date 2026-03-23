@@ -73,7 +73,7 @@ import Profile from './pages/Profile';
 import SelectProfile from './pages/SelectProfile';
 import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
-import SubscriptionPage from './pages/SubscriptionPage';
+
 import Inbox from './pages/Inbox';
 import InboxThread from './pages/InboxThread';
 import DiscoverCommunity from './pages/DiscoverCommunity';
@@ -107,7 +107,6 @@ export const PAGES = {
     "SelectProfile": SelectProfile,
     "Settings": Settings,
     "Subscription": Subscription,
-    "SubscriptionPage": SubscriptionPage,
     "Inbox": Inbox,
     "InboxThread": InboxThread,
     "DiscoverCommunity": DiscoverCommunity,
