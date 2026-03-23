@@ -25,9 +25,24 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../components/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { toast } from 'sonner';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+const formatBRL = (value) => {
+  const num = parseFloat(value);
+  if (isNaN(num)) return '—';
+  return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
 
 export default function MyApplications() {
-  const { user, profile: authProfile, profileType } = useAuth();
+  const { user, profile: authProfile, profileType, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const [withdrawTarget, setWithdrawTarget] = useState(null);
   const [creator, setCreator] = useState(null);
   const [applications, setApplications] = useState([]);
   const [campaigns, setCampaigns] = useState({});
@@ -75,17 +90,23 @@ export default function MyApplications() {
     }
   };
 
+  if (!authLoading && profileType && profileType !== 'creator') {
+    navigate(createPageUrl('Home'));
+    return null;
+  }
+
   const handleWithdraw = async (applicationId) => {
-    if (!window.confirm('Tem certeza que deseja cancelar esta candidatura?')) return;
-    
     try {
       await base44.functions.invoke('manageApplication', {
         action: 'withdraw',
         application_id: applicationId,
       });
+      setWithdrawTarget(null);
+      toast.success('Candidatura cancelada.');
       await loadData();
     } catch (error) {
       console.error('Error withdrawing application:', error);
+      toast.error('Erro ao cancelar candidatura.');
     }
   };
 
@@ -195,12 +216,12 @@ export default function MyApplications() {
                           <div className="flex flex-wrap gap-3 mt-2 text-sm">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
-                              {campaign?.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '-'}
+                              {campaign?.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
                             </span>
                             {application.proposed_rate && (
                               <span className="flex items-center gap-1">
                                 <DollarSign className="w-4 h-4" />
-                                R$ {application.proposed_rate}
+                                {formatBRL(application.proposed_rate)}
                               </span>
                             )}
                           </div>
@@ -210,7 +231,7 @@ export default function MyApplications() {
                       {/* Status & Date */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         <span>
-                          {new Date(application.created_date).toLocaleDateString('pt-BR')}
+                          {new Date(application.created_date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                         </span>
                         <Badge className={`${statusConfig.color} border-0`}>
                           <statusConfig.icon className="w-3 h-3 mr-1" />
@@ -223,8 +244,7 @@ export default function MyApplications() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleWithdraw(application.id)}
-                         
+                          onClick={() => setWithdrawTarget(application.id)}
                         >
                           <XCircle className="w-4 h-4 mr-1" />
                           Cancelar
@@ -257,7 +277,7 @@ export default function MyApplications() {
                     {application.status === 'accepted' && application.agreed_rate && (
                       <div className="mt-4 p-3 bg-emerald-50 rounded-lg">
                         <p className="text-sm text-emerald-700">
-                          <strong>Valor Acordado:</strong> R$ {application.agreed_rate}
+                          <strong>Valor Acordado:</strong> {formatBRL(application.agreed_rate)}
                         </p>
                       </div>
                     )}
@@ -282,6 +302,25 @@ export default function MyApplications() {
           </CardContent>
         </Card>
       )}
+
+      {/* Withdraw Confirmation Dialog */}
+      <AlertDialog open={!!withdrawTarget} onOpenChange={(open) => { if (!open) setWithdrawTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogTitle>Cancelar candidatura?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Você perderá sua posição nesta campanha. Essa ação não pode ser desfeita.
+          </AlertDialogDescription>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel>Manter candidatura</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleWithdraw(withdrawTarget)}
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+            >
+              Sim, cancelar
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
