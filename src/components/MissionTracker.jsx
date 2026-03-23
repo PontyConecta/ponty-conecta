@@ -8,16 +8,16 @@ import { motion } from 'framer-motion';
 export default function MissionTracker({ missions = [] }) {
   if (missions.length === 0) {
     return (
-      <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <Card className="bg-card">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Flame className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
+          <CardTitle className="text-lg font-semibold flex items-center gap-2 text-foreground">
+            <Flame className="w-5 h-5 text-primary" />
             Missões
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <p style={{ color: 'var(--text-secondary)' }}>Nenhuma missão ativa no momento</p>
+          <p className="text-muted-foreground">Nenhuma missão ativa no momento</p>
           </div>
         </CardContent>
       </Card>
@@ -25,10 +25,10 @@ export default function MissionTracker({ missions = [] }) {
   }
 
   return (
-    <Card style={{ backgroundColor: 'var(--bg-secondary)' }}>
+    <Card className="bg-card">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-          <Flame className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
+        <CardTitle className="text-lg font-semibold flex items-center gap-2 text-foreground">
+          <Flame className="w-5 h-5 text-primary" />
           Missões ({missions.filter(m => m.status === 'active').length} ativas)
         </CardTitle>
       </CardHeader>
@@ -49,14 +49,14 @@ export default function MissionTracker({ missions = [] }) {
               transition={{ delay: index * 0.1 }}
               className={`p-4 rounded-xl border transition-all ${
                 isCompleted 
-                  ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800' 
+                  ? 'bg-emerald-500/10 border-emerald-500/20' 
                   : isActive 
                   ? 'border-opacity-50'
                   : 'opacity-60'
               }`}
               style={{
-                backgroundColor: isCompleted ? undefined : 'var(--bg-secondary)',
-                borderColor: isCompleted ? undefined : 'var(--border-color)'
+                backgroundColor: isCompleted ? undefined : undefined,
+                borderColor: isCompleted ? undefined : undefined
               }}
             >
               <div className="flex items-start gap-3 mb-3">
@@ -79,10 +79,10 @@ export default function MissionTracker({ missions = [] }) {
                      isCompleted 
                        ? 'text-emerald-900 line-through' 
                        : ''
-                   }`} style={{ color: isCompleted ? undefined : 'var(--text-primary)' }}>
+                   }`} style={{ color: isCompleted ? undefined : undefined }}>
                      {mission.title}
                    </h4>
-                   <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{mission.description}</p>
+                   <p className="text-xs mt-0.5 text-muted-foreground">{mission.description}</p>
                  </div>
 
                 {mission.reward_points > 0 && (
@@ -94,7 +94,7 @@ export default function MissionTracker({ missions = [] }) {
 
               {isActive && (
                 <>
-                  <div className="flex items-center justify-between text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
+                  <div className="flex items-center justify-between text-xs mb-2 text-muted-foreground">
                     <span>Progresso</span>
                     <span className="font-semibold">
                       {mission.current_progress}/{mission.target_value}

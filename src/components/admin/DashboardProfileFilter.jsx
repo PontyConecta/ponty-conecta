@@ -10,7 +10,7 @@ const filters = [
 
 export default function DashboardProfileFilter({ value, onChange }) {
   return (
-    <div className="flex items-center gap-1 p-1 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="flex items-center gap-1 p-1 rounded-lg bg-muted">
       {filters.map(f => {
         const active = value === f.key;
         return (
@@ -22,7 +22,7 @@ export default function DashboardProfileFilter({ value, onChange }) {
             className={`h-8 px-3 gap-1.5 text-xs font-medium rounded-md transition-all ${
               active ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
             }`}
-            style={active ? { backgroundColor: 'var(--bg-secondary)', color: '#7DB04B' } : { color: 'var(--text-secondary)' }}
+            style={active ? { backgroundColor: 'hsl(var(--card))', color: '#7DB04B' } : { color: 'hsl(var(--muted-foreground))' }}
           >
             <f.icon className="w-3.5 h-3.5" />
             {f.label}

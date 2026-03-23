@@ -130,13 +130,13 @@ export default function SelectProfile() {
           <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20" style={{ backgroundColor: '#7DB04B' }}>
             <span className="text-white font-bold text-xl">P</span>
           </div>
-          <span className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Ponty</span>
+          <span className="text-2xl font-semibold text-foreground">Ponty</span>
         </Link>
 
-        <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+        <h1 className="text-4xl font-bold mb-4 text-foreground">
           Bem-vindo, {user?.full_name?.split(' ')[0]}!
         </h1>
-        <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-lg max-w-xl mx-auto text-muted-foreground">
           Escolha como você quer usar a plataforma. Você poderá criar perfis adicionais depois.
         </p>
       </div>
@@ -167,13 +167,13 @@ export default function SelectProfile() {
               </div>
 
               {/* Content */}
-              <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{profile.title}</h2>
-              <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>{profile.subtitle}</p>
+              <h2 className="text-2xl font-bold mb-2 text-foreground">{profile.title}</h2>
+              <p className="mb-6 text-muted-foreground">{profile.subtitle}</p>
 
               {/* Features */}
               <ul className="space-y-3 mb-8">
                 {profile.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
+                  <li key={i} className="flex items-center gap-3 text-foreground">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
@@ -202,7 +202,7 @@ export default function SelectProfile() {
 
       {/* Info Section */}
       <div className="max-w-2xl mx-auto mt-12 text-center">
-        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-sm text-muted-foreground">
           Ao continuar, você concorda com nossos{' '}
           <a href="#" className="text-[#7DB04B] hover:underline">Termos de Uso</a>
           {' '}e{' '}

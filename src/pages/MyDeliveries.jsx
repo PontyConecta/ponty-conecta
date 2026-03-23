@@ -256,7 +256,7 @@ export default function MyDeliveries() {
                             {brand?.company_name || 'Marca'}
                           </p>
                           <div className="flex flex-wrap gap-3 mt-2 text-sm">
-                            <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : ''}`} style={isOverdue ? {} : { color: 'var(--text-secondary)' }}>
+                            <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : 'text-muted-foreground'}`}>
                               <Calendar className="w-4 h-4" />
                               {delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}
                               {isOverdue && <span className="font-medium">(Atrasado!)</span>}

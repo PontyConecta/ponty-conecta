@@ -30,7 +30,7 @@ export default function DashboardDateFilter({ value, onChange }) {
     : 'Personalizado';
 
   return (
-    <div className="flex items-center gap-1 p-1 rounded-lg w-fit flex-wrap" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="flex items-center gap-1 p-1 rounded-lg w-fit flex-wrap bg-muted">
       {ranges.map(r => {
         const active = value === r.key;
         return (
@@ -42,7 +42,7 @@ export default function DashboardDateFilter({ value, onChange }) {
             className={`h-8 px-3 gap-1.5 text-xs font-medium rounded-md transition-all ${
               active ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
             }`}
-            style={active ? { backgroundColor: 'var(--bg-secondary)', color: '#7DB04B' } : { color: 'var(--text-secondary)' }}
+            style={active ? { backgroundColor: 'hsl(var(--card))', color: '#7DB04B' } : { color: 'hsl(var(--muted-foreground))' }}
           >
             <r.icon className="w-3.5 h-3.5" />
             {r.label}
@@ -59,35 +59,35 @@ export default function DashboardDateFilter({ value, onChange }) {
             className={`h-8 px-3 gap-1.5 text-xs font-medium rounded-md transition-all ${
               isCustom ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
             }`}
-            style={isCustom ? { backgroundColor: 'var(--bg-secondary)', color: '#7DB04B' } : { color: 'var(--text-secondary)' }}
+            style={isCustom ? { backgroundColor: 'hsl(var(--card))', color: '#7DB04B' } : { color: 'hsl(var(--muted-foreground))' }}
           >
             <Settings2 className="w-3.5 h-3.5" />
             {customLabel}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-72 p-4" align="end" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <PopoverContent className="w-72 p-4" align="end" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
           <div className="space-y-3">
-            <p className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>Período Personalizado</p>
+            <p className="text-xs font-semibold text-foreground">Período Personalizado</p>
             <div className="space-y-2">
               <div>
-                <Label className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>De</Label>
+                <Label className="text-[11px] text-muted-foreground">De</Label>
                 <Input
                   type="date"
                   value={customFrom}
                   onChange={(e) => setCustomFrom(e.target.value)}
                   className="h-8 text-xs mt-1"
-                  style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
+                  style={{ color: 'hsl(var(--foreground))', backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }}
                 />
               </div>
               <div>
-                <Label className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>Até</Label>
+                <Label className="text-[11px] text-muted-foreground">Até</Label>
                 <Input
                   type="date"
                   value={customTo}
                   onChange={(e) => setCustomTo(e.target.value)}
                   className="h-8 text-xs mt-1"
                   max={new Date().toISOString().split('T')[0]}
-                  style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
+                  style={{ color: 'hsl(var(--foreground))', backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }}
                 />
               </div>
             </div>

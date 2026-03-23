@@ -38,9 +38,9 @@ export default function UserGrowthChart({ brands, creators }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* Growth Chart */}
-      <Card className="lg:col-span-2" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card className="lg:col-span-2 bg-card border">
         <CardContent className="p-4">
-          <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Crescimento de Usuários</h3>
+          <h3 className="text-sm font-semibold mb-4 text-foreground">Crescimento de Usuários</h3>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={growthData}>
@@ -54,11 +54,11 @@ export default function UserGrowthChart({ brands, creators }) {
                     <stop offset="95%" stopColor="#fb923c" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
-                <YAxis tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
                 />
                 <Area type="monotone" dataKey="marcas" stroke="#B5956A" fill="url(#colorBrands)" strokeWidth={2} />
                 <Area type="monotone" dataKey="criadores" stroke="#fb923c" fill="url(#colorCreators)" strokeWidth={2} />
@@ -69,9 +69,9 @@ export default function UserGrowthChart({ brands, creators }) {
       </Card>
 
       {/* Subscription Distribution */}
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+      <Card className="bg-card border">
         <CardContent className="p-4">
-          <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Distribuição de Planos</h3>
+          <h3 className="text-sm font-semibold mb-4 text-foreground">Distribuição de Planos</h3>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -90,10 +90,10 @@ export default function UserGrowthChart({ brands, creators }) {
                 </Pie>
                 <Legend 
                   wrapperStyle={{ fontSize: '11px' }}
-                  formatter={(value) => <span style={{ color: 'var(--text-secondary)' }}>{value}</span>}
+                  formatter={(value) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{value}</span>}
                 />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
                 />
               </PieChart>
             </ResponsiveContainer>
