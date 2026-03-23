@@ -9,10 +9,18 @@ import ApplicationCard from '../components/applications/ApplicationCard';
 import ApplicationsFilters from '../components/applications/ApplicationsFilters';
 import ApplicationDetailDialog from '../components/applications/ApplicationDetailDialog';
 import BrandDecisionDialog from '../components/applications/BrandDecisionDialog';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function Applications() {
-  const { profile: authProfile, profileType } = useAuth();
+  const { profile: authProfile, profileType, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const vm = useApplicationsViewModel(profileType, authProfile);
+
+  if (!authLoading && profileType && profileType !== 'brand') {
+    navigate(createPageUrl('Home'));
+    return null;
+  }
 
   if (vm.isLoading) return <LoadingSpinner />;
 

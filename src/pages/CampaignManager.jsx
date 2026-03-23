@@ -25,9 +25,12 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CampaignCreateMultiStep from '@/components/campaign/CampaignCreateMultiStep';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function CampaignManager() {
-  const { user, profile: brand } = useAuth();
+  const { user, profile: brand, profileType, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const { isSubscribed } = useSubscription();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,8 +42,12 @@ export default function CampaignManager() {
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
 
   useEffect(() => {
+    if (!authLoading && profileType && profileType !== 'brand') {
+      navigate(createPageUrl('Home'));
+      return;
+    }
     loadData();
-  }, []);
+  }, [authLoading, profileType]);
 
   const loadData = async () => {
     if (!brand) {
@@ -154,7 +161,7 @@ export default function CampaignManager() {
         </div>
         
         <Button 
-          className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm min-h-[44px]"
+          className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]"
           onClick={() => { 
             if (!profileValidation.isComplete) {
               toast.error('Complete seu perfil antes de criar campanhas');
@@ -366,7 +373,7 @@ export default function CampaignManager() {
                   setIsCreateOpen(true);
                 }
               }} 
-              className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm"
+              className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Campanha

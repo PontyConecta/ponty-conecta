@@ -51,7 +51,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-8 lg:mb-16">
             <div className="flex flex-col gap-4 sm:gap-5 lg:gap-7">
-              <div className="hidden lg:inline-flex items-center gap-2 bg-[#7DB04B]/10 text-[#7DB04B] px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
+              <div className="hidden lg:inline-flex items-center gap-2 bg-primary/10 text-primary px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
                 <Zap className="w-4 h-4 animate-pulse" />
                 <span>Mediação Profissional de Última Geração</span>
               </div>
@@ -72,7 +72,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   size="lg" 
-                  className="bg-[#7DB04B] text-white hover:bg-[#5C8036] w-full sm:w-auto shadow-lg shadow-[#7DB04B]/25 h-11 sm:h-12"
+                  className="bg-primary text-primary-foreground hover:bg-primary/80 w-full sm:w-auto shadow-lg shadow-primary/25 h-11 sm:h-12"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                 >
                   Sou uma Marca
@@ -80,7 +80,7 @@ export default function Home() {
                 </Button>
                 <Button 
                   size="lg" 
-                  className="w-full sm:w-auto border-2 border-[#7DB04B] text-[#7DB04B] bg-background hover:bg-[#7DB04B]/5 h-11 sm:h-12"
+                  className="w-full sm:w-auto border-2 border-primary text-primary bg-background hover:bg-primary/5 h-11 sm:h-12"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                 >
                   Sou Criador
@@ -164,8 +164,8 @@ export default function Home() {
                          { icon: Shield, title: 'Gestão Simplificada', description: 'Acompanhe entregas em um só lugar' }
                         ].map((feature, idx) => (
                          <div key={idx} className="flex gap-3 bg-card/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-9 h-9 bg-[#7DB04B]/10 rounded-lg flex items-center justify-center">
-                             <feature.icon className="w-4 h-4 text-[#7DB04B]" />
+                            <div className="flex-shrink-0 w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <feature.icon className="w-4 h-4 text-primary" />
                             </div>
                             <div>
                               <h4 className="font-bold text-sm text-foreground">{feature.title}</h4>
@@ -177,7 +177,7 @@ export default function Home() {
 
                       <Button 
                         size="lg" 
-                        className="bg-[#7DB04B] hover:bg-[#5C8036] text-white w-full"
+                        className="bg-primary hover:bg-primary/80 text-primary-foreground w-full"
                         onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
                       >
                         Começar como Marca
@@ -294,7 +294,7 @@ export default function Home() {
 
           <Button 
             size="lg" 
-            className="bg-background text-[#7DB04B] hover:bg-secondary"
+            className="bg-background text-primary hover:bg-secondary"
             onClick={scrollToSection}
           >
             Começar Agora

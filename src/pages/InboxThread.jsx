@@ -7,12 +7,22 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft, Send, Loader2 } from 'lucide-react';
 import MessageBubble from '@/components/inbox/MessageBubble';
+import { toast } from 'sonner';
 import moment from 'moment';
 
 export default function InboxThread() {
   const { user, profileType } = useAuth();
   const urlParams = new URLSearchParams(window.location.search);
   const applicationId = urlParams.get('applicationId');
+
+  if (!applicationId) {
+    return (
+      <div className="text-center py-20">
+        <p className="text-muted-foreground">Conversa não encontrada.</p>
+        <Link to={createPageUrl('Inbox')} className="text-primary text-sm mt-2 inline-block">Voltar</Link>
+      </div>
+    );
+  }
 
   const [application, setApplication] = useState(null);
   const [campaign, setCampaign] = useState(null);
@@ -69,7 +79,7 @@ export default function InboxThread() {
     }
 
     // Load messages
-    const msgs = await base44.entities.Message.filter({ application_id: applicationId }, 'created_date', 500);
+    const msgs = await base44.entities.Message.filter({ application_id: applicationId }, 'created_date', 100);
     setMessages(msgs);
 
     // Mark unread as read
@@ -99,8 +109,9 @@ export default function InboxThread() {
       if (brands.length > 0) recipientUserId = brands[0].user_id;
     }
 
+    const tempId = 'temp-' + Date.now();
     const tempMsg = {
-      id: 'temp-' + Date.now(),
+      id: tempId,
       application_id: applicationId,
       sender_id: user.id,
       sender_type: profileType,
@@ -113,15 +124,21 @@ export default function InboxThread() {
     setMessages(prev => [...prev, tempMsg]);
     setNewMessage('');
 
-    await base44.entities.Message.create({
-      application_id: applicationId,
-      sender_id: user.id,
-      sender_type: profileType,
-      recipient_id: recipientUserId,
-      content: tempMsg.content,
-    });
+    try {
 
-    setSending(false);
+      await base44.entities.Message.create({
+        application_id: applicationId,
+        sender_id: user.id,
+        sender_type: profileType,
+        recipient_id: recipientUserId,
+        content: tempMsg.content,
+      });
+    } catch (error) {
+      setMessages(prev => prev.filter(m => m.id !== tempId));
+      toast.error('Falha ao enviar mensagem. Tente novamente.');
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleKeyDown = (e) => {

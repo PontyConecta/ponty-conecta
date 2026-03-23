@@ -38,9 +38,12 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../components/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function MyDeliveries() {
-  const { user, profile: authProfile, profileType } = useAuth();
+  const { user, profile: authProfile, profileType, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [creator, setCreator] = useState(null);
   const [deliveries, setDeliveries] = useState([]);
   const [campaigns, setCampaigns] = useState({});
@@ -55,11 +58,15 @@ export default function MyDeliveries() {
   const [proofNotes, setProofNotes] = useState('');
 
   useEffect(() => {
+    if (!authLoading && profileType && profileType !== 'creator') {
+      navigate(createPageUrl('Home'));
+      return;
+    }
     if (authProfile && profileType === 'creator') {
       setCreator(authProfile);
       loadPageData(authProfile);
     }
-  }, [authProfile, profileType]);
+  }, [authProfile, profileType, authLoading]);
 
   const loadData = () => loadPageData(creator);
 
@@ -397,7 +404,7 @@ export default function MyDeliveries() {
                         className="hidden"
                         onChange={handleFileUpload}
                       />
-                      <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg hover:border-[#7DB04B] transition-colors">
+                      <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
                         <Upload className="w-5 h-5" />
                         <span className="text-sm">Clique para fazer upload</span>
                       </div>

@@ -28,52 +28,48 @@ export default function Inbox() {
   }, [user?.id]);
 
   const loadMessages = async () => {
-    const allMsgs = await base44.entities.Message.filter({}, '-created_date', 500);
-    const myMsgs = allMsgs.filter(m => m.sender_id === user.id || m.recipient_id === user.id);
+    const [sent, received] = await Promise.all([
+      base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 200),
+      base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 200),
+    ]);
+    const myMsgs = [...sent, ...received].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);
     setMessages(myMsgs);
 
     // Get unique application IDs
     const appIds = [...new Set(myMsgs.map(m => m.application_id))];
     
     if (appIds.length > 0) {
+      // Load applications in parallel
+      const apps = await Promise.all(appIds.map(id => base44.entities.Application.filter({ id }).then(r => r[0])));
       const appMap = {};
       const campaignIds = new Set();
       const brandIds = new Set();
       const creatorIds = new Set();
-
-      for (const id of appIds) {
-        const app = await base44.entities.Application.filter({ id });
-        if (app.length > 0) {
-          appMap[id] = app[0];
-          if (app[0].campaign_id) campaignIds.add(app[0].campaign_id);
-          if (app[0].brand_id) brandIds.add(app[0].brand_id);
-          if (app[0].creator_id) creatorIds.add(app[0].creator_id);
-        }
-      }
+      apps.filter(Boolean).forEach(app => {
+        appMap[app.id] = app;
+        if (app.campaign_id) campaignIds.add(app.campaign_id);
+        if (app.brand_id) brandIds.add(app.brand_id);
+        if (app.creator_id) creatorIds.add(app.creator_id);
+      });
       setApplications(appMap);
 
-      // Load campaigns
+      // Load campaigns, brands, creators in parallel
+      const [campsArr, brandsArr, creatorsArr] = await Promise.all([
+        Promise.all([...campaignIds].map(id => base44.entities.Campaign.filter({ id }).then(r => r[0]))),
+        Promise.all([...brandIds].map(id => base44.entities.Brand.filter({ id }).then(r => r[0]))),
+        Promise.all([...creatorIds].map(id => base44.entities.Creator.filter({ id }).then(r => r[0]))),
+      ]);
+
       const campMap = {};
-      for (const cid of campaignIds) {
-        const c = await base44.entities.Campaign.filter({ id: cid });
-        if (c.length > 0) campMap[cid] = c[0];
-      }
+      campsArr.filter(Boolean).forEach(c => { campMap[c.id] = c; });
       setCampaigns(campMap);
 
-      // Load brands
       const brandMap = {};
-      for (const bid of brandIds) {
-        const b = await base44.entities.Brand.filter({ id: bid });
-        if (b.length > 0) brandMap[bid] = b[0];
-      }
+      brandsArr.filter(Boolean).forEach(b => { brandMap[b.id] = b; });
       setBrands(brandMap);
 
-      // Load creators
       const creatorMap = {};
-      for (const cid of creatorIds) {
-        const c = await base44.entities.Creator.filter({ id: cid });
-        if (c.length > 0) creatorMap[cid] = c[0];
-      }
+      creatorsArr.filter(Boolean).forEach(c => { creatorMap[c.id] = c; });
       setCreators(creatorMap);
     }
 
@@ -147,6 +143,15 @@ export default function Inbox() {
           <p className="text-xs text-muted-foreground/60 mt-1">
             As conversas aparecem quando você se candidata ou recebe candidaturas em campanhas.
           </p>
+          {profileType === 'brand' ? (
+            <Link to={createPageUrl('DiscoverCreators')} className="text-primary text-sm font-medium mt-3 inline-block hover:underline">
+              Descobrir Criadores →
+            </Link>
+          ) : (
+            <Link to={createPageUrl('OpportunityFeed')} className="text-primary text-sm font-medium mt-3 inline-block hover:underline">
+              Ver Campanhas →
+            </Link>
+          )}
         </Card>
       ) : (
         <div className="space-y-2">

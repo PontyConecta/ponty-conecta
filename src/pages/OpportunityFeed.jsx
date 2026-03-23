@@ -91,7 +91,7 @@ export default function OpportunityFeed() {
                 </p>
               </div>
               <Button
-                className="bg-[#7DB04B] hover:bg-[#5C8036] text-white shadow-sm min-h-[44px]"
+                className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]"
                 onClick={() => vm.setShowPaywall(true)}
               >
                 Assinar

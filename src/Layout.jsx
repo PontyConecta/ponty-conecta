@@ -125,7 +125,7 @@ function LayoutContent({ children, currentPageName }) {
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => window.open('https://wa.me/5561998591499?text=Estou%20utilizando%20o%20aplicativo%20e%20preciso%20de%20ajuda.', '_blank')}
-                    className="bg-[#7DB04B] hover:bg-[#5C8036] text-white"
+                    className="bg-primary hover:bg-primary/80 text-primary-foreground"
                   >
                     Abrir WhatsApp
                   </AlertDialogAction>
@@ -139,8 +139,8 @@ function LayoutContent({ children, currentPageName }) {
             {/* Admin Link */}
             {isAdmin && (
               <Link to={createPageUrl('AdminDashboard')}>
-                <button className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center hover:bg-[#7DB04B]/10 transition-colors">
-                  <Shield className="w-5 h-5" style={{ color: '#7DB04B' }} />
+                <button className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+                  <Shield className="w-5 h-5 text-primary" />
                 </button>
               </Link>
             )}
@@ -149,7 +149,7 @@ function LayoutContent({ children, currentPageName }) {
             {!isSubscribed && (
               <Button 
                 onClick={() => window.location.href = createPageUrl('Subscription')}
-                className="h-10 px-4 font-bold rounded-lg shadow-sm bg-[#7DB04B] hover:bg-[#5C8036] text-white min-h-[44px]"
+                className="h-10 px-4 font-bold rounded-lg shadow-sm bg-primary hover:bg-primary/80 text-primary-foreground min-h-[44px]"
               >
                 <Crown className="w-4 h-4" />
                 <span className="hidden sm:inline">Assinar</span>
