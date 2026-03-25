@@ -6,8 +6,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Megaphone, Users, FileCheck, TrendingUp, Plus, ArrowRight, Loader2, Crown
+  Megaphone, Users, FileCheck, TrendingUp, Plus, ArrowRight, Crown
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
@@ -62,8 +63,17 @@ export default function BrandDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="space-y-5">
+        <div className="h-8 w-48 rounded-lg bg-muted animate-pulse" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-2xl bg-muted animate-pulse h-24" />
+          ))}
+        </div>
+        <div className="grid lg:grid-cols-2 gap-4">
+          <div className="rounded-2xl bg-muted animate-pulse h-64" />
+          <div className="rounded-2xl bg-muted animate-pulse h-64" />
+        </div>
       </div>
     );
   }
@@ -88,7 +98,7 @@ export default function BrandDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight text-foreground">
+          <h1 className="headline-display text-3xl lg:text-4xl text-foreground">
             Olá, {brand?.company_name?.split(' ')[0] || 'Marca'} 👋
           </h1>
           <p className="text-sm mt-1 text-muted-foreground">
@@ -116,11 +126,17 @@ export default function BrandDashboard() {
       />
 
       {/* BLOCK 2 — Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+      <motion.div
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4"
+        initial="hidden" animate="visible"
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+      >
         {stats.map((stat, i) => (
-          <StatCard key={i} index={i} {...stat} />
+          <motion.div key={i} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
+            <StatCard index={i} {...stat} />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* BLOCK 3 — Split grid */}
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">

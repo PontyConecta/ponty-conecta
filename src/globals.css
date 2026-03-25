@@ -154,6 +154,12 @@ html[data-theme="neon"], html[data-theme="musk"] {
 }
 
 /* ── Utility classes ── */
+.headline-display {
+  font-family: Impact, 'Arial Black', sans-serif;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
 .select-none {
   user-select: none;
   -webkit-user-select: none;

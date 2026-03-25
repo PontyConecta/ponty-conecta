@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads'];
 const CONTENT_TYPES = ['Fotos', 'Reels', 'Stories', 'Vídeos Longos', 'Lives', 'Unboxing', 'Reviews'];
-const NICHES = ['Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde', 'Viagens', 'Gastronomia'];
+const NICHES = ['Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde', 'Viagens', 'Gastronomia', 'Negócios', 'Esportes', 'Educação', 'Casa & Decoração', 'Maternidade', 'Sustentabilidade', 'Culinária', 'Espiritualidade', 'Automotivo'];
 
 export default function CampaignFormStep2({ formData, onChange, toggleArrayItem }) {
   return (

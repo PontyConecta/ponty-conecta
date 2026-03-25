@@ -24,13 +24,15 @@ import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import FieldHint from '@/components/onboarding/FieldHint';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
 import { computeProfileSize, FOLLOWER_RANGES, formatFollowers as fmtFollowers, getProfileSizeLabel } from '@/components/utils/profileSizeUtils';
+import { CREATOR_TYPE_OPTIONS } from '@/components/utils/creatorTypeConfig';
 
 const STEPS = [
   { number: 1, title: 'Identidade' },
   { number: 2, title: 'Especialização' },
-  { number: 3, title: 'Redes Sociais' },
-  { number: 4, title: 'Contato & Valores' },
-  { number: 5, title: 'Finalização' },
+  { number: 3, title: 'Tipo' },
+  { number: 4, title: 'Redes Sociais' },
+  { number: 5, title: 'Contato & Valores' },
+  { number: 6, title: 'Finalização' },
 ];
 
 const NICHES = [
@@ -69,6 +71,7 @@ export default function OnboardingCreator() {
     bio: '',
     avatar_url: '',
     niche: [],
+    creator_type: 'ugc',
     platforms: [],
     profile_size: '',
     content_types: [],
@@ -103,6 +106,7 @@ export default function OnboardingCreator() {
           bio: existing.bio || '',
           avatar_url: existing.avatar_url || '',
           niche: existing.niche || [],
+          creator_type: existing.creator_type || 'ugc',
           platforms: existing.platforms || [],
           profile_size: existing.profile_size || '',
           content_types: existing.content_types || [],
@@ -182,16 +186,17 @@ export default function OnboardingCreator() {
       dataToSave.avatar_url = formData.avatar_url;
       dataToSave.state = formData.state;
       dataToSave.city = formData.city;
-      // location is derived server-side from city + state
     } else if (step === 2) {
       dataToSave.niche = formData.niche;
       dataToSave.content_types = formData.content_types;
       dataToSave.profile_size = formData.profile_size;
     } else if (step === 3) {
+      dataToSave.creator_type = formData.creator_type;
+    } else if (step === 4) {
       dataToSave.platforms = formData.platforms;
       dataToSave.profile_size = computeProfileSize(formData.platforms);
       dataToSave.portfolio_url = formData.portfolio_url;
-    } else if (step === 4) {
+    } else if (step === 5) {
       dataToSave.contact_email = formData.contact_email;
       dataToSave.contact_whatsapp = formData.contact_whatsapp;
       dataToSave.rate_cash_min = formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null;
@@ -224,7 +229,7 @@ export default function OnboardingCreator() {
   };
 
   const handleNext = async () => {
-    if (step < 5) {
+    if (step < 6) {
       const ok = await saveStepData(step + 1);
       if (ok !== false) setStep(step + 1);
     }
@@ -252,9 +257,10 @@ export default function OnboardingCreator() {
     switch (step) {
       case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state && formData.state.length === 2;
       case 2: return formData.niche.length > 0 && formData.content_types.length > 0;
-      case 3: return formData.platforms.length > 0;
-      case 4: return isValidEmail(formData.contact_email) && formData.contact_whatsapp?.replace(/\D/g, '').length >= 10;
-      case 5: return true;
+      case 3: return true; // creator_type is optional (can skip)
+      case 4: return formData.platforms.length > 0;
+      case 5: return isValidEmail(formData.contact_email) && formData.contact_whatsapp?.replace(/\D/g, '').length >= 10;
+      case 6: return true;
       default: return false;
     }
   };
@@ -368,7 +374,7 @@ export default function OnboardingCreator() {
                   </div>
                 )}
 
-                {step === 3 && (
+                {step === 4 && (
                   <div className="space-y-6">
                     <div>
                       <Label className="text-sm font-medium text-foreground">Suas Plataformas *</Label>
@@ -420,7 +426,7 @@ export default function OnboardingCreator() {
                   </div>
                 )}
 
-                {step === 4 && (
+                {step === 5 && (
                   <div className="space-y-6">
                     <div>
                       <Label className="text-sm font-medium text-foreground">Email de Contato *</Label>
@@ -466,17 +472,22 @@ export default function OnboardingCreator() {
                   </div>
                 )}
 
-                {step === 5 && (
+                {step === 6 && (
                   <OnboardingSuccess profileType="creator" onContinue={handleFinalize} />
                 )}
               </motion.div>
             </AnimatePresence>
 
-            {step < 5 && (
+            {step < 6 && (
               <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
                   <ArrowLeft className="w-4 h-4" /> Voltar
                 </Button>
+                {step === 3 && (
+                  <Button variant="ghost" onClick={() => setStep(step + 1)} className="gap-2 text-muted-foreground">
+                    Pular
+                  </Button>
+                )}
                 <Button onClick={handleNext} disabled={!isStepValid() || saving} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2 disabled:opacity-50">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                     <>Próximo <ArrowRight className="w-4 h-4" /></>

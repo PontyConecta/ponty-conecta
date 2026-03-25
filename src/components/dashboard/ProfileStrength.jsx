@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { motion } from 'framer-motion';
 import { CheckCircle2, Camera, FileText, Globe, Image, Mail, ArrowRight } from 'lucide-react';
 
 const CRITERIA = [
@@ -39,7 +39,14 @@ export default function ProfileStrength({ profile }) {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center gap-3">
-          <Progress value={score} className="h-2 flex-1" />
+          <div className="h-2 flex-1 rounded-full bg-muted overflow-hidden">
+            <motion.div
+              className="h-full bg-primary rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${score}%` }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            />
+          </div>
           <span className="text-sm font-semibold tabular-nums text-foreground">{score}%</span>
         </div>
         <div className="space-y-2">

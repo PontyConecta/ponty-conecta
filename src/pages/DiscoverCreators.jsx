@@ -19,6 +19,7 @@ import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import {
   Search, Loader2, Users, Filter, X
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
@@ -36,7 +37,18 @@ const NICHES = [
   { value: 'Games', label: 'Games' },
   { value: 'Saúde', label: 'Saúde' },
   { value: 'Viagens', label: 'Viagens' },
+  { value: 'Negócios', label: 'Negócios' },
+  { value: 'Esportes', label: 'Esportes' },
+  { value: 'Educação', label: 'Educação' },
+  { value: 'Casa & Decoração', label: 'Casa & Decoração' },
+  { value: 'Maternidade', label: 'Maternidade' },
+  { value: 'Sustentabilidade', label: 'Sustentabilidade' },
+  { value: 'Culinária', label: 'Culinária' },
+  { value: 'Espiritualidade', label: 'Espiritualidade' },
+  { value: 'Automotivo', label: 'Automotivo' },
 ];
+
+import { CREATOR_TYPE_OPTIONS } from '@/components/utils/creatorTypeConfig';
 
 export default function DiscoverCreators() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -47,6 +59,7 @@ export default function DiscoverCreators() {
   const [filterSize, setFilterSize] = useState('all');
   const [filterState, setFilterState] = useState('all');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [filterType, setFilterType] = useState('all');
   const [selectedCreator, setSelectedCreator] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
 
@@ -115,10 +128,11 @@ export default function DiscoverCreators() {
       const matchNiche = filterNiche === 'all' || c.niche?.includes(filterNiche);
       const matchSize = filterSize === 'all' || c.profile_size === filterSize;
       const matchState = filterState === 'all' || c.state === filterState;
-      return matchSearch && matchNiche && matchSize && matchState;
+      const matchType = filterType === 'all' || (c.creator_type || 'ugc') === filterType;
+      return matchSearch && matchNiche && matchSize && matchState && matchType;
     });
     return filtered.sort(rankSort);
-  }, [visibleCreators, searchTerm, filterNiche, filterSize, filterState]);
+  }, [visibleCreators, searchTerm, filterNiche, filterSize, filterState, filterType]);
 
   const featuredCreators = useMemo(() =>
     [...visibleCreators.filter(c => c.featured && isTopEligible(c))].sort(rankSort),
@@ -158,8 +172,13 @@ export default function DiscoverCreators() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="space-y-5">
+        <div className="h-8 w-48 rounded-lg bg-muted animate-pulse" />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="rounded-2xl bg-muted animate-pulse h-48" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -205,9 +224,16 @@ export default function DiscoverCreators() {
               <SelectItem value="mega">Mega</SelectItem>
             </SelectContent>
           </Select>
-          {(filterState !== 'all' || filterSize !== 'all') && (
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-44 h-8 text-xs"><SelectValue placeholder="Tipo" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os Tipos</SelectItem>
+              {CREATOR_TYPE_OPTIONS.map(t => <SelectItem key={t.value} value={t.value}>{t.emoji} {t.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          {(filterState !== 'all' || filterSize !== 'all' || filterType !== 'all') && (
             <Button variant="ghost" size="sm" className="h-8 text-xs"
-              onClick={() => { setFilterState('all'); setFilterSize('all'); }}>
+              onClick={() => { setFilterState('all'); setFilterSize('all'); setFilterType('all'); }}>
               <X className="w-3 h-3 mr-1" /> Limpar
             </Button>
           )}
@@ -261,13 +287,19 @@ export default function DiscoverCreators() {
               {showSections ? 'Todos os creators' : 'Resultados'}
             </h2>
             {displayCreators.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              <motion.div
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+                initial="hidden" animate="visible"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+              >
                 {displayCreators.map(c => (
-                  <DiscoverCreatorCard key={c.id} creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)}
-                    showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
+                  <motion.div key={c.id} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
+                    <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
+                      onClick={() => setSelectedCreator(c)}
+                      showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             ) : (
               <Card className="border bg-card">
                 <CardContent className="p-12 text-center">

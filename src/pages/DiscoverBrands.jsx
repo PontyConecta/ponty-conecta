@@ -17,6 +17,7 @@ import BrandProfileModal from '@/components/modals/BrandProfileModal';
 import {
   Search, Loader2, Building2, Filter, X
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
@@ -93,8 +94,13 @@ export default function DiscoverBrands() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="space-y-5">
+        <div className="h-8 w-48 rounded-lg bg-muted animate-pulse" />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="rounded-2xl bg-muted animate-pulse h-48" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -173,12 +179,18 @@ export default function DiscoverBrands() {
               {showSections ? 'Todas as marcas' : 'Resultados'}
             </h2>
             {displayBrands.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              <motion.div
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+                initial="hidden" animate="visible"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+              >
                 {displayBrands.map(b => (
-                  <DiscoverBrandCard key={b.id} brand={b} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedBrand(b)} />
+                  <motion.div key={b.id} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
+                    <DiscoverBrandCard brand={b} isSubscribed={isSubscribed}
+                      onClick={() => setSelectedBrand(b)} />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             ) : (
               <Card className="border bg-card">
                 <CardContent className="p-12 text-center">

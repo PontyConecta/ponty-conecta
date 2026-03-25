@@ -7,7 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, Megaphone, Crown } from 'lucide-react';
+import { Megaphone, Crown } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { getPageTitle, getEmptyMessage } from '@/components/utils/creatorTypeConfig';
 import PaywallModal from '@/components/PaywallModal';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import EmptyState from '@/components/EmptyState';
@@ -41,10 +43,18 @@ export default function OpportunityFeed() {
     return () => document.removeEventListener('touchstart', handleTouchStart);
   }, [vm.handleRefresh]);
 
+  const creatorType = authProfile?.creator_type;
+  const pageTitle = getPageTitle(creatorType);
+
   if (vm.isLoading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="space-y-5">
+        <div className="h-8 w-48 rounded-lg bg-muted animate-pulse" />
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-5">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-2xl bg-muted animate-pulse h-48" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -63,7 +73,7 @@ export default function OpportunityFeed() {
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold tracking-tight flex items-center gap-2">
             <Megaphone className="w-6 h-6 lg:w-7 lg:h-7 text-primary" />
-            Campanhas
+            {pageTitle}
           </h1>
           <p className="mt-1 text-muted-foreground">
             {vm.filteredCampaigns.length} campanhas disponíveis
@@ -114,18 +124,23 @@ export default function OpportunityFeed() {
       {/* Campaigns Grid */}
       {vm.filteredCampaigns.length > 0 ? (
         <>
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-5">
+          <motion.div
+            className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-5"
+            initial="hidden" animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+          >
             {vm.filteredCampaigns.map((campaign, index) => (
-              <OpportunityCard
-                key={campaign.id}
-                campaign={campaign}
-                brand={vm.brands[campaign.brand_id]}
-                applied={vm.hasApplied(campaign.id)}
-                index={index}
-                onView={vm.openCampaignDetails}
-              />
+              <motion.div key={campaign.id} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
+                <OpportunityCard
+                  campaign={campaign}
+                  brand={vm.brands[campaign.brand_id]}
+                  applied={vm.hasApplied(campaign.id)}
+                  index={index}
+                  onView={vm.openCampaignDetails}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Infinite scroll sentinel */}
           <div ref={loadMoreRef} className="flex justify-center py-6">
@@ -143,7 +158,7 @@ export default function OpportunityFeed() {
               description={
                 vm.searchTerm || vm.filterPlatform !== 'all' || vm.filterRemuneration !== 'all'
                   ? 'Tente ajustar seus filtros'
-                  : 'Novas campanhas serão adicionadas em breve'
+                  : getEmptyMessage(creatorType)
               }
             />
           </CardContent>

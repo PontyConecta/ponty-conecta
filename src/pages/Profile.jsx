@@ -59,6 +59,7 @@ import BrazilStateSelect, { getStateLabel } from '@/components/common/BrazilStat
 import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
 import { computeProfileSize, FOLLOWER_RANGES, formatFollowers as fmtFollowers, getProfileSizeLabel } from '@/components/utils/profileSizeUtils';
+import { CREATOR_TYPE_OPTIONS } from '@/components/utils/creatorTypeConfig';
 
 export default function Profile() {
   const { user, profile, profileType, refreshProfile, logout } = useAuth();
@@ -72,7 +73,7 @@ export default function Profile() {
   const [newPlatform, setNewPlatform] = useState({ name: '', handle: '', followers: '' });
   const [newPortfolioImage, setNewPortfolioImage] = useState('');
 
-  const niches = ['Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde', 'Viagens', 'Gastronomia', 'Pets', 'Família', 'Educação', 'Finanças', 'Humor', 'Música', 'Arte'];
+  const niches = ['Moda', 'Beleza', 'Tecnologia', 'Games', 'Lifestyle', 'Fitness', 'Saúde', 'Viagens', 'Gastronomia', 'Pets', 'Família', 'Educação', 'Finanças', 'Humor', 'Música', 'Arte', 'Negócios', 'Casa & Decoração', 'Maternidade', 'Sustentabilidade', 'Culinária', 'Espiritualidade', 'Automotivo', 'Esportes'];
   const contentTypes = ['Fotos', 'Reels', 'Stories', 'Vídeos Longos', 'Lives', 'Podcasts', 'Blogs', 'Unboxing', 'Reviews'];
   const platformOptions = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads', 'Pinterest', 'Twitch'];
 
@@ -118,6 +119,7 @@ export default function Profile() {
           bio: profile.bio || '',
           avatar_url: profile.avatar_url || '',
           cover_image_url: profile.cover_image_url || '',
+          creator_type: profile.creator_type || 'ugc',
           state: profile.state || '',
           city: profile.city || '',
           location: profile.location || '',
@@ -381,6 +383,12 @@ export default function Profile() {
                             <SelectItem value="education">Educação</SelectItem>
                             <SelectItem value="retail">Varejo</SelectItem>
                             <SelectItem value="automotive">Automotivo</SelectItem>
+                            <SelectItem value="healthcare">Saúde & Bem-estar</SelectItem>
+                            <SelectItem value="real_estate">Imobiliário</SelectItem>
+                            <SelectItem value="pets">Pets & Animais</SelectItem>
+                            <SelectItem value="home_decor">Casa & Decoração</SelectItem>
+                            <SelectItem value="ecommerce">E-commerce</SelectItem>
+                            <SelectItem value="mental_health">Saúde Mental</SelectItem>
                             <SelectItem value="other">Outros</SelectItem>
                           </SelectContent>
                         </Select>
@@ -591,16 +599,28 @@ export default function Profile() {
                     </div>
 
                     <div className="flex items-center gap-3 p-4 rounded-xl bg-muted">
-                       <Checkbox
-                         id="accepts_barter"
-                         checked={formData.accepts_barter}
-                         onCheckedChange={(checked) => handleChange('accepts_barter', checked)}
-                       />
-                       <Label htmlFor="accepts_barter" className="cursor-pointer">
-                         Aceito permutas (produtos/serviços)
-                       </Label>
+                      <Checkbox
+                        id="accepts_barter"
+                        checked={formData.accepts_barter}
+                        onCheckedChange={(checked) => handleChange('accepts_barter', checked)}
+                      />
+                      <Label htmlFor="accepts_barter" className="cursor-pointer">
+                        Aceito permutas (produtos/serviços)
+                      </Label>
                      </div>
-                  </>
+
+                    <div>
+                      <Label>Tipo de Creator</Label>
+                      <Select value={formData.creator_type || 'ugc'} onValueChange={(v) => handleChange('creator_type', v)}>
+                        <SelectTrigger className="mt-2 h-12"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {CREATOR_TYPE_OPTIONS.map(t => (
+                            <SelectItem key={t.value} value={t.value}>{t.emoji} {t.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    </>
                 )}
               </div>
             </CardContent>

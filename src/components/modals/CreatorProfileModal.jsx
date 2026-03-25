@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock, MessageCircle, UserPlus } from 'lucide-react';
+import { TYPE_LABELS } from '@/components/utils/creatorTypeConfig';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 function SafeImage({ src, alt, className, fallback }) {
@@ -26,10 +27,13 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
 
       <div className="pt-10 space-y-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-2xl font-bold">{creator.display_name || 'Criadora'}</h2>
             {creator.is_verified && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
           </div>
+          <Badge variant="secondary" className="mt-1">
+            {TYPE_LABELS[creator.creator_type] || 'Creator'}
+          </Badge>
           {(creator.state || creator.location) && (
             <p className="flex items-center gap-1 mt-1 text-muted-foreground">
               <MapPin className="w-4 h-4" />

@@ -35,9 +35,9 @@ export default function OpportunityCard({ campaign, brand, applied, index, onVie
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
+      transition={{ duration: 0.28, delay: Math.min(index, 5) * 0.05 }}
     >
       <Card
         className="border bg-card shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer overflow-hidden"

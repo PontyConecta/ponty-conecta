@@ -56,7 +56,7 @@ export default function Home() {
                 <span>Mediação Profissional de Última Geração</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight tracking-tight">
+              <h1 className="headline-display text-3xl sm:text-4xl lg:text-6xl">
               A <span className="text-primary">Ponte Profissional</span> Entre Marcas e Criadoras
               </h1>
 
@@ -124,7 +124,7 @@ export default function Home() {
       <section id="por-que-ponty" className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-3 tracking-tight">
+            <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-3">
               Por que escolher Ponty
             </h2>
             <p className="text-lg text-muted-foreground">A solução certa para cada perfil</p>
@@ -240,7 +240,7 @@ export default function Home() {
       <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-3 tracking-tight">
+            <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-3">
               Simples para ambos os lados
             </h2>
             <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">Processo transparente e estruturado do início ao fim</p>
@@ -285,7 +285,7 @@ export default function Home() {
 
       <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-primary">
         <div className="max-w-3xl mx-auto text-center text-primary-foreground">
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black mb-4 tracking-tight">
+          <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-4">
             Pronto para começar?
           </h2>
           <p className="text-sm sm:text-lg mb-8 opacity-95">
