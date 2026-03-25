@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +33,8 @@ import {
   DollarSign,
   ExternalLink,
   Star,
-  Eye
+  Eye,
+  Mail
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -198,7 +201,7 @@ export default function ApplicationsManager() {
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold truncate">
+                            <h3 className="font-semibold truncate text-foreground">
                               {creator?.display_name || 'Criador'}
                             </h3>
                             {creator?.verified && (
@@ -207,9 +210,11 @@ export default function ApplicationsManager() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">
-                            Campanha: {campaign?.title || '-'}
-                          </p>
+                          {campaign && (
+                            <Link to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id} className="text-sm text-primary hover:underline truncate block">
+                              {campaign.title}
+                            </Link>
+                          )}
                           <div className="flex flex-wrap gap-2 mt-1">
                             {creator?.niche?.slice(0, 3).map((n, i) => (
                               <Badge key={i} variant="outline" className="text-xs">{n}</Badge>
@@ -301,7 +306,7 @@ export default function ApplicationsManager() {
 
       {/* Application Detail Dialog */}
       <Dialog open={!!selectedApplication} onOpenChange={() => setSelectedApplication(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Detalhes da Candidatura</DialogTitle>
           </DialogHeader>
@@ -334,10 +339,19 @@ export default function ApplicationsManager() {
               {/* Campaign */}
               <div>
                 <Label className="text-sm text-muted-foreground">Campanha</Label>
-                <p className="font-medium">
+                <Link to={createPageUrl('CampaignManager') + '?campaignId=' + selectedApplication.campaign_id} className="font-medium text-primary hover:underline block">
                   {campaigns[selectedApplication.campaign_id]?.title}
-                </p>
+                </Link>
               </div>
+
+              {/* Conversation Link */}
+              <Link
+                to={createPageUrl('InboxThread') + '?applicationId=' + selectedApplication.id}
+                className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
+              >
+                <Mail className="w-4 h-4" />
+                Ver conversa
+              </Link>
 
               {/* Message */}
               {selectedApplication.message && (

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -179,12 +181,14 @@ export default function DeliveriesManager() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold truncate">
+                          <h3 className="font-semibold truncate text-foreground">
                             {creator?.display_name || 'Criador'}
                           </h3>
-                          <p className="text-sm text-muted-foreground truncate">
-                            {campaign?.title || '-'}
-                          </p>
+                          {campaign && (
+                            <Link to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id} className="text-sm text-primary hover:underline truncate block">
+                              {campaign.title}
+                            </Link>
+                          )}
                         </div>
                       </div>
 
@@ -263,12 +267,12 @@ export default function DeliveriesManager() {
           {selectedDelivery && (
             <div className="space-y-6 py-4">
               {/* Campaign & Creator */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 bg-muted rounded-xl">
                   <Label className="text-sm text-muted-foreground">Campanha</Label>
-                  <p className="font-medium">
+                  <Link to={createPageUrl('CampaignManager') + '?campaignId=' + selectedDelivery.campaign_id} className="font-medium text-primary hover:underline block">
                     {campaigns[selectedDelivery.campaign_id]?.title}
-                  </p>
+                  </Link>
                 </div>
                 <div className="p-4 bg-muted rounded-xl">
                   <Label className="text-sm text-muted-foreground">Criador</Label>
