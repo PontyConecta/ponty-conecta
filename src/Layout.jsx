@@ -191,7 +191,7 @@ function LayoutContent({ children, currentPageName }) {
            Desktop: pt-16 (header-lg) + left margin for sidebar, no bottom padding
            Mobile: pt-14 (header) + pb for bottom nav safe area
       */}
-      <main className={`pt-14 lg:pt-16 pb-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom,0px)+24px)] lg:pb-6 min-h-[100dvh] transition-[margin-left] duration-200 ease-in-out ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
+      <main className={`pt-14 lg:pt-16 pb-[calc(var(--bottom-nav-height,72px)+env(safe-area-inset-bottom,0px)+24px)] lg:pb-6 min-h-[100dvh] transition-[margin-left] duration-200 ease-in-out ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
         <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
           {children}
         </div>
