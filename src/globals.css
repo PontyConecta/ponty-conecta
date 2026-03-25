@@ -6,8 +6,12 @@
 
 /* ═══════════════════════════════════════════════
    PONTY DESIGN SYSTEM — SINGLE SOURCE OF TRUTH
-   Phase 2.0 — Premium UI Spec + System Lock
-   
+   Phase 4.0 — Official Brand Guide
+
+   ACCENT:  Roxo Ponty digital #6b5475 → HSL(279, 20%, 48%)
+   BASE:    Off-White #f9f4ff → HSL(267, 100%, 98%)
+   DARK:    Grafite #2a242e → HSL(276, 12%, 16%)
+
    RULES:
    1. shadcn HSL tokens use bare triplets (no hsl() wrapper)
    2. data-theme on <html> controls everything
@@ -28,74 +32,75 @@ html:root, html[data-theme="light"] {
   --header-height-lg: 64px;
   --bottom-nav-height: 72px;
 
-  --background: 270 5% 97% !important;
-  --foreground: 270 22% 14% !important;
+  /* Off-white base + Roxo Ponty digital accent */
+  --background: 267 100% 98% !important;
+  --foreground: 276 12% 16% !important;
   --card: 0 0% 100% !important;
-  --card-foreground: 270 22% 14% !important;
+  --card-foreground: 276 12% 16% !important;
   --popover: 0 0% 100% !important;
-  --popover-foreground: 270 22% 14% !important;
-  --primary: 270 45% 48% !important;
+  --popover-foreground: 276 12% 16% !important;
+  --primary: 279 20% 48% !important;
   --primary-foreground: 0 0% 100% !important;
-  --secondary: 270 10% 93% !important;
-  --secondary-foreground: 270 22% 14% !important;
-  --muted: 270 8% 91% !important;
-  --muted-foreground: 270 10% 50% !important;
-  --accent: 270 45% 48% !important;
+  --secondary: 273 13% 83% !important;
+  --secondary-foreground: 276 12% 16% !important;
+  --muted: 273 13% 91% !important;
+  --muted-foreground: 276 10% 46% !important;
+  --accent: 279 20% 48% !important;
   --accent-foreground: 0 0% 100% !important;
   --destructive: 0 84% 60% !important;
   --destructive-foreground: 0 0% 98% !important;
-  --border: 270 8% 88% !important;
-  --input: 270 8% 86% !important;
-  --ring: 270 45% 48% !important;
+  --border: 273 13% 83% !important;
+  --input: 273 12% 88% !important;
+  --ring: 279 20% 48% !important;
   --radius: 0.75rem !important;
-  --chart-1: 270 45% 48% !important;
-  --chart-2: 173 58% 39% !important;
-  --chart-3: 197 37% 24% !important;
-  --chart-4: 43 74% 66% !important;
-  --chart-5: 27 87% 67% !important;
+  --chart-1: 279 20% 48% !important;
+  --chart-2: 279 14% 62% !important;
+  --chart-3: 276 12% 35% !important;
+  --chart-4: 283 16% 58% !important;
+  --chart-5: 265 14% 52% !important;
   --sidebar-background: 0 0% 100% !important;
-  --sidebar-foreground: 270 22% 14% !important;
-  --sidebar-primary: 270 45% 48% !important;
+  --sidebar-foreground: 276 12% 16% !important;
+  --sidebar-primary: 279 20% 48% !important;
   --sidebar-primary-foreground: 0 0% 100% !important;
-  --sidebar-accent: 270 10% 95% !important;
-  --sidebar-accent-foreground: 270 22% 14% !important;
-  --sidebar-border: 270 8% 88% !important;
-  --sidebar-ring: 270 45% 48% !important;
+  --sidebar-accent: 273 13% 95% !important;
+  --sidebar-accent-foreground: 276 12% 16% !important;
+  --sidebar-border: 273 13% 88% !important;
+  --sidebar-ring: 279 20% 48% !important;
 }
 
 html[data-theme="dark"] {
-  --background: 270 28% 7% !important;
-  --foreground: 270 8% 92% !important;
-  --card: 270 22% 11% !important;
-  --card-foreground: 270 8% 92% !important;
-  --popover: 270 22% 11% !important;
-  --popover-foreground: 270 8% 92% !important;
-  --primary: 270 40% 68% !important;
+  --background: 276 14% 10% !important;
+  --foreground: 267 30% 94% !important;
+  --card: 276 12% 14% !important;
+  --card-foreground: 267 30% 94% !important;
+  --popover: 276 12% 14% !important;
+  --popover-foreground: 267 30% 94% !important;
+  --primary: 279 22% 65% !important;
   --primary-foreground: 0 0% 100% !important;
-  --secondary: 270 18% 16% !important;
-  --secondary-foreground: 270 8% 90% !important;
-  --muted: 270 14% 18% !important;
-  --muted-foreground: 270 8% 56% !important;
-  --accent: 270 40% 68% !important;
+  --secondary: 276 10% 20% !important;
+  --secondary-foreground: 267 20% 88% !important;
+  --muted: 276 10% 22% !important;
+  --muted-foreground: 273 8% 56% !important;
+  --accent: 279 22% 65% !important;
   --accent-foreground: 0 0% 100% !important;
   --destructive: 0 72% 55% !important;
   --destructive-foreground: 0 0% 98% !important;
-  --border: 270 14% 16% !important;
-  --input: 270 14% 18% !important;
-  --ring: 270 40% 68% !important;
-  --chart-1: 270 40% 68% !important;
-  --chart-2: 160 55% 42% !important;
-  --chart-3: 30 75% 55% !important;
-  --chart-4: 280 60% 62% !important;
-  --chart-5: 340 70% 58% !important;
-  --sidebar-background: 270 22% 10% !important;
-  --sidebar-foreground: 270 8% 92% !important;
-  --sidebar-primary: 270 40% 68% !important;
+  --border: 276 10% 20% !important;
+  --input: 276 10% 22% !important;
+  --ring: 279 22% 65% !important;
+  --chart-1: 279 22% 65% !important;
+  --chart-2: 279 16% 72% !important;
+  --chart-3: 276 14% 55% !important;
+  --chart-4: 283 18% 68% !important;
+  --chart-5: 265 16% 62% !important;
+  --sidebar-background: 276 14% 12% !important;
+  --sidebar-foreground: 267 30% 94% !important;
+  --sidebar-primary: 279 22% 65% !important;
   --sidebar-primary-foreground: 0 0% 100% !important;
-  --sidebar-accent: 270 14% 14% !important;
-  --sidebar-accent-foreground: 270 8% 90% !important;
-  --sidebar-border: 270 14% 16% !important;
-  --sidebar-ring: 270 40% 68% !important;
+  --sidebar-accent: 276 10% 18% !important;
+  --sidebar-accent-foreground: 267 20% 88% !important;
+  --sidebar-border: 276 10% 18% !important;
+  --sidebar-ring: 279 22% 65% !important;
 }
 
 html[data-theme="neon"], html[data-theme="musk"] {
@@ -159,16 +164,15 @@ html[data-theme="neon"], html[data-theme="musk"] {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Mobile bottom nav safe area — in @layer utilities for correct Tailwind ordering */
 @layer utilities {
   .pb-mobile-safe {
     padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
   }
 }
 
-/* Neon theme glow effects — subtle, controlled */
+/* Neon theme glow — Roxo Ponty */
 [data-theme="neon"] .glow-primary {
-  box-shadow: 0 0 20px -4px hsl(270 67% 58% / 0.3);
+  box-shadow: 0 0 24px -4px hsl(279 28% 68% / 0.4);
 }
 
 @layer utilities {

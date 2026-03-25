@@ -31,7 +31,11 @@ export default function StatCard({ label, value, total, icon: Icon, color, index
   );
 
   if (href) {
-    return <Link to={href} className="block hover:opacity-90 transition-opacity">{content}</Link>;
+    return (
+      <Link to={href} className="block hover:shadow-md active:scale-[0.99] transition-all cursor-pointer rounded-xl">
+        {content}
+      </Link>
+    );
   }
   return content;
 }

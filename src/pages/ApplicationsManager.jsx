@@ -127,7 +127,7 @@ export default function ApplicationsManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Candidaturas</h1>
+        <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight">Candidaturas</h1>
         <p className="text-sm mt-1 text-muted-foreground">
           {filteredApplications.length} candidaturas encontradas
         </p>

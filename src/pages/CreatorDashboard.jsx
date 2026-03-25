@@ -6,29 +6,23 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Sparkles, 
-  Megaphone,
-  FileText, 
-  ArrowRight,
-  Loader2,
-  Crown,
-  Target
+  Sparkles, Megaphone, FileText, ArrowRight, Loader2, Crown, Target, CheckCircle2
 } from 'lucide-react';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateCreatorProfile } from '@/components/utils/profileValidation';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
 import CreatorMetricsChart from '@/components/charts/CreatorMetricsChart';
-import CreatorReputationSection from '@/components/creator/CreatorReputationSection';
-import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
-import QuickActions from '@/components/dashboard/QuickActions';
-import DashboardMissions from '@/components/dashboard/DashboardMissions';
 import StatCard from '@/components/dashboard/StatCard';
 import StatusBadge from '@/components/common/StatusBadge';
+import CreatorPipeline from '@/components/dashboard/CreatorPipeline';
+import CreatorUrgentActions from '@/components/dashboard/CreatorUrgentActions';
+import ProfileStrength from '@/components/dashboard/ProfileStrength';
+import CampaignsForYou from '@/components/dashboard/CampaignsForYou';
 import { useCreatorDashboardData } from '@/components/hooks/useDashboardData';
 
 export default function CreatorDashboard() {
-  const { user, profile: authProfile, profileType } = useAuth();
+  const { user, profile: authProfile } = useAuth();
   const queryClient = useQueryClient();
   const creator = authProfile;
   const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
@@ -38,13 +32,11 @@ export default function CreatorDashboard() {
   const recentDeliveries = data?.recentDeliveries || [];
   const campaignsMap = data?.campaignsMap || {};
   const brandsMap = data?.brandsMap || {};
-  const reputation = data?.reputation || null;
   const appCounts = data?.appCounts || {};
   const delCounts = data?.delCounts || {};
   const totalApps = data?.totalApps || 0;
   const totalDeliveries = data?.totalDeliveries || 0;
 
-  // Realtime: invalidate scoped keys only
   useEffect(() => {
     if (!creator?.id) return;
     const creatorId = creator.id;
@@ -53,13 +45,11 @@ export default function CreatorDashboard() {
       base44.entities.Application.subscribe((event) => {
         if (event.data?.creator_id === creatorId || event.type === 'delete') {
           queryClient.invalidateQueries({ queryKey: ['dashboard', 'creator', creatorId] });
-          queryClient.invalidateQueries({ queryKey: ['applications', 'creator', creatorId] });
         }
       }),
       base44.entities.Delivery.subscribe((event) => {
         if (event.data?.creator_id === creatorId || event.type === 'delete') {
           queryClient.invalidateQueries({ queryKey: ['dashboard', 'creator', creatorId] });
-          queryClient.invalidateQueries({ queryKey: ['deliveries', 'creator', creatorId] });
         }
       }),
       base44.entities.Reputation.subscribe((event) => {
@@ -79,122 +69,98 @@ export default function CreatorDashboard() {
     );
   }
 
-  const activeAppsCount = (appCounts.pending || 0) + (appCounts.accepted || 0);
-  const activeDelCount = (delCounts.pending || 0) + (delCounts.submitted || 0);
+  const isSubscribed = isProfileSubscribed(creator);
 
   const stats = [
-    { 
-      label: 'Candidaturas Ativas', 
-      value: activeAppsCount,
-      total: totalApps,
-      icon: Target,
-      color: 'bg-primary'
-    },
-    { 
-      label: 'Trabalhos em Andamento', 
-      value: activeDelCount,
-      total: totalDeliveries,
-      icon: FileText,
-      color: 'bg-primary/60'
-    }
+    { label: 'Total Candidaturas', value: totalApps, icon: Target, color: 'bg-primary', href: createPageUrl('MyApplications') },
+    { label: 'Aceitas', value: appCounts.accepted || 0, icon: CheckCircle2, color: 'bg-emerald-500', href: createPageUrl('MyApplications') },
+    { label: 'Entregas Enviadas', value: (delCounts.submitted || 0) + (delCounts.approved || 0), icon: FileText, color: 'bg-primary/60', href: createPageUrl('MyDeliveries') },
+    { label: 'Aprovadas', value: delCounts.approved || 0, icon: Sparkles, color: 'bg-primary/40', href: createPageUrl('MyDeliveries') },
   ];
-
-  const isSubscribed = isProfileSubscribed(creator);
-  const isNewUser = activeAppsCount === 0 && totalDeliveries === 0;
 
   return (
     <div className="space-y-5 lg:space-y-6">
-      {/* Welcome Banner for new users */}
-      {isNewUser ? (
-        <WelcomeBanner 
-          profileType="creator" 
-          name={creator?.display_name?.split(' ')[0] || 'Criador'} 
-          isSubscribed={isSubscribed} 
-        />
-      ) : (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-semibold tracking-tight text-foreground">
-              Olá, {creator?.display_name?.split(' ')[0]} ✨
-            </h1>
-            <p className="text-sm mt-1 text-muted-foreground">
-              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
-            </p>
-          </div>
-          <Link to={createPageUrl(isSubscribed ? 'OpportunityFeed' : 'Subscription')}>
-            <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm">
-              {isSubscribed ? <><Megaphone className="w-4 h-4 mr-2" />Campanhas</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
-            </Button>
-          </Link>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight text-foreground">
+            Olá, {creator?.display_name?.split(' ')[0] || 'Criador'} ✨
+          </h1>
+          <p className="text-sm mt-1 text-muted-foreground">
+            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, c => c.toUpperCase())}
+          </p>
         </div>
-      )}
+        <Link to={createPageUrl(isSubscribed ? 'OpportunityFeed' : 'Subscription')}>
+          <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]">
+            {isSubscribed ? <><Megaphone className="w-4 h-4 mr-2" />Campanhas</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
+          </Button>
+        </Link>
+      </div>
 
-      {/* Profile Incomplete Alert / Avatar Hint */}
-      <ProfileIncompleteAlert 
-        missingFields={profileValidation.missingFields} 
-        profileType="creator"
-        profile={creator}
-      />
+      {/* Profile alert */}
+      <ProfileIncompleteAlert missingFields={profileValidation.missingFields} profileType="creator" profile={creator} />
 
-      {/* Onboarding Missions */}
-      <DashboardMissions userId={user?.id} profileType="creator" />
+      {/* BLOCK 1 — Pipeline */}
+      <CreatorPipeline appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} />
 
-      {/* Quick Actions */}
-      <QuickActions profileType="creator" isSubscribed={isSubscribed} />
+      {/* BLOCK 2 — Urgent actions */}
+      <CreatorUrgentActions deliveries={recentDeliveries} applications={recentApplications} campaignsMap={campaignsMap} />
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-3 lg:gap-4">
-        {stats.map((stat, index) => (
-          <StatCard key={index} index={index} {...stat} />
+      {/* BLOCK 3 — Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+        {stats.map((stat, i) => (
+          <StatCard key={i} index={i} {...stat} />
         ))}
       </div>
 
-      {/* Metrics Charts */}
-      <CreatorMetricsChart appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} totalDeliveries={totalDeliveries} onTimeRate={data?.onTimeRate ?? 100} />
+      {/* BLOCK 4 — Profile strength */}
+      <ProfileStrength profile={creator} />
 
-      {/* Reputation Section */}
-      <CreatorReputationSection reputation={reputation} delCounts={delCounts} totalDeliveries={totalDeliveries} onTimeRate={data?.onTimeRate} />
+      {/* BLOCK 5 — Campaigns for you */}
+      {isSubscribed && <CampaignsForYou creatorNiches={creator?.niche || []} />}
 
-      {/* My Applications */}
+      {/* BLOCK 6 — Recent activity */}
       <Card className="border bg-card shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold">Minhas Candidaturas</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between pb-3">
+          <CardTitle className="text-base lg:text-lg font-semibold">Atividade Recente</CardTitle>
           <Link to={createPageUrl('MyApplications')}>
-            <Button variant="ghost" size="sm" className="text-primary">
-            Ver todas <ArrowRight className="w-4 h-4 ml-1" />
+            <Button variant="ghost" size="sm" className="text-primary min-h-[44px]">
+              Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </CardHeader>
         <CardContent>
           {recentApplications.length > 0 ? (
-            <div className="space-y-3">
-              {recentApplications.slice(0, 5).map((app) => (
-                <Link
-                  key={app.id}
-                  to={createPageUrl('MyApplications') + '?applicationId=' + app.id}
-                  className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
-                >
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate">
-                      {campaignsMap[app.campaign_id]?.title || `Campanha #${app.campaign_id?.slice(-6)}`}
-                    </h4>
-                    <p className="text-sm truncate text-muted-foreground">
-                      {app.message?.slice(0, 50) || 'Sem mensagem'}
-                    </p>
-                  </div>
-                  <StatusBadge type="application" status={app.status} />
-                </Link>
-              ))}
+            <div className="space-y-2">
+              {recentApplications.slice(0, 5).map(app => {
+                const age = (Date.now() - new Date(app.created_date).getTime()) / (1000 * 60 * 60);
+                return (
+                  <Link
+                    key={app.id}
+                    to={createPageUrl('MyApplications') + '?applicationId=' + app.id}
+                    className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors cursor-pointer group min-h-[56px]"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium truncate">
+                        {campaignsMap[app.campaign_id]?.title || `Campanha #${app.campaign_id?.slice(-6)}`}
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        há {age < 1 ? 'poucos minutos' : age < 24 ? `${Math.floor(age)}h` : `${Math.floor(age / 24)}d`}
+                      </p>
+                    </div>
+                    <StatusBadge type="application" status={app.status} />
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-8">
-              <Target className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
-              <p className="mb-3 text-muted-foreground">Você ainda não se candidatou a nenhuma campanha</p>
+              <Target className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground mb-3">Nenhuma candidatura ainda</p>
               {isSubscribed && (
                 <Link to={createPageUrl('OpportunityFeed')}>
-                  <Button variant="outline" size="sm">
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Explorar Campanhas
+                  <Button variant="outline" size="sm" className="min-h-[44px]">
+                    <Sparkles className="w-4 h-4 mr-2" />Explorar Campanhas
                   </Button>
                 </Link>
               )}
@@ -203,49 +169,8 @@ export default function CreatorDashboard() {
         </CardContent>
       </Card>
 
-      {/* My Deliveries */}
-      <Card className="border bg-card shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold">Minhas Entregas</CardTitle>
-          <Link to={createPageUrl('MyDeliveries')}>
-            <Button variant="ghost" size="sm" className="text-primary">
-            Ver todas <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent>
-          {recentDeliveries.length > 0 ? (
-            <div className="space-y-3">
-              {recentDeliveries.slice(0, 5).map((delivery) => (
-                <Link
-                  key={delivery.id}
-                  to={createPageUrl('MyDeliveries') + '?deliveryId=' + delivery.id}
-                  className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
-                >
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate">
-                      {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {brandsMap[delivery.brand_id]?.company_name || ''}
-                      {delivery.submitted_at 
-                        ? ` · Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
-                        : ` · Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
-                      }
-                    </p>
-                  </div>
-                  <StatusBadge type="delivery" status={delivery.status} />
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
-              <p className="text-muted-foreground">Nenhuma entrega registrada</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Metrics */}
+      <CreatorMetricsChart appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} totalDeliveries={totalDeliveries} onTimeRate={data?.onTimeRate ?? 100} />
     </div>
   );
 }

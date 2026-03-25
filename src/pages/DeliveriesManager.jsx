@@ -118,7 +118,7 @@ export default function DeliveriesManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Entregas de Criadores</h1>
+        <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight">Entregas de Criadores</h1>
         <p className="text-sm mt-1 text-muted-foreground">
           {filteredDeliveries.length} entregas encontradas
         </p>

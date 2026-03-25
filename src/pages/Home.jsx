@@ -64,7 +64,7 @@ export default function Home() {
                 Organize, execute e escale suas relações profissionais com regras automatizadas e entrega garantida.
               </p>
 
-              <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2.5 rounded-lg w-fit text-sm font-medium">
+              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 px-4 py-2.5 rounded-lg w-fit text-sm font-medium">
                 <CheckCircle className="w-4 h-4" />
                 <span>Explore gratuitamente • Sem cartão de crédito</span>
               </div>

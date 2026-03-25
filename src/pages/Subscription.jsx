@@ -232,7 +232,7 @@ export default function Subscription() {
           {isBrand ? 'Plano para Marcas' : 'Plano para Criadores'}
         </Badge>
 
-        <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-foreground">
+        <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 text-foreground">
           Desbloqueie todo o potencial
         </h1>
         <p className="text-lg max-w-xl mx-auto text-muted-foreground">

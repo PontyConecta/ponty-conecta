@@ -1,4 +1,3 @@
-// v3: clean module resolution
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -7,29 +6,21 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Megaphone, 
-  Users, 
-  FileCheck, 
-  TrendingUp,
-  Plus,
-  ArrowRight,
-  Loader2,
-  Crown
+  Megaphone, Users, FileCheck, TrendingUp, Plus, ArrowRight, Loader2, Crown
 } from 'lucide-react';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
 import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
-import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
-import QuickActions from '@/components/dashboard/QuickActions';
-import DashboardMissions from '@/components/dashboard/DashboardMissions';
 import StatCard from '@/components/dashboard/StatCard';
 import StatusBadge from '@/components/common/StatusBadge';
+import CampaignSlotProgress from '@/components/dashboard/CampaignSlotProgress';
+import AttentionBlock from '@/components/dashboard/AttentionBlock';
 import { useBrandDashboardData } from '@/components/hooks/useDashboardData';
 
 export default function BrandDashboard() {
-  const { user, profile: authProfile, profileType } = useAuth();
+  const { user, profile: authProfile } = useAuth();
   const queryClient = useQueryClient();
   const brand = authProfile;
   const profileValidation = authProfile ? validateBrandProfile(authProfile) : { isComplete: true, missingFields: [] };
@@ -46,7 +37,6 @@ export default function BrandDashboard() {
   const totalApps = data?.totalApps || 0;
   const totalDeliveries = data?.totalDeliveries || 0;
 
-  // Realtime: invalidate scoped keys only
   useEffect(() => {
     if (!brand?.id) return;
     const brandId = brand.id;
@@ -54,19 +44,16 @@ export default function BrandDashboard() {
       base44.entities.Campaign.subscribe((event) => {
         if (event.data?.brand_id === brandId || event.type === 'delete') {
           queryClient.invalidateQueries({ queryKey: ['dashboard', 'brand', brandId] });
-          queryClient.invalidateQueries({ queryKey: ['deliveries', 'brand', brandId] });
         }
       }),
       base44.entities.Application.subscribe((event) => {
         if (event.data?.brand_id === brandId || event.type === 'delete') {
           queryClient.invalidateQueries({ queryKey: ['dashboard', 'brand', brandId] });
-          queryClient.invalidateQueries({ queryKey: ['applications', 'brand', brandId] });
         }
       }),
       base44.entities.Delivery.subscribe((event) => {
         if (event.data?.brand_id === brandId || event.type === 'delete') {
           queryClient.invalidateQueries({ queryKey: ['dashboard', 'brand', brandId] });
-          queryClient.invalidateQueries({ queryKey: ['deliveries', 'brand', brandId] });
         }
       })
     ];
@@ -85,135 +72,91 @@ export default function BrandDashboard() {
   const pendingAppsCount = appCounts.pending || 0;
   const submittedDelCount = delCounts.submitted || 0;
   const approvedDelCount = delCounts.approved || 0;
+  const isSubscribed = isProfileSubscribed(brand);
 
   const stats = [
-    { 
-      label: 'Campanhas Ativas', 
-      value: activeCampaignsCount,
-      total: totalCampaigns,
-      icon: Megaphone,
-      color: 'bg-primary'
-    },
-    { 
-      label: 'Candidaturas Pendentes', 
-      value: pendingAppsCount,
-      total: totalApps,
-      icon: Users,
-      color: 'bg-primary/60'
-    },
-    { 
-      label: 'Entregas Aguardando', 
-      value: submittedDelCount,
-      total: totalDeliveries,
-      icon: FileCheck,
-      color: 'bg-emerald-500'
-    },
-    { 
-      label: 'Total Concluídas', 
-      value: approvedDelCount,
-      total: totalDeliveries,
-      icon: TrendingUp,
-      color: 'bg-primary/40'
-    }
+    { label: 'Campanhas Ativas', value: activeCampaignsCount, total: totalCampaigns, icon: Megaphone, color: 'bg-primary', href: createPageUrl('CampaignManager') },
+    { label: 'Candidaturas Pendentes', value: pendingAppsCount, total: totalApps, icon: Users, color: 'bg-primary/60', href: createPageUrl('ApplicationsManager') },
+    { label: 'Entregas Aguardando', value: submittedDelCount, total: totalDeliveries, icon: FileCheck, color: 'bg-emerald-500', href: createPageUrl('DeliveriesManager') },
+    { label: 'Total Aprovadas', value: approvedDelCount, total: totalDeliveries, icon: TrendingUp, color: 'bg-primary/40', href: createPageUrl('DeliveriesManager') },
   ];
 
-  const isSubscribed = isProfileSubscribed(brand);
-  const isNewUser = totalCampaigns === 0 && pendingAppsCount === 0;
+  const pendingApplications = recentApplications.filter(a => a.status === 'pending');
 
   return (
     <div className="space-y-5 lg:space-y-6">
-      {/* Welcome Banner for new users */}
-      {isNewUser ? (
-        <WelcomeBanner 
-          profileType="brand" 
-          name={brand?.company_name?.split(' ')[0] || 'Marca'} 
-          isSubscribed={isSubscribed} 
-        />
-      ) : (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-semibold tracking-tight text-foreground">
-              Olá, {brand?.company_name?.split(' ')[0]} 👋
-            </h1>
-            <p className="text-sm mt-1 text-muted-foreground">
-              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, (c) => c.toUpperCase())}
-            </p>
-          </div>
-          <Link to={createPageUrl(isSubscribed ? 'CampaignManager' : 'Subscription')}>
-            <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm">
-              {isSubscribed ? <><Plus className="w-4 h-4 mr-2" />Nova Campanha</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
-            </Button>
-          </Link>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl lg:text-2xl xl:text-3xl font-semibold tracking-tight text-foreground">
+            Olá, {brand?.company_name?.split(' ')[0] || 'Marca'} 👋
+          </h1>
+          <p className="text-sm mt-1 text-muted-foreground">
+            {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, c => c.toUpperCase())}
+          </p>
         </div>
-      )}
-
-      {/* Profile Incomplete Alert */}
-      {!profileValidation.isComplete && (
-        <ProfileIncompleteAlert 
-          missingFields={profileValidation.missingFields} 
-          profileType="brand"
-        />
-      )}
-
-      {/* Onboarding Missions */}
-      <DashboardMissions userId={user?.id} profileType="brand" />
-
-      {/* Quick Actions */}
-      <QuickActions profileType="brand" isSubscribed={isSubscribed} />
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-        {stats.map((stat, index) => {
-          const hrefs = [
-            createPageUrl('CampaignManager'),
-            createPageUrl('ApplicationsManager'),
-            createPageUrl('DeliveriesManager'),
-            createPageUrl('DeliveriesManager'),
-          ];
-          return <StatCard key={index} index={index} {...stat} href={hrefs[index]} />;
-        })}
+        <Link to={createPageUrl(isSubscribed ? 'CampaignManager' : 'Subscription')}>
+          <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]">
+            {isSubscribed ? <><Plus className="w-4 h-4 mr-2" />Nova Campanha</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
+          </Button>
+        </Link>
       </div>
 
-      {/* Gráficos de Métricas */}
-      <CampaignMetricsChart campaignCounts={campaignCounts} appCounts={appCounts} totalCampaigns={totalCampaigns} totalApps={totalApps} campaignsByMonth={data?.campaignsByMonth || []} />
+      {/* Profile alert */}
+      {!profileValidation.isComplete && (
+        <ProfileIncompleteAlert missingFields={profileValidation.missingFields} profileType="brand" />
+      )}
 
+      {/* BLOCK 1 — Attention */}
+      <AttentionBlock
+        deliveries={recentDeliveries}
+        applications={recentApplications}
+        campaigns={recentCampaigns}
+        campaignsMap={campaignsMap}
+      />
+
+      {/* BLOCK 2 — Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+        {stats.map((stat, i) => (
+          <StatCard key={i} index={i} {...stat} />
+        ))}
+      </div>
+
+      {/* BLOCK 3 — Split grid */}
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Campaigns */}
         <Card className="border bg-card shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <CardTitle className="text-lg font-semibold">Campanhas Recentes</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-base lg:text-lg font-semibold">Campanhas Recentes</CardTitle>
             <Link to={createPageUrl('CampaignManager')}>
-              <Button variant="ghost" size="sm" className="text-primary">
+              <Button variant="ghost" size="sm" className="text-primary min-h-[44px]">
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2">
             {recentCampaigns.length > 0 ? (
-              recentCampaigns.slice(0, 5).map((campaign) => (
+              recentCampaigns.slice(0, 5).map(c => (
                 <Link
-                  key={campaign.id}
-                  to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id}
-                  className="flex items-center justify-between p-3 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
+                  key={c.id}
+                  to={createPageUrl('CampaignManager') + '?campaignId=' + c.id}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors cursor-pointer group min-h-[56px]"
                 >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate">{campaign.title}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {campaign.slots_filled || 0}/{campaign.slots_total || 1} vagas preenchidas
-                    </p>
+                    <h4 className="text-sm font-medium truncate">{c.title}</h4>
+                    <CampaignSlotProgress filled={c.slots_filled || 0} total={c.slots_total || 1} />
                   </div>
-                  <StatusBadge type="campaign" status={campaign.status} />
+                  <StatusBadge type="campaign" status={c.status} />
                 </Link>
               ))
             ) : (
               <div className="text-center py-8">
-                <Megaphone className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-muted-foreground">Nenhuma campanha criada</p>
+                <Megaphone className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground mb-3">Nenhuma campanha criada</p>
                 {isSubscribed && (
                   <Link to={createPageUrl('CampaignManager')}>
-                    <Button variant="outline" size="sm" className="mt-3">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Criar Primeira Campanha
+                    <Button variant="outline" size="sm" className="min-h-[44px]">
+                      <Plus className="w-4 h-4 mr-2" />Criar Primeira Campanha
                     </Button>
                   </Link>
                 )}
@@ -224,30 +167,32 @@ export default function BrandDashboard() {
 
         {/* Pending Applications */}
         <Card className="border bg-card shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-4">
-            <CardTitle className="text-lg font-semibold">Candidaturas Pendentes</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-base lg:text-lg font-semibold">Candidaturas Pendentes</CardTitle>
             <Link to={createPageUrl('ApplicationsManager')}>
-                  <Button variant="ghost" size="sm" className="text-primary">
+              <Button variant="ghost" size="sm" className="text-primary min-h-[44px]">
                 Ver todas <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {recentApplications.filter(a => a.status === 'pending').length > 0 ? (
-              recentApplications.filter(a => a.status === 'pending').slice(0, 5).map((app) => {
+          <CardContent className="space-y-2">
+            {pendingApplications.length > 0 ? (
+              pendingApplications.slice(0, 5).map(app => {
                 const campaign = campaignsMap[app.campaign_id];
+                const age = (Date.now() - new Date(app.created_date).getTime()) / (1000 * 60 * 60);
+                const isUrgent = age > 48;
                 return (
                   <Link
                     key={app.id}
                     to={createPageUrl('ApplicationsManager') + '?applicationId=' + app.id}
-                    className="flex items-center justify-between p-3 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
+                    className={`flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors cursor-pointer group min-h-[56px] ${isUrgent ? 'border-l-2 border-l-amber-400' : ''}`}
                   >
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium truncate">
+                      <h4 className="text-sm font-medium truncate">
                         {campaign?.title || `Candidatura #${app.id.slice(-6)}`}
                       </h4>
-                      <p className="text-sm truncate text-muted-foreground">
-                        {app.message?.slice(0, 50) || 'Sem mensagem'}
+                      <p className="text-xs text-muted-foreground">
+                        há {age < 1 ? 'poucos minutos' : age < 24 ? `${Math.floor(age)}h` : `${Math.floor(age / 24)}d`}
                       </p>
                     </div>
                     <StatusBadge type="application" status={app.status} />
@@ -256,56 +201,75 @@ export default function BrandDashboard() {
               })
             ) : (
               <div className="text-center py-8">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
-                  <p className="text-muted-foreground">Nenhuma candidatura pendente</p>
+                <Users className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">Nenhuma candidatura pendente</p>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Deliveries */}
+      {/* BLOCK 4 — Metrics */}
+      <CampaignMetricsChart campaignCounts={campaignCounts} appCounts={appCounts} totalCampaigns={totalCampaigns} totalApps={totalApps} campaignsByMonth={data?.campaignsByMonth || []} />
+
+      {/* BLOCK 5 — Recent Deliveries */}
       <Card className="border bg-card shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-lg font-semibold">Entregas de Criadores</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between pb-3">
+          <CardTitle className="text-base lg:text-lg font-semibold">Entregas Recentes</CardTitle>
           <Link to={createPageUrl('DeliveriesManager')}>
-            <Button variant="ghost" size="sm" className="text-primary">
+            <Button variant="ghost" size="sm" className="text-primary min-h-[44px]">
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </CardHeader>
         <CardContent>
           {recentDeliveries.length > 0 ? (
-            <div className="space-y-3">
-              {recentDeliveries.slice(0, 5).map((delivery) => (
+            <div className="space-y-2">
+              {recentDeliveries.slice(0, 5).map(d => (
                 <Link
-                  key={delivery.id}
-                  to={createPageUrl('DeliveriesManager') + '?deliveryId=' + delivery.id}
-                  className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
+                  key={d.id}
+                  to={createPageUrl('DeliveriesManager') + '?deliveryId=' + d.id}
+                  className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors cursor-pointer group min-h-[56px]"
                 >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium truncate">
-                      {campaignsMap[delivery.campaign_id]?.title || `Entrega #${delivery.id.slice(-6)}`}
+                    <h4 className="text-sm font-medium truncate">
+                      {campaignsMap[d.campaign_id]?.title || `Entrega #${d.id.slice(-6)}`}
                     </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {delivery.submitted_at 
-                        ? `Enviada em ${new Date(delivery.submitted_at).toLocaleDateString('pt-BR')}`
-                        : `Prazo: ${delivery.deadline ? new Date(delivery.deadline).toLocaleDateString('pt-BR') : '-'}`
-                      }
+                    <p className="text-xs text-muted-foreground">
+                      {d.submitted_at
+                        ? `Enviada em ${new Date(d.submitted_at).toLocaleDateString('pt-BR')}`
+                        : `Prazo: ${d.deadline ? new Date(d.deadline).toLocaleDateString('pt-BR') : '-'}`}
                     </p>
                   </div>
-                  <StatusBadge type="delivery" status={delivery.status} />
+                  <StatusBadge type="delivery" status={d.status} />
                 </Link>
               ))}
             </div>
           ) : (
             <div className="text-center py-8">
-              <FileCheck className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
-              <p className="text-muted-foreground">Nenhuma entrega registrada</p>
+              <FileCheck className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Nenhuma entrega registrada</p>
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* BLOCK 6 — Discover Creators teaser */}
+      {isSubscribed && (
+        <Card className="border bg-card shadow-sm">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Descobrir Creators</p>
+              <p className="text-xs text-muted-foreground">Encontre os melhores criadores para sua marca</p>
+            </div>
+            <Link to={createPageUrl('DiscoverCreators')}>
+              <Button variant="outline" size="sm" className="min-h-[44px]">
+                Ver todos <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
