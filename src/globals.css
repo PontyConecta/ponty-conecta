@@ -34,33 +34,33 @@ html:root, html[data-theme="light"] {
   --card-foreground: 270 22% 14% !important;
   --popover: 0 0% 100% !important;
   --popover-foreground: 270 22% 14% !important;
-  --primary: 270 16% 56% !important;
+  --primary: 270 45% 48% !important;
   --primary-foreground: 0 0% 100% !important;
   --secondary: 270 10% 93% !important;
   --secondary-foreground: 270 22% 14% !important;
   --muted: 270 8% 91% !important;
   --muted-foreground: 270 10% 50% !important;
-  --accent: 270 16% 56% !important;
+  --accent: 270 45% 48% !important;
   --accent-foreground: 0 0% 100% !important;
   --destructive: 0 84% 60% !important;
   --destructive-foreground: 0 0% 98% !important;
   --border: 270 8% 88% !important;
   --input: 270 8% 86% !important;
-  --ring: 270 16% 56% !important;
+  --ring: 270 45% 48% !important;
   --radius: 0.75rem !important;
-  --chart-1: 270 16% 56% !important;
+  --chart-1: 270 45% 48% !important;
   --chart-2: 173 58% 39% !important;
   --chart-3: 197 37% 24% !important;
   --chart-4: 43 74% 66% !important;
   --chart-5: 27 87% 67% !important;
   --sidebar-background: 0 0% 100% !important;
   --sidebar-foreground: 270 22% 14% !important;
-  --sidebar-primary: 270 16% 56% !important;
+  --sidebar-primary: 270 45% 48% !important;
   --sidebar-primary-foreground: 0 0% 100% !important;
   --sidebar-accent: 270 10% 95% !important;
   --sidebar-accent-foreground: 270 22% 14% !important;
   --sidebar-border: 270 8% 88% !important;
-  --sidebar-ring: 270 16% 56% !important;
+  --sidebar-ring: 270 45% 48% !important;
 }
 
 html[data-theme="dark"] {
@@ -70,32 +70,32 @@ html[data-theme="dark"] {
   --card-foreground: 270 8% 92% !important;
   --popover: 270 22% 11% !important;
   --popover-foreground: 270 8% 92% !important;
-  --primary: 270 20% 67% !important;
+  --primary: 270 40% 68% !important;
   --primary-foreground: 0 0% 100% !important;
   --secondary: 270 18% 16% !important;
   --secondary-foreground: 270 8% 90% !important;
   --muted: 270 14% 18% !important;
   --muted-foreground: 270 8% 56% !important;
-  --accent: 270 20% 67% !important;
+  --accent: 270 40% 68% !important;
   --accent-foreground: 0 0% 100% !important;
   --destructive: 0 72% 55% !important;
   --destructive-foreground: 0 0% 98% !important;
   --border: 270 14% 16% !important;
   --input: 270 14% 18% !important;
-  --ring: 270 20% 67% !important;
-  --chart-1: 270 20% 67% !important;
+  --ring: 270 40% 68% !important;
+  --chart-1: 270 40% 68% !important;
   --chart-2: 160 55% 42% !important;
   --chart-3: 30 75% 55% !important;
   --chart-4: 280 60% 62% !important;
   --chart-5: 340 70% 58% !important;
   --sidebar-background: 270 22% 10% !important;
   --sidebar-foreground: 270 8% 92% !important;
-  --sidebar-primary: 270 20% 67% !important;
+  --sidebar-primary: 270 40% 68% !important;
   --sidebar-primary-foreground: 0 0% 100% !important;
   --sidebar-accent: 270 14% 14% !important;
   --sidebar-accent-foreground: 270 8% 90% !important;
   --sidebar-border: 270 14% 16% !important;
-  --sidebar-ring: 270 20% 67% !important;
+  --sidebar-ring: 270 40% 68% !important;
 }
 
 html[data-theme="neon"], html[data-theme="musk"] {
