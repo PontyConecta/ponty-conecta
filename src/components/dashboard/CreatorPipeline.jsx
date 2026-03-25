@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
-import { Sparkles } from 'lucide-react';
+
 
 const STAGES = [
   { key: 'sent', label: 'Enviadas', filter: null, page: 'MyApplications' },
@@ -25,13 +25,24 @@ export default function CreatorPipeline({ appCounts = {}, delCounts = {}, totalA
 
   if (allZero) {
     return (
-      <div className="flex flex-col items-center justify-center py-6 px-4 rounded-xl bg-card border text-center">
-        <Sparkles className="w-8 h-8 text-primary mb-2" />
-        <p className="text-sm font-medium text-foreground mb-1">Comece sua jornada</p>
-        <p className="text-xs text-muted-foreground mb-3">Candidate-se a campanhas e acompanhe aqui</p>
+      <div className="rounded-xl bg-card border p-4 space-y-3">
+        <p className="text-sm font-semibold text-foreground">
+          Sua jornada começa com a primeira candidatura
+        </p>
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+          {STAGES.map((stage) => (
+            <div
+              key={stage.key}
+              className="flex-1 min-w-[80px] flex flex-col items-center gap-1 px-3 py-3 rounded-xl border border-dashed border-border/50 text-center opacity-50"
+            >
+              <span className="text-lg font-semibold tabular-nums text-muted-foreground">—</span>
+              <span className="text-[10px] sm:text-xs text-muted-foreground leading-tight">{stage.label}</span>
+            </div>
+          ))}
+        </div>
         <Link to={createPageUrl('OpportunityFeed')}>
-          <Button size="sm" className="bg-primary hover:bg-primary/80 text-primary-foreground">
-            Explorar Campanhas
+          <Button size="sm" className="w-full bg-primary hover:bg-primary/80 text-primary-foreground">
+            Ver campanhas disponíveis
           </Button>
         </Link>
       </div>

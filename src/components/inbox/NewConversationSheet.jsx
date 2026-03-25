@@ -151,7 +151,11 @@ export default function NewConversationSheet({ open, onClose }) {
                 className="mt-1 min-h-[100px]"
                 placeholder="Por que você é a escolha certa para esta marca?"
               />
-              <p className="text-xs mt-1 text-muted-foreground">{pitchProposal.length}/280</p>
+              <div className="flex justify-end">
+                <span className={`text-xs tabular-nums ${pitchProposal.length > 250 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                  {280 - pitchProposal.length} restantes
+                </span>
+              </div>
             </div>
 
             {pitchLimitReached && (

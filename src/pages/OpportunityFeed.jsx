@@ -95,9 +95,11 @@ export default function OpportunityFeed() {
                 <Crown className="w-6 h-6 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold">Modo Exploração</h3>
+                <h3 className="font-semibold">
+                  Sua próxima parceria está aqui
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Você pode ver as campanhas, mas precisa assinar para se candidatar.
+                  Assine e candidate-se a campanhas com orçamentos reais — sem intermediários.
                 </p>
               </div>
               <Button

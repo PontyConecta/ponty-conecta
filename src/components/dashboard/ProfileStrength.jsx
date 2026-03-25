@@ -23,8 +23,8 @@ export default function ProfileStrength({ profile }) {
         <CardContent className="p-4 flex items-center gap-3">
           <CheckCircle2 className="w-8 h-8 text-emerald-500 shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-foreground">Perfil completo!</p>
-            <p className="text-xs text-muted-foreground">Seu perfil está otimizado para atrair marcas</p>
+            <p className="text-sm font-semibold text-foreground">Você está no radar das marcas</p>
+            <p className="text-xs text-muted-foreground">Perfil completo — marcas podem te encontrar e convidar</p>
           </div>
         </CardContent>
       </Card>
@@ -35,7 +35,7 @@ export default function ProfileStrength({ profile }) {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold">Força do Perfil</CardTitle>
-        <p className="text-xs text-muted-foreground">Perfil completo atrai 3x mais marcas</p>
+        <p className="text-xs text-muted-foreground">Marcas consultam seu perfil antes de convidar</p>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center gap-3">

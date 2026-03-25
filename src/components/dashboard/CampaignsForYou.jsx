@@ -46,7 +46,7 @@ export default function CampaignsForYou({ creatorNiches = [] }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-base lg:text-lg font-semibold">Campanhas para você</CardTitle>
+        <CardTitle className="text-base lg:text-lg font-semibold">Marcas buscando o seu perfil</CardTitle>
         <Link to={createPageUrl('OpportunityFeed')}>
           <Button variant="ghost" size="sm" className="text-primary">
             Ver todas <ArrowRight className="w-4 h-4 ml-1" />

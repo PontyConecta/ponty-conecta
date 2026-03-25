@@ -374,6 +374,33 @@ export default function OnboardingCreator() {
                   </div>
                 )}
 
+                {step === 3 && (
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium text-foreground">Qual tipo de creator melhor te define?</Label>
+                      <p className="text-xs mt-1 text-muted-foreground">Ajuda a personalizar sua experiência na plataforma</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {CREATOR_TYPE_OPTIONS.map(opt => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => handleChange('creator_type', opt.value)}
+                          className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all text-center ${
+                            formData.creator_type === opt.value
+                              ? 'border-primary bg-primary/10'
+                              : 'border-transparent bg-muted/50 hover:bg-muted'
+                          }`}
+                        >
+                          <span className="text-3xl" aria-hidden="true">{opt.emoji}</span>
+                          <span className="text-sm font-bold text-foreground">{opt.label}</span>
+                          <span className="text-xs text-muted-foreground leading-tight">{opt.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {step === 4 && (
                   <div className="space-y-6">
                     <div>

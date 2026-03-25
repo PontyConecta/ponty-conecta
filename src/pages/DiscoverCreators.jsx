@@ -228,7 +228,11 @@ export default function DiscoverCreators() {
             <SelectTrigger className="w-44 h-8 text-xs"><SelectValue placeholder="Tipo" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os Tipos</SelectItem>
-              {CREATOR_TYPE_OPTIONS.map(t => <SelectItem key={t.value} value={t.value}>{t.emoji} {t.label}</SelectItem>)}
+              {CREATOR_TYPE_OPTIONS.map(t => (
+                <SelectItem key={t.value} value={t.value}>
+                  <span aria-hidden="true">{t.emoji}</span>{' '}{t.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           {(filterState !== 'all' || filterSize !== 'all' || filterType !== 'all') && (
