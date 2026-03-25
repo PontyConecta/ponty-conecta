@@ -117,6 +117,7 @@ export default function InboxThread() {
     const unsub = base44.entities.Message.subscribe((event) => {
       if (!isMounted) return;
       if (event.type === 'create' && event.data?.application_id === conversationKey) {
+        if (event.data.sender_id === user.id) return;
         setMessages(prev => {
           if (prev.some(m => m.id === event.data.id)) return prev;
           return [...prev, event.data];
