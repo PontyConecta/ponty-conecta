@@ -19,12 +19,14 @@ export default function Inbox() {
   const [loading, setLoading] = useState(true);
   const [directPartners, setDirectPartners] = useState({});
   const [showNewConvo, setShowNewConvo] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!user) return;
     let aborted = false;
 
     const load = async () => {
+      try {
       const [sent, received] = await Promise.all([
         base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 200),
         base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 200),
@@ -83,7 +85,12 @@ export default function Inbox() {
       }
 
       setDirectPartners(directPartnerMap);
-      setLoading(false);
+      } catch (err) {
+        console.error('Erro ao carregar inbox:', err);
+        if (!aborted) setError('Não foi possível carregar as mensagens. Tente novamente.');
+      } finally {
+        if (!aborted) setLoading(false);
+      }
     };
 
     load();
@@ -165,8 +172,15 @@ export default function Inbox() {
         </Button>
       </div>
 
+      {error && (
+        <div className="p-4 text-center text-sm text-muted-foreground">
+          {error}
+          <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
+        </div>
+      )}
+
       {/* Thread list */}
-      {threads.length === 0 ? (
+      {!error && threads.length === 0 && !loading ? (
         <div className="py-16 text-center">
           <MessageCircle className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Nenhuma conversa ainda</h3>

@@ -86,7 +86,7 @@ export default function SelectProfile() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#7DB04B]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -97,7 +97,7 @@ export default function SelectProfile() {
       icon: Building2,
       title: 'Sou uma Marca',
       subtitle: 'Quero contratar criadores',
-      bgColor: '#7DB04B',
+      bgColor: 'hsl(279, 20%, 48%)',
       shadowColor: 'shadow-primary/25',
       features: [
         'Crie campanhas estruturadas',
@@ -127,7 +127,7 @@ export default function SelectProfile() {
       {/* Header */}
       <div className="text-center mb-12">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20" style={{ backgroundColor: '#7DB04B' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 bg-primary">
             <span className="text-white font-bold text-xl">P</span>
           </div>
           <span className="text-2xl font-semibold text-foreground">Ponty</span>
@@ -204,9 +204,9 @@ export default function SelectProfile() {
       <div className="max-w-2xl mx-auto mt-12 text-center">
         <p className="text-sm text-muted-foreground">
           Ao continuar, você concorda com nossos{' '}
-          <a href="#" className="text-[#7DB04B] hover:underline">Termos de Uso</a>
+          <a href="#" className="text-primary hover:underline">Termos de Uso</a>
           {' '}e{' '}
-          <a href="#" className="text-[#7DB04B] hover:underline">Política de Privacidade</a>.
+          <a href="#" className="text-primary hover:underline">Política de Privacidade</a>.
         </p>
       </div>
     </div>

@@ -38,8 +38,8 @@ export default function NewConversationSheet({ open, onClose }) {
     setLoading(true);
     const load = async () => {
       const data = profileType === 'brand'
-        ? await base44.entities.Creator.filter({}, '-created_date', 50)
-        : await base44.entities.Brand.filter({}, '-created_date', 50);
+        ? await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 50)
+        : await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date', 50);
       setResults(data);
       setLoading(false);
     };

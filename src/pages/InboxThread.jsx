@@ -5,9 +5,12 @@ import { useAuth } from '@/components/contexts/AuthContext';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronLeft, Send, Loader2, ExternalLink } from 'lucide-react';
 import MessageBubble from '@/components/inbox/MessageBubble';
+import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
+import BrandProfileModal from '@/components/modals/BrandProfileModal';
+import { TYPE_LABELS } from '@/components/utils/creatorTypeConfig';
 import { toast } from 'sonner';
 import moment from 'moment';
 
@@ -40,6 +43,10 @@ export default function InboxThread() {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showOtherProfile, setShowOtherProfile] = useState(false);
+  const [otherCreator, setOtherCreator] = useState(null);
+  const [otherBrand, setOtherBrand] = useState(null);
+  const [error, setError] = useState(null);
 
   const bottomRef = useRef(null);
 
@@ -48,6 +55,7 @@ export default function InboxThread() {
     let isMounted = true;
 
     const loadThread = async () => {
+      try {
       if (!isDirect) {
         // Application-based thread
         const apps = await base44.entities.Application.filter({ id: conversationKey });
@@ -63,11 +71,24 @@ export default function InboxThread() {
         if (profileType === 'brand') {
           const creators = await base44.entities.Creator.filter({ id: app.creator_id });
           if (!isMounted) return;
+          if (creators[0]) setOtherCreator(creators[0]);
           setOtherName(creators[0]?.display_name || 'Criador');
         } else {
           const brands = await base44.entities.Brand.filter({ id: app.brand_id });
           if (!isMounted) return;
+          if (brands[0]) setOtherBrand(brands[0]);
           setOtherName(brands[0]?.company_name || 'Marca');
+        }
+      } else {
+        // Direct conversation: resolve partner profile
+        if (profileType === 'brand') {
+          const creators = await base44.entities.Creator.filter({ user_id: recipientIdParam });
+          if (!isMounted) return;
+          if (creators[0]) { setOtherCreator(creators[0]); setOtherName(creators[0].display_name || recipientNameParam || 'Usuário'); }
+        } else {
+          const brands = await base44.entities.Brand.filter({ user_id: recipientIdParam });
+          if (!isMounted) return;
+          if (brands[0]) { setOtherBrand(brands[0]); setOtherName(brands[0].company_name || recipientNameParam || 'Usuário'); }
         }
       }
 
@@ -82,6 +103,10 @@ export default function InboxThread() {
         Promise.all(
           unread.map(m => base44.entities.Message.update(m.id, { read_at: new Date().toISOString() }))
         ).catch(() => {});
+      }
+      } catch (err) {
+        console.error('Erro ao carregar thread:', err);
+        if (isMounted) setError('Não foi possível carregar a conversa. Tente novamente.');
       }
 
       if (isMounted) setLoading(false);
@@ -194,21 +219,38 @@ export default function InboxThread() {
             <ChevronLeft className="w-5 h-5" />
           </Button>
         </Link>
-        <Avatar className="w-9 h-9 flex-shrink-0">
-          <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">{otherName?.[0]?.toUpperCase() || '?'}</AvatarFallback>
-        </Avatar>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-foreground truncate">{otherName}</p>
-          <p className="text-xs text-muted-foreground truncate">
-            {isDirect ? 'Conversa direta' : (campaign?.title || 'Campanha')}
-          </p>
-        </div>
+        <button
+          onClick={() => setShowOtherProfile(true)}
+          className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity min-h-[44px] text-left flex-1"
+        >
+          <Avatar className="h-9 w-9 shrink-0">
+            <AvatarImage src={otherCreator?.avatar_url || otherBrand?.logo_url} />
+            <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
+              {otherName?.[0]?.toUpperCase() || '?'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="font-semibold text-sm text-foreground truncate">{otherName}</p>
+            {isDirect && otherCreator?.creator_type ? (
+              <p className="text-xs text-muted-foreground">{TYPE_LABELS[otherCreator.creator_type] || 'Creator'}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground truncate">{isDirect ? 'Conversa direta' : (campaign?.title || 'Campanha')}</p>
+            )}
+          </div>
+        </button>
         {!isDirect && application && (
           <Link to={createPageUrl(profileType === 'brand' ? 'ApplicationsManager' : 'MyApplications')} className="text-xs text-primary hover:underline flex items-center gap-1 flex-shrink-0">
             Ver candidatura <ExternalLink className="w-3 h-3" />
           </Link>
         )}
       </div>
+
+      {error && (
+        <div className="p-4 text-center text-sm text-muted-foreground">
+          {error}
+          <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-3 pb-3">
@@ -265,6 +307,21 @@ export default function InboxThread() {
           <Send className="w-4 h-4" />
         </Button>
       </div>
+
+      {showOtherProfile && profileType === 'brand' && otherCreator && (
+        <CreatorProfileModal
+          creator={otherCreator}
+          isOpen={showOtherProfile}
+          onClose={() => setShowOtherProfile(false)}
+        />
+      )}
+      {showOtherProfile && profileType === 'creator' && otherBrand && (
+        <BrandProfileModal
+          brand={otherBrand}
+          isOpen={showOtherProfile}
+          onClose={() => setShowOtherProfile(false)}
+        />
+      )}
     </div>
   );
 }

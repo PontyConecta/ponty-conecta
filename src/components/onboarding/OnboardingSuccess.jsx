@@ -52,8 +52,8 @@ export default function OnboardingSuccess({ profileType, onContinue }) {
     >
       {isBrand ? (
         <>
-          <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 bg-[#7DB04B]/10">
-            <CheckCircle2 className="w-10 h-10 text-[#7DB04B]" />
+          <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 bg-primary/10">
+            <CheckCircle2 className="w-10 h-10 text-primary" />
           </div>
           <h2 className="text-3xl font-bold mb-3 text-foreground">Perfil Criado com Sucesso!</h2>
           <p className="text-lg mb-8 max-w-md mx-auto text-muted-foreground">

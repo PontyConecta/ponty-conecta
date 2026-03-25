@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
@@ -63,6 +64,7 @@ import { CREATOR_TYPE_OPTIONS } from '@/components/utils/creatorTypeConfig';
 
 export default function Profile() {
   const { user, profile, profileType, refreshProfile, logout } = useAuth();
+  const navigate = useNavigate();
   const { isSubscribed } = useSubscription();
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -802,7 +804,7 @@ export default function Profile() {
                        <CreditCard className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                        <h4 className="font-semibold mb-2">Sem assinatura ativa</h4>
                        <p className="mb-4 text-sm text-muted-foreground">Assine para acessar todas as funcionalidades</p>
-                    <Button onClick={() => window.location.href = createPageUrl('Subscription')} className="bg-primary hover:bg-primary/80 text-primary-foreground">
+                    <Button onClick={() => navigate(createPageUrl('Subscription'))} className="bg-primary hover:bg-primary/80 text-primary-foreground">
                       Ver Planos
                     </Button>
                   </div>

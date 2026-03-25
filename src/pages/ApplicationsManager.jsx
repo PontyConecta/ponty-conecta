@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
 import { useApplicationsQuery, useAcceptApplicationMutation, useRejectApplicationMutation } from '../components/hooks/useEntityQuery';
+import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 
 export default function ApplicationsManager() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -58,6 +59,8 @@ export default function ApplicationsManager() {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [agreedRate, setAgreedRate] = useState('');
+  const [viewingCreator, setViewingCreator] = useState(null);
+  const navigate = useNavigate();
 
   const processing = acceptMutation.isPending || rejectMutation.isPending;
 
@@ -314,7 +317,10 @@ export default function ApplicationsManager() {
           {selectedApplication && (
             <div className="space-y-6 py-4">
               {/* Creator Profile */}
-              <div className="flex items-center gap-4 p-4 bg-muted rounded-xl">
+              <button
+                onClick={() => setViewingCreator(creators[selectedApplication.creator_id])}
+                className="flex items-center gap-4 p-4 bg-muted rounded-xl hover:opacity-80 transition-opacity text-left w-full"
+              >
                 <Avatar className="w-16 h-16">
                   <AvatarImage src={creators[selectedApplication.creator_id]?.avatar_url} />
                   <AvatarFallback className="bg-primary/10 text-primary text-lg">
@@ -322,27 +328,17 @@ export default function ApplicationsManager() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="font-semibold">
+                  <h4 className="font-semibold text-foreground">
                     {creators[selectedApplication.creator_id]?.display_name || 'Criador'}
                   </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {creators[selectedApplication.creator_id]?.bio?.slice(0, 100)}...
-                  </p>
+                  <p className="text-xs text-primary underline underline-offset-2">Ver perfil completo →</p>
                   <div className="flex gap-1 mt-2">
                     {creators[selectedApplication.creator_id]?.platforms?.slice(0, 3).map((p, i) => (
                       <Badge key={i} variant="outline" className="text-xs">{p.name}</Badge>
                     ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Campaign */}
-              <div>
-                <Label className="text-sm text-muted-foreground">Campanha</Label>
-                <Link to={createPageUrl('CampaignManager') + '?campaignId=' + selectedApplication.campaign_id} className="font-medium text-primary hover:underline block">
-                  {campaigns[selectedApplication.campaign_id]?.title}
-                </Link>
-              </div>
+              </button>
 
               {/* Conversation Link */}
               <Link
@@ -350,7 +346,7 @@ export default function ApplicationsManager() {
                 className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
               >
                 <Mail className="w-4 h-4" />
-                Ver conversa
+                Mandar mensagem
               </Link>
 
               {/* Message */}
@@ -437,6 +433,20 @@ export default function ApplicationsManager() {
           )}
         </DialogContent>
       </Dialog>
+
+      {viewingCreator && (
+        <CreatorProfileModal
+          creator={viewingCreator}
+          isOpen={!!viewingCreator}
+          onClose={() => setViewingCreator(null)}
+          onInvite={(creator) => {
+            setViewingCreator(null);
+            navigate(createPageUrl('InboxThread') +
+              '?recipientId=' + creator.user_id +
+              '&recipientName=' + encodeURIComponent(creator.display_name));
+          }}
+        />
+      )}
     </div>
   );
 }

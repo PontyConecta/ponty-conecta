@@ -80,7 +80,7 @@ export default function OnlinePresenceManager({ presences = [], onChange, showLi
                     {config?.label || p.type}
                   </span>
                   {showLinks ? (
-                    <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm truncate font-medium flex items-center gap-1 hover:underline" style={{ color: '#7DB04B' }}>
+                    <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm truncate font-medium flex items-center gap-1 hover:underline text-primary">
                       {label}
                       <ExternalLink className="w-3 h-3 flex-shrink-0" />
                     </a>
