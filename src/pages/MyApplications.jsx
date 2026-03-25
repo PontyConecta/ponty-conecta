@@ -349,7 +349,10 @@ export default function MyApplications() {
               onPaywall={() => { setSelectedBrand(null); setShowPaywall(true); }}
               onMessage={(b) => {
                 setSelectedBrand(null);
-                navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
+                navigate(
+                  createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`,
+                  { state: { from: 'MyApplications', fromLabel: 'Candidaturas' } }
+                );
               }}
             />
           )}

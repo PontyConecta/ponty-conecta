@@ -30,6 +30,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ThemeSelector from '@/components/ThemeSelector';
 import BetaFeedbackNudge from '@/components/feedback/BetaFeedbackNudge';
 import { useUnreadCount } from '@/hooks/useUnreadCount';
+import BackButton from '@/components/BackButton';
+import { LEAF_PAGES } from '@/hooks/useSmartBack';
 
 function LayoutContent({ children, currentPageName }) {
   const { user, profile, profileType, loading, logout } = useAuth();
@@ -41,7 +43,6 @@ function LayoutContent({ children, currentPageName }) {
 
   const isAdmin = user?.role === 'admin';
   const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
-  const noBackButtonPages = ['BrandDashboard', 'CreatorDashboard'];
 
   // Track page view
   useEffect(() => {
@@ -92,19 +93,26 @@ function LayoutContent({ children, currentPageName }) {
       {/* ── Top Header ── fixed, always visible, z-50 */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b h-14 lg:h-16">
         <div className="flex items-center justify-between px-4 lg:px-8 h-full">
-          {/* Logo */}
+          {/* Logo / Back */}
           <div className="flex items-center gap-2">
-            <Link to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')} className="flex items-center gap-2 group">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform bg-primary">
-                <span className="text-primary-foreground font-bold text-base lg:text-lg">P</span>
-              </div>
-              <div className="hidden sm:flex flex-col">
-                <span className="text-base lg:text-lg font-bold leading-tight text-primary">Ponty</span>
-                <span className="text-[10px] lg:text-xs font-medium text-muted-foreground leading-tight">
-                  {profileType === 'brand' ? 'Marcas' : 'Creators'}
-                </span>
-              </div>
-            </Link>
+            {LEAF_PAGES.has(currentPageName) ? (
+              <BackButton currentPage={currentPageName} />
+            ) : (
+              <Link
+                to={createPageUrl(profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard')}
+                className="flex items-center gap-2 group"
+              >
+                <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform bg-primary">
+                  <span className="text-primary-foreground font-bold text-base lg:text-lg">P</span>
+                </div>
+                <div className="hidden sm:flex flex-col">
+                  <span className="text-base lg:text-lg font-bold leading-tight text-primary">Ponty</span>
+                  <span className="text-[10px] lg:text-xs font-medium text-muted-foreground leading-tight">
+                    {profileType === 'brand' ? 'Marcas' : 'Creators'}
+                  </span>
+                </div>
+              </Link>
+            )}
           </div>
 
           {/* Right Section */}

@@ -348,6 +348,7 @@ export default function ApplicationsManager() {
               {/* Conversation Link */}
               <Link
                 to={createPageUrl('InboxThread') + '?applicationId=' + selectedApplication.id}
+                state={{ from: 'ApplicationsManager', fromLabel: 'Candidaturas' }}
                 className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 text-primary hover:bg-primary/10 transition-colors text-sm font-medium"
               >
                 <Mail className="w-4 h-4" />

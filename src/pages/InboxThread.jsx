@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronLeft, Send, Loader2, ExternalLink } from 'lucide-react';
+import { Send, Loader2, ExternalLink } from 'lucide-react';
 import MessageBubble from '@/components/inbox/MessageBubble';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import BrandProfileModal from '@/components/modals/BrandProfileModal';
@@ -214,41 +214,7 @@ export default function InboxThread() {
     <div className="flex flex-col" style={{ height: 'calc(100dvh - var(--header-height, 56px) - var(--bottom-nav-height, 72px) - 2rem)' }}>
       {/* Header */}
       <div className="flex items-center gap-3 pb-3 border-b mb-3 flex-shrink-0">
-        <Link to={createPageUrl('Inbox')}>
-          <Button variant="ghost" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full">
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
-        </Link>
-        <button
-          onClick={() => setShowOtherProfile(true)}
-          className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity min-h-[44px] text-left flex-1"
-        >
-          <Avatar className="h-9 w-9 shrink-0">
-            <AvatarImage src={otherCreator?.avatar_url || otherBrand?.logo_url} />
-            <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
-              {otherName?.[0]?.toUpperCase() || '?'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="font-semibold text-sm text-foreground truncate">{otherName}</p>
-            {isDirect && otherCreator?.creator_type ? (
-              <p className="text-xs text-muted-foreground">{TYPE_LABELS[otherCreator.creator_type] || 'Creator'}</p>
-            ) : (
-              <p className="text-xs text-muted-foreground truncate">{isDirect ? 'Conversa direta' : (campaign?.title || 'Campanha')}</p>
-            )}
-          </div>
-        </button>
-        {!isDirect && application && (
-          <Link to={createPageUrl(profileType === 'brand' ? 'ApplicationsManager' : 'MyApplications')} className="text-xs text-primary hover:underline flex items-center gap-1 flex-shrink-0">
-            Ver candidatura <ExternalLink className="w-3 h-3" />
-          </Link>
-        )}
-      </div>
-
-      {error && (
-        <div className="p-4 text-center text-sm text-muted-foreground">
-          {error}
-          <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
+        <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
         </div>
       )}
 

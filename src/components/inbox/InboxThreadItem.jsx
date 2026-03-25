@@ -34,7 +34,10 @@ export default function InboxThreadItem({ thread, userId }) {
     : (lastMessage.content?.length > 70 ? lastMessage.content.substring(0, 70) + '...' : lastMessage.content);
 
   return (
-    <Link to={createPageUrl('InboxThread') + (threadLink || ('?applicationId=' + applicationId))}>
+    <Link
+      to={createPageUrl('InboxThread') + (threadLink || ('?applicationId=' + applicationId))}
+      state={{ from: 'Inbox', fromLabel: 'Mensagens' }}
+    >
       <div className={`flex items-center gap-3 px-4 py-3 rounded-xl min-h-[72px] transition-colors cursor-pointer hover:bg-muted/50 ${hasUnread ? 'bg-primary/5' : ''}`}>
         {/* Avatar with unread dot */}
         <div className="relative flex-shrink-0">

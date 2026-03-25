@@ -279,7 +279,7 @@ export default function CampaignManager() {
                           </span>
                           {campaign.total_applications > 0 && (
                             <span onClick={(e) => e.stopPropagation()} className="inline-block">
-                              <Link to={createPageUrl('ApplicationsManager')} className="flex items-center gap-1 text-primary hover:underline">
+                              <Link to={createPageUrl('ApplicationsManager')} state={{ from: 'CampaignManager', fromLabel: 'Campanhas' }} className="flex items-center gap-1 text-primary hover:underline">
                                 <Target className="w-4 h-4" />
                                 {campaign.total_applications} candidaturas
                               </Link>
@@ -450,6 +450,7 @@ export default function CampaignManager() {
               <div className="grid grid-cols-2 gap-3">
                 <Link
                   to={createPageUrl('ApplicationsManager') + '?campaignId=' + detailCampaign.id}
+                  state={{ from: 'CampaignManager', fromLabel: 'Campanhas' }}
                   onClick={() => setDetailCampaign(null)}
                   className="flex items-center gap-2 p-3 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors text-primary text-sm font-medium"
                 >
@@ -458,6 +459,7 @@ export default function CampaignManager() {
                 </Link>
                 <Link
                   to={createPageUrl('DeliveriesManager') + '?campaignId=' + detailCampaign.id}
+                  state={{ from: 'CampaignManager', fromLabel: 'Campanhas' }}
                   onClick={() => setDetailCampaign(null)}
                   className="flex items-center gap-2 p-3 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors text-primary text-sm font-medium"
                 >
