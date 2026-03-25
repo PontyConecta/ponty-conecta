@@ -429,9 +429,15 @@ export default function MyDeliveries() {
                 <h4 className="font-semibold">
                   {campaigns[selectedDelivery.campaign_id]?.title}
                 </h4>
-                <p className="text-sm">
+                <button
+                  onClick={() => {
+                    const b = brands[selectedDelivery.brand_id];
+                    b && setSelectedBrand(b);
+                  }}
+                  className="text-sm text-primary hover:underline text-left mt-0.5"
+                >
                   {brands[selectedDelivery.brand_id]?.company_name}
-                </p>
+                </button>
               </div>
 
               {/* Proof Requirements */}

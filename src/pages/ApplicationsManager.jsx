@@ -195,7 +195,10 @@ export default function ApplicationsManager() {
                   <CardContent className="p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                       {/* Creator Info */}
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <button
+                        onClick={() => creator && setViewingCreator(creator)}
+                        className="flex items-center gap-4 flex-1 min-w-0 hover:opacity-80 transition-opacity text-left"
+                      >
                         <Avatar className="w-12 h-12">
                           <AvatarImage src={creator?.avatar_url} />
                           <AvatarFallback className="bg-primary/10 text-primary">
@@ -207,16 +210,18 @@ export default function ApplicationsManager() {
                             <h3 className="font-semibold truncate text-foreground">
                               {creator?.display_name || 'Criador'}
                             </h3>
-                            {creator?.verified && (
+                            {creator?.is_verified && (
                               <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700">
                                 Verificado
                               </Badge>
                             )}
                           </div>
                           {campaign && (
-                            <Link to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id} className="text-sm text-primary hover:underline truncate block">
-                              {campaign.title}
-                            </Link>
+                            <span onClick={(e) => e.stopPropagation()} className="inline-block">
+                              <Link to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id} className="text-sm text-primary hover:underline truncate block">
+                                {campaign.title}
+                              </Link>
+                            </span>
                           )}
                           <div className="flex flex-wrap gap-2 mt-1">
                             {creator?.niche?.slice(0, 3).map((n, i) => (
@@ -229,7 +234,7 @@ export default function ApplicationsManager() {
                             )}
                           </div>
                         </div>
-                      </div>
+                      </button>
 
                       {/* Application Details */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">

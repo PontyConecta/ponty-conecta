@@ -19,6 +19,12 @@ import {
 import PaywallModal from '@/components/PaywallModal';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { 
   Plus, Megaphone, Calendar, DollarSign, Users, Edit, Pause, Play,
   Gift, Package, Target, MoreVertical, XCircle, CheckCircle2, Ban, UserPlus
@@ -42,6 +48,7 @@ export default function CampaignManager() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
   const [inviteForCampaign, setInviteForCampaign] = useState(null);
+  const [detailCampaign, setDetailCampaign] = useState(null);
 
   useEffect(() => {
     if (!authLoading && profileType && profileType !== 'brand') {
@@ -231,8 +238,11 @@ export default function CampaignManager() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
                 <Card className="border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <CardContent className="p-4 lg:p-6">
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                  <CardContent className="p-4 lg:p-6 relative">
+                    <div
+                      className="flex flex-col lg:flex-row lg:items-center gap-4 cursor-pointer"
+                      onClick={() => setDetailCampaign(campaign)}
+                    >
                       {/* Cover Image */}
                       {campaign.cover_image_url && (
                         <div className="lg:w-24 lg:h-24 w-full h-32 rounded-lg overflow-hidden flex-shrink-0">
@@ -241,77 +251,11 @@ export default function CampaignManager() {
                       )}
                       
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-lg font-semibold truncate">
-                              {campaign.title}
-                            </h3>
-                            <StatusBadge type="campaign" status={campaign.status} />
-                          </div>
-                          
-                          {/* Actions Dropdown */}
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-9 w-9 min-h-[44px] min-w-[44px]">
-                                <MoreVertical className="w-4 h-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => openEditDialog(campaign)}>
-                                <Edit className="w-4 h-4 mr-2" />
-                                Editar
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              {campaign.status === 'draft' && (
-                                <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
-                                  <Play className="w-4 h-4 mr-2 text-emerald-600" />
-                                  Publicar
-                                </DropdownMenuItem>
-                              )}
-                              {campaign.status === 'active' && (
-                                <>
-                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'paused')}>
-                                    <Pause className="w-4 h-4 mr-2 text-orange-600" />
-                                    Pausar
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'applications_closed')}>
-                                    <XCircle className="w-4 h-4 mr-2 text-blue-600" />
-                                    Fechar Inscrições
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
-                                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
-                                    Marcar como Concluída
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                              {campaign.status === 'paused' && (
-                                <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
-                                  <Play className="w-4 h-4 mr-2 text-emerald-600" />
-                                  Reativar
-                                </DropdownMenuItem>
-                              )}
-                              {campaign.status === 'applications_closed' && (
-                                <>
-                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
-                                    <Play className="w-4 h-4 mr-2 text-emerald-600" />
-                                    Reabrir Inscrições
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
-                                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
-                                    Marcar como Concluída
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem 
-                                onClick={() => updateCampaignStatus(campaign.id, 'cancelled')}
-                                className="text-red-600"
-                              >
-                                <Ban className="w-4 h-4 mr-2" />
-                                Cancelar
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                        <div className="flex items-center gap-2 flex-wrap mb-2 pr-12">
+                          <h3 className="text-lg font-semibold truncate">
+                            {campaign.title}
+                          </h3>
+                          <StatusBadge type="campaign" status={campaign.status} />
                         </div>
                         
                         <p className="text-sm line-clamp-2 mb-3 text-muted-foreground">
@@ -334,10 +278,12 @@ export default function CampaignManager() {
                             {campaign.remuneration_type === 'mixed' && 'Misto'}
                           </span>
                           {campaign.total_applications > 0 && (
-                            <Link to={createPageUrl('ApplicationsManager')} className="flex items-center gap-1 text-primary hover:underline">
-                              <Target className="w-4 h-4" />
-                              {campaign.total_applications} candidaturas
-                            </Link>
+                            <span onClick={(e) => e.stopPropagation()} className="inline-block">
+                              <Link to={createPageUrl('ApplicationsManager')} className="flex items-center gap-1 text-primary hover:underline">
+                                <Target className="w-4 h-4" />
+                                {campaign.total_applications} candidaturas
+                              </Link>
+                            </span>
                           )}
                         </div>
                         {(campaign.status === 'active' || campaign.status === 'draft') && isSubscribed && (
@@ -352,6 +298,72 @@ export default function CampaignManager() {
                           </Button>
                         )}
                       </div>
+                    </div>
+
+                    {/* DropdownMenu outside clickable area */}
+                    <div className="absolute top-4 right-4 lg:top-6 lg:right-6">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-9 w-9 min-h-[44px] min-w-[44px]" onClick={(e) => e.stopPropagation()}>
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => openEditDialog(campaign)}>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          {campaign.status === 'draft' && (
+                            <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                              <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                              Publicar
+                            </DropdownMenuItem>
+                          )}
+                          {campaign.status === 'active' && (
+                            <>
+                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'paused')}>
+                                <Pause className="w-4 h-4 mr-2 text-orange-600" />
+                                Pausar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'applications_closed')}>
+                                <XCircle className="w-4 h-4 mr-2 text-blue-600" />
+                                Fechar Inscrições
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
+                                <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
+                                Marcar como Concluída
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          {campaign.status === 'paused' && (
+                            <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                              <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                              Reativar
+                            </DropdownMenuItem>
+                          )}
+                          {campaign.status === 'applications_closed' && (
+                            <>
+                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                                <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                                Reabrir Inscrições
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
+                                <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
+                                Marcar como Concluída
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            onClick={() => updateCampaignStatus(campaign.id, 'cancelled')}
+                            className="text-red-600"
+                          >
+                            <Ban className="w-4 h-4 mr-2" />
+                            Cancelar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </CardContent>
                 </Card>
@@ -405,6 +417,69 @@ export default function CampaignManager() {
         feature="Criar campanhas ilimitadas"
         isAuthenticated={true}
       />
+
+      {/* Campaign Detail Dialog */}
+      <Dialog open={!!detailCampaign} onOpenChange={(v) => !v && setDetailCampaign(null)}>
+        <DialogContent className="max-w-2xl max-h-[85dvh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{detailCampaign?.title}</DialogTitle>
+          </DialogHeader>
+          {detailCampaign && (
+            <div className="space-y-5 py-3">
+              <div className="flex items-center gap-2">
+                <StatusBadge type="campaign" status={detailCampaign.status} />
+                <span className="text-sm text-muted-foreground">
+                  {formatDate(detailCampaign.deadline)}
+                </span>
+              </div>
+
+              {detailCampaign.description && (
+                <div>
+                  <h4 className="text-sm font-semibold mb-1">Descrição</h4>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{detailCampaign.description}</p>
+                </div>
+              )}
+
+              {detailCampaign.requirements && (
+                <div>
+                  <h4 className="text-sm font-semibold mb-1">Requisitos</h4>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{detailCampaign.requirements}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  to={createPageUrl('ApplicationsManager') + '?campaignId=' + detailCampaign.id}
+                  onClick={() => setDetailCampaign(null)}
+                  className="flex items-center gap-2 p-3 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors text-primary text-sm font-medium"
+                >
+                  <Users className="w-4 h-4" />
+                  {detailCampaign.total_applications || 0} candidaturas
+                </Link>
+                <Link
+                  to={createPageUrl('DeliveriesManager') + '?campaignId=' + detailCampaign.id}
+                  onClick={() => setDetailCampaign(null)}
+                  className="flex items-center gap-2 p-3 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors text-primary text-sm font-medium"
+                >
+                  <Target className="w-4 h-4" />
+                  Ver entregas
+                </Link>
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { setDetailCampaign(null); openEditDialog(detailCampaign); }}
+                >
+                  <Edit className="w-3 h-3 mr-1" />
+                  Editar
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Invite Creator (linked from "Buscar criadoras" per campaign) */}
       {inviteForCampaign && (

@@ -17,6 +17,7 @@ import {
   Eye
 } from 'lucide-react';
 import AdminHeader from '../components/admin/AdminHeader';
+import BrandProfileModal from '@/components/modals/BrandProfileModal';
 import {
   Select,
   SelectContent,
@@ -39,6 +40,7 @@ export default function AdminCampaigns() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [viewingBrand, setViewingBrand] = useState(null);
 
   useEffect(() => {
     loadCampaigns();
@@ -165,7 +167,7 @@ export default function AdminCampaigns() {
       {/* Campaigns List */}
       <div className="grid gap-4">
         {filteredCampaigns.map((campaign) => (
-          <Card key={campaign.id} className="bg-card border hover:shadow-md transition-shadow">
+          <Card key={campaign.id} className="bg-card border hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSelectedCampaign(campaign)}>
             <CardContent className="p-5 lg:p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -183,9 +185,16 @@ export default function AdminCampaigns() {
                   <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="flex items-center gap-2 text-sm">
                     <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const b = brands.find(br => br.id === campaign.brand_id);
+                        b && setViewingBrand(b);
+                      }}
+                      className="text-primary hover:underline font-medium text-left"
+                    >
                       {getBrandName(campaign.brand_id)}
-                    </span>
+                    </button>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm">
@@ -232,7 +241,7 @@ export default function AdminCampaigns() {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => setSelectedCampaign(campaign)}
+                  onClick={(e) => { e.stopPropagation(); setSelectedCampaign(campaign); }}
                 >
                   <Eye className="w-4 h-4 mr-2" />
                   Detalhes
@@ -256,7 +265,15 @@ export default function AdminCampaigns() {
                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Marca:</span>
-                    <p className="font-medium">{getBrandName(selectedCampaign.brand_id)}</p>
+                    <button
+                      onClick={() => {
+                        const b = brands.find(br => br.id === selectedCampaign.brand_id);
+                        b && setViewingBrand(b);
+                      }}
+                      className="font-medium text-primary hover:underline text-left mt-1 block"
+                    >
+                      {getBrandName(selectedCampaign.brand_id)}
+                    </button>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Status:</span>
@@ -339,6 +356,14 @@ export default function AdminCampaigns() {
           )}
         </DialogContent>
       </Dialog>
+
+      {viewingBrand && (
+        <BrandProfileModal
+          brand={viewingBrand}
+          isOpen={!!viewingBrand}
+          onClose={() => setViewingBrand(null)}
+        />
+      )}
     </div>
   );
 }

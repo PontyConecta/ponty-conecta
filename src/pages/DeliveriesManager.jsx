@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ import {
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
+import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import { useDeliveriesQuery, useApproveMutation, useContestMutation } from '../components/hooks/useEntityQuery';
 
 export default function DeliveriesManager() {
@@ -56,6 +57,8 @@ export default function DeliveriesManager() {
   const [filterStatus, setFilterStatus] = useState('submitted');
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [contestReason, setContestReason] = useState('');
+  const [viewingCreator, setViewingCreator] = useState(null);
+  const navigate = useNavigate();
 
   const processing = approveMutation.isPending || contestMutation.isPending;
 
@@ -173,7 +176,10 @@ export default function DeliveriesManager() {
                   <CardContent className="p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                       {/* Creator Info */}
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <button
+                        onClick={() => creator && setViewingCreator(creator)}
+                        className="flex items-center gap-4 flex-1 min-w-0 hover:opacity-80 transition-opacity text-left"
+                      >
                         <Avatar className="w-12 h-12">
                           <AvatarImage src={creator?.avatar_url} />
                           <AvatarFallback className="bg-primary/10 text-primary">
@@ -185,12 +191,14 @@ export default function DeliveriesManager() {
                             {creator?.display_name || 'Criador'}
                           </h3>
                           {campaign && (
-                            <Link to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id} className="text-sm text-primary hover:underline truncate block">
-                              {campaign.title}
-                            </Link>
+                            <span onClick={(e) => e.stopPropagation()} className="inline-block">
+                              <Link to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id} className="text-sm text-primary hover:underline truncate block">
+                                {campaign.title}
+                              </Link>
+                            </span>
                           )}
                         </div>
-                      </div>
+                      </button>
 
                       {/* Delivery Details */}
                       <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -274,12 +282,17 @@ export default function DeliveriesManager() {
                     {campaigns[selectedDelivery.campaign_id]?.title}
                   </Link>
                 </div>
-                <div className="p-4 bg-muted rounded-xl">
-                  <Label className="text-sm text-muted-foreground">Criador</Label>
-                  <p className="font-medium">
-                    {creators[selectedDelivery.creator_id]?.display_name}
-                  </p>
-                </div>
+                <button
+                  onClick={() => {
+                    const c = creators[selectedDelivery.creator_id];
+                    c && setViewingCreator(c);
+                  }}
+                  className="p-4 bg-muted rounded-xl text-left w-full hover:opacity-80 transition-opacity"
+                >
+                  <p className="text-xs text-muted-foreground">Criador</p>
+                  <p className="font-medium text-primary">{creators[selectedDelivery.creator_id]?.display_name}</p>
+                  <p className="text-xs text-primary/60 mt-0.5">Ver perfil →</p>
+                </button>
               </div>
 
               {/* Proof Requirements */}
@@ -456,6 +469,20 @@ export default function DeliveriesManager() {
           )}
         </DialogContent>
       </Dialog>
+
+      {viewingCreator && (
+        <CreatorProfileModal
+          creator={viewingCreator}
+          isOpen={!!viewingCreator}
+          onClose={() => setViewingCreator(null)}
+          onInvite={(c) => {
+            setViewingCreator(null);
+            navigate(createPageUrl('InboxThread') +
+              '?recipientId=' + c.user_id +
+              '&recipientName=' + encodeURIComponent(c.display_name));
+          }}
+        />
+      )}
     </div>
   );
 }
