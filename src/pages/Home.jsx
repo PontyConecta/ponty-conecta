@@ -57,7 +57,7 @@ export default function Home() {
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black leading-tight tracking-tight">
-                A <span className="text-primary">Ponte Profissional</span> Entre Marcas e Criadores
+              A <span className="text-primary">Ponte Profissional</span> Entre Marcas e Criadoras
               </h1>
 
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-md">
@@ -83,7 +83,7 @@ export default function Home() {
                   className="w-full sm:w-auto border-2 border-primary text-primary bg-background hover:bg-primary/5 h-11 sm:h-12"
                   onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                 >
-                  Sou Criador
+                  Começar como Criadora
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
@@ -138,7 +138,7 @@ export default function Home() {
               </TabsTrigger>
               <TabsTrigger value="creators" className="text-base">
                 <span className="mr-2">✨</span>
-                Para Criadores
+                Para Criadoras
               </TabsTrigger>
             </TabsList>
 
@@ -199,15 +199,15 @@ export default function Home() {
                           <Sparkles className="w-8 h-8 text-primary" />
                         </div>
                         <h3 className="text-xl sm:text-2xl font-black leading-tight mb-2">
-                          Oportunidades profissionais para criadores
+                          Conecte sua criatividade com marcas que valorizam autenticidade
                         </h3>
                       </div>
 
                       <div className="space-y-3">
                         {[
                           { icon: Sparkles, title: 'Campanhas Profissionais', description: 'Briefings detalhados e objetivos' },
-                          { icon: CheckCircle, title: 'Requisitos Claros', description: 'Saiba o que entregar e quando' },
-                          { icon: TrendingUp, title: 'Reputação Verificada', description: 'Construa histórico profissional' }
+                           { icon: CheckCircle, title: 'Requisitos Claros', description: 'Saiba o que entregar e quando' },
+                           { icon: TrendingUp, title: 'Criadoras verificadas', description: 'Ganham 3x mais oportunidades' }
                         ].map((feature, idx) => (
                           <div key={idx} className="flex gap-3 bg-card/50 backdrop-blur-sm p-3 rounded-lg">
                             <div className="flex-shrink-0 w-9 h-9 bg-accent/10 rounded-lg flex items-center justify-center">
@@ -226,7 +226,7 @@ export default function Home() {
                         className="bg-accent hover:bg-accent/80 text-accent-foreground w-full"
                         onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
                       >
-                        Começar como Criador
+                        Começar como Criadora
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
                     </div>
@@ -289,7 +289,7 @@ export default function Home() {
             Pronto para começar?
           </h2>
           <p className="text-sm sm:text-lg mb-8 opacity-95">
-            Junte-se a centenas de marcas e criadores que já estão transformando suas relações profissionais
+            Junte-se a centenas de marcas e criadoras que já estão transformando suas relações profissionais
           </p>
 
           <Button 
@@ -308,7 +308,7 @@ export default function Home() {
           <div className="flex flex-col items-center gap-6">
             <div className="text-center">
               <h3 className="font-bold text-xl mb-2 text-foreground">Ponty</h3>
-              <p className="text-muted-foreground text-sm">A ponte profissional entre marcas e criadores</p>
+              <p className="text-muted-foreground text-sm">A ponte profissional entre marcas e criadoras</p>
             </div>
 
             <div className="flex items-center gap-6">

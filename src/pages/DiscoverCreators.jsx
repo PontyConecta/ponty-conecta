@@ -20,6 +20,8 @@ import {
   Search, Loader2, Users, Filter, X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
@@ -50,9 +52,23 @@ export default function DiscoverCreators() {
 
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
   const isAdmin = user?.role === 'admin';
+  const isBrand = profileType === 'brand';
   const navigate = useNavigate();
+  const [inviteTarget, setInviteTarget] = useState(null);
+  const [brandCampaigns, setBrandCampaigns] = useState([]);
 
   useEffect(() => { loadData(); }, []);
+
+  useEffect(() => {
+    if (isBrand && authProfile) {
+      base44.entities.Campaign.filter({ brand_id: authProfile.id }, '-created_date', 50).then(setBrandCampaigns);
+    }
+  }, [isBrand, authProfile?.id]);
+
+  const handleInvite = (creator) => {
+    if (!isSubscribed) { setShowPaywall(true); return; }
+    setInviteTarget(creator);
+  };
 
   const loadData = async () => {
     const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 500);
@@ -205,7 +221,8 @@ export default function DiscoverCreators() {
               {featuredCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
                   <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)} />
+                    onClick={() => setSelectedCreator(c)}
+                    showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
                 </div>
               ))}
             </HorizontalSection>
@@ -215,7 +232,8 @@ export default function DiscoverCreators() {
               {newCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
                   <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)} />
+                    onClick={() => setSelectedCreator(c)}
+                    showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
                 </div>
               ))}
             </HorizontalSection>
@@ -246,7 +264,8 @@ export default function DiscoverCreators() {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {displayCreators.map(c => (
                   <DiscoverCreatorCard key={c.id} creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)} />
+                    onClick={() => setSelectedCreator(c)}
+                    showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
                 ))}
               </div>
             ) : (
@@ -274,16 +293,29 @@ export default function DiscoverCreators() {
               onPaywall={() => setShowPaywall(true)}
               onMessage={(c) => {
                 setSelectedCreator(null);
-                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Creator')}`);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Criadora')}`);
               }}
+              onInvite={isBrand ? (c) => {
+                setSelectedCreator(null);
+                handleInvite(c);
+              } : undefined}
             />
           )}
         </DialogContent>
       </Dialog>
 
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)}
-        title="Contato Premium" description="Assine para entrar em contato direto com criadores."
-        feature="Ver email e WhatsApp do criador" isAuthenticated={true} />
+        title="Contato Premium" description="Assine para desbloquear contato direto com criadoras."
+        feature="Ver email e WhatsApp" isAuthenticated={true} />
+
+      {inviteTarget && (
+        <InviteCreatorModal
+          open={!!inviteTarget}
+          onClose={() => setInviteTarget(null)}
+          creator={inviteTarget}
+          campaigns={brandCampaigns}
+        />
+      )}
     </div>
   );
 }

@@ -17,6 +17,8 @@ import BrandProfileModal from '@/components/modals/BrandProfileModal';
 import {
   Search, Loader2, Building2, Filter, X
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
@@ -45,6 +47,8 @@ export default function DiscoverBrands() {
 
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
   const isAdmin = user?.role === 'admin';
+  const isCreator = profileType === 'creator';
+  const navigate = useNavigate();
 
   useEffect(() => { loadData(); }, []);
 
@@ -193,7 +197,12 @@ export default function DiscoverBrands() {
           <DialogHeader><DialogTitle>Perfil da Marca</DialogTitle></DialogHeader>
           {selectedBrand && (
             <BrandProfileModal brand={selectedBrand} isSubscribed={isSubscribed}
-              onPaywall={() => setShowPaywall(true)} />
+              onPaywall={() => setShowPaywall(true)}
+              onMessage={isCreator && isSubscribed ? (b) => {
+                setSelectedBrand(null);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
+              } : undefined}
+            />
           )}
         </DialogContent>
       </Dialog>

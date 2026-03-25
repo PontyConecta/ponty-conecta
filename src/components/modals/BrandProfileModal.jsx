@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, CheckCircle2, MapPin, Mail, Phone, Globe } from 'lucide-react';
+import { Building2, CheckCircle2, MapPin, Mail, Phone, Globe, MessageCircle } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 import { getPresenceUrl, getPresenceLabel } from '@/components/utils/phoneFormatter';
 
@@ -12,7 +12,7 @@ const INDUSTRY_LABELS = {
   retail: 'Varejo', automotive: 'Automotivo', other: 'Outros',
 };
 
-export default function BrandProfileModal({ brand, isSubscribed, onPaywall }) {
+export default function BrandProfileModal({ brand, isSubscribed, onPaywall, onMessage }) {
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
@@ -58,18 +58,24 @@ export default function BrandProfileModal({ brand, isSubscribed, onPaywall }) {
         {brand.content_guidelines && <div><h4 className="font-medium mb-2">Diretrizes de Conteúdo</h4><p className="text-muted-foreground">{brand.content_guidelines}</p></div>}
 
         {isSubscribed ? (
-          <div className="p-4 bg-primary/5 rounded-xl space-y-3">
-            <h4 className="font-medium text-primary">Contato</h4>
-            {brand.contact_email && <a href={`mailto:${brand.contact_email}`} className="flex items-center gap-2 text-primary hover:underline"><Mail className="w-4 h-4" />{brand.contact_email}</a>}
-            {brand.contact_phone && <a href={`tel:${brand.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{brand.contact_phone}</a>}
-            {brand.online_presences?.length > 0 ? (
-              brand.online_presences.map((p, i) => (
-                <a key={i} href={getPresenceUrl(p)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Globe className="w-4 h-4" />{getPresenceLabel(p)}</a>
-              ))
-            ) : (
-              <>
-                {brand.website && <a href={brand.website.startsWith('http') ? brand.website : `https://${brand.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Globe className="w-4 h-4" />Website</a>}
-              </>
+          <div className="space-y-3">
+            <div className="p-4 bg-primary/5 rounded-xl space-y-3">
+              <h4 className="font-medium text-primary">Contato</h4>
+              {brand.contact_email && <a href={`mailto:${brand.contact_email}`} className="flex items-center gap-2 text-primary hover:underline"><Mail className="w-4 h-4" />{brand.contact_email}</a>}
+              {brand.contact_phone && <a href={`tel:${brand.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{brand.contact_phone}</a>}
+              {brand.online_presences?.length > 0 ? (
+                brand.online_presences.map((p, i) => (
+                  <a key={i} href={getPresenceUrl(p)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Globe className="w-4 h-4" />{getPresenceLabel(p)}</a>
+                ))
+              ) : (
+                <>{brand.website && <a href={brand.website.startsWith('http') ? brand.website : `https://${brand.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Globe className="w-4 h-4" />Website</a>}</>
+              )}
+            </div>
+            {onMessage && brand.user_id && (
+              <Button onClick={() => onMessage(brand)} className="w-full min-h-[44px] bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                <MessageCircle className="w-4 h-4" />
+                Enviar Mensagem
+              </Button>
             )}
           </div>
         ) : (

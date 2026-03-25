@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Users, CheckCircle2, Lock } from 'lucide-react';
+import { MapPin, Users, CheckCircle2, Lock, UserPlus } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 function formatFollowers(num) {
@@ -18,7 +19,7 @@ function ImagePlaceholder({ name }) {
   );
 }
 
-export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) {
+export default function DiscoverCreatorCard({ creator, isSubscribed, onClick, onInvite, showInvite }) {
   const totalFollowers = (creator.platforms || []).reduce((s, p) => s + (p.followers || 0), 0);
   const [imgFailed, setImgFailed] = useState(false);
 
@@ -103,6 +104,18 @@ export default function DiscoverCreatorCard({ creator, isSubscribed, onClick }) 
             <span className="text-[9px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">UGC</span>
           )}
         </div>
+
+        {showInvite && onInvite && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full h-8 text-xs border-primary/30 text-primary hover:bg-primary/5 mt-1"
+            onClick={(e) => { e.stopPropagation(); onInvite(creator); }}
+          >
+            <UserPlus className="w-3 h-3 mr-1" />
+            Convidar
+          </Button>
+        )}
       </div>
     </div>
   );

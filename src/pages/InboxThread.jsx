@@ -5,9 +5,11 @@ import { useAuth } from '@/components/contexts/AuthContext';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronLeft, Send, Loader2 } from 'lucide-react';
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ChevronLeft, Send, Loader2, ExternalLink } from 'lucide-react';
 import MessageBubble from '@/components/inbox/MessageBubble';
 import { toast } from 'sonner';
+import moment from 'moment';
 
 export default function InboxThread() {
   const { user, profileType } = useAuth();
@@ -188,16 +190,24 @@ export default function InboxThread() {
       {/* Header */}
       <div className="flex items-center gap-3 pb-3 border-b mb-3 flex-shrink-0">
         <Link to={createPageUrl('Inbox')}>
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+          <Button variant="ghost" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full">
             <ChevronLeft className="w-5 h-5" />
           </Button>
         </Link>
-        <div className="min-w-0">
+        <Avatar className="w-9 h-9 flex-shrink-0">
+          <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">{otherName?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-foreground truncate">{otherName}</p>
           <p className="text-xs text-muted-foreground truncate">
-            {isDirect ? 'Mensagem direta' : (campaign?.title || 'Campanha')}
+            {isDirect ? 'Conversa direta' : (campaign?.title || 'Campanha')}
           </p>
         </div>
+        {!isDirect && application && (
+          <Link to={createPageUrl(profileType === 'brand' ? 'ApplicationsManager' : 'MyApplications')} className="text-xs text-primary hover:underline flex items-center gap-1 flex-shrink-0">
+            Ver candidatura <ExternalLink className="w-3 h-3" />
+          </Link>
+        )}
       </div>
 
       {/* Messages */}
@@ -209,9 +219,30 @@ export default function InboxThread() {
               : 'Envie a primeira mensagem para iniciar a conversa.'}
           </p>
         )}
-        {messages.map(msg => (
-          <MessageBubble key={msg.id} message={msg} isOwn={msg.sender_id === user.id} />
-        ))}
+        {messages.map((msg, i) => {
+          const prev = messages[i - 1];
+          const msgDate = moment(msg.created_date).startOf('day');
+          const prevDate = prev ? moment(prev.created_date).startOf('day') : null;
+          const showDateSep = !prevDate || !msgDate.isSame(prevDate);
+          const today = moment().startOf('day');
+          const yesterday = moment().subtract(1, 'day').startOf('day');
+          let dateLabel = '';
+          if (showDateSep) {
+            if (msgDate.isSame(today)) dateLabel = 'Hoje';
+            else if (msgDate.isSame(yesterday)) dateLabel = 'Ontem';
+            else dateLabel = msgDate.format('D [de] MMMM');
+          }
+          return (
+            <React.Fragment key={msg.id}>
+              {showDateSep && (
+                <div className="flex justify-center py-2">
+                  <span className="text-[10px] text-muted-foreground bg-muted px-3 py-1 rounded-full">{dateLabel}</span>
+                </div>
+              )}
+              <MessageBubble message={msg} isOwn={msg.sender_id === user.id} profileType={profileType} />
+            </React.Fragment>
+          );
+        })}
         <div ref={bottomRef} />
       </div>
 

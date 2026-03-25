@@ -21,12 +21,13 @@ import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import { 
   Plus, Megaphone, Calendar, DollarSign, Users, Edit, Pause, Play,
-  Gift, Package, Target, MoreVertical, XCircle, CheckCircle2, Ban
+  Gift, Package, Target, MoreVertical, XCircle, CheckCircle2, Ban, UserPlus
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CampaignCreateMultiStep from '@/components/campaign/CampaignCreateMultiStep';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import InviteCreatorSearchSheet from '@/components/campaign/InviteCreatorSearchSheet';
 
 export default function CampaignManager() {
   const { user, profile: brand, profileType, loading: authLoading } = useAuth();
@@ -40,6 +41,7 @@ export default function CampaignManager() {
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
+  const [inviteForCampaign, setInviteForCampaign] = useState(null);
 
   useEffect(() => {
     if (!authLoading && profileType && profileType !== 'brand') {
@@ -332,12 +334,23 @@ export default function CampaignManager() {
                             {campaign.remuneration_type === 'mixed' && 'Misto'}
                           </span>
                           {campaign.total_applications > 0 && (
-                            <span className="flex items-center gap-1 text-primary">
+                            <Link to={createPageUrl('ApplicationsManager')} className="flex items-center gap-1 text-primary hover:underline">
                               <Target className="w-4 h-4" />
                               {campaign.total_applications} candidaturas
-                            </span>
+                            </Link>
                           )}
                         </div>
+                        {(campaign.status === 'active' || campaign.status === 'draft') && isSubscribed && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-3 h-8 text-xs border-primary/30 text-primary hover:bg-primary/5"
+                            onClick={(e) => { e.stopPropagation(); setInviteForCampaign(campaign); }}
+                          >
+                            <UserPlus className="w-3 h-3 mr-1" />
+                            Buscar criadoras
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -358,7 +371,7 @@ export default function CampaignManager() {
             <p className="mb-6 text-muted-foreground">
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
-                : 'Crie sua primeira campanha para conectar com criadores'}
+                : 'Crie sua primeira campanha para conectar com criadoras'}
             </p>
             {!searchTerm && filterStatus === 'all' && (
               <Button 
@@ -392,6 +405,14 @@ export default function CampaignManager() {
         feature="Criar campanhas ilimitadas"
         isAuthenticated={true}
       />
+
+      {/* Invite Creator (linked from "Buscar criadoras" per campaign) */}
+      {inviteForCampaign && (
+        <InviteCreatorSearchSheet
+          campaign={inviteForCampaign}
+          onClose={() => setInviteForCampaign(null)}
+        />
+      )}
     </div>
   );
 }

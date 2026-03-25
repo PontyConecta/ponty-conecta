@@ -13,9 +13,9 @@ export default function ThemeSelector() {
   const { theme, changeTheme } = useTheme();
 
   const themes = [
-    { value: 'light', label: 'Light', icon: Sun },
-    { value: 'dark', label: 'Dark', icon: Moon },
-    { value: 'neon', label: 'Neon', icon: Zap },
+    { value: 'light', label: 'Editorial', icon: Sun },
+    { value: 'dark', label: 'Estúdio', icon: Moon },
+    { value: 'neon', label: 'Runway', icon: Zap },
   ];
 
   const CurrentIcon = themes.find(t => t.value === theme)?.icon || Sun;

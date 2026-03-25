@@ -69,73 +69,73 @@ html:root, html[data-theme="light"] {
 }
 
 html[data-theme="dark"] {
-  --background: 276 14% 10% !important;
-  --foreground: 267 30% 94% !important;
-  --card: 276 12% 14% !important;
-  --card-foreground: 267 30% 94% !important;
-  --popover: 276 12% 14% !important;
-  --popover-foreground: 267 30% 94% !important;
-  --primary: 279 22% 65% !important;
+  --background: 276 18% 7% !important;
+  --foreground: 273 15% 92% !important;
+  --card: 276 14% 12% !important;
+  --card-foreground: 273 15% 92% !important;
+  --popover: 276 14% 10% !important;
+  --popover-foreground: 273 15% 92% !important;
+  --primary: 279 30% 68% !important;
   --primary-foreground: 0 0% 100% !important;
-  --secondary: 276 10% 20% !important;
-  --secondary-foreground: 267 20% 88% !important;
-  --muted: 276 10% 22% !important;
-  --muted-foreground: 273 8% 56% !important;
-  --accent: 279 22% 65% !important;
+  --secondary: 276 12% 18% !important;
+  --secondary-foreground: 273 12% 82% !important;
+  --muted: 276 10% 20% !important;
+  --muted-foreground: 273 8% 52% !important;
+  --accent: 279 30% 68% !important;
   --accent-foreground: 0 0% 100% !important;
-  --destructive: 0 72% 55% !important;
+  --destructive: 0 70% 58% !important;
   --destructive-foreground: 0 0% 98% !important;
-  --border: 276 10% 20% !important;
-  --input: 276 10% 22% !important;
-  --ring: 279 22% 65% !important;
-  --chart-1: 279 22% 65% !important;
-  --chart-2: 279 16% 72% !important;
-  --chart-3: 276 14% 55% !important;
-  --chart-4: 283 18% 68% !important;
-  --chart-5: 265 16% 62% !important;
-  --sidebar-background: 276 14% 12% !important;
-  --sidebar-foreground: 267 30% 94% !important;
-  --sidebar-primary: 279 22% 65% !important;
+  --border: 276 12% 17% !important;
+  --input: 276 12% 19% !important;
+  --ring: 279 30% 68% !important;
+  --chart-1: 279 30% 68% !important;
+  --chart-2: 279 22% 55% !important;
+  --chart-3: 276 18% 44% !important;
+  --chart-4: 283 26% 62% !important;
+  --chart-5: 265 24% 58% !important;
+  --sidebar-background: 276 18% 9% !important;
+  --sidebar-foreground: 273 15% 92% !important;
+  --sidebar-primary: 279 30% 68% !important;
   --sidebar-primary-foreground: 0 0% 100% !important;
-  --sidebar-accent: 276 10% 18% !important;
-  --sidebar-accent-foreground: 267 20% 88% !important;
-  --sidebar-border: 276 10% 18% !important;
-  --sidebar-ring: 279 22% 65% !important;
+  --sidebar-accent: 276 12% 16% !important;
+  --sidebar-accent-foreground: 273 12% 82% !important;
+  --sidebar-border: 276 12% 15% !important;
+  --sidebar-ring: 279 30% 68% !important;
 }
 
 html[data-theme="neon"], html[data-theme="musk"] {
-  --background: 270 40% 4% !important;
-  --foreground: 270 10% 94% !important;
-  --card: 270 32% 8% !important;
-  --card-foreground: 270 10% 94% !important;
-  --popover: 270 32% 8% !important;
-  --popover-foreground: 270 10% 94% !important;
-  --primary: 270 67% 58% !important;
+  --background: 276 25% 4% !important;
+  --foreground: 270 20% 96% !important;
+  --card: 276 22% 8% !important;
+  --card-foreground: 270 20% 96% !important;
+  --popover: 276 22% 7% !important;
+  --popover-foreground: 270 20% 96% !important;
+  --primary: 279 70% 72% !important;
   --primary-foreground: 0 0% 100% !important;
-  --secondary: 270 28% 12% !important;
-  --secondary-foreground: 270 10% 92% !important;
-  --muted: 270 22% 14% !important;
-  --muted-foreground: 270 10% 55% !important;
-  --accent: 270 67% 58% !important;
+  --secondary: 276 20% 12% !important;
+  --secondary-foreground: 270 15% 88% !important;
+  --muted: 276 18% 14% !important;
+  --muted-foreground: 273 12% 54% !important;
+  --accent: 279 70% 72% !important;
   --accent-foreground: 0 0% 100% !important;
-  --destructive: 0 72% 55% !important;
+  --destructive: 0 80% 62% !important;
   --destructive-foreground: 0 0% 98% !important;
-  --border: 270 18% 13% !important;
-  --input: 270 20% 15% !important;
-  --ring: 270 67% 58% !important;
-  --chart-1: 270 67% 58% !important;
-  --chart-2: 170 55% 42% !important;
-  --chart-3: 35 80% 58% !important;
-  --chart-4: 200 65% 62% !important;
-  --chart-5: 345 70% 58% !important;
-  --sidebar-background: 270 32% 8% !important;
-  --sidebar-foreground: 270 10% 94% !important;
-  --sidebar-primary: 270 67% 58% !important;
+  --border: 276 20% 14% !important;
+  --input: 276 20% 16% !important;
+  --ring: 279 70% 72% !important;
+  --chart-1: 279 70% 72% !important;
+  --chart-2: 290 60% 68% !important;
+  --chart-3: 265 65% 66% !important;
+  --chart-4: 305 55% 70% !important;
+  --chart-5: 248 58% 64% !important;
+  --sidebar-background: 276 25% 6% !important;
+  --sidebar-foreground: 270 20% 96% !important;
+  --sidebar-primary: 279 70% 72% !important;
   --sidebar-primary-foreground: 0 0% 100% !important;
-  --sidebar-accent: 270 22% 12% !important;
-  --sidebar-accent-foreground: 270 10% 92% !important;
-  --sidebar-border: 270 18% 13% !important;
-  --sidebar-ring: 270 67% 58% !important;
+  --sidebar-accent: 276 18% 12% !important;
+  --sidebar-accent-foreground: 270 15% 88% !important;
+  --sidebar-border: 276 20% 12% !important;
+  --sidebar-ring: 279 70% 72% !important;
 }
 
 @layer base {
@@ -170,9 +170,40 @@ html[data-theme="neon"], html[data-theme="musk"] {
   }
 }
 
-/* Neon theme glow — Roxo Ponty */
+/* ── Dark theme shadows ── */
+[data-theme="dark"] .bg-primary {
+  box-shadow: 0 0 16px -4px hsl(279 30% 68% / 0.35);
+}
+[data-theme="dark"] .bg-card {
+  box-shadow: 0 1px 3px hsl(276 20% 4% / 0.6), 0 0 0 1px hsl(276 12% 17%);
+}
+
+/* ── Neon theme glow ── */
+[data-theme="neon"] .bg-primary {
+  box-shadow: 0 0 20px -2px hsl(279 70% 72% / 0.55),
+              0 0 40px -8px hsl(279 70% 72% / 0.30);
+}
+[data-theme="neon"] .bg-primary:hover {
+  box-shadow: 0 0 28px -2px hsl(279 70% 72% / 0.70),
+              0 0 56px -8px hsl(279 70% 72% / 0.40);
+}
+[data-theme="neon"] .bg-card {
+  box-shadow: 0 0 0 1px hsl(279 70% 72% / 0.12),
+              0 4px 24px -4px hsl(276 25% 4% / 0.8);
+}
+[data-theme="neon"] .bg-card:hover {
+  box-shadow: 0 0 0 1px hsl(279 70% 72% / 0.28),
+              0 4px 24px -4px hsl(276 25% 4% / 0.8);
+}
+[data-theme="neon"] .text-primary {
+  text-shadow: 0 0 12px hsl(279 70% 72% / 0.4);
+}
+[data-theme="neon"] input:focus,
+[data-theme="neon"] textarea:focus {
+  box-shadow: 0 0 0 2px hsl(279 70% 72% / 0.50);
+}
 [data-theme="neon"] .glow-primary {
-  box-shadow: 0 0 24px -4px hsl(279 28% 68% / 0.4);
+  box-shadow: 0 0 24px -4px hsl(279 70% 72% / 0.50);
 }
 
 @layer utilities {

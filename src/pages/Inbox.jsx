@@ -4,9 +4,10 @@ import { createPageUrl } from '@/utils';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { MessageCircle, Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { MessageCircle, Loader2, Plus } from 'lucide-react';
 import InboxThreadItem from '@/components/inbox/InboxThreadItem';
+import NewConversationSheet from '@/components/inbox/NewConversationSheet';
 
 export default function Inbox() {
   const { user, profile, profileType } = useAuth();
@@ -17,6 +18,7 @@ export default function Inbox() {
   const [creators, setCreators] = useState({});
   const [loading, setLoading] = useState(true);
   const [directPartners, setDirectPartners] = useState({});
+  const [showNewConvo, setShowNewConvo] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -31,17 +33,14 @@ export default function Inbox() {
       const myMsgs = [...sent, ...received].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);
       setMessages(myMsgs);
 
-      // Get unique application IDs — separate direct vs application threads
       const appIds = [...new Set(myMsgs.map(m => m.application_id))];
       const realAppIds = appIds.filter(id => !id.includes('__direct__'));
       const directKeys = appIds.filter(id => id.includes('__direct__'));
 
-      // Resolve direct conversation partner names
       const directPartnerMap = {};
       for (const key of directKeys) {
         const parts = key.split('__direct__');
         const partnerId = parts[0] === user.id ? parts[1] : parts[0];
-        // Try to find partner in creators or brands
         const [crs, brs] = await Promise.all([
           base44.entities.Creator.filter({ user_id: partnerId }),
           base44.entities.Brand.filter({ user_id: partnerId }),
@@ -75,11 +74,9 @@ export default function Inbox() {
         const campMap = {};
         campsArr.filter(Boolean).forEach(c => { campMap[c.id] = c; });
         setCampaigns(campMap);
-
         const brandMap = {};
         brandsArr.filter(Boolean).forEach(b => { brandMap[b.id] = b; });
         setBrands(brandMap);
-
         const creatorMap = {};
         creatorsArr.filter(Boolean).forEach(c => { creatorMap[c.id] = c; });
         setCreators(creatorMap);
@@ -96,13 +93,9 @@ export default function Inbox() {
       }
     });
 
-    return () => {
-      aborted = true;
-      unsub?.();
-    };
+    return () => { aborted = true; unsub?.(); };
   }, [user?.id]);
 
-  // Group messages by application_id into threads
   const threads = useMemo(() => {
     const grouped = {};
     messages.forEach(msg => {
@@ -123,7 +116,7 @@ export default function Inbox() {
 
         if (isDirect) {
           otherName = directPartners[appId] || 'Usuário';
-          campaignTitle = 'Mensagem direta';
+          campaignTitle = 'Conversa direta';
           const parts = appId.split('__direct__');
           const partnerId = parts[0] === user.id ? parts[1] : parts[0];
           threadLink = `?recipientId=${partnerId}&recipientName=${encodeURIComponent(otherName)}`;
@@ -132,7 +125,7 @@ export default function Inbox() {
           const campaign = app ? campaigns[app.campaign_id] : null;
           if (profileType === 'brand') {
             const creator = app ? creators[app.creator_id] : null;
-            otherName = creator?.display_name || 'Criador';
+            otherName = creator?.display_name || 'Criadora';
           } else {
             const brand = app ? brands[app.brand_id] : null;
             otherName = brand?.company_name || 'Marca';
@@ -141,14 +134,7 @@ export default function Inbox() {
           threadLink = `?applicationId=${appId}`;
         }
 
-        return {
-          applicationId: appId,
-          lastMessage: lastMsg,
-          unreadCount: unread,
-          campaignTitle,
-          otherName,
-          threadLink,
-        };
+        return { applicationId: appId, lastMessage: lastMsg, unreadCount: unread, campaignTitle, otherName, threadLink };
       })
       .sort((a, b) => new Date(b.lastMessage.created_date) - new Date(a.lastMessage.created_date));
   }, [messages, applications, campaigns, brands, creators, directPartners, user?.id, profileType]);
@@ -166,41 +152,48 @@ export default function Inbox() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <MessageCircle className="w-6 h-6 text-primary" />
-        <h1 className="text-xl font-bold text-foreground">Direct</h1>
-        {totalUnread > 0 && (
-          <Badge className="bg-primary text-primary-foreground border-0">
-            {totalUnread}
-          </Badge>
-        )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <MessageCircle className="w-6 h-6 text-primary" />
+          <h1 className="text-xl font-bold text-foreground">Mensagens</h1>
+          {totalUnread > 0 && (
+            <Badge className="bg-primary text-primary-foreground border-0">{totalUnread}</Badge>
+          )}
+        </div>
+        <Button variant="outline" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full" onClick={() => setShowNewConvo(true)}>
+          <Plus className="w-5 h-5" />
+        </Button>
       </div>
 
       {/* Thread list */}
       {threads.length === 0 ? (
-        <Card className="p-8 text-center bg-card border">
-          <MessageCircle className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
-          <p className="text-muted-foreground">Nenhuma conversa ainda</p>
-          <p className="text-xs text-muted-foreground/60 mt-1">
-            As conversas aparecem quando você se candidata ou recebe candidaturas em campanhas.
+        <div className="py-16 text-center">
+          <MessageCircle className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Nenhuma conversa ainda</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            {profileType === 'brand'
+              ? 'Convide criadoras para suas campanhas'
+              : 'Suas conversas com marcas aparecem aqui 💜'}
           </p>
           {profileType === 'brand' ? (
-            <Link to={createPageUrl('DiscoverCreators')} className="text-primary text-sm font-medium mt-3 inline-block hover:underline">
-              Descobrir Criadores →
+            <Link to={createPageUrl('DiscoverCreators')}>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]">Descobrir Criadoras</Button>
             </Link>
           ) : (
-            <Link to={createPageUrl('OpportunityFeed')} className="text-primary text-sm font-medium mt-3 inline-block hover:underline">
-              Ver Campanhas →
+            <Link to={createPageUrl('OpportunityFeed')}>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]">Ver Campanhas</Button>
             </Link>
           )}
-        </Card>
+        </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-1">
           {threads.map(thread => (
             <InboxThreadItem key={thread.applicationId} thread={thread} userId={user.id} />
           ))}
         </div>
       )}
+
+      <NewConversationSheet open={showNewConvo} onClose={() => setShowNewConvo(false)} />
     </div>
   );
 }

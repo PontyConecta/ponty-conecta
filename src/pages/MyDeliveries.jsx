@@ -39,14 +39,20 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../components/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
+import BrandProfileModal from '@/components/modals/BrandProfileModal';
+import { useSubscription } from '@/components/contexts/SubscriptionContext';
+import PaywallModal from '@/components/PaywallModal';
 
 export default function MyDeliveries() {
   const { user, profile: authProfile, profileType, loading: authLoading } = useAuth();
+  const { isSubscribed } = useSubscription();
   const navigate = useNavigate();
   const [creator, setCreator] = useState(null);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [showPaywall, setShowPaywall] = useState(false);
   const [deliveries, setDeliveries] = useState([]);
   const [campaigns, setCampaigns] = useState({});
   const [brands, setBrands] = useState({});
@@ -284,9 +290,9 @@ export default function MyDeliveries() {
                           <h3 className="font-semibold truncate">
                             {campaign?.title || 'Campanha'}
                           </h3>
-                          <p className="text-sm">
+                          <button onClick={(e) => { e.stopPropagation(); brand && setSelectedBrand(brand); }} className="text-sm text-primary hover:underline text-left">
                             {brand?.company_name || 'Marca'}
-                          </p>
+                          </button>
                           <div className="flex flex-wrap gap-3 mt-2 text-sm">
                             <span className={`flex items-center gap-1 ${isOverdue ? 'text-red-600' : 'text-muted-foreground'}`}>
                               <Calendar className="w-4 h-4" />
@@ -309,7 +315,7 @@ export default function MyDeliveries() {
                       {delivery.status === 'pending' && (
                         <Button
                           onClick={() => openSubmitDialog(delivery)}
-                          className="bg-orange-500 hover:bg-orange-600"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]"
                         >
                           <Send className="w-4 h-4 mr-2" />
                           Enviar Entrega
@@ -374,16 +380,38 @@ export default function MyDeliveries() {
           <CardContent className="p-12 text-center">
             <FileText className="w-16 h-16 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              Nenhuma entrega encontrada
+              {searchTerm || filterStatus !== 'all' ? 'Nenhuma entrega encontrada' : 'Suas entregas aprovadas aparecem aqui 🎯'}
             </h3>
-            <p>
+            <p className="text-muted-foreground">
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
-                : 'Suas entregas aparecerão aqui quando suas candidaturas forem aceitas'}
+                : 'Quando suas candidaturas forem aceitas, as entregas aparecerão aqui.'}
             </p>
           </CardContent>
         </Card>
       )}
+
+      {/* Brand Profile Modal */}
+      <Dialog open={!!selectedBrand} onOpenChange={(v) => { if (!v) setSelectedBrand(null); }}>
+        <DialogContent className="max-w-lg max-h-[90dvh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{selectedBrand?.company_name}</DialogTitle>
+          </DialogHeader>
+          {selectedBrand && (
+            <BrandProfileModal
+              brand={selectedBrand}
+              isSubscribed={isSubscribed}
+              onPaywall={() => { setSelectedBrand(null); setShowPaywall(true); }}
+              onMessage={(b) => {
+                setSelectedBrand(null);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title="Recurso Premium" description="Assine para desbloquear contato completo das marcas." feature="Contato de marcas" isAuthenticated={true} />
 
       {/* Submit Delivery Dialog */}
       <Dialog open={!!selectedDelivery} onOpenChange={() => closeSubmitDialog()}>
@@ -525,9 +553,9 @@ export default function MyDeliveries() {
                     </p>
                   </div>
                   <Button
-                    onClick={handleSubmitDelivery}
-                    disabled={submitting || proofUrls.length === 0}
-                    className="w-full bg-orange-500 hover:bg-orange-600"
+                  onClick={handleSubmitDelivery}
+                  disabled={submitting || proofUrls.length === 0}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]"
                   >
                     {submitting ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

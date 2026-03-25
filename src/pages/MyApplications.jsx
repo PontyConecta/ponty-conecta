@@ -25,13 +25,19 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../components/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import BrandProfileModal from '@/components/modals/BrandProfileModal';
+import { useSubscription } from '@/components/contexts/SubscriptionContext';
+import PaywallModal from '@/components/PaywallModal';
 
 const formatBRL = (value) => {
   const num = parseFloat(value);
@@ -41,8 +47,11 @@ const formatBRL = (value) => {
 
 export default function MyApplications() {
   const { user, profile: authProfile, profileType, loading: authLoading } = useAuth();
+  const { isSubscribed } = useSubscription();
   const navigate = useNavigate();
   const [withdrawTarget, setWithdrawTarget] = useState(null);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [showPaywall, setShowPaywall] = useState(false);
   const [creator, setCreator] = useState(null);
   const [applications, setApplications] = useState([]);
   const [campaigns, setCampaigns] = useState({});
@@ -212,9 +221,9 @@ export default function MyApplications() {
                           <h3 className="font-semibold truncate">
                             {campaign?.title || 'Campanha'}
                           </h3>
-                          <p className="text-sm">
+                          <button onClick={(e) => { e.stopPropagation(); brand && setSelectedBrand(brand); }} className="text-sm text-primary hover:underline text-left">
                             {brand?.company_name || 'Marca'}
-                          </p>
+                          </button>
                           <div className="flex flex-wrap gap-3 mt-2 text-sm">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
@@ -294,13 +303,18 @@ export default function MyApplications() {
           <CardContent className="p-12 text-center">
             <Target className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
             <h3 className="text-lg font-semibold mb-2">
-              Nenhuma candidatura encontrada
+              {searchTerm || filterStatus !== 'all' ? 'Nenhuma candidatura encontrada' : 'Você ainda não se candidatou'}
             </h3>
-            <p>
+            <p className="text-muted-foreground mb-4">
               {searchTerm || filterStatus !== 'all'
                 ? 'Tente ajustar seus filtros'
-                : 'Suas candidaturas aparecerão aqui'}
+                : 'Explore campanhas e candidate-se — é grátis! ✨'}
             </p>
+            {!searchTerm && filterStatus === 'all' && (
+              <Link to={createPageUrl('OpportunityFeed')}>
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]">Ver Campanhas</Button>
+              </Link>
+            )}
           </CardContent>
         </Card>
       )}
@@ -323,6 +337,26 @@ export default function MyApplications() {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Brand Profile Modal */}
+      <Dialog open={!!selectedBrand} onOpenChange={(v) => { if (!v) setSelectedBrand(null); }}>
+        <DialogContent className="max-w-lg max-h-[90dvh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{selectedBrand?.company_name}</DialogTitle></DialogHeader>
+          {selectedBrand && (
+            <BrandProfileModal
+              brand={selectedBrand}
+              isSubscribed={isSubscribed}
+              onPaywall={() => { setSelectedBrand(null); setShowPaywall(true); }}
+              onMessage={(b) => {
+                setSelectedBrand(null);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title="Recurso Premium" description="Assine para desbloquear contato completo das marcas." feature="Contato de marcas" isAuthenticated={true} />
     </div>
   );
 }
