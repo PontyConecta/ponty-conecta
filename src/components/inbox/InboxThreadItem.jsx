@@ -6,14 +6,14 @@ import { Card } from "@/components/ui/card";
 import moment from 'moment';
 
 export default function InboxThreadItem({ thread, userId }) {
-  const { applicationId, lastMessage, unreadCount, campaignTitle, otherName } = thread;
+  const { applicationId, lastMessage, unreadCount, campaignTitle, otherName, threadLink } = thread;
   const isMyMessage = lastMessage.sender_id === userId;
   const preview = lastMessage.content?.length > 80 
     ? lastMessage.content.substring(0, 80) + '...' 
     : lastMessage.content;
 
   return (
-    <Link to={createPageUrl('InboxThread') + '?applicationId=' + applicationId}>
+    <Link to={createPageUrl('InboxThread') + (threadLink || ('?applicationId=' + applicationId))}>
       <Card className={`px-4 py-3 bg-card border hover:shadow-md transition-shadow cursor-pointer ${unreadCount > 0 ? 'border-primary/30' : ''}`}>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">

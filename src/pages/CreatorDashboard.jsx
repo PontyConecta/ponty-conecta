@@ -169,9 +169,10 @@ export default function CreatorDashboard() {
           {recentApplications.length > 0 ? (
             <div className="space-y-3">
               {recentApplications.slice(0, 5).map((app) => (
-                <div
+                <Link
                   key={app.id}
-                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors bg-muted/50"
+                  to={createPageUrl('MyApplications') + '?applicationId=' + app.id}
+                  className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
                 >
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium truncate">
@@ -182,7 +183,7 @@ export default function CreatorDashboard() {
                     </p>
                   </div>
                   <StatusBadge type="application" status={app.status} />
-                </div>
+                </Link>
               ))}
             </div>
           ) : (
@@ -216,9 +217,10 @@ export default function CreatorDashboard() {
           {recentDeliveries.length > 0 ? (
             <div className="space-y-3">
               {recentDeliveries.slice(0, 5).map((delivery) => (
-                <div
+                <Link
                   key={delivery.id}
-                  className="flex items-center justify-between p-4 rounded-xl hover:opacity-80 transition-colors bg-muted/50"
+                  to={createPageUrl('MyDeliveries') + '?deliveryId=' + delivery.id}
+                  className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
                 >
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium truncate">
@@ -233,7 +235,7 @@ export default function CreatorDashboard() {
                     </p>
                   </div>
                   <StatusBadge type="delivery" status={delivery.status} />
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

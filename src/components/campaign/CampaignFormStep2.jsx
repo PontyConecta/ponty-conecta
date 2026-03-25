@@ -42,7 +42,7 @@ export default function CampaignFormStep2({ formData, onChange, toggleArrayItem 
         <div className="flex flex-wrap gap-2 mt-2">
           {NICHES.map(n => (
             <Badge key={n} variant={formData.niche_required.includes(n) ? "default" : "outline"}
-              className={`cursor-pointer transition-all ${formData.niche_required.includes(n) ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}
+              className={`cursor-pointer transition-all ${formData.niche_required.includes(n) ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}`}
               onClick={() => toggleArrayItem('niche_required', n)}>
               {n}
             </Badge>

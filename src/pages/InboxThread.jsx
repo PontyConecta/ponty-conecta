@@ -8,14 +8,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft, Send, Loader2 } from 'lucide-react';
 import MessageBubble from '@/components/inbox/MessageBubble';
 import { toast } from 'sonner';
-import moment from 'moment';
 
 export default function InboxThread() {
   const { user, profileType } = useAuth();
   const urlParams = new URLSearchParams(window.location.search);
   const applicationId = urlParams.get('applicationId');
+  const recipientIdParam = urlParams.get('recipientId');
+  const recipientNameParam = urlParams.get('recipientName');
 
-  if (!applicationId) {
+  // Direct conversation: derive a stable key from sorted user IDs
+  const isDirect = !applicationId && !!recipientIdParam;
+  const conversationKey = isDirect && user
+    ? [user.id, recipientIdParam].sort().join('__direct__')
+    : applicationId;
+
+  if (!conversationKey) {
     return (
       <div className="text-center py-20">
         <p className="text-muted-foreground">Conversa não encontrada.</p>
@@ -26,7 +33,7 @@ export default function InboxThread() {
 
   const [application, setApplication] = useState(null);
   const [campaign, setCampaign] = useState(null);
-  const [otherName, setOtherName] = useState('');
+  const [otherName, setOtherName] = useState(isDirect ? (recipientNameParam || 'Usuário') : '');
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
@@ -35,50 +42,44 @@ export default function InboxThread() {
   const bottomRef = useRef(null);
 
   useEffect(() => {
-    if (!applicationId || !user) return;
+    if (!conversationKey || !user) return;
     let isMounted = true;
 
     const loadThread = async () => {
-      // Load application
-      const apps = await base44.entities.Application.filter({ id: applicationId });
-      if (!isMounted) return;
-      if (apps.length === 0) { setLoading(false); return; }
-      const app = apps[0];
-      setApplication(app);
-
-      // Load campaign
-      const camps = await base44.entities.Campaign.filter({ id: app.campaign_id });
-      if (!isMounted) return;
-      if (camps.length > 0) setCampaign(camps[0]);
-
-      // Load other participant name
-      if (profileType === 'brand') {
-        const creators = await base44.entities.Creator.filter({ id: app.creator_id });
+      if (!isDirect) {
+        // Application-based thread
+        const apps = await base44.entities.Application.filter({ id: conversationKey });
         if (!isMounted) return;
-        setOtherName(creators[0]?.display_name || 'Criador');
-      } else {
-        const brands = await base44.entities.Brand.filter({ id: app.brand_id });
+        if (apps.length === 0) { setLoading(false); return; }
+        const app = apps[0];
+        setApplication(app);
+
+        const camps = await base44.entities.Campaign.filter({ id: app.campaign_id });
         if (!isMounted) return;
-        setOtherName(brands[0]?.company_name || 'Marca');
+        if (camps.length > 0) setCampaign(camps[0]);
+
+        if (profileType === 'brand') {
+          const creators = await base44.entities.Creator.filter({ id: app.creator_id });
+          if (!isMounted) return;
+          setOtherName(creators[0]?.display_name || 'Criador');
+        } else {
+          const brands = await base44.entities.Brand.filter({ id: app.brand_id });
+          if (!isMounted) return;
+          setOtherName(brands[0]?.company_name || 'Marca');
+        }
       }
 
       // Load messages
-      const msgs = await base44.entities.Message.filter({ application_id: applicationId }, 'created_date', 100);
+      const msgs = await base44.entities.Message.filter({ application_id: conversationKey }, 'created_date', 200);
       if (!isMounted) return;
       setMessages(msgs);
 
       // Mark unread as read
       const unread = msgs.filter(m => m.recipient_id === user.id && !m.read_at);
       if (unread.length > 0) {
-        try {
-          await Promise.all(
-            unread.map(m =>
-              base44.entities.Message.update(m.id, { read_at: new Date().toISOString() })
-            )
-          );
-        } catch (error) {
-          console.error('Falha ao marcar mensagens como lidas:', error);
-        }
+        Promise.all(
+          unread.map(m => base44.entities.Message.update(m.id, { read_at: new Date().toISOString() }))
+        ).catch(() => {});
       }
 
       if (isMounted) setLoading(false);
@@ -88,52 +89,47 @@ export default function InboxThread() {
 
     const unsub = base44.entities.Message.subscribe((event) => {
       if (!isMounted) return;
-      if (event.type === 'create' && event.data?.application_id === applicationId) {
+      if (event.type === 'create' && event.data?.application_id === conversationKey) {
         setMessages(prev => {
           if (prev.some(m => m.id === event.data.id)) return prev;
           return [...prev, event.data];
         });
-        // Mark as read if it's for me
         if (event.data.recipient_id === user.id && !event.data.read_at) {
           base44.entities.Message.update(event.data.id, { read_at: new Date().toISOString() }).catch(() => {});
         }
       }
     });
 
-    return () => {
-      isMounted = false;
-      unsub?.();
-    };
-  }, [applicationId, user?.id]);
+    return () => { isMounted = false; unsub?.(); };
+  }, [conversationKey, user?.id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // loadThread is now inside the useEffect above
-
   const handleSend = async () => {
     if (!newMessage.trim() || sending) return;
     setSending(true);
 
-    const recipientId = profileType === 'brand' 
-      ? application.creator_id 
-      : application.brand_id;
+    let recipientUserId;
 
-    // Resolve recipient user_id from profile id
-    let recipientUserId = recipientId;
-    if (profileType === 'brand') {
-      const creators = await base44.entities.Creator.filter({ id: application.creator_id });
-      if (creators.length > 0) recipientUserId = creators[0].user_id;
+    if (isDirect) {
+      recipientUserId = recipientIdParam;
     } else {
-      const brands = await base44.entities.Brand.filter({ id: application.brand_id });
-      if (brands.length > 0) recipientUserId = brands[0].user_id;
+      // Resolve from application profile entities
+      if (profileType === 'brand') {
+        const creators = await base44.entities.Creator.filter({ id: application.creator_id });
+        recipientUserId = creators[0]?.user_id || application.creator_id;
+      } else {
+        const brands = await base44.entities.Brand.filter({ id: application.brand_id });
+        recipientUserId = brands[0]?.user_id || application.brand_id;
+      }
     }
 
     const tempId = 'temp-' + Date.now();
     const tempMsg = {
       id: tempId,
-      application_id: applicationId,
+      application_id: conversationKey,
       sender_id: user.id,
       sender_type: profileType,
       recipient_id: recipientUserId,
@@ -146,9 +142,8 @@ export default function InboxThread() {
     setNewMessage('');
 
     try {
-
       await base44.entities.Message.create({
-        application_id: applicationId,
+        application_id: conversationKey,
         sender_id: user.id,
         sender_type: profileType,
         recipient_id: recipientUserId,
@@ -177,7 +172,7 @@ export default function InboxThread() {
     );
   }
 
-  if (!application) {
+  if (!isDirect && !application) {
     return (
       <div className="text-center py-20">
         <p className="text-muted-foreground">Conversa não encontrada.</p>
@@ -199,7 +194,9 @@ export default function InboxThread() {
         </Link>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-foreground truncate">{otherName}</p>
-          <p className="text-xs text-muted-foreground truncate">{campaign?.title || 'Campanha'}</p>
+          <p className="text-xs text-muted-foreground truncate">
+            {isDirect ? 'Mensagem direta' : (campaign?.title || 'Campanha')}
+          </p>
         </div>
       </div>
 
@@ -207,7 +204,9 @@ export default function InboxThread() {
       <div className="flex-1 overflow-y-auto space-y-3 pb-3">
         {messages.length === 0 && (
           <p className="text-center text-xs text-muted-foreground py-8">
-            Envie a primeira mensagem para iniciar a conversa.
+            {isDirect
+              ? `Inicie a conversa com ${otherName}`
+              : 'Envie a primeira mensagem para iniciar a conversa.'}
           </p>
         )}
         {messages.map(msg => (

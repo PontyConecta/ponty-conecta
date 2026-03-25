@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import DashboardCard from './DashboardCard';
 
-export default function StatCard({ label, value, total, icon: Icon, color, index = 0 }) {
-  return (
+export default function StatCard({ label, value, total, icon: Icon, color, index = 0, href }) {
+  const content = (
     <div className="h-[140px]">
       <DashboardCard index={index}>
         <div className="flex flex-col items-center text-center h-full justify-between py-1">
@@ -28,4 +29,9 @@ export default function StatCard({ label, value, total, icon: Icon, color, index
       </DashboardCard>
     </div>
   );
+
+  if (href) {
+    return <Link to={href} className="block hover:opacity-90 transition-opacity">{content}</Link>;
+  }
+  return content;
 }

@@ -16,6 +16,7 @@ export default function Inbox() {
   const [brands, setBrands] = useState({});
   const [creators, setCreators] = useState({});
   const [loading, setLoading] = useState(true);
+  const [directPartners, setDirectPartners] = useState({});
 
   useEffect(() => {
     if (!user) return;
@@ -23,18 +24,34 @@ export default function Inbox() {
 
     const load = async () => {
       const [sent, received] = await Promise.all([
-        base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 100),
-        base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 100),
+        base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 200),
+        base44.entities.Message.filter({ recipient_id: user.id }, '-created_date', 200),
       ]);
       if (aborted) return;
       const myMsgs = [...sent, ...received].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);
       setMessages(myMsgs);
 
-      // Get unique application IDs
+      // Get unique application IDs — separate direct vs application threads
       const appIds = [...new Set(myMsgs.map(m => m.application_id))];
+      const realAppIds = appIds.filter(id => !id.includes('__direct__'));
+      const directKeys = appIds.filter(id => id.includes('__direct__'));
+
+      // Resolve direct conversation partner names
+      const directPartnerMap = {};
+      for (const key of directKeys) {
+        const parts = key.split('__direct__');
+        const partnerId = parts[0] === user.id ? parts[1] : parts[0];
+        // Try to find partner in creators or brands
+        const [crs, brs] = await Promise.all([
+          base44.entities.Creator.filter({ user_id: partnerId }),
+          base44.entities.Brand.filter({ user_id: partnerId }),
+        ]);
+        if (aborted) return;
+        directPartnerMap[key] = crs[0]?.display_name || brs[0]?.company_name || 'Usuário';
+      }
       
-      if (appIds.length > 0) {
-        const apps = await Promise.all(appIds.map(id => base44.entities.Application.filter({ id }).then(r => r[0])));
+      if (realAppIds.length > 0) {
+        const apps = await Promise.all(realAppIds.map(id => base44.entities.Application.filter({ id }).then(r => r[0])));
         if (aborted) return;
         const appMap = {};
         const campaignIds = new Set();
@@ -68,6 +85,7 @@ export default function Inbox() {
         setCreators(creatorMap);
       }
 
+      setDirectPartners(directPartnerMap);
       setLoading(false);
     };
 
@@ -97,28 +115,43 @@ export default function Inbox() {
         const sorted = msgs.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
         const lastMsg = sorted[0];
         const unread = msgs.filter(m => m.recipient_id === user.id && !m.read_at).length;
-        const app = applications[appId];
-        const campaign = app ? campaigns[app.campaign_id] : null;
-        
+        const isDirect = appId.includes('__direct__');
+
         let otherName = '';
-        if (profileType === 'brand') {
-          const creator = app ? creators[app.creator_id] : null;
-          otherName = creator?.display_name || 'Criador';
+        let campaignTitle = '';
+        let threadLink = '';
+
+        if (isDirect) {
+          otherName = directPartners[appId] || 'Usuário';
+          campaignTitle = 'Mensagem direta';
+          const parts = appId.split('__direct__');
+          const partnerId = parts[0] === user.id ? parts[1] : parts[0];
+          threadLink = `?recipientId=${partnerId}&recipientName=${encodeURIComponent(otherName)}`;
         } else {
-          const brand = app ? brands[app.brand_id] : null;
-          otherName = brand?.company_name || 'Marca';
+          const app = applications[appId];
+          const campaign = app ? campaigns[app.campaign_id] : null;
+          if (profileType === 'brand') {
+            const creator = app ? creators[app.creator_id] : null;
+            otherName = creator?.display_name || 'Criador';
+          } else {
+            const brand = app ? brands[app.brand_id] : null;
+            otherName = brand?.company_name || 'Marca';
+          }
+          campaignTitle = campaign?.title || 'Campanha';
+          threadLink = `?applicationId=${appId}`;
         }
 
         return {
           applicationId: appId,
           lastMessage: lastMsg,
           unreadCount: unread,
-          campaignTitle: campaign?.title || 'Campanha',
+          campaignTitle,
           otherName,
+          threadLink,
         };
       })
       .sort((a, b) => new Date(b.lastMessage.created_date) - new Date(a.lastMessage.created_date));
-  }, [messages, applications, campaigns, brands, creators, user?.id, profileType]);
+  }, [messages, applications, campaigns, brands, creators, directPartners, user?.id, profileType]);
 
   const totalUnread = useMemo(() => threads.reduce((acc, t) => acc + t.unreadCount, 0), [threads]);
 

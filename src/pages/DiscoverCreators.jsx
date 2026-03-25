@@ -19,6 +19,7 @@ import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import {
   Search, Loader2, Users, Filter, X
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
@@ -49,6 +50,7 @@ export default function DiscoverCreators() {
 
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
   const isAdmin = user?.role === 'admin';
+  const navigate = useNavigate();
 
   useEffect(() => { loadData(); }, []);
 
@@ -270,6 +272,10 @@ export default function DiscoverCreators() {
               formatFollowers={formatFollowers}
               getTotalFollowers={getTotalFollowers}
               onPaywall={() => setShowPaywall(true)}
+              onMessage={(c) => {
+                setSelectedCreator(null);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Creator')}`);
+              }}
             />
           )}
         </DialogContent>

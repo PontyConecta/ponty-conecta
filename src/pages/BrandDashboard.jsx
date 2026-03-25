@@ -163,9 +163,15 @@ export default function BrandDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-        {stats.map((stat, index) => (
-          <StatCard key={index} index={index} {...stat} />
-        ))}
+        {stats.map((stat, index) => {
+          const hrefs = [
+            createPageUrl('CampaignManager'),
+            createPageUrl('ApplicationsManager'),
+            createPageUrl('DeliveriesManager'),
+            createPageUrl('DeliveriesManager'),
+          ];
+          return <StatCard key={index} index={index} {...stat} href={hrefs[index]} />;
+        })}
       </div>
 
       {/* Gráficos de Métricas */}
@@ -185,9 +191,10 @@ export default function BrandDashboard() {
           <CardContent className="space-y-3">
             {recentCampaigns.length > 0 ? (
               recentCampaigns.slice(0, 5).map((campaign) => (
-                <div
-                key={campaign.id}
-                className="flex items-center justify-between p-3 rounded-xl transition-colors bg-muted/50"
+                <Link
+                  key={campaign.id}
+                  to={createPageUrl('CampaignManager') + '?campaignId=' + campaign.id}
+                  className="flex items-center justify-between p-3 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
                 >
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium truncate">{campaign.title}</h4>
@@ -196,7 +203,7 @@ export default function BrandDashboard() {
                     </p>
                   </div>
                   <StatusBadge type="campaign" status={campaign.status} />
-                </div>
+                </Link>
               ))
             ) : (
               <div className="text-center py-8">
@@ -230,9 +237,10 @@ export default function BrandDashboard() {
               recentApplications.filter(a => a.status === 'pending').slice(0, 5).map((app) => {
                 const campaign = campaignsMap[app.campaign_id];
                 return (
-                  <div
+                  <Link
                     key={app.id}
-                    className="flex items-center justify-between p-3 rounded-xl transition-colors bg-muted/50"
+                    to={createPageUrl('ApplicationsManager') + '?applicationId=' + app.id}
+                    className="flex items-center justify-between p-3 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
                   >
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium truncate">
@@ -243,7 +251,7 @@ export default function BrandDashboard() {
                       </p>
                     </div>
                     <StatusBadge type="application" status={app.status} />
-                  </div>
+                  </Link>
                 );
               })
             ) : (
@@ -270,9 +278,10 @@ export default function BrandDashboard() {
           {recentDeliveries.length > 0 ? (
             <div className="space-y-3">
               {recentDeliveries.slice(0, 5).map((delivery) => (
-                <div
+                <Link
                   key={delivery.id}
-                  className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50"
+                  to={createPageUrl('DeliveriesManager') + '?deliveryId=' + delivery.id}
+                  className="flex items-center justify-between p-4 rounded-xl transition-colors bg-muted/50 hover:bg-muted cursor-pointer"
                 >
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium truncate">
@@ -286,7 +295,7 @@ export default function BrandDashboard() {
                     </p>
                   </div>
                   <StatusBadge type="delivery" status={delivery.status} />
-                </div>
+                </Link>
               ))}
             </div>
           ) : (

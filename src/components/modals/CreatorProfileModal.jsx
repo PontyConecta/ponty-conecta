@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock } from 'lucide-react';
+import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock, MessageCircle } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 
 function SafeImage({ src, alt, className, fallback }) {
@@ -11,7 +11,7 @@ function SafeImage({ src, alt, className, fallback }) {
   return <img src={src} alt={alt || ''} className={className} onError={() => setFailed(true)} />;
 }
 
-export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall }) {
+export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall, onMessage }) {
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
@@ -102,10 +102,10 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
         {isSubscribed ? (
           <>
             {(creator.rate_cash_min || creator.rate_cash_max) && (
-              <div className="p-4 rounded-xl bg-emerald-500/10">
-                <h4 className="font-medium text-emerald-600 mb-1">Faixa de Valores</h4>
-                <p className="text-emerald-500">R$ {creator.rate_cash_min || 0} - R$ {creator.rate_cash_max || 0}</p>
-                {creator.accepts_barter && <Badge className="mt-2 bg-emerald-500/15 text-emerald-600 border-0">Aceita permutas</Badge>}
+              <div className="p-4 rounded-xl bg-primary/10">
+                <h4 className="font-medium text-primary mb-1">Faixa de Valores</h4>
+                <p className="text-primary">R$ {creator.rate_cash_min || 0} - R$ {creator.rate_cash_max || 0}</p>
+                {creator.accepts_barter && <Badge className="mt-2 bg-primary/15 text-primary border-0">Aceita permutas</Badge>}
               </div>
             )}
             <div className="p-4 rounded-xl space-y-3 bg-primary/5">
@@ -114,6 +114,12 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
               {creator.contact_whatsapp && <a href={`https://wa.me/${creator.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{creator.contact_whatsapp}</a>}
               {creator.portfolio_url && <a href={creator.portfolio_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><ExternalLink className="w-4 h-4" />Ver Media Kit</a>}
             </div>
+            {onMessage && creator.user_id && (
+              <Button onClick={() => onMessage(creator)} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                <MessageCircle className="w-4 h-4" />
+                Enviar Mensagem
+              </Button>
+            )}
           </>
         ) : (
           <div className="p-4 rounded-xl bg-muted/60 border border-border text-center space-y-2">
