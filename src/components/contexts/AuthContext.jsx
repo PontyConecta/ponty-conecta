@@ -10,6 +10,7 @@ export function AuthProvider({ children }) {
   const [profileType, setProfileType] = useState(null);
   const [loading, setLoading] = useState(true);
   const sessionCheckIntervalRef = useRef(null);
+  const userRef = useRef(null);
   const [updating, setUpdating] = useState(false);
 
   // Verificar autenticação
@@ -79,7 +80,7 @@ export function AuthProvider({ children }) {
     // Verificar sessão a cada 5 minutos
     const interval = setInterval(async () => {
       const isValid = await checkAuth();
-      if (!isValid && user) {
+      if (!isValid && userRef.current) {
         toast.error('Sua sessão expirou. Por favor, faça login novamente.');
       }
     }, 5 * 60 * 1000);
@@ -90,6 +91,9 @@ export function AuthProvider({ children }) {
       if (interval) clearInterval(interval);
     };
   }, []);
+
+  // Keep userRef in sync for interval closure
+  useEffect(() => { userRef.current = user; }, [user]);
 
   // Atualizar perfil
   const refreshProfile = async () => {

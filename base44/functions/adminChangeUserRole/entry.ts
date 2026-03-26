@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
   try {
@@ -33,14 +33,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'User already has this role' }, { status: 400 });
     }
 
-    // Delete old profile
-    if (currentRole === 'brand' && existingBrand) {
-      await base44.asServiceRole.entities.Brand.delete(existingBrand.id);
-    } else if (currentRole === 'creator' && existingCreator) {
-      await base44.asServiceRole.entities.Creator.delete(existingCreator.id);
-    }
-
-    // Preserve subscription data from old profile if available
+    // Preserve subscription data from old profile
     const oldProfile = existingBrand || existingCreator;
     const preservedSubscription = {
       subscription_status: oldProfile?.subscription_status || 'starter',
@@ -48,9 +41,10 @@ Deno.serve(async (req) => {
       stripe_customer_id: oldProfile?.stripe_customer_id || null
     };
 
-    // Create new profile with incomplete state but preserved subscription
+    // CREATE new profile FIRST — if this fails, old profile stays intact
+    let newProfile;
     if (new_role === 'brand') {
-      await base44.asServiceRole.entities.Brand.create({
+      newProfile = await base44.asServiceRole.entities.Brand.create({
         user_id,
         company_name: 'Nova Marca',
         account_state: 'incomplete',
@@ -58,13 +52,24 @@ Deno.serve(async (req) => {
         ...preservedSubscription
       });
     } else {
-      await base44.asServiceRole.entities.Creator.create({
+      newProfile = await base44.asServiceRole.entities.Creator.create({
         user_id,
         display_name: 'Novo Criador',
         account_state: 'incomplete',
         onboarding_step: 1,
         ...preservedSubscription
       });
+    }
+
+    if (!newProfile) {
+      return Response.json({ error: 'Failed to create new profile' }, { status: 500 });
+    }
+
+    // Only delete old profile AFTER new one is confirmed created
+    if (currentRole === 'brand' && existingBrand) {
+      await base44.asServiceRole.entities.Brand.delete(existingBrand.id);
+    } else if (currentRole === 'creator' && existingCreator) {
+      await base44.asServiceRole.entities.Creator.delete(existingCreator.id);
     }
 
     // Log action

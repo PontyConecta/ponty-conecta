@@ -39,8 +39,9 @@ export function SubscriptionProvider({ children }) {
     subscriptionStatus,
     planLevel,
     canAccessFeature: (feature) => {
-      // Premium/legacy users have full access based on plan_level from database
-      return isSubscribed && !!planLevel;
+      if (!isSubscribed || !planLevel) return false;
+      // All premium/legacy/trial users get full access to all features
+      return true;
     }
   };
 
