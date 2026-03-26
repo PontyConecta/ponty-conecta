@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { trackPurchase } from '@/components/analytics/analyticsUtils';
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -46,16 +46,7 @@ export default function Subscription() {
     const urlParams = new URLSearchParams(window.location.search);
     const successParam = urlParams.get('success');
     if (successParam === 'true') {
-      (async () => {
-        await refreshProfile();
-        const plan = urlParams.get('plan') || selectedPlan;
-        trackPurchase({
-          value: plan === 'monthly' ? 45 : 450,
-          currency: 'BRL',
-          content_name: `Assinatura ${profileType === 'brand' ? 'Marca' : 'Criador'} ${plan === 'monthly' ? 'Mensal' : 'Anual'}`,
-          subscription_status: profile.subscription_status
-        });
-      })();
+      refreshProfile();
     }
   }, [profile, profileType]);
 

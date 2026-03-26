@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { trackPageView } from '@/components/analytics/analyticsUtils';
+
 import { useAuth } from '@/components/contexts/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
 import { ThemeProvider, useTheme } from '@/components/contexts/ThemeContext';
@@ -44,10 +44,7 @@ function LayoutContent({ children, currentPageName }) {
   const isAdmin = user?.role === 'admin';
   const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];
 
-  // Track page view
-  useEffect(() => {
-    trackPageView(currentPageName);
-  }, [currentPageName]);
+
 
   // Track activity (1x per session, fire-and-forget)
   useEffect(() => {
