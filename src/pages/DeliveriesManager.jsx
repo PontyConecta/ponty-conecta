@@ -470,19 +470,26 @@ export default function DeliveriesManager() {
         </DialogContent>
       </Dialog>
 
-      {viewingCreator && (
-        <CreatorProfileModal
-          creator={viewingCreator}
-          isOpen={!!viewingCreator}
-          onClose={() => setViewingCreator(null)}
-          onInvite={(c) => {
-            setViewingCreator(null);
-            navigate(createPageUrl('InboxThread') +
-              '?recipientId=' + c.user_id +
-              '&recipientName=' + encodeURIComponent(c.display_name));
-          }}
-        />
-      )}
+      <Dialog open={!!viewingCreator} onOpenChange={() => setViewingCreator(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Perfil da Criadora</DialogTitle></DialogHeader>
+          {viewingCreator && (
+            <CreatorProfileModal
+              creator={viewingCreator}
+              isSubscribed={true}
+              formatFollowers={(n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n||0)}
+              getTotalFollowers={(c) => (c?.platforms||[]).reduce((s,p) => s + (p.followers||0), 0)}
+              onPaywall={() => {}}
+              onInvite={(c) => {
+                setViewingCreator(null);
+                navigate(createPageUrl('InboxThread') +
+                  '?recipientId=' + c.user_id +
+                  '&recipientName=' + encodeURIComponent(c.display_name));
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

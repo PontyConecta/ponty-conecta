@@ -77,7 +77,7 @@ export default function MyDeliveries() {
     }
   }, [authProfile, profileType, authLoading]);
 
-  const loadData = () => loadPageData(creator);
+  const loadData = () => loadPageData(authProfile);
 
   const loadPageData = async (creatorProfile) => {
     if (!creatorProfile) return;

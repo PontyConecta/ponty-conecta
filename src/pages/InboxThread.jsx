@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { base44 } from '@/api/base44Client';
@@ -24,10 +24,11 @@ moment.locale('pt-br');
 
 export default function InboxThread() {
   const { user, profileType } = useAuth();
-  const urlParams = new URLSearchParams(window.location.search);
-  const applicationId = urlParams.get('applicationId');
-  const recipientIdParam = urlParams.get('recipientId');
-  const recipientNameParam = urlParams.get('recipientName');
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const applicationId = searchParams.get('applicationId');
+  const recipientIdParam = searchParams.get('recipientId');
+  const recipientNameParam = searchParams.get('recipientName');
 
   // Direct conversation: derive a stable key from sorted user IDs
   const isDirect = !applicationId && !!recipientIdParam;
@@ -219,7 +220,7 @@ export default function InboxThread() {
     <div className="flex flex-col" style={{ height: 'calc(100dvh - var(--header-height, 56px) - var(--bottom-nav-height, 72px) - 2rem)' }}>
       {/* Header */}
       <div className="flex items-center gap-3 pb-3 border-b mb-3 flex-shrink-0">
-        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => window.history.length > 2 ? window.history.back() : window.location.href = '/Inbox'}>
+        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => window.history.length > 2 ? window.history.back() : navigate(createPageUrl('Inbox'))}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <Avatar className="w-10 h-10">

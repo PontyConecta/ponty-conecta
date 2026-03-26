@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { useSubscription } from '@/components/contexts/SubscriptionContext';
-import { toast } from '@/components/utils/toast';
+import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate, formatCurrencyRange } from '../components/utils/formatters';
@@ -55,8 +55,9 @@ export default function CampaignManager() {
       navigate(createPageUrl('Home'));
       return;
     }
+    if (authLoading || !brand) return;
     loadData();
-  }, [authLoading, profileType]);
+  }, [authLoading, profileType, brand?.id]);
 
   const loadData = async () => {
     if (!brand) {

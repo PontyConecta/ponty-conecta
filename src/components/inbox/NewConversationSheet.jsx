@@ -50,13 +50,14 @@ export default function NewConversationSheet({ open, onClose }) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       base44.entities.Message.filter({ sender_id: user.id }, '-created_date', 50).then(msgs => {
-        const directToday = msgs.filter(m => {
+        const pitchesToday = msgs.filter(m => {
           const isDirectThread = m.application_id?.includes('__direct__');
           const isToday = new Date(m.created_date) >= today;
-          return isDirectThread && isToday;
+          const isPitch = m.content?.startsWith('🎯 Pitch de Parceria');
+          return isDirectThread && isToday && isPitch;
         });
-        // Count unique conversations started today
-        const uniqueConvos = new Set(directToday.map(m => m.application_id));
+        // Count unique pitch conversations started today
+        const uniqueConvos = new Set(pitchesToday.map(m => m.application_id));
         setDailyCount(uniqueConvos.size);
       });
     }

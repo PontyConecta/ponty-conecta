@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,16 @@ export default function ApplicationsManager() {
   const [agreedRate, setAgreedRate] = useState('');
   const [viewingCreator, setViewingCreator] = useState(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Deep-link: open application dialog from URL param
+  useEffect(() => {
+    const appId = searchParams.get('applicationId');
+    if (appId && applications.length > 0 && !selectedApplication) {
+      const found = applications.find(a => a.id === appId);
+      if (found) setSelectedApplication(found);
+    }
+  }, [searchParams, applications]);
 
   const processing = acceptMutation.isPending || rejectMutation.isPending;
 
@@ -85,10 +95,12 @@ export default function ApplicationsManager() {
     if (!selectedApplication) return;
     try {
       await rejectMutation.mutateAsync({ applicationId: selectedApplication.id, rejectionReason, profileType: 'brand', profileId: authProfile?.id });
+      toast.success('Candidatura recusada.');
       setSelectedApplication(null);
       setRejectionReason('');
     } catch (error) {
       console.error('Error rejecting application:', error);
+      toast.error('Erro ao recusar candidatura.');
     }
   };
 

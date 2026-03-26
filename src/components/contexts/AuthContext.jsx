@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [profileType, setProfileType] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sessionCheckInterval, setSessionCheckInterval] = useState(null);
+  const sessionCheckIntervalRef = useRef(null);
   const [updating, setUpdating] = useState(false);
 
   // Verificar autenticação
@@ -84,7 +84,7 @@ export function AuthProvider({ children }) {
       }
     }, 5 * 60 * 1000);
 
-    setSessionCheckInterval(interval);
+    sessionCheckIntervalRef.current = interval;
 
     return () => {
       if (interval) clearInterval(interval);
@@ -149,8 +149,9 @@ export function AuthProvider({ children }) {
   // Logout
   const logout = async (redirectUrl = '/') => {
     try {
-      if (sessionCheckInterval) {
-        clearInterval(sessionCheckInterval);
+      if (sessionCheckIntervalRef.current) {
+        clearInterval(sessionCheckIntervalRef.current);
+        sessionCheckIntervalRef.current = null;
       }
       setUser(null);
       setProfile(null);
