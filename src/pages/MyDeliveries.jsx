@@ -164,10 +164,12 @@ export default function MyDeliveries() {
         proof_notes: proofNotes,
       });
 
+      toast.success('Entrega enviada com sucesso!');
       await loadData();
       closeSubmitDialog();
     } catch (error) {
       console.error('Error submitting delivery:', error);
+      toast.error('Erro ao enviar entrega. Tente novamente.');
     } finally {
       setSubmitting(false);
     }

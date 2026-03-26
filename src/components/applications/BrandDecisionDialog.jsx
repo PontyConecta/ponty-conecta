@@ -48,7 +48,7 @@ export default function BrandDecisionDialog({
                 {creator?.display_name || 'Criador'}
               </h4>
               <p className="text-sm">
-                {creator?.bio?.slice(0, 100)}...
+                {creator?.bio ? `${creator.bio.slice(0, 100)}${creator.bio.length > 100 ? '...' : ''}` : ''}
               </p>
             </div>
           </div>

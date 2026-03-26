@@ -90,19 +90,25 @@ export default function NewConversationSheet({ open, onClose }) {
   const handleSendPitch = async () => {
     if (!selectedBrand || !pitchProposal.trim()) return;
     setSending(true);
-    const conversationId = [user.id, selectedBrand.user_id].sort().join('__direct__');
-    const content = `🎯 Pitch de Parceria\nNicho: ${pitchNiche || 'Não informado'}\nAlcance: ${pitchReach || 'Não informado'}\nProposta: ${pitchProposal}`;
-    await base44.entities.Message.create({
-      application_id: conversationId,
-      sender_id: user.id,
-      sender_type: 'creator',
-      recipient_id: selectedBrand.user_id,
-      content,
-    });
-    toast.success('Pitch enviado com sucesso! ✨');
-    setSending(false);
-    onClose();
-    navigate(createPageUrl('InboxThread') + `?recipientId=${selectedBrand.user_id}&recipientName=${encodeURIComponent(selectedBrand.company_name || 'Marca')}`);
+    try {
+      const conversationId = [user.id, selectedBrand.user_id].sort().join('__direct__');
+      const content = `🎯 Pitch de Parceria\nNicho: ${pitchNiche || 'Não informado'}\nAlcance: ${pitchReach || 'Não informado'}\nProposta: ${pitchProposal}`;
+      await base44.entities.Message.create({
+        application_id: conversationId,
+        sender_id: user.id,
+        sender_type: 'creator',
+        recipient_id: selectedBrand.user_id,
+        content,
+      });
+      toast.success('Pitch enviado com sucesso! ✨');
+      onClose();
+      navigate(createPageUrl('InboxThread') + `?recipientId=${selectedBrand.user_id}&recipientName=${encodeURIComponent(selectedBrand.company_name || 'Marca')}`);
+    } catch (error) {
+      console.error('Error sending pitch:', error);
+      toast.error('Erro ao enviar pitch. Tente novamente.');
+    } finally {
+      setSending(false);
+    }
   };
 
   const pitchLimitReached = dailyCount >= 5;

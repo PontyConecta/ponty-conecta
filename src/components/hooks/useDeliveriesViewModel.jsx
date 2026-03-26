@@ -100,8 +100,13 @@ export function useDeliveriesViewModel(profileType, profileId) {
   const handleFileUpload = useCallback(async (e) => {
     const files = Array.from(e.target.files);
     for (const file of files) {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setProofUrls(prev => [...prev, file_url]);
+      try {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        setProofUrls(prev => [...prev, file_url]);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        toast.error('Erro ao fazer upload do arquivo.');
+      }
     }
   }, []);
 

@@ -6,7 +6,32 @@ import { Target, Megaphone } from 'lucide-react';
 import moment from 'moment';
 
 export default function MessageBubble({ message, isOwn, profileType }) {
-  const isInvite = message.content?.startsWith('🎯');
+  const isInvite = message.content?.startsWith('🎯 *Convite para campanha');
+  const isPitch = !isInvite && message.content?.startsWith('🎯 Pitch de Parceria');
+
+  if (isPitch) {
+    const lines = message.content.split('\n');
+    const nicho = lines.find(l => l.startsWith('Nicho:'))?.replace('Nicho: ', '') || '';
+    const alcance = lines.find(l => l.startsWith('Alcance:'))?.replace('Alcance: ', '') || '';
+    const proposta = lines.find(l => l.startsWith('Proposta:'))?.replace('Proposta: ', '') || '';
+
+    return (
+      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+        <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl border border-primary/20 bg-primary/5 p-4 space-y-2">
+          <div className="flex items-center gap-2 text-primary">
+            <Target className="w-4 h-4" />
+            <span className="text-sm font-bold">Pitch de Parceria</span>
+          </div>
+          {nicho && <p className="text-xs text-muted-foreground"><span className="font-medium text-foreground">Nicho:</span> {nicho}</p>}
+          {alcance && <p className="text-xs text-muted-foreground"><span className="font-medium text-foreground">Alcance:</span> {alcance}</p>}
+          {proposta && <p className="text-sm text-foreground whitespace-pre-wrap mt-1">{proposta}</p>}
+          <p className={`text-[10px] ${isOwn ? 'text-primary/60' : 'text-muted-foreground/60'}`}>
+            {moment(message.created_date).format('HH:mm')}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (isInvite) {
     // Extract campaign name from content

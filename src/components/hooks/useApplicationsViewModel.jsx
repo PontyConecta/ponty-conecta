@@ -135,7 +135,6 @@ export function useApplicationsViewModel(profileType, profile) {
   }, [selectedApplication, rejectionReason, profileType, profileId, rejectMutation, closeDialog]);
 
   const handleWithdraw = useCallback(async (applicationId) => {
-    if (!window.confirm('Tem certeza que deseja cancelar esta candidatura?')) return;
     try {
       await withdrawMutation.mutateAsync({ applicationId, profileType, profileId });
     } catch (error) {

@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Megaphone, Crown } from 'lucide-react';
+import { Megaphone, Crown, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getPageTitle, getEmptyMessage } from '@/components/utils/creatorTypeConfig';
 import PaywallModal from '@/components/PaywallModal';

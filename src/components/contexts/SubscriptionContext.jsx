@@ -6,7 +6,7 @@ const SubscriptionContext = createContext(null);
 export function SubscriptionProvider({ children }) {
   const { profile } = useAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState('Guest');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('starter');
   const [planLevel, setPlanLevel] = useState(null);
 
   useEffect(() => {

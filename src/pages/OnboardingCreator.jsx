@@ -23,6 +23,7 @@ import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import FieldHint from '@/components/onboarding/FieldHint';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
+import { toast } from 'sonner';
 import { computeProfileSize, FOLLOWER_RANGES, formatFollowers as fmtFollowers, getProfileSizeLabel } from '@/components/utils/profileSizeUtils';
 import { CREATOR_TYPE_OPTIONS } from '@/components/utils/creatorTypeConfig';
 
@@ -239,10 +240,16 @@ export default function OnboardingCreator() {
 
   const handleFinalize = async () => {
     setSaving(true);
-    await base44.functions.invoke('onboardingFinalize', { profile_type: 'creator' });
-    await refreshProfile();
-    setSaving(false);
-    navigate(createPageUrl('CreatorDashboard'));
+    try {
+      await base44.functions.invoke('onboardingFinalize', { profile_type: 'creator' });
+      await refreshProfile();
+      navigate(createPageUrl('CreatorDashboard'));
+    } catch (error) {
+      console.error('Error finalizing:', error);
+      toast.error('Erro ao finalizar cadastro. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {

@@ -48,7 +48,10 @@ export default function Inbox() {
           base44.entities.Brand.filter({ user_id: partnerId }),
         ]);
         if (aborted) return;
-        directPartnerMap[key] = crs[0]?.display_name || brs[0]?.company_name || 'Usuário';
+        directPartnerMap[key] = {
+          name: crs[0]?.display_name || brs[0]?.company_name || 'Usuário',
+          avatarUrl: crs[0]?.avatar_url || brs[0]?.logo_url || null,
+        };
       }
       
       if (realAppIds.length > 0) {
@@ -121,8 +124,12 @@ export default function Inbox() {
         let campaignTitle = '';
         let threadLink = '';
 
+        let avatarUrl = null;
+
         if (isDirect) {
-          otherName = directPartners[appId] || 'Usuário';
+          const partnerData = directPartners[appId];
+          otherName = partnerData?.name || 'Usuário';
+          avatarUrl = partnerData?.avatarUrl || null;
           campaignTitle = 'Conversa direta';
           const parts = appId.split('__direct__');
           const partnerId = parts[0] === user.id ? parts[1] : parts[0];
@@ -133,15 +140,17 @@ export default function Inbox() {
           if (profileType === 'brand') {
             const creator = app ? creators[app.creator_id] : null;
             otherName = creator?.display_name || 'Criadora';
+            avatarUrl = creator?.avatar_url || null;
           } else {
             const brand = app ? brands[app.brand_id] : null;
             otherName = brand?.company_name || 'Marca';
+            avatarUrl = brand?.logo_url || null;
           }
           campaignTitle = campaign?.title || 'Campanha';
           threadLink = `?applicationId=${appId}`;
         }
 
-        return { applicationId: appId, lastMessage: lastMsg, unreadCount: unread, campaignTitle, otherName, threadLink };
+        return { applicationId: appId, lastMessage: lastMsg, unreadCount: unread, campaignTitle, otherName, threadLink, avatarUrl };
       })
       .sort((a, b) => new Date(b.lastMessage.created_date) - new Date(a.lastMessage.created_date));
   }, [messages, applications, campaigns, brands, creators, directPartners, user?.id, profileType]);

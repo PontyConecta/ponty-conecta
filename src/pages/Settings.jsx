@@ -16,6 +16,7 @@ import {
   User, Crown, LogOut, CreditCard, ExternalLink, Loader2, Sun, Moon, Zap
 } from 'lucide-react';
 import { useTheme } from '@/components/contexts/ThemeContext';
+import { toast } from 'sonner';
 
 export default function Settings() {
   const { user, profile, profileType, logout } = useAuth();
@@ -26,13 +27,19 @@ export default function Settings() {
 
   const handleManageSubscription = async () => {
     setManagingSubscription(true);
-    const response = await base44.functions.invoke('createCustomerPortalSession', {
-      profile_type: profileType
-    });
-    if (response.data?.url) {
-      window.location.href = response.data.url;
+    try {
+      const response = await base44.functions.invoke('createCustomerPortalSession', {
+        profile_type: profileType
+      });
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.error('Error opening portal:', error);
+      toast.error('Erro ao abrir portal de assinatura.');
+    } finally {
+      setManagingSubscription(false);
     }
-    setManagingSubscription(false);
   };
 
   const handleLogout = () => {

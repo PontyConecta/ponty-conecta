@@ -79,6 +79,7 @@ export default function SelectProfile() {
       navigate(createPageUrl(type === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator'));
     } catch (error) {
       console.error('Error creating profile:', error);
+    } finally {
       setSelecting(false);
     }
   };

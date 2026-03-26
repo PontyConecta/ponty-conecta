@@ -41,6 +41,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
 import { useApplicationsQuery, useAcceptApplicationMutation, useRejectApplicationMutation } from '../components/hooks/useEntityQuery';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
+import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 
 export default function ApplicationsManager() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -63,6 +64,10 @@ export default function ApplicationsManager() {
   const navigate = useNavigate();
 
   const processing = acceptMutation.isPending || rejectMutation.isPending;
+
+  const formatFollowers = (n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n||0);
+  const getTotalFollowers = (c) => (c?.platforms||[]).reduce((sum,p)=>sum+(p.followers||0),0);
+  const isSubscribed = isProfileSubscribed(authProfile);
 
   const handleAccept = async () => {
     if (!selectedApplication) return;
@@ -440,19 +445,26 @@ export default function ApplicationsManager() {
         </DialogContent>
       </Dialog>
 
-      {viewingCreator && (
-        <CreatorProfileModal
-          creator={viewingCreator}
-          isOpen={!!viewingCreator}
-          onClose={() => setViewingCreator(null)}
-          onInvite={(creator) => {
-            setViewingCreator(null);
-            navigate(createPageUrl('InboxThread') +
-              '?recipientId=' + creator.user_id +
-              '&recipientName=' + encodeURIComponent(creator.display_name));
-          }}
-        />
-      )}
+      <Dialog open={!!viewingCreator} onOpenChange={() => setViewingCreator(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Perfil da Criadora</DialogTitle></DialogHeader>
+          {viewingCreator && (
+            <CreatorProfileModal
+              creator={viewingCreator}
+              isSubscribed={isSubscribed}
+              formatFollowers={formatFollowers}
+              getTotalFollowers={getTotalFollowers}
+              onPaywall={() => {}}
+              onInvite={(creator) => {
+                setViewingCreator(null);
+                navigate(createPageUrl('InboxThread') +
+                  '?recipientId=' + creator.user_id +
+                  '&recipientName=' + encodeURIComponent(creator.display_name));
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

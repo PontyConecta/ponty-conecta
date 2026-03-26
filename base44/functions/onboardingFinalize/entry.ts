@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     // ── 4. EXECUTE ──
     await base44.entities[entityName].update(profile.id, {
       account_state: 'ready',
-      onboarding_step: 5,
+      onboarding_step: 6,
     });
 
     // Fire-and-forget: create onboarding missions
@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
     console.log(`[${FN}] Finalized ${profile_type} for user ${user.id}`);
     return Response.json({
       success: true,
-      profile: { ...profile, account_state: 'ready', onboarding_step: 5 },
+      profile: { ...profile, account_state: 'ready', onboarding_step: 6 },
     });
   } catch (error) {
     console.error(`[${FN}] Error:`, error.message);

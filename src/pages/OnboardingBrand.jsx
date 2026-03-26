@@ -22,6 +22,7 @@ import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
 import FieldHint from '@/components/onboarding/FieldHint';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
+import { toast } from 'sonner';
 
 const STEPS = [
   { number: 1, title: 'Identidade' },
@@ -108,38 +109,44 @@ export default function OnboardingBrand() {
   }, []);
 
   const loadData = async () => {
-    const userData = await base44.auth.me();
-    setUser(userData);
+    try {
+      const userData = await base44.auth.me();
+      setUser(userData);
 
-    const brands = await base44.entities.Brand.filter({ user_id: userData.id });
-    if (brands.length > 0) {
-      const existing = brands[0];
+      const brands = await base44.entities.Brand.filter({ user_id: userData.id });
+      if (brands.length > 0) {
+        const existing = brands[0];
 
-      if (existing.account_state === 'ready') {
-        navigate(createPageUrl('BrandDashboard'));
-        return;
+        if (existing.account_state === 'ready') {
+          navigate(createPageUrl('BrandDashboard'));
+          return;
+        }
+
+        setBrand(existing);
+        setStep(existing.onboarding_step || 1);
+        setFormData({
+          company_name: existing.company_name || '',
+          industry: existing.industry || '',
+          company_size: existing.company_size || '',
+          marketing_budget: existing.marketing_budget || '',
+          description: existing.description || '',
+          target_audience: existing.target_audience || '',
+          online_presences: migrateLegacyPresences(existing),
+          contact_email: existing.contact_email || userData.email,
+          contact_phone: existing.contact_phone || '',
+          logo_url: existing.logo_url || '',
+          state: existing.state || '',
+          city: existing.city || '',
+        });
+      } else {
+        setFormData(prev => ({ ...prev, contact_email: userData.email }));
       }
-
-      setBrand(existing);
-      setStep(existing.onboarding_step || 1);
-      setFormData({
-        company_name: existing.company_name || '',
-        industry: existing.industry || '',
-        company_size: existing.company_size || '',
-        marketing_budget: existing.marketing_budget || '',
-        description: existing.description || '',
-        target_audience: existing.target_audience || '',
-        online_presences: migrateLegacyPresences(existing),
-        contact_email: existing.contact_email || userData.email,
-        contact_phone: existing.contact_phone || '',
-        logo_url: existing.logo_url || '',
-        state: existing.state || '',
-        city: existing.city || '',
-      });
-    } else {
-      setFormData(prev => ({ ...prev, contact_email: userData.email }));
+    } catch (error) {
+      console.error('Error loading data:', error);
+      toast.error('Erro ao carregar dados. Tente novamente.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const [fieldErrors, setFieldErrors] = useState({});
@@ -235,10 +242,16 @@ export default function OnboardingBrand() {
 
   const handleFinalize = async () => {
     setSaving(true);
-    await base44.functions.invoke('onboardingFinalize', { profile_type: 'brand' });
-    await refreshProfile();
-    setSaving(false);
-    navigate(createPageUrl('BrandDashboard'));
+    try {
+      await base44.functions.invoke('onboardingFinalize', { profile_type: 'brand' });
+      await refreshProfile();
+      navigate(createPageUrl('BrandDashboard'));
+    } catch (error) {
+      console.error('Error finalizing:', error);
+      toast.error('Erro ao finalizar cadastro. Tente novamente.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {

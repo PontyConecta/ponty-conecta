@@ -14,32 +14,37 @@ export default function CampaignsForYou({ creatorNiches = [] }) {
 
   useEffect(() => {
     const load = async () => {
-      const all = await base44.entities.Campaign.filter({ status: 'active' }, '-created_date', 20);
-      // Filter by niche overlap
-      let filtered = all;
-      if (creatorNiches.length > 0) {
-        const nicheSet = new Set(creatorNiches.map(n => n.toLowerCase()));
-        filtered = all.filter(c =>
-          (c.niche_required || []).some(n => nicheSet.has(n.toLowerCase()))
-        );
-        if (filtered.length < 3) filtered = all;
-      }
-      const top = filtered.slice(0, 4);
+      try {
+        const all = await base44.entities.Campaign.filter({ status: 'active' }, '-created_date', 20);
+        // Filter by niche overlap
+        let filtered = all;
+        if (creatorNiches.length > 0) {
+          const nicheSet = new Set(creatorNiches.map(n => n.toLowerCase()));
+          filtered = all.filter(c =>
+            (c.niche_required || []).some(n => nicheSet.has(n.toLowerCase()))
+          );
+          if (filtered.length < 3) filtered = all;
+        }
+        const top = filtered.slice(0, 4);
 
-      // Fetch brand names
-      const brandIds = [...new Set(top.map(c => c.brand_id).filter(Boolean))];
-      if (brandIds.length > 0) {
-        const brandData = await base44.entities.Brand.filter({ id: { $in: brandIds } });
-        const map = {};
-        brandData.forEach(b => { map[b.id] = b; });
-        setBrands(map);
-      }
+        // Fetch brand names
+        const brandIds = [...new Set(top.map(c => c.brand_id).filter(Boolean))];
+        if (brandIds.length > 0) {
+          const brandData = await base44.entities.Brand.filter({ id: { $in: brandIds } });
+          const map = {};
+          brandData.forEach(b => { map[b.id] = b; });
+          setBrands(map);
+        }
 
-      setCampaigns(top);
-      setLoading(false);
+        setCampaigns(top);
+      } catch (error) {
+        console.error('Error loading campaigns:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
-  }, []);
+  }, [JSON.stringify(creatorNiches)]);
 
   if (loading || campaigns.length === 0) return null;
 

@@ -11,7 +11,7 @@ const CREATOR_REQUIRED_FIELDS = [
   { key: 'bio', label: 'Biografia' },
   { key: 'niche', label: 'Nicho(s)', validate: (val) => Array.isArray(val) && val.length > 0 },
   { key: 'platforms', label: 'Plataformas', validate: (val) => Array.isArray(val) && val.length > 0 },
-  { key: 'location', label: 'Localização' },
+  { key: 'state', label: 'Estado' },
 ];
 
 // Campos básicos obrigatórios para Brand

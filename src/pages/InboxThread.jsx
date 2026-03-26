@@ -6,13 +6,21 @@ import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, Loader2, ExternalLink } from 'lucide-react';
+import { Send, Loader2, ArrowLeft, User as UserIcon } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import MessageBubble from '@/components/inbox/MessageBubble';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import BrandProfileModal from '@/components/modals/BrandProfileModal';
 import { TYPE_LABELS } from '@/components/utils/creatorTypeConfig';
 import { toast } from 'sonner';
 import moment from 'moment';
+import 'moment/locale/pt-br';
+moment.locale('pt-br');
 
 export default function InboxThread() {
   const { user, profileType } = useAuth();
@@ -144,14 +152,9 @@ export default function InboxThread() {
     if (isDirect) {
       recipientUserId = recipientIdParam;
     } else {
-      // Resolve from application profile entities
-      if (profileType === 'brand') {
-        const creators = await base44.entities.Creator.filter({ id: application.creator_id });
-        recipientUserId = creators[0]?.user_id || application.creator_id;
-      } else {
-        const brands = await base44.entities.Brand.filter({ id: application.brand_id });
-        recipientUserId = brands[0]?.user_id || application.brand_id;
-      }
+      recipientUserId = profileType === 'brand'
+        ? (otherCreator?.user_id || application?.creator_id)
+        : (otherBrand?.user_id || application?.brand_id);
     }
 
     const tempId = 'temp-' + Date.now();
@@ -215,7 +218,26 @@ export default function InboxThread() {
     <div className="flex flex-col" style={{ height: 'calc(100dvh - var(--header-height, 56px) - var(--bottom-nav-height, 72px) - 2rem)' }}>
       {/* Header */}
       <div className="flex items-center gap-3 pb-3 border-b mb-3 flex-shrink-0">
-        <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
+        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => window.history.length > 2 ? window.history.back() : window.location.href = '/Inbox'}>
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <Avatar className="w-10 h-10">
+          <AvatarImage src={profileType === 'brand' ? otherCreator?.avatar_url : otherBrand?.logo_url} />
+          <AvatarFallback className="bg-primary/10 text-primary">{otherName?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold truncate">{otherName}</p>
+          {campaign && !isDirect && <p className="text-xs text-muted-foreground truncate">{campaign.title}</p>}
+        </div>
+        <Button variant="ghost" size="sm" onClick={() => setShowOtherProfile(true)} className="text-xs text-primary">
+          Ver perfil
+        </Button>
+      </div>
+
+      {error && (
+        <div className="p-3 text-sm text-destructive text-center">
+          {error}
+          <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
         </div>
       )}
 
@@ -275,20 +297,32 @@ export default function InboxThread() {
         </Button>
       </div>
 
-      {showOtherProfile && profileType === 'brand' && otherCreator && (
-        <CreatorProfileModal
-          creator={otherCreator}
-          isOpen={showOtherProfile}
-          onClose={() => setShowOtherProfile(false)}
-        />
-      )}
-      {showOtherProfile && profileType === 'creator' && otherBrand && (
-        <BrandProfileModal
-          brand={otherBrand}
-          isOpen={showOtherProfile}
-          onClose={() => setShowOtherProfile(false)}
-        />
-      )}
+      <Dialog open={showOtherProfile && profileType === 'brand' && !!otherCreator} onOpenChange={() => setShowOtherProfile(false)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Perfil da Criadora</DialogTitle></DialogHeader>
+          {otherCreator && (
+            <CreatorProfileModal
+              creator={otherCreator}
+              isSubscribed={true}
+              formatFollowers={(n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n||0)}
+              getTotalFollowers={(c) => (c?.platforms||[]).reduce((s,p) => s + (p.followers||0), 0)}
+              onPaywall={() => {}}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showOtherProfile && profileType === 'creator' && !!otherBrand} onOpenChange={() => setShowOtherProfile(false)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Perfil da Marca</DialogTitle></DialogHeader>
+          {otherBrand && (
+            <BrandProfileModal
+              brand={otherBrand}
+              isSubscribed={true}
+              onPaywall={() => {}}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

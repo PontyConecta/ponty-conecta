@@ -76,9 +76,10 @@ const BRAND_STEP_FIELDS = {
 
 const CREATOR_STEP_FIELDS = {
   1: ['display_name', 'bio', 'avatar_url', 'state', 'city'],
-  2: ['niche', 'content_types', 'profile_size'],
-  3: ['platforms', 'profile_size', 'portfolio_url'],
-  4: ['contact_email', 'contact_whatsapp', 'rate_cash_min', 'rate_cash_max', 'accepts_barter'],
+  2: ['niche', 'content_types'],
+  3: ['creator_type'],
+  4: ['platforms', 'profile_size', 'portfolio_url'],
+  5: ['contact_email', 'contact_whatsapp', 'rate_cash_min', 'rate_cash_max', 'accepts_barter'],
 };
 
 // Sanitizer map per field
@@ -111,6 +112,7 @@ const FIELD_SANITIZERS = {
   online_presences: (v) => sanitizeArray(v, 15),
   // booleans
   accepts_barter: (v) => v === true || v === 'true',
+  creator_type: (v) => sanitizeString(v, 50),
   // numbers
   rate_cash_min: (v) => { const n = parseFloat(v); return isNaN(n) ? null : Math.max(0, n); },
   rate_cash_max: (v) => { const n = parseFloat(v); return isNaN(n) ? null : Math.max(0, n); },
@@ -133,8 +135,8 @@ Deno.serve(async (req) => {
     if (!['brand', 'creator'].includes(profile_type)) {
       return err('Invalid profile_type', 'INVALID_INPUT');
     }
-    if (step < 1 || step > 4) {
-      return err('Invalid step (must be 1-4)', 'INVALID_STEP');
+    if (step < 1 || step > 5) {
+      return err('Invalid step (must be 1-5)', 'INVALID_STEP');
     }
 
     // ── 3. SANITIZE ──
@@ -182,8 +184,8 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    // Rate validation for creator step 4
-    if (profile_type === 'creator' && step === 4) {
+    // Rate validation for creator step 5
+    if (profile_type === 'creator' && step === 5) {
       if (sanitized.rate_cash_min != null && sanitized.rate_cash_max != null) {
         const min = parseFloat(sanitized.rate_cash_min);
         const max = parseFloat(sanitized.rate_cash_max);

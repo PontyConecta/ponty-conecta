@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function relativeTime(dateStr) {
   const now = new Date();
@@ -42,6 +42,7 @@ export default function InboxThreadItem({ thread, userId }) {
         {/* Avatar with unread dot */}
         <div className="relative flex-shrink-0">
           <Avatar className="w-12 h-12">
+            <AvatarImage src={thread.avatarUrl} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
               {otherName?.[0]?.toUpperCase() || '?'}
             </AvatarFallback>
