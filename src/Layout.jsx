@@ -10,7 +10,7 @@ import { base44 } from '@/api/base44Client';
 import BottomNav from '@/components/BottomNav';
 import Sidebar from '@/components/Sidebar';
 import NotificationDropdown from '@/components/NotificationDropdown';
-import { Toaster } from 'sonner';
+
 import { 
   Crown,
   HelpCircle,
@@ -88,8 +88,6 @@ function LayoutContent({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors">
-      <Toaster position="top-right" richColors closeButton />
-
       {/* ── Top Header ── fixed, always visible, z-50 */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b h-14 lg:h-16">
         <div className="flex items-center justify-between px-4 lg:px-8 h-full">
