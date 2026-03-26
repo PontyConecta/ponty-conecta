@@ -35,15 +35,7 @@ export default function InboxThread() {
     ? [user.id, recipientIdParam].sort().join('__direct__')
     : applicationId;
 
-  if (!conversationKey) {
-    return (
-      <div className="text-center py-20">
-        <p className="text-muted-foreground">Conversa não encontrada.</p>
-        <Link to={createPageUrl('Inbox')} className="text-primary text-sm mt-2 inline-block">Voltar</Link>
-      </div>
-    );
-  }
-
+  // All hooks MUST be declared before any conditional return
   const [application, setApplication] = useState(null);
   const [campaign, setCampaign] = useState(null);
   const [otherName, setOtherName] = useState(isDirect ? (recipientNameParam || 'Usuário') : '');
@@ -55,8 +47,16 @@ export default function InboxThread() {
   const [otherCreator, setOtherCreator] = useState(null);
   const [otherBrand, setOtherBrand] = useState(null);
   const [error, setError] = useState(null);
-
   const bottomRef = useRef(null);
+
+  if (!conversationKey) {
+    return (
+      <div className="text-center py-20">
+        <p className="text-muted-foreground">Conversa não encontrada.</p>
+        <Link to={createPageUrl('Inbox')} className="text-primary text-sm mt-2 inline-block">Voltar</Link>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (!conversationKey || !user) return;
