@@ -1,11 +1,18 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+
+const LIMIT = 1000;
+
+function escapeCSV(val) {
+  if (val == null) return 'N/A';
+  const str = String(val).replace(/"/g, '""');
+  return `"${str}"`;
+}
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const admin = await base44.auth.me();
 
-    // Verify admin access
     if (!admin || admin.role !== 'admin') {
       return Response.json({ error: 'Unauthorized: Admin access required' }, { status: 403 });
     }
@@ -22,9 +29,9 @@ Deno.serve(async (req) => {
     switch (exportType) {
       case 'users': {
         const [users, brands, creators] = await Promise.all([
-          base44.asServiceRole.entities.User.list(),
-          base44.asServiceRole.entities.Brand.list(),
-          base44.asServiceRole.entities.Creator.list()
+          base44.asServiceRole.entities.User.list('-created_date', LIMIT),
+          base44.asServiceRole.entities.Brand.list('-created_date', LIMIT),
+          base44.asServiceRole.entities.Creator.list('-created_date', LIMIT)
         ]);
 
         csvData = 'User ID,Email,Full Name,Role,Created Date,Account State,Subscription Status\n';
@@ -35,7 +42,7 @@ Deno.serve(async (req) => {
           const role = brand ? 'brand' : creator ? 'creator' : 'unknown';
           const profile = brand || creator || {};
           
-          csvData += `"${user.id}","${user.email}","${user.full_name}","${role}","${user.created_date}","${profile.account_state || 'N/A'}","${profile.subscription_status || 'N/A'}"\n`;
+          csvData += `${escapeCSV(user.id)},${escapeCSV(user.email)},${escapeCSV(user.full_name)},${escapeCSV(role)},${escapeCSV(user.created_date)},${escapeCSV(profile.account_state)},${escapeCSV(profile.subscription_status)}\n`;
         }
         
         filename = 'users_export.csv';
@@ -43,12 +50,12 @@ Deno.serve(async (req) => {
       }
 
       case 'campaigns': {
-        const campaigns = await base44.asServiceRole.entities.Campaign.list();
+        const campaigns = await base44.asServiceRole.entities.Campaign.list('-created_date', LIMIT);
         
         csvData = 'Campaign ID,Title,Status,Brand ID,Created Date,Deadline,Remuneration Type,Budget Min,Budget Max,Slots Total,Slots Filled,Total Applications\n';
         
         for (const c of campaigns) {
-          csvData += `"${c.id}","${c.title}","${c.status}","${c.brand_id}","${c.created_date}","${c.deadline}","${c.remuneration_type}","${c.budget_min || 'N/A'}","${c.budget_max || 'N/A'}","${c.slots_total}","${c.slots_filled}","${c.total_applications}"\n`;
+          csvData += `${escapeCSV(c.id)},${escapeCSV(c.title)},${escapeCSV(c.status)},${escapeCSV(c.brand_id)},${escapeCSV(c.created_date)},${escapeCSV(c.deadline)},${escapeCSV(c.remuneration_type)},${escapeCSV(c.budget_min)},${escapeCSV(c.budget_max)},${escapeCSV(c.slots_total)},${escapeCSV(c.slots_filled)},${escapeCSV(c.total_applications)}\n`;
         }
         
         filename = 'campaigns_export.csv';
@@ -56,12 +63,12 @@ Deno.serve(async (req) => {
       }
 
       case 'applications': {
-        const applications = await base44.asServiceRole.entities.Application.list();
+        const applications = await base44.asServiceRole.entities.Application.list('-created_date', LIMIT);
         
         csvData = 'Application ID,Campaign ID,Creator ID,Brand ID,Status,Created Date,Invited,Proposed Rate,Agreed Rate\n';
         
         for (const a of applications) {
-          csvData += `"${a.id}","${a.campaign_id}","${a.creator_id}","${a.brand_id}","${a.status}","${a.created_date}","${a.invited}","${a.proposed_rate || 'N/A'}","${a.agreed_rate || 'N/A'}"\n`;
+          csvData += `${escapeCSV(a.id)},${escapeCSV(a.campaign_id)},${escapeCSV(a.creator_id)},${escapeCSV(a.brand_id)},${escapeCSV(a.status)},${escapeCSV(a.created_date)},${escapeCSV(a.invited)},${escapeCSV(a.proposed_rate)},${escapeCSV(a.agreed_rate)}\n`;
         }
         
         filename = 'applications_export.csv';
@@ -69,12 +76,12 @@ Deno.serve(async (req) => {
       }
 
       case 'deliveries': {
-        const deliveries = await base44.asServiceRole.entities.Delivery.list();
+        const deliveries = await base44.asServiceRole.entities.Delivery.list('-created_date', LIMIT);
         
         csvData = 'Delivery ID,Campaign ID,Creator ID,Brand ID,Status,Submitted At,Deadline,On Time,Payment Status\n';
         
         for (const d of deliveries) {
-          csvData += `"${d.id}","${d.campaign_id}","${d.creator_id}","${d.brand_id}","${d.status}","${d.submitted_at || 'N/A'}","${d.deadline}","${d.on_time}","${d.payment_status}"\n`;
+          csvData += `${escapeCSV(d.id)},${escapeCSV(d.campaign_id)},${escapeCSV(d.creator_id)},${escapeCSV(d.brand_id)},${escapeCSV(d.status)},${escapeCSV(d.submitted_at)},${escapeCSV(d.deadline)},${escapeCSV(d.on_time)},${escapeCSV(d.payment_status)}\n`;
         }
         
         filename = 'deliveries_export.csv';
@@ -82,7 +89,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Create audit log
     await base44.asServiceRole.entities.AuditLog.create({
       admin_id: admin.id,
       admin_email: admin.email,

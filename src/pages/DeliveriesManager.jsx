@@ -266,7 +266,7 @@ export default function DeliveriesManager() {
       )}
 
       {/* Delivery Detail Dialog */}
-      <Dialog open={!!selectedDelivery} onOpenChange={() => setSelectedDelivery(null)}>
+      <Dialog open={!!selectedDelivery} onOpenChange={() => { setSelectedDelivery(null); setContestReason(''); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Detalhes da Entrega</DialogTitle>
@@ -449,7 +449,7 @@ export default function DeliveriesManager() {
               )}
 
               {/* Contest Reason Display */}
-              {selectedDelivery.status === 'contested' && selectedDelivery.contest_reason && (
+              {(selectedDelivery.status === 'contested' || selectedDelivery.status === 'in_dispute') && selectedDelivery.contest_reason && (
                 <div className="p-4 bg-red-50 rounded-xl">
                   <Label className="text-sm text-red-700 font-medium">Motivo da Contestação</Label>
                   <p className="text-red-800 mt-1">{selectedDelivery.contest_reason}</p>

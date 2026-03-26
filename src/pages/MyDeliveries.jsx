@@ -116,6 +116,7 @@ export default function MyDeliveries() {
       }
     } catch (error) {
       console.error('Error loading data:', error);
+      toast.error('Erro ao carregar entregas.');
     } finally {
       setLoading(false);
     }
@@ -140,6 +141,7 @@ export default function MyDeliveries() {
         setProofUrls(prev => [...prev, file_url]);
       } catch (error) {
         console.error('Error uploading file:', error);
+        toast.error('Erro ao enviar arquivo. Tente novamente.');
       }
     }
   };

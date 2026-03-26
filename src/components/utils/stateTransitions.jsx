@@ -31,7 +31,7 @@ const applicationTransitions = {
  */
 const deliveryTransitions = {
   pending: ['submitted'],
-  submitted: ['approved', 'contested'],
+  submitted: ['approved', 'contested', 'in_dispute'],
   approved: ['in_dispute'],
   contested: ['in_dispute', 'approved'],
   in_dispute: ['approved', 'closed'],
