@@ -41,7 +41,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
 import { useApplicationsQuery, useAcceptApplicationMutation, useRejectApplicationMutation } from '../components/hooks/useEntityQuery';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
-import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
+import { useSubscription } from '@/components/contexts/SubscriptionContext';
 
 export default function ApplicationsManager() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -67,7 +67,7 @@ export default function ApplicationsManager() {
 
   const formatFollowers = (n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n||0);
   const getTotalFollowers = (c) => (c?.platforms||[]).reduce((sum,p)=>sum+(p.followers||0),0);
-  const isSubscribed = isProfileSubscribed(authProfile);
+  const { isSubscribed } = useSubscription();
 
   const handleAccept = async () => {
     if (!selectedApplication) return;
