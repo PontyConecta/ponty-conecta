@@ -47,6 +47,7 @@ export default function InboxThread() {
   const [otherCreator, setOtherCreator] = useState(null);
   const [otherBrand, setOtherBrand] = useState(null);
   const [error, setError] = useState(null);
+  const [retryKey, setRetryKey] = useState(0);
   const bottomRef = useRef(null);
 
   if (!conversationKey) {
@@ -137,7 +138,7 @@ export default function InboxThread() {
     });
 
     return () => { isMounted = false; unsub?.(); };
-  }, [conversationKey, user?.id]);
+  }, [conversationKey, user?.id, retryKey]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -237,7 +238,7 @@ export default function InboxThread() {
       {error && (
         <div className="p-3 text-sm text-destructive text-center">
           {error}
-          <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
+          <button onClick={() => { setError(null); setRetryKey(k => k + 1); }} className="ml-2 text-primary underline">Tentar novamente</button>
         </div>
       )}
 

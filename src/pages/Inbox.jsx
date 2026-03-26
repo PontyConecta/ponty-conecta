@@ -20,6 +20,7 @@ export default function Inbox() {
   const [directPartners, setDirectPartners] = useState({});
   const [showNewConvo, setShowNewConvo] = useState(false);
   const [error, setError] = useState(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -104,7 +105,7 @@ export default function Inbox() {
     });
 
     return () => { aborted = true; unsub?.(); };
-  }, [user?.id]);
+  }, [user?.id, retryKey]);
 
   const threads = useMemo(() => {
     const grouped = {};
@@ -184,7 +185,7 @@ export default function Inbox() {
       {error && (
         <div className="p-4 text-center text-sm text-muted-foreground">
           {error}
-          <button onClick={() => { setError(null); setLoading(true); }} className="ml-2 text-primary underline">Tentar novamente</button>
+          <button onClick={() => { setError(null); setRetryKey(k => k + 1); }} className="ml-2 text-primary underline">Tentar novamente</button>
         </div>
       )}
 

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Loader2, Send } from 'lucide-react';
-import { toast } from '@/components/utils/toast';
+import { toast } from 'sonner';
 
 export default function NewConversationSheet({ open, onClose }) {
   const { user, profile, profileType } = useAuth();

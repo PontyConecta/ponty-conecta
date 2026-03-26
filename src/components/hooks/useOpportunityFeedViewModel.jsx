@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { validateCreatorProfile } from '../utils/profileValidation';
-import { isProfileSubscribed } from '../utils/subscriptionUtils';
+import { useSubscription } from '../contexts/SubscriptionContext';
 import { useApplyToCampaignMutation } from './useEntityQuery';
 import { useOpportunitiesPaginated } from './useOpportunitiesPaginated';
 
@@ -10,7 +10,7 @@ export function useOpportunityFeedViewModel(authProfile, profileType) {
   const queryClient = useQueryClient();
   const creator = authProfile;
   const creatorId = profileType === 'creator' ? authProfile?.id : null;
-  const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
+  const { isSubscribed } = useSubscription();
   const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
 
   // Paginated data

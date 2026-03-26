@@ -518,7 +518,7 @@ export default function OnboardingCreator() {
                   <ArrowLeft className="w-4 h-4" /> Voltar
                 </Button>
                 {step === 3 && (
-                  <Button variant="ghost" onClick={() => setStep(step + 1)} className="gap-2 text-muted-foreground">
+                  <Button variant="ghost" onClick={() => saveStepData({ creator_type: formData.creator_type || 'ugc' })} className="gap-2 text-muted-foreground">
                     Pular
                   </Button>
                 )}
