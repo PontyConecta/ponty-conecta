@@ -518,7 +518,10 @@ export default function OnboardingCreator() {
                   <ArrowLeft className="w-4 h-4" /> Voltar
                 </Button>
                 {step === 3 && (
-                  <Button variant="ghost" onClick={async () => { await saveStepData({ creator_type: formData.creator_type || 'ugc' }); setStep(step + 1); }} className="gap-2 text-muted-foreground">
+                  <Button variant="ghost" disabled={saving} onClick={async () => {
+                    const ok = await saveStepData();
+                    if (ok !== false) setStep(step + 1);
+                  }} className="gap-2 text-muted-foreground">
                     Pular
                   </Button>
                 )}

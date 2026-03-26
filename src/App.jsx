@@ -1,4 +1,4 @@
-// Toaster is rendered by Layout (sonner)
+import { Toaster } from 'sonner'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
@@ -76,6 +76,7 @@ function App() {
         <NavigationTracker />
         <AuthenticatedApp />
       </Router>
+      <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
   </PlatformAuthProvider>
   )

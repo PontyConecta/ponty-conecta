@@ -50,15 +50,6 @@ export default function InboxThread() {
   const [retryKey, setRetryKey] = useState(0);
   const bottomRef = useRef(null);
 
-  if (!conversationKey) {
-    return (
-      <div className="text-center py-20">
-        <p className="text-muted-foreground">Conversa não encontrada.</p>
-        <Link to={createPageUrl('Inbox')} className="text-primary text-sm mt-2 inline-block">Voltar</Link>
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (!conversationKey || !user) return;
     let isMounted = true;
@@ -143,6 +134,15 @@ export default function InboxThread() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  if (!conversationKey) {
+    return (
+      <div className="text-center py-20">
+        <p className="text-muted-foreground">Conversa não encontrada.</p>
+        <Link to={createPageUrl('Inbox')} className="text-primary text-sm mt-2 inline-block">Voltar</Link>
+      </div>
+    );
+  }
 
   const handleSend = async () => {
     if (!newMessage.trim() || sending) return;

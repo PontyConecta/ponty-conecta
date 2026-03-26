@@ -89,6 +89,10 @@ export default function NewConversationSheet({ open, onClose }) {
 
   const handleSendPitch = async () => {
     if (!selectedBrand || !pitchProposal.trim()) return;
+    if (pitchLimitReached) {
+      toast.error('Limite de 5 pitches por dia atingido.');
+      return;
+    }
     setSending(true);
     try {
       const conversationId = [user.id, selectedBrand.user_id].sort().join('__direct__');
