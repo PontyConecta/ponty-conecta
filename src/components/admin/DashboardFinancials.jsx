@@ -119,7 +119,7 @@ export default function DashboardFinancials() {
         <DashboardMetricCard
           label="MRR"
           value={`R$ ${mrr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          subtitle={f === 'all' ? `Marcas R$${d.brandMRR.toFixed(2)} · Creators R$${d.creatorMRR.toFixed(2)}` : `ARPU R$ ${arpu.toFixed(2)}`}
+          subtitle={f === 'all' ? `Marcas R$${(d.brandMRR || 0).toFixed(2)} · Creators R$${(d.creatorMRR || 0).toFixed(2)}` : `ARPU R$ ${arpu.toFixed(2)}`}
           icon={DollarSign}
           iconColor="text-green-600"
           tooltip="Monthly Recurring Revenue — receita recorrente mensal das assinaturas ativas no Stripe."

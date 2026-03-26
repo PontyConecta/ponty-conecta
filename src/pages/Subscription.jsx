@@ -42,13 +42,12 @@ export default function Subscription() {
   }, [authProfile, authProfileType]);
 
   useEffect(() => {
-    // Check for success parameter in URL after profile is loaded — force refresh
-    if (profile && profileType) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const successParam = urlParams.get('success');
-      if (successParam === 'true') {
-        // Force refresh profile from DB to pick up webhook updates
-        refreshProfile();
+    if (!profile || !profileType) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const successParam = urlParams.get('success');
+    if (successParam === 'true') {
+      (async () => {
+        await refreshProfile();
         const plan = urlParams.get('plan') || selectedPlan;
         trackPurchase({
           value: plan === 'monthly' ? 45 : 450,
@@ -56,7 +55,7 @@ export default function Subscription() {
           content_name: `Assinatura ${profileType === 'brand' ? 'Marca' : 'Criador'} ${plan === 'monthly' ? 'Mensal' : 'Anual'}`,
           subscription_status: profile.subscription_status
         });
-      }
+      })();
     }
   }, [profile, profileType]);
 

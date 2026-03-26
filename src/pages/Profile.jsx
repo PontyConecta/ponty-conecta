@@ -81,7 +81,7 @@ export default function Profile() {
 
   useEffect(() => {
     loadData();
-  }, [profile]);
+  }, [profile?.id, profileType]);
 
   const loadData = async () => {
     if (!profile || !user) return;

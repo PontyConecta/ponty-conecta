@@ -86,7 +86,7 @@ export default function DashboardPipeline({ pipeline, funnelData }) {
             <h3 className="text-sm font-semibold mb-4 text-foreground">Funil de Conversão</h3>
             <div className="space-y-0">
               {funnelData.map((item, i) => {
-                const firstVal = funnelData[0]?.value || 1;
+                const firstVal = funnelData[0]?.value || 0;
                 const widthPct = firstVal > 0 ? Math.max((item.value / firstVal) * 100, 18) : 18;
                 const prevVal = i > 0 ? funnelData[i - 1].value : 0;
                 const dropRate = i > 0 && prevVal > 0

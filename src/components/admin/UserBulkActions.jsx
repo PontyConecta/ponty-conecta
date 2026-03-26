@@ -33,6 +33,13 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
       toast.error('Digite o nome da tag');
       return;
     }
+    if (needsTrialDays) {
+      const days = parseInt(bulkTag);
+      if (isNaN(days) || days < 1 || days > 365) {
+        toast.error('Dias de trial deve ser entre 1 e 365');
+        return;
+      }
+    }
 
     setLoading(true);
     let successCount = 0;

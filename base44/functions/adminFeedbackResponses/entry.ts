@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
     // ── LIST ──
     if (mode === 'list') {
       const { filters = {}, page = 1, pageSize = 50 } = body;
-      const allResponses = await base44.asServiceRole.entities.FeedbackResponse.filter({});
+      const allResponses = await base44.asServiceRole.entities.FeedbackResponse.filter({}, '-created_date', 10000);
       let filtered = [...allResponses];
 
       if (filters.status && filters.status !== 'all') {
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       });
 
       // Enrich with user info
-      const allUsers = await base44.asServiceRole.entities.User.filter({});
+      const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 10000);
       const userMap = {};
       allUsers.forEach(u => { userMap[String(u.id)] = { full_name: u.full_name, email: u.email }; });
 
@@ -104,14 +104,14 @@ Deno.serve(async (req) => {
     // ── EXPORT ──
     if (mode === 'export') {
       const { format = 'csv', filters = {} } = body;
-      const allResponses = await base44.asServiceRole.entities.FeedbackResponse.filter({});
+      const allResponses = await base44.asServiceRole.entities.FeedbackResponse.filter({}, '-created_date', 10000);
       let filtered = [...allResponses];
 
       // Apply same filters
       if (filters.status && filters.status !== 'all') filtered = filtered.filter(f => f.status === filters.status);
       if (filters.category && filters.category !== 'all') filtered = filtered.filter(f => f.category === filters.category);
 
-      const allUsers = await base44.asServiceRole.entities.User.filter({});
+      const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 10000);
       const userMap = {};
       allUsers.forEach(u => { userMap[String(u.id)] = { full_name: u.full_name, email: u.email }; });
 

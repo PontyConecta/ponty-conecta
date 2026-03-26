@@ -200,7 +200,7 @@ export default function AdminCampaigns() {
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
                     <span className="text-muted-foreground">
-                      Prazo: {new Date(campaign.deadline).toLocaleDateString('pt-BR')}
+                      Prazo: {campaign.deadline ? new Date(campaign.deadline).toLocaleDateString('pt-BR') : '—'}
                     </span>
                   </div>
 
@@ -233,7 +233,7 @@ export default function AdminCampaigns() {
                     <Badge className="bg-amber-100 text-amber-700 border-0 text-xs">⭐ Destaque</Badge>
                   )}
                   <span className="text-xs text-muted-foreground">
-                    Criada em {new Date(campaign.created_date).toLocaleDateString('pt-BR')}
+                   Criada em {campaign.created_date ? new Date(campaign.created_date).toLocaleDateString('pt-BR') : '—'}
                   </span>
                   </div>
                 </div>
@@ -282,7 +282,7 @@ export default function AdminCampaigns() {
                   <div>
                     <span className="text-muted-foreground">Prazo de Entrega:</span>
                     <p className="font-medium">
-                      {new Date(selectedCampaign.deadline).toLocaleDateString('pt-BR')}
+                      {selectedCampaign.deadline ? new Date(selectedCampaign.deadline).toLocaleDateString('pt-BR') : '—'}
                     </p>
                   </div>
                   <div>

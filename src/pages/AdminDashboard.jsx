@@ -37,7 +37,7 @@ export default function AdminDashboard() {
   const [userListLoaded, setUserListLoaded] = useState(false);
 
   // Map v1 dateRange keys to v2 range values
-  const rangeMap = { day: '7d', week: '7d', month: '30d', year: '90d' };
+  const rangeMap = { day: '1d', week: '7d', month: '30d', year: '90d' };
 
   const loadAnalytics = useCallback(async () => {
     try {

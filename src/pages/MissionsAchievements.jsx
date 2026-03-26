@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/components/contexts/AuthContext';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -7,19 +8,17 @@ import { Loader2, Flame, Star, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function MissionsAchievements() {
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (user) loadData();
+  }, [user?.id]);
 
   const loadData = async () => {
     try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-      const missionsData = await base44.entities.Mission.filter({ user_id: userData.id }, '-order');
+      const missionsData = await base44.entities.Mission.filter({ user_id: user.id }, '-order');
       setMissions(missionsData);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -161,7 +160,7 @@ export default function MissionsAchievements() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-emerald-800 line-through">{mission.title}</h3>
                       <p className="text-xs text-emerald-700 mt-1">
-                        Concluída em {new Date(mission.completed_at).toLocaleDateString('pt-BR')}
+                        Concluída em {mission.completed_at ? new Date(mission.completed_at).toLocaleDateString('pt-BR') : '—'}
                       </p>
                     </div>
                     <Badge className="bg-emerald-100 text-emerald-800 border-0">

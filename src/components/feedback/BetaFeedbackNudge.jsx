@@ -12,9 +12,7 @@ export default function BetaFeedbackNudge() {
   const [showBanner, setShowBanner] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
-  const isEligible = user &&
-    ['eligible', 'invited'].includes(user.feedback_status) &&
-    user.feedback_status !== 'submitted';
+  const isEligible = user && ['eligible', 'invited'].includes(user.feedback_status);
 
   useEffect(() => {
     if (!isEligible) return;

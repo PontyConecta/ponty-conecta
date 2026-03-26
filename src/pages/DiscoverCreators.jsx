@@ -84,9 +84,14 @@ export default function DiscoverCreators() {
   };
 
   const loadData = async () => {
-    const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 500);
-    setCreators(allCreators.filter(c => c.display_name?.trim()));
-    setLoading(false);
+    try {
+      const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 500);
+      setCreators(allCreators.filter(c => c.display_name?.trim()));
+    } catch (error) {
+      console.error('Error loading creators:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ── Ranking tier logic ──

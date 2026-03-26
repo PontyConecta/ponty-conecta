@@ -118,11 +118,17 @@ export default function BetaFeedbackForm({ channel = 'modal', onComplete, onClos
   const handleSubmit = async () => {
     if (!validateStep()) return;
     setSubmitting(true);
-    const platform = /Mobi|Android/i.test(navigator.userAgent) ? 'android' : 'web';
-    await base44.functions.invoke('submitBetaFeedback', { ...answers, channel, platform });
-    setDone(true);
-    setSubmitting(false);
-    onComplete?.();
+    try {
+      const platform = /Mobi|Android/i.test(navigator.userAgent) ? 'android' : 'web';
+      await base44.functions.invoke('submitBetaFeedback', { ...answers, channel, platform });
+      setDone(true);
+      onComplete?.();
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      // toast not imported — use alert as lightweight fallback
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // ── Tela final ──

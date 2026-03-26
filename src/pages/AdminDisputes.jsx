@@ -84,10 +84,10 @@ export default function AdminDisputes() {
       setDisputes(disputesData);
 
       // Load related entities
-      const deliveryIds = [...new Set(disputesData.map(d => d.delivery_id))];
-      const campaignIds = [...new Set(disputesData.map(d => d.campaign_id))];
-      const brandIds = [...new Set(disputesData.map(d => d.brand_id))];
-      const creatorIds = [...new Set(disputesData.map(d => d.creator_id))];
+      const deliveryIds = [...new Set(disputesData.map(d => d.delivery_id).filter(Boolean))];
+      const campaignIds = [...new Set(disputesData.map(d => d.campaign_id).filter(Boolean))];
+      const brandIds = [...new Set(disputesData.map(d => d.brand_id).filter(Boolean))];
+      const creatorIds = [...new Set(disputesData.map(d => d.creator_id).filter(Boolean))];
 
       const [deliveriesData, campaignsData, brandsData, creatorsData] = await Promise.all([
         Promise.all(deliveryIds.map(id => base44.entities.Delivery.filter({ id }))),
@@ -341,7 +341,7 @@ export default function AdminDisputes() {
       )}
 
       {/* Dispute Detail Dialog */}
-      <Dialog open={!!selectedDispute} onOpenChange={() => setSelectedDispute(null)}>
+      <Dialog open={!!selectedDispute} onOpenChange={() => { setSelectedDispute(null); setResolution(''); setResolutionType(''); }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
