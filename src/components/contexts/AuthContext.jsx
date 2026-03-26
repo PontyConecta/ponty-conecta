@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
@@ -153,10 +152,10 @@ export function AuthProvider({ children }) {
       if (sessionCheckInterval) {
         clearInterval(sessionCheckInterval);
       }
-      await base44.auth.logout(redirectUrl);
       setUser(null);
       setProfile(null);
       setProfileType(null);
+      await base44.auth.logout(redirectUrl);
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
       window.location.href = redirectUrl;
