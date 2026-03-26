@@ -3,9 +3,9 @@ import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
 import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
 
-const AuthContext = createContext();
+const PlatformAuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const PlatformAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ 
+    <PlatformAuthContext.Provider value={{ 
       user, 
       isAuthenticated, 
       isLoadingAuth,
@@ -114,14 +114,18 @@ export const AuthProvider = ({ children }) => {
       checkAppState
     }}>
       {children}
-    </AuthContext.Provider>
+    </PlatformAuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
+export const usePlatformAuth = () => {
+  const context = useContext(PlatformAuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('usePlatformAuth must be used within PlatformAuthProvider');
   }
   return context;
 };
+
+// Backward-compatible aliases
+export const AuthProvider = PlatformAuthProvider;
+export const useAuth = usePlatformAuth;
