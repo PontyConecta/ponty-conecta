@@ -127,6 +127,7 @@ export function useApplicationsViewModel(profileType, profile) {
         profileType,
         profileId,
       });
+      toast.success('Candidatura recusada.');
       closeDialog();
     } catch (error) {
       console.error('[rejectApplication] appId:', selectedApplication?.id, 'error:', error.message);

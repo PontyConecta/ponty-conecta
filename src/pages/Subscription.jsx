@@ -45,7 +45,8 @@ export default function Subscription() {
     // Check for success parameter in URL after profile is loaded — force refresh
     if (profile && profileType) {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('success') === 'true') {
+      const successParam = urlParams.get('success');
+      if (successParam === 'true') {
         // Force refresh profile from DB to pick up webhook updates
         refreshProfile();
         const plan = urlParams.get('plan') || selectedPlan;
@@ -181,8 +182,12 @@ export default function Subscription() {
                 <p className="text-muted-foreground">Acesso ilimitado a todas as funcionalidades</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-foreground">R$ 45</p>
-                <p className="text-muted-foreground">/mês</p>
+                <p className="text-3xl font-bold text-foreground">
+                  R$ {profile?.plan_level?.includes('annual') ? '450' : '45'}
+                </p>
+                <p className="text-muted-foreground">
+                  {profile?.plan_level?.includes('annual') ? '/ano' : '/mês'}
+                </p>
               </div>
             </div>
           </CardContent>

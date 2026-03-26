@@ -45,6 +45,11 @@ Deno.serve(async (req) => {
       return err('Campanha não está aceitando candidaturas', 'CAMPAIGN_NOT_ACTIVE');
     }
 
+    // 5b. SLOT CAPACITY CHECK
+    if (campaign.slots_filled >= campaign.slots_total) {
+      return err('Campanha sem vagas disponíveis', 'CAMPAIGN_FULL');
+    }
+
     // 6. DUPLICATE CHECK
     const existing = await base44.entities.Application.filter({ campaign_id, creator_id: creator.id });
     if (existing.length > 0) {
