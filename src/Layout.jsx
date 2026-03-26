@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { trackPageView } from '@/components/analytics/analyticsUtils';
-import { useAuth } from '@/components/contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/components/contexts/AuthContext';
 import { SubscriptionProvider, useSubscription } from '@/components/contexts/SubscriptionContext';
 import { ThemeProvider, useTheme } from '@/components/contexts/ThemeContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -209,11 +209,13 @@ function LayoutContent({ children, currentPageName }) {
 export default function Layout({ children, currentPageName }) {
   return (
     <ErrorBoundary>
-      <SubscriptionProvider>
-        <ThemeProvider>
-          <LayoutContent children={children} currentPageName={currentPageName} />
-        </ThemeProvider>
-      </SubscriptionProvider>
+      <AuthProvider>
+        <SubscriptionProvider>
+          <ThemeProvider>
+            <LayoutContent children={children} currentPageName={currentPageName} />
+          </ThemeProvider>
+        </SubscriptionProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }
