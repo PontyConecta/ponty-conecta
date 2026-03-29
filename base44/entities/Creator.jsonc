@@ -1,0 +1,193 @@
+{
+  "name": "Creator",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Reference to the User who owns this creator profile"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Public display name"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Short biography"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Profile photo URL"
+    },
+    "cover_image_url": {
+      "type": "string",
+      "description": "Profile cover/banner image URL"
+    },
+    "niche": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Content niches"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "followers": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Social media platforms with stats"
+    },
+    "profile_size": {
+      "type": "string",
+      "enum": [
+        "nano",
+        "micro",
+        "mid",
+        "macro",
+        "mega"
+      ],
+      "description": "Influencer tier based on total reach"
+    },
+    "creator_type": {
+      "type": "string",
+      "enum": [
+        "ugc",
+        "healthcare",
+        "athlete",
+        "entrepreneur",
+        "expert",
+        "entertainer"
+      ],
+      "default": "ugc",
+      "description": "Creator subtype for adaptive language and matching"
+    },
+    "content_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Types of content created"
+    },
+    "state": {
+      "type": "string",
+      "description": "Estado brasileiro (UF) - Ex: SP, RJ, MG"
+    },
+    "city": {
+      "type": "string",
+      "description": "Cidade do creator"
+    },
+    "location": {
+      "type": "string",
+      "description": "Primary location/city (legacy field)"
+    },
+    "portfolio_url": {
+      "type": "string",
+      "description": "Link to portfolio or media kit"
+    },
+    "portfolio_images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Portfolio image URLs"
+    },
+    "rate_cash_min": {
+      "type": "number",
+      "description": "Minimum rate for cash payments"
+    },
+    "rate_cash_max": {
+      "type": "number",
+      "description": "Maximum rate for cash payments"
+    },
+    "accepts_barter": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether creator accepts product/barter deals"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the creator has been verified by platform admins"
+    },
+    "is_hidden": {
+      "type": "boolean",
+      "default": false,
+      "description": "Admin moderation: hide creator from all public feeds"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "starter",
+        "premium"
+      ],
+      "default": "starter",
+      "description": "Subscription status: starter (free) or premium (active paid/trial)"
+    },
+    "plan_level": {
+      "type": "string",
+      "description": "Current plan level mirrored from Stripe"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "trial_end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the free trial period ends (null if not on trial)"
+    },
+    "completed_campaigns": {
+      "type": "number",
+      "default": 0,
+      "description": "Total completed campaigns"
+    },
+    "on_time_rate": {
+      "type": "number",
+      "default": 100,
+      "description": "Percentage of on-time deliveries"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured creator on discovery"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Contact email"
+    },
+    "contact_whatsapp": {
+      "type": "string",
+      "description": "WhatsApp number"
+    },
+    "account_state": {
+      "type": "string",
+      "enum": [
+        "incomplete",
+        "ready"
+      ],
+      "default": "incomplete",
+      "description": "User journey state"
+    },
+    "onboarding_step": {
+      "type": "number",
+      "default": 1,
+      "description": "Current onboarding step (1-5)"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}

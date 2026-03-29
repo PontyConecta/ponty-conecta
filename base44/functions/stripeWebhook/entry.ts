@@ -231,19 +231,19 @@ async function handleSubscriptionUpdate(base44, subscription) {
 
   const { profile, profileType, entityName } = result;
 
-  // Map Stripe status to our system
+  // Map Stripe status to our system: only 'starter' or 'premium'
   const statusMap = {
     'active': 'premium',
-    'past_due': 'pending',
-    'canceled': 'legacy',
-    'unpaid': 'pending',
+    'past_due': 'starter',
+    'canceled': 'starter',
+    'unpaid': 'starter',
     'trialing': 'premium'
   };
   let mappedStatus = statusMap[subscription.status] || 'starter';
 
-  // Active but cancelling = legacy (still has access)
+  // Active but cancelling at period end: still premium until Stripe fires subscription.deleted
   if (subscription.status === 'active' && subscription.cancel_at_period_end) {
-    mappedStatus = 'legacy';
+    mappedStatus = 'premium';
   }
 
   // Update subscription record
@@ -264,7 +264,7 @@ async function handleSubscriptionUpdate(base44, subscription) {
   }
 
   // Update profile
-  const planLevel = (mappedStatus === 'premium' || mappedStatus === 'legacy') ? 'premium' : null;
+  const planLevel = mappedStatus === 'premium' ? 'premium' : null;
   const profileUpdate = {
     subscription_status: mappedStatus,
     plan_level: planLevel,
@@ -353,9 +353,9 @@ async function handleInvoicePaymentFailed(base44, invoice) {
   if (result) {
     const { profile, profileType, entityName } = result;
     await base44.asServiceRole.entities[entityName].update(profile.id, {
-      subscription_status: 'pending',
+      subscription_status: 'starter',
       plan_level: null
     });
-    console.log(`Payment failed for ${profileType} ${profile.id}`);
+    console.log(`Payment failed for ${profileType} ${profile.id} -> starter`);
   }
 }

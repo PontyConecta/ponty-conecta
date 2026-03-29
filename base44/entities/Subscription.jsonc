@@ -1,0 +1,87 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Reference to the subscribing user"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Official company or brand name"
+    },
+    "plan_type": {
+      "type": "string",
+      "enum": [
+        "brand_monthly",
+        "brand_annual",
+        "creator_monthly",
+        "creator_annual"
+      ],
+      "description": "Type of subscription plan"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "starter",
+        "premium"
+      ],
+      "default": "starter",
+      "description": "Subscription status: starter (free/cancelled) or premium (active paid)"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Subscription start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Subscription end date"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Subscription amount in platform currency"
+    },
+    "currency": {
+      "type": "string",
+      "default": "BRL",
+      "description": "Payment currency"
+    },
+    "auto_renew": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether subscription auto-renews"
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Payment method reference"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "next_billing_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Next billing date"
+    },
+    "last_billing_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last billing date"
+    },
+    "plan_name": {
+      "type": "string",
+      "description": "Plan name"
+    }
+  },
+  "required": [
+    "user_id",
+    "plan_type"
+  ]
+}

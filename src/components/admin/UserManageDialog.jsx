@@ -80,9 +80,13 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
 
   const handleSaveSubscription = () => {
     const data = { subscription_status: newSubscriptionStatus };
-    if (newSubscriptionStatus === 'trial') data.trial_days = trialDays;
+    if (newSubscriptionStatus === 'premium' && trialDays > 0 && isTrialMode) {
+      data.trial_days = trialDays;
+    }
     handleAction('set_subscription_status', data);
   };
+
+  const [isTrialMode, setIsTrialMode] = useState(false);
 
   const handleSaveAccountState = () => handleAction('set_account_state', { account_state: newAccountState });
   const handleToggleVerified = () => handleAction('toggle_verified');
@@ -92,9 +96,6 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
     const configs = {
       starter: { label: 'Starter', className: 'bg-slate-100 text-slate-700' },
       premium: { label: 'Premium', className: 'bg-emerald-100 text-emerald-700' },
-      trial: { label: 'Trial', className: 'bg-blue-100 text-blue-700' },
-      legacy: { label: 'Legacy', className: 'bg-amber-100 text-amber-700' },
-      pending: { label: 'Pendente', className: 'bg-red-100 text-red-700' },
     };
     const c = configs[status] || configs.starter;
     return <Badge className={`${c.className} border-0`}>{c.label}</Badge>;
@@ -236,34 +237,42 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
           {/* Subscription Management */}
           <SectionCard icon={Crown} label="Assinatura">
             <div className="flex items-center gap-3">
-              <Select value={newSubscriptionStatus} onValueChange={setNewSubscriptionStatus}>
+              <Select value={newSubscriptionStatus} onValueChange={(v) => {
+                setNewSubscriptionStatus(v);
+                if (v === 'starter') setIsTrialMode(false);
+              }}>
                 <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="starter">Starter (Gratuito)</SelectItem>
                   <SelectItem value="premium">Premium (Pago)</SelectItem>
-                  <SelectItem value="trial">Trial (Teste Grátis)</SelectItem>
-                  <SelectItem value="legacy">Legacy (Cancelou mas ainda ativo)</SelectItem>
-                  <SelectItem value="pending">Pendente (Pagamento atrasado)</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={handleSaveSubscription} disabled={actionLoading || newSubscriptionStatus === profile.subscription_status} className="bg-primary hover:bg-primary/90 text-primary-foreground" size="sm">
+              <Button onClick={handleSaveSubscription} disabled={actionLoading || (newSubscriptionStatus === profile.subscription_status && !isTrialMode)} className="bg-primary hover:bg-primary/90 text-primary-foreground" size="sm">
                 {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Salvar'}
               </Button>
             </div>
-            {newSubscriptionStatus === 'trial' && (
-              <div className="flex items-center gap-3">
-                <Label className="text-sm whitespace-nowrap text-muted-foreground">Dias de trial:</Label>
-                <Select value={String(trialDays)} onValueChange={(v) => setTrialDays(Number(v))}>
-                  <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {[7, 14, 30, 60, 90, 120, 180, 270, 365].map(d => (
-                      <SelectItem key={d} value={String(d)}>{d} dias</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {newSubscriptionStatus === 'premium' && (
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={isTrialMode} onChange={(e) => setIsTrialMode(e.target.checked)} className="rounded" />
+                  <span className="text-sm text-muted-foreground">Conceder como trial (com data de expiração)</span>
+                </label>
+                {isTrialMode && (
+                  <div className="flex items-center gap-3">
+                    <Label className="text-sm whitespace-nowrap text-muted-foreground">Dias de trial:</Label>
+                    <Select value={String(trialDays)} onValueChange={(v) => setTrialDays(Number(v))}>
+                      <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {[7, 14, 30, 60, 90, 120, 180, 270, 365].map(d => (
+                          <SelectItem key={d} value={String(d)}>{d} dias</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
             )}
-            {profile.trial_end_date && profile.subscription_status === 'trial' && (
+            {profile.trial_end_date && profile.subscription_status === 'premium' && new Date(profile.trial_end_date) > new Date() && (
               <p className="text-xs flex items-center gap-1 text-muted-foreground">
                 <Calendar className="w-3 h-3" />
                 Trial expira em: {new Date(profile.trial_end_date).toLocaleDateString('pt-BR')}

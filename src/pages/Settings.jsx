@@ -55,9 +55,6 @@ export default function Settings() {
   const statusLabels = {
     starter: 'Gratuito',
     premium: 'Premium',
-    pending: 'Pendente',
-    legacy: 'Legado',
-    trial: 'Teste Grátis'
   };
 
   return (

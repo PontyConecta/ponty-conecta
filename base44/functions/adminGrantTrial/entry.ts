@@ -33,10 +33,10 @@ Deno.serve(async (req) => {
 
     const entityName = profileType === 'brand' ? 'Brand' : 'Creator';
 
-    // Update profile with trial status
+    // Update profile with premium status + trial end date
     await base44.asServiceRole.entities[entityName].update(profile.id, {
-      subscription_status: 'trial',
-      plan_level: 'trial',
+      subscription_status: 'premium',
+      plan_level: 'premium',
       trial_end_date: trialEndDate.toISOString()
     });
 

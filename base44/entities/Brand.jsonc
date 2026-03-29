@@ -1,0 +1,161 @@
+{
+  "name": "Brand",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Reference to the User who owns this brand profile"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Official company or brand name"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Primary industry sector"
+    },
+    "company_size": {
+      "type": "string",
+      "enum": [
+        "1-10",
+        "11-50",
+        "51-200",
+        "201-500",
+        "500+"
+      ],
+      "description": "Number of employees"
+    },
+    "marketing_budget": {
+      "type": "string",
+      "enum": [
+        "Under R$1k",
+        "R$1k-R$5k",
+        "R$5k-R$20k",
+        "R$20k+"
+      ],
+      "description": "Monthly marketing budget range"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the brand and its values"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL to brand logo"
+    },
+    "cover_image_url": {
+      "type": "string",
+      "description": "URL to brand cover/banner image"
+    },
+    "website": {
+      "type": "string",
+      "description": "Brand website URL (legacy field)"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Primary contact email for business communications"
+    },
+    "contact_phone": {
+      "type": "string",
+      "description": "Contact phone number"
+    },
+    "social_instagram": {
+      "type": "string",
+      "description": "Instagram handle (legacy field)"
+    },
+    "social_linkedin": {
+      "type": "string",
+      "description": "LinkedIn profile URL (legacy field)"
+    },
+    "online_presences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "List of online presences (website, social media, etc.)"
+    },
+    "state": {
+      "type": "string",
+      "description": "Estado brasileiro (UF)"
+    },
+    "city": {
+      "type": "string",
+      "description": "Cidade da marca"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the brand has been verified by platform admins"
+    },
+    "is_hidden": {
+      "type": "boolean",
+      "default": false,
+      "description": "Admin moderation: hide brand from all public feeds"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "starter",
+        "premium"
+      ],
+      "default": "starter",
+      "description": "Subscription status: starter (free) or premium (active paid/trial)"
+    },
+    "plan_level": {
+      "type": "string",
+      "description": "Current plan level mirrored from Stripe"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "trial_end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the free trial period ends (null if not on trial)"
+    },
+    "total_campaigns": {
+      "type": "number",
+      "default": 0,
+      "description": "Total campaigns created"
+    },
+    "active_campaigns": {
+      "type": "number",
+      "default": 0,
+      "description": "Currently active campaigns"
+    },
+    "target_audience": {
+      "type": "string",
+      "description": "Primary target audience description"
+    },
+    "content_guidelines": {
+      "type": "string",
+      "description": "General content guidelines for creators"
+    },
+    "account_state": {
+      "type": "string",
+      "enum": [
+        "incomplete",
+        "ready"
+      ],
+      "default": "incomplete",
+      "description": "User journey state"
+    },
+    "onboarding_step": {
+      "type": "number",
+      "default": 1,
+      "description": "Current onboarding step (1-5)"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}

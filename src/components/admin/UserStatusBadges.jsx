@@ -36,7 +36,7 @@ export function getUserBadgeKeys(user, profile) {
   if (created && (now - created) < 7 * DAY_MS) keys.push('new_user');
 
   const sub = profile?.subscription_status;
-  if (sub === 'premium' || sub === 'legacy' || sub === 'trial') keys.push('premium');
+  if (sub === 'premium') keys.push('premium');
 
   if (user.feedback_status && user.feedback_status !== 'none') keys.push('feedback_beta');
 

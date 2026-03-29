@@ -31,13 +31,13 @@ Deno.serve(async (req) => {
 
     switch (action) {
       case 'set_subscription_status': {
-        // Set subscription status: starter, premium, pending, legacy, trial
+        // Set subscription status: starter or premium
         const newStatus = data?.subscription_status;
         if (!newStatus) {
           return Response.json({ error: 'subscription_status is required' }, { status: 400 });
         }
 
-        const validStatuses = ['starter', 'premium', 'pending', 'legacy', 'trial'];
+        const validStatuses = ['starter', 'premium'];
         if (!validStatuses.includes(newStatus)) {
           return Response.json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` }, { status: 400 });
         }
@@ -48,23 +48,23 @@ Deno.serve(async (req) => {
 
         const updateData = { subscription_status: newStatus };
 
-        if (newStatus === 'premium' || newStatus === 'legacy') {
+        if (newStatus === 'premium') {
           updateData.plan_level = 'premium';
-        } else if (newStatus === 'trial') {
-          updateData.plan_level = 'trial';
-          // Set trial end date if provided, otherwise 30 days
-          const trialDays = data?.trial_days || 30;
-          const trialEnd = new Date();
-          trialEnd.setDate(trialEnd.getDate() + trialDays);
-          updateData.trial_end_date = trialEnd.toISOString();
+          // If trial_days provided, set trial_end_date
+          if (data?.trial_days) {
+            const trialEnd = new Date();
+            trialEnd.setDate(trialEnd.getDate() + data.trial_days);
+            updateData.trial_end_date = trialEnd.toISOString();
+          }
         } else {
+          // starter: clear everything
           updateData.plan_level = null;
           updateData.trial_end_date = null;
         }
 
         result = await base44.asServiceRole.entities[entityName].update(profile.id, updateData);
         auditAction = 'subscription_override';
-        auditDetails = `Subscription changed to ${newStatus} for ${profileType} profile`;
+        auditDetails = `Subscription changed to ${newStatus}${data?.trial_days ? ` (trial ${data.trial_days} days)` : ''} for ${profileType} profile`;
         break;
       }
 

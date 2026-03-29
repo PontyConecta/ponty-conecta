@@ -5,15 +5,14 @@
 
 export function isProfileSubscribed(profile) {
   if (!profile) return false;
-  const status = profile.subscription_status || 'starter';
+  return profile.subscription_status === 'premium';
+}
 
-  if (status === 'premium' || status === 'legacy') return true;
-
-  if (status === 'trial' && profile.trial_end_date) {
-    return new Date(profile.trial_end_date) > new Date();
-  }
-
-  return false;
+export function isOnTrial(profile) {
+  if (!profile) return false;
+  if (profile.subscription_status !== 'premium') return false;
+  if (!profile.trial_end_date) return false;
+  return new Date(profile.trial_end_date) > new Date();
 }
 
 export function getSubscriptionStatus(profile) {

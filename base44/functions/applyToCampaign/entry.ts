@@ -23,17 +23,9 @@ Deno.serve(async (req) => {
     if (creators.length === 0) return err('Perfil de creator não encontrado', 'FORBIDDEN', 403);
     const creator = creators[0];
 
-    // 4. SUBSCRIPTION CHECK
-    const validStatuses = ['premium', 'trial', 'legacy'];
-    if (!validStatuses.includes(creator.subscription_status)) {
+    // 4. SUBSCRIPTION CHECK — only 'premium' grants access
+    if (creator.subscription_status !== 'premium') {
       return err('Assinatura ativa necessária', 'SUBSCRIPTION_REQUIRED', 403);
-    }
-
-    // 4b. TRIAL EXPIRY CHECK
-    if (creator.subscription_status === 'trial') {
-      if (!creator.trial_end_date || new Date(creator.trial_end_date) <= new Date()) {
-        return err('Trial expirado', 'SUBSCRIPTION_REQUIRED', 403);
-      }
     }
 
     // 5. CAMPAIGN CHECK
