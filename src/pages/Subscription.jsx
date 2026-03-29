@@ -56,6 +56,7 @@ export default function Subscription() {
       attempts++;
       await refreshProfile();
       if (attempts < 15) setTimeout(poll, 2000);
+      else setProcessingPayment(false);
     };
     poll();
   }, [profile?.id, profileType]);
@@ -122,6 +123,7 @@ export default function Subscription() {
   const isSubscribed = isProfileSubscribed(profile);
 
   // Stop processing overlay once subscription is confirmed
+  // (placed before any early returns so hook order is stable)
   useEffect(() => {
     if (isSubscribed && processingPayment) {
       setProcessingPayment(false);
@@ -131,12 +133,10 @@ export default function Subscription() {
   // Show payment confirmation screen
   if (processingPayment && !isSubscribed) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Card className="max-w-md w-full text-center p-8">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2 text-foreground">Confirmando seu pagamento...</h2>
-          <p className="text-muted-foreground">Aguarde alguns instantes. Não feche esta página.</p>
-        </Card>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        <p className="text-lg font-semibold text-foreground">Confirmando seu pagamento...</p>
+        <p className="text-sm text-muted-foreground">Não feche esta página.</p>
       </div>
     );
   }
