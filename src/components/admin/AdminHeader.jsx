@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Megaphone, AlertTriangle, FileText 
+  LayoutDashboard, Users, Megaphone, AlertTriangle, FileText, Receipt 
 } from 'lucide-react';
 
 const adminNav = [
@@ -11,6 +11,7 @@ const adminNav = [
   { name: 'Usuários', page: 'AdminUsers', icon: Users },
   { name: 'Campanhas', page: 'AdminCampaigns', icon: Megaphone },
   { name: 'Disputas', page: 'AdminDisputes', icon: AlertTriangle },
+  { name: 'Transações', page: 'AdminTransactions', icon: Receipt },
   { name: 'Logs', page: 'AdminAuditLogs', icon: FileText },
 ];
 

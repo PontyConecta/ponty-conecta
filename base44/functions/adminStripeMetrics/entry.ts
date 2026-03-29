@@ -18,13 +18,15 @@ Deno.serve(async (req) => {
       base44.asServiceRole.entities.Creator.list(),
     ]);
 
-    // Build set of excluded Stripe customer IDs AND user IDs from users flagged exclude_from_financials
+    // Build set of excluded Stripe customer IDs, user IDs, AND emails from users flagged exclude_from_financials
     const excludedCustomerIds = new Set();
     const excludedUserIds = new Set();
+    const excludedEmails = new Set();
     const excludedUsers = allUsers.filter(u => u.exclude_from_financials);
     
     for (const u of excludedUsers) {
       excludedUserIds.add(u.id);
+      if (u.email) excludedEmails.add(u.email.toLowerCase());
       const brand = allBrands.find(b => b.user_id === u.id);
       const creator = allCreators.find(c => c.user_id === u.id);
       if (brand?.stripe_customer_id) excludedCustomerIds.add(brand.stripe_customer_id);
@@ -34,15 +36,16 @@ Deno.serve(async (req) => {
     // No hardcoded orphan exclusions
     const orphanExcludedCount = 0;
 
-    console.log(`Excluding ${excludedUsers.length} user(s) + ${orphanExcludedCount} orphan(s) (${excludedCustomerIds.size} Stripe customer(s)) from financials`);
+    console.log(`Excluding ${excludedUsers.length} user(s) + ${orphanExcludedCount} orphan(s) (${excludedCustomerIds.size} Stripe customer(s), ${excludedEmails.size} email(s)) from financials`);
     console.log(`Excluded Stripe IDs: ${[...excludedCustomerIds].join(', ')}`);
+    console.log(`Excluded emails: ${[...excludedEmails].join(', ')}`);
 
     const subscriptions = [];
     let hasMore = true;
     let startingAfter = undefined;
     
     while (hasMore) {
-      const params = { limit: 100, status: 'all', expand: ['data.plan.product'] };
+      const params = { limit: 100, status: 'all', expand: ['data.plan.product', 'data.customer'] };
       if (startingAfter) params.starting_after = startingAfter;
       const batch = await stripe.subscriptions.list(params);
       subscriptions.push(...batch.data);
@@ -86,18 +89,52 @@ Deno.serve(async (req) => {
       return item?.price?.unit_amount > 0;
     };
 
+    const getCustomerId = (sub) => typeof sub.customer === 'string' ? sub.customer : sub.customer?.id;
+    const getCustomerEmail = (sub) => (typeof sub.customer === 'object' && sub.customer?.email) ? sub.customer.email.toLowerCase() : null;
+
+    // Build set of all known user emails and all known stripe customer IDs for matching
+    const allUserEmails = new Set(allUsers.map(u => u.email?.toLowerCase()).filter(Boolean));
+    const allKnownCustomerIds = new Set();
+    allBrands.forEach(b => { if (b.stripe_customer_id) allKnownCustomerIds.add(b.stripe_customer_id); });
+    allCreators.forEach(c => { if (c.stripe_customer_id) allKnownCustomerIds.add(c.stripe_customer_id); });
+
     const isNotExcluded = (sub) => {
-      if (excludedCustomerIds.has(sub.customer)) return false;
-      // Also check if customer email matches any excluded user
-      // by checking if any excluded user's brand/creator has this stripe_customer_id
+      const custId = getCustomerId(sub);
+      if (excludedCustomerIds.has(custId)) return false;
+      const email = getCustomerEmail(sub);
+      if (email && excludedEmails.has(email)) return false;
+      // Exclude orphan Stripe customers (no matching user in the system)
+      const isKnownById = allKnownCustomerIds.has(custId);
+      const isKnownByEmail = email && allUserEmails.has(email);
+      if (!isKnownById && !isKnownByEmail) {
+        console.log(`Excluding orphan Stripe sub ${sub.id} (customer ${custId}, email ${email})`);
+        return false;
+      }
       return true;
     };
 
     const validSub = (sub) => hasValue(sub) && isNotExcluded(sub);
-    const validInvoice = (inv) => !excludedCustomerIds.has(inv.customer);
+    const validInvoice = (inv) => {
+      const custId = typeof inv.customer === 'string' ? inv.customer : inv.customer?.id;
+      if (excludedCustomerIds.has(custId)) return false;
+      // Also check invoice customer email if available
+      const custEmail = (typeof inv.customer === 'object' && inv.customer?.email) ? inv.customer.email.toLowerCase() : null;
+      if (custEmail && excludedEmails.has(custEmail)) return false;
+      return true;
+    };
 
     const activeSubs = subscriptions.filter(s => (s.status === 'active' || s.status === 'trialing') && validSub(s));
-    const cancelledSubs = subscriptions.filter(s => s.status === 'canceled' && validSub(s));
+
+    // Build set of customer IDs that have an active sub — their cancelled subs are superseded
+    const activeCustomerIds = new Set(activeSubs.map(s => getCustomerId(s)));
+
+    const cancelledSubs = subscriptions.filter(s => {
+      if (s.status !== 'canceled') return false;
+      if (!validSub(s)) return false;
+      // Exclude cancelled subs if the same customer has an active replacement
+      if (activeCustomerIds.has(getCustomerId(s))) return false;
+      return true;
+    });
     const pastDueSubs = subscriptions.filter(s => s.status === 'past_due' && validSub(s));
     const filteredInvoices = invoices.filter(validInvoice);
 

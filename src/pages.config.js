@@ -77,6 +77,7 @@ import Subscription from './pages/Subscription';
 import Inbox from './pages/Inbox';
 import InboxThread from './pages/InboxThread';
 import DiscoverCommunity from './pages/DiscoverCommunity';
+import AdminTransactions from './pages/AdminTransactions';
 import __Layout from './Layout.jsx';
 
 
@@ -110,6 +111,7 @@ export const PAGES = {
     "Inbox": Inbox,
     "InboxThread": InboxThread,
     "DiscoverCommunity": DiscoverCommunity,
+    "AdminTransactions": AdminTransactions,
 }
 
 export const pagesConfig = {
