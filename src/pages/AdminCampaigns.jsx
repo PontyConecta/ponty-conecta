@@ -14,7 +14,10 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock,
-  Eye
+  Eye,
+  Pencil,
+  Save,
+  X
 } from 'lucide-react';
 import AdminHeader from '../components/admin/AdminHeader';
 import BrandProfileModal from '@/components/modals/BrandProfileModal';
@@ -32,6 +35,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AdminCampaigns() {
   const [loading, setLoading] = useState(true);
@@ -41,6 +45,9 @@ export default function AdminCampaigns() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [viewingBrand, setViewingBrand] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadCampaigns();
@@ -253,12 +260,90 @@ export default function AdminCampaigns() {
       </div>
 
       {/* Campaign Details Dialog */}
-      <Dialog open={!!selectedCampaign} onOpenChange={(open) => !open && setSelectedCampaign(null)}>
+      <Dialog open={!!selectedCampaign} onOpenChange={(open) => { if (!open) { setSelectedCampaign(null); setEditing(false); } }}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selectedCampaign?.title}</DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle>{editing ? 'Editando Campanha' : selectedCampaign?.title}</DialogTitle>
+              {!editing && (
+                <Button variant="outline" size="sm" onClick={() => {
+                  setEditing(true);
+                  setEditData({
+                    title: selectedCampaign.title || '',
+                    description: selectedCampaign.description || '',
+                    deadline: selectedCampaign.deadline || '',
+                    status: selectedCampaign.status || 'draft',
+                  });
+                }}>
+                  <Pencil className="w-4 h-4 mr-1" /> Editar
+                </Button>
+              )}
+            </div>
           </DialogHeader>
-          {selectedCampaign && (
+          {selectedCampaign && editing ? (
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-medium text-foreground">Título</label>
+                <Input value={editData.title} onChange={(e) => setEditData(d => ({ ...d, title: e.target.value }))} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground">Descrição</label>
+                <Textarea value={editData.description} onChange={(e) => setEditData(d => ({ ...d, description: e.target.value }))} className="mt-1 min-h-[100px]" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-foreground">Deadline</label>
+                  <Input type="date" value={editData.deadline} onChange={(e) => setEditData(d => ({ ...d, deadline: e.target.value }))} className="mt-1" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground">Status</label>
+                  <Select value={editData.status} onValueChange={(v) => setEditData(d => ({ ...d, status: v }))}>
+                    <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Rascunho</SelectItem>
+                      <SelectItem value="under_review">Em Análise</SelectItem>
+                      <SelectItem value="active">Ativa</SelectItem>
+                      <SelectItem value="completed">Concluída</SelectItem>
+                      <SelectItem value="cancelled">Cancelada</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button
+                  onClick={async () => {
+                    setSaving(true);
+                    try {
+                      await base44.entities.Campaign.update(selectedCampaign.id, editData);
+                      const user = await base44.auth.me();
+                      await base44.entities.AuditLog.create({
+                        admin_id: user.id, admin_email: user.email,
+                        action: 'campaign_status_change',
+                        target_entity_id: selectedCampaign.id,
+                        details: `Campanha "${editData.title}" editada pelo admin. Status: ${editData.status}`,
+                        timestamp: new Date().toISOString(),
+                      });
+                      toast.success('Campanha atualizada');
+                      setEditing(false);
+                      setSelectedCampaign(null);
+                      loadCampaigns();
+                    } catch (err) {
+                      console.error(err);
+                      toast.error('Erro ao salvar campanha');
+                    } finally { setSaving(false); }
+                  }}
+                  disabled={saving}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+                  Salvar
+                </Button>
+                <Button variant="outline" onClick={() => setEditing(false)}>
+                  <X className="w-4 h-4 mr-1" /> Cancelar
+                </Button>
+              </div>
+            </div>
+          ) : selectedCampaign && (
             <div className="space-y-6 py-4">
               <div>
                 <h4 className="font-semibold mb-2 text-foreground">Informações Básicas</h4>

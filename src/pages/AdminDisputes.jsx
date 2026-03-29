@@ -60,6 +60,9 @@ export default function AdminDisputes() {
   const [processing, setProcessing] = useState(false);
   const [resolution, setResolution] = useState('');
   const [resolutionType, setResolutionType] = useState('');
+  const [reopening, setReopening] = useState(false);
+  const [reopenReason, setReopenReason] = useState('');
+  const [showReopenForm, setShowReopenForm] = useState(false);
   
   // Paginação
   const pagination = usePagination(20);
@@ -601,6 +604,66 @@ export default function AdminDisputes() {
                       <span>Por: {selectedDispute.resolved_by}</span>
                       <span>Em: {formatDate(selectedDispute.resolved_at)}</span>
                     </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Reopen button for resolved disputes */}
+              {(selectedDispute.status === 'resolved_brand_favor' || selectedDispute.status === 'resolved_creator_favor') && (
+                <Card className="border-orange-200 bg-orange-500/5">
+                  <CardContent className="p-4 space-y-3">
+                    {!showReopenForm ? (
+                      <Button variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-50" onClick={() => setShowReopenForm(true)}>
+                        <AlertTriangle className="w-4 h-4 mr-1" /> Reabrir Disputa
+                      </Button>
+                    ) : (
+                      <>
+                        <Label className="text-orange-700 font-medium">Motivo para reabertura *</Label>
+                        <Textarea
+                          value={reopenReason}
+                          onChange={(e) => setReopenReason(e.target.value)}
+                          placeholder="Explique por que esta disputa precisa ser reaberta..."
+                          className="min-h-[80px]"
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            disabled={reopening || !reopenReason.trim()}
+                            className="bg-orange-600 hover:bg-orange-700 text-white"
+                            onClick={async () => {
+                              setReopening(true);
+                              try {
+                                const me = await base44.auth.me();
+                                await base44.entities.Dispute.update(selectedDispute.id, {
+                                  status: 'under_review',
+                                  resolution: null,
+                                  resolved_by: null,
+                                  resolved_at: null,
+                                });
+                                await base44.entities.AuditLog.create({
+                                  admin_id: me.id, admin_email: me.email,
+                                  action: 'dispute_resolved',
+                                  target_entity_id: selectedDispute.id,
+                                  details: `Disputa reaberta pelo admin. Status anterior: ${selectedDispute.status}`,
+                                  note: reopenReason.trim(),
+                                  timestamp: new Date().toISOString(),
+                                });
+                                toast.success('Disputa reaberta');
+                                setSelectedDispute(null);
+                                setShowReopenForm(false);
+                                setReopenReason('');
+                                loadData();
+                              } catch (err) {
+                                console.error(err);
+                                toast.error('Erro ao reabrir disputa');
+                              } finally { setReopening(false); }
+                            }}
+                          >
+                            {reopening ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar Reabertura'}
+                          </Button>
+                          <Button variant="ghost" onClick={() => { setShowReopenForm(false); setReopenReason(''); }}>Cancelar</Button>
+                        </div>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               )}

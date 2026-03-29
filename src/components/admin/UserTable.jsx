@@ -62,12 +62,12 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
     const isTrialing = profile?.subscription_status === 'premium' && profile?.trial_end_date && new Date(profile.trial_end_date) > new Date();
     const key = isTrialing ? 'trial' : (profile?.subscription_status || 'starter');
     const c = SUB_BADGE[key] || SUB_BADGE.starter;
-    let label = c.label;
-    if (isTrialing) {
-      const daysLeft = Math.ceil((new Date(profile.trial_end_date) - Date.now()) / 86400000);
-      label = `Trial · ${daysLeft}d`;
-    }
-    return <Badge className={`${c.cls} border-0 text-xs px-2 py-0.5`}>{label}</Badge>;
+    return (
+      <Badge className={`${c.cls} border-0 text-xs px-2 py-0.5 gap-1`}>
+        {isTrialing && <Clock className="w-3 h-3" />}
+        {c.label}
+      </Badge>
+    );
   };
 
   const compact = density === 'compact';

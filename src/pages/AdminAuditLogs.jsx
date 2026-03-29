@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Clock, User, FileText } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Shield, Clock, User, FileText, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminHeader from '../components/admin/AdminHeader';
 import {
   Select,
@@ -22,6 +24,11 @@ export default function AdminAuditLogs() {
   const [logs, setLogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [targetUserFilter, setTargetUserFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 25;
 
   useEffect(() => {
     loadLogs();
@@ -47,7 +54,7 @@ export default function AdminAuditLogs() {
     return <Badge className={`${config.color} border-0`}>{config.label}</Badge>;
   };
 
-  const filteredLogs = logs.filter(log => {
+  const filteredLogs = useMemo(() => logs.filter(log => {
     const matchesSearch = 
       log.admin_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -55,9 +62,42 @@ export default function AdminAuditLogs() {
       log.target_user_id?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesAction = actionFilter === 'all' || log.action === actionFilter;
+
+    if (dateFrom) {
+      const logDate = log.timestamp ? new Date(log.timestamp) : null;
+      if (!logDate || logDate < new Date(dateFrom)) return false;
+    }
+    if (dateTo) {
+      const logDate = log.timestamp ? new Date(log.timestamp) : null;
+      if (!logDate || logDate > new Date(dateTo + 'T23:59:59')) return false;
+    }
+    if (targetUserFilter.trim()) {
+      if (!log.target_user_id?.toLowerCase().includes(targetUserFilter.toLowerCase())) return false;
+    }
     
     return matchesSearch && matchesAction;
-  });
+  }), [logs, searchTerm, actionFilter, dateFrom, dateTo, targetUserFilter]);
+
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, actionFilter, dateFrom, dateTo, targetUserFilter]);
+
+  const totalPages = Math.ceil(filteredLogs.length / PAGE_SIZE);
+  const paginatedLogs = filteredLogs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleExportCSV = () => {
+    const headers = ['Data', 'Admin', 'Ação', 'Detalhes', 'Nota', 'Target User ID'];
+    const rows = filteredLogs.map(log => [
+      log.timestamp || '', log.admin_email || '', log.action || '',
+      (log.details || '').replace(/[\n,]/g, ' '), (log.note || '').replace(/[\n,]/g, ' '),
+      log.target_user_id || ''
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'audit_logs.csv'; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -69,11 +109,16 @@ export default function AdminAuditLogs() {
       <AdminHeader currentPageName="AdminAuditLogs" />
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Logs de Auditoria</h1>
-        <p className="mt-1 text-muted-foreground">
-          Histórico completo de ações administrativas • {filteredLogs.length} registros
-        </p>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Logs de Auditoria</h1>
+          <p className="mt-1 text-muted-foreground">
+            Histórico completo de ações administrativas • {filteredLogs.length} registros
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={handleExportCSV}>
+          <Download className="w-4 h-4 mr-1" /> Exportar CSV
+        </Button>
       </div>
 
       {/* Filters */}
@@ -103,13 +148,28 @@ export default function AdminAuditLogs() {
                 <SelectItem value="dispute_resolved">Disputa Resolvida</SelectItem>
               </SelectContent>
             </Select>
+            {/* Date range + target user filters */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-3">
+              <div className="flex items-center gap-2 flex-1">
+                <span className="text-xs text-muted-foreground whitespace-nowrap">De:</span>
+                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-9 text-sm" />
+                <span className="text-xs text-muted-foreground whitespace-nowrap">Até:</span>
+                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-9 text-sm" />
+              </div>
+              <Input
+                placeholder="Filtrar por Target User ID..."
+                value={targetUserFilter}
+                onChange={(e) => setTargetUserFilter(e.target.value)}
+                className="sm:w-64"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Logs List */}
       <div className="space-y-3">
-        {filteredLogs.map((log) => (
+        {paginatedLogs.map((log) => (
           <Card key={log.id} className="bg-card border hover:shadow-md transition-shadow">
             <CardContent className="p-5">
               <div className="flex items-start gap-4">
@@ -157,6 +217,23 @@ export default function AdminAuditLogs() {
               <p className="text-muted-foreground">Nenhum log encontrado</p>
             </CardContent>
           </Card>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-4">
+            <span className="text-sm text-muted-foreground">
+              Página {currentPage} de {totalPages} ({filteredLogs.length} registros)
+            </span>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)}>
+                <ChevronLeft className="w-4 h-4 mr-1" /> Anterior
+              </Button>
+              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)}>
+                Próximo <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </div>
         )}
       </div>
     </div>

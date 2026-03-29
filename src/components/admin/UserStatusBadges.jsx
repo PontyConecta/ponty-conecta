@@ -71,16 +71,18 @@ export default function UserStatusBadges({ user, profile, maxShow = 2 }) {
           const tipText = key === 'trial' && keys._trialDaysLeft
             ? `Trial ativo — expira em ${keys._trialDaysLeft} dias`
             : cfg.tip;
-          const labelText = key === 'trial' && keys._trialDaysLeft
-            ? `Trial · ${keys._trialDaysLeft}d`
-            : cfg.label;
           return (
             <Tooltip key={key}>
               <TooltipTrigger asChild>
-                <Badge className={`${cfg.cls} border-0 text-[10px] px-1.5 py-0 gap-0.5 cursor-default`}>
-                  <IconComp className="w-2.5 h-2.5" />
-                  <span className="hidden sm:inline">{labelText}</span>
-                </Badge>
+                <div className="flex flex-col items-start">
+                  <Badge className={`${cfg.cls} border-0 text-[10px] px-1.5 py-0 gap-0.5 cursor-default`}>
+                    <IconComp className="w-2.5 h-2.5" />
+                    <span className="hidden sm:inline">{cfg.label}</span>
+                  </Badge>
+                  {key === 'trial' && keys._trialDaysLeft && (
+                    <span className="text-[10px] text-muted-foreground mt-0.5">expira em {keys._trialDaysLeft}d</span>
+                  )}
+                </div>
               </TooltipTrigger>
               <TooltipContent side="top" className="text-xs max-w-[200px]">
                 <p>{tipText}</p>
