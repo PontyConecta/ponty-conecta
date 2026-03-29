@@ -30,6 +30,10 @@ export default function Subscription() {
   const [profileType, setProfileType] = useState(null);
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('success') === 'true';
+  });
   const [selectedPlan, setSelectedPlan] = useState('monthly');
   const navigate = useNavigate();
 
@@ -44,11 +48,17 @@ export default function Subscription() {
   useEffect(() => {
     if (!profile || !profileType) return;
     const urlParams = new URLSearchParams(window.location.search);
-    const successParam = urlParams.get('success');
-    if (successParam === 'true') {
-      refreshProfile();
-    }
-  }, [profile, profileType]);
+    if (urlParams.get('success') !== 'true') return;
+
+    setProcessingPayment(true);
+    let attempts = 0;
+    const poll = async () => {
+      attempts++;
+      await refreshProfile();
+      if (attempts < 15) setTimeout(poll, 2000);
+    };
+    poll();
+  }, [profile?.id, profileType]);
 
   const handleSubscribe = async () => {
     if (window.self !== window.top) {
@@ -72,7 +82,13 @@ export default function Subscription() {
       }
     } catch (error) {
       console.error('Error creating checkout:', error);
-      alert('Erro ao iniciar pagamento. Tente novamente.');
+      const errorCode = error?.response?.data?.code;
+      if (errorCode === 'ALREADY_SUBSCRIBED') {
+        alert('Você já possui uma assinatura ativa. Atualize a página para ver seu status.');
+        refreshProfile();
+      } else {
+        alert('Erro ao iniciar pagamento. Tente novamente.');
+      }
       setSubscribing(false);
     }
   };
@@ -104,6 +120,26 @@ export default function Subscription() {
 
   const isBrand = profileType === 'brand';
   const isSubscribed = isProfileSubscribed(profile);
+
+  // Stop processing overlay once subscription is confirmed
+  useEffect(() => {
+    if (isSubscribed && processingPayment) {
+      setProcessingPayment(false);
+    }
+  }, [isSubscribed, processingPayment]);
+
+  // Show payment confirmation screen
+  if (processingPayment && !isSubscribed) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Card className="max-w-md w-full text-center p-8">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2 text-foreground">Confirmando seu pagamento...</h2>
+          <p className="text-muted-foreground">Aguarde alguns instantes. Não feche esta página.</p>
+        </Card>
+      </div>
+    );
+  }
 
   const brandFeatures = [
     'Criação ilimitada de campanhas',

@@ -49,6 +49,19 @@ Deno.serve(async (req) => {
           customerId = null;
         } else {
           console.log('Reusing existing customer:', customerId);
+          // Verificar se já tem assinatura ativa
+          const activeSubs = await stripe.subscriptions.list({
+            customer: customerId,
+            status: 'active',
+            limit: 1
+          });
+          if (activeSubs.data.length > 0) {
+            console.log('Customer already has active subscription:', activeSubs.data[0].id);
+            return Response.json({
+              error: 'Você já possui uma assinatura ativa.',
+              code: 'ALREADY_SUBSCRIBED'
+            }, { status: 400 });
+          }
         }
       } catch (e) {
         console.log('Customer ID invalid, creating new one:', e.message);
