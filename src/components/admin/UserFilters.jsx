@@ -118,10 +118,7 @@ export default function UserFilters({
                 <SelectItem value="all">Todos os Status</SelectItem>
                 <SelectItem value="premium">Premium</SelectItem>
                 <SelectItem value="starter">Starter</SelectItem>
-                <SelectItem value="trial">Trial</SelectItem>
-                <SelectItem value="legacy">Legacy</SelectItem>
-                <SelectItem value="ready">Conta Pronta</SelectItem>
-                <SelectItem value="incomplete">Incompleta</SelectItem>
+                <SelectItem value="trial">Em Trial</SelectItem>
               </SelectContent>
             </Select>
             <Button 

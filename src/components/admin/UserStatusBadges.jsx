@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { EyeOff, Ghost, Moon, Sparkles, Crown, MessageSquarePlus } from 'lucide-react';
+import { EyeOff, Ghost, Moon, Sparkles, Crown, MessageSquarePlus, Clock } from 'lucide-react';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -16,11 +16,12 @@ const BADGE_CONFIG = {
   inactive:     { label: 'Inativo',       icon: Moon,     cls: 'bg-orange-100 text-orange-700', tip: 'Inativo: sem acesso há mais de 30 dias' },
   new_user:     { label: 'Novo',          icon: Sparkles, cls: 'bg-emerald-100 text-emerald-700', tip: 'Novo: conta criada nos últimos 7 dias' },
   premium:      { label: 'Premium',       icon: Crown,    cls: 'bg-amber-100 text-amber-700', tip: 'Premium: assinatura ativa' },
+  trial:        { label: 'Trial',         icon: Clock,    cls: 'bg-amber-100 text-amber-700', tip: 'Trial ativo' },
   feedback_beta:{ label: 'Pesquisa',      icon: MessageSquarePlus, cls: 'bg-primary/10 text-primary', tip: 'Pesquisa de experiência: participando da pesquisa' },
 };
 
 // Priority order for badge display
-const PRIORITY = ['hidden', 'never_active', 'inactive', 'new_user', 'premium', 'feedback_beta'];
+const PRIORITY = ['hidden', 'never_active', 'inactive', 'new_user', 'trial', 'premium', 'feedback_beta'];
 
 export function getUserBadgeKeys(user, profile) {
   const now = Date.now();
@@ -36,7 +37,17 @@ export function getUserBadgeKeys(user, profile) {
   if (created && (now - created) < 7 * DAY_MS) keys.push('new_user');
 
   const sub = profile?.subscription_status;
-  if (sub === 'premium') keys.push('premium');
+  if (sub === 'premium') {
+    const trialEnd = profile?.trial_end_date;
+    if (trialEnd && new Date(trialEnd) > new Date()) {
+      const daysLeft = Math.ceil((new Date(trialEnd) - Date.now()) / 86400000);
+      keys.push('trial');
+      // Store daysLeft for tooltip
+      keys._trialDaysLeft = daysLeft;
+    } else {
+      keys.push('premium');
+    }
+  }
 
   if (user.feedback_status && user.feedback_status !== 'none') keys.push('feedback_beta');
 
@@ -57,16 +68,22 @@ export default function UserStatusBadges({ user, profile, maxShow = 2 }) {
           const cfg = BADGE_CONFIG[key];
           if (!cfg) return null;
           const IconComp = cfg.icon;
+          const tipText = key === 'trial' && keys._trialDaysLeft
+            ? `Trial ativo — expira em ${keys._trialDaysLeft} dias`
+            : cfg.tip;
+          const labelText = key === 'trial' && keys._trialDaysLeft
+            ? `Trial · ${keys._trialDaysLeft}d`
+            : cfg.label;
           return (
             <Tooltip key={key}>
               <TooltipTrigger asChild>
                 <Badge className={`${cfg.cls} border-0 text-[10px] px-1.5 py-0 gap-0.5 cursor-default`}>
                   <IconComp className="w-2.5 h-2.5" />
-                  <span className="hidden sm:inline">{cfg.label}</span>
+                  <span className="hidden sm:inline">{labelText}</span>
                 </Badge>
               </TooltipTrigger>
               <TooltipContent side="top" className="text-xs max-w-[200px]">
-                <p>{cfg.tip}</p>
+                <p>{tipText}</p>
               </TooltipContent>
             </Tooltip>
           );

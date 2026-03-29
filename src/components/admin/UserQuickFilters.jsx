@@ -8,6 +8,7 @@ const FILTERS = [
   { key: 'inactive', label: 'Inativos' },
   { key: 'hidden', label: 'Ocultos' },
   { key: 'premium', label: 'Premium' },
+  { key: 'trial', label: 'Em Trial' },
   { key: 'feedback_beta', label: 'Pesquisa' },
 ];
 

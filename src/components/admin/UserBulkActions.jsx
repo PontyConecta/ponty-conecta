@@ -69,15 +69,15 @@ export default function UserBulkActions({ selectedIds, users, brands, creators, 
             break;
           case 'set_trial_30':
             actionName = 'set_subscription_status';
-            data = { subscription_status: 'trial', trial_days: 30 };
+            data = { subscription_status: 'premium', trial_days: 30 };
             break;
           case 'set_trial_365':
             actionName = 'set_subscription_status';
-            data = { subscription_status: 'trial', trial_days: 365 };
+            data = { subscription_status: 'premium', trial_days: 365 };
             break;
           case 'set_trial_custom':
             actionName = 'set_subscription_status';
-            data = { subscription_status: 'trial', trial_days: parseInt(bulkTag) || 365 };
+            data = { subscription_status: 'premium', trial_days: parseInt(bulkTag) || 365 };
             break;
           case 'set_ready':
             actionName = 'set_account_state';

@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Building2, Star, Shield, CheckCircle2, Crown, Eye,
-  ChevronUp, ChevronDown, ChevronsUpDown, MapPin, EyeOff
+  ChevronUp, ChevronDown, ChevronsUpDown, MapPin, EyeOff, Clock
 } from 'lucide-react';
 import { UserTagBadges } from './UserTagManager';
 import UserStatusBadges from './UserStatusBadges';
@@ -28,9 +28,7 @@ function SortHeader({ label, field, sortField, sortDir, onSort }) {
 const SUB_BADGE = {
   starter: { label: 'Starter', cls: 'bg-slate-100 text-slate-600' },
   premium: { label: 'Premium', cls: 'bg-emerald-100 text-emerald-700' },
-  trial: { label: 'Trial', cls: 'bg-blue-100 text-blue-700' },
-  legacy: { label: 'Legacy', cls: 'bg-amber-100 text-amber-700' },
-  pending: { label: 'Pendente', cls: 'bg-red-100 text-red-700' },
+  trial: { label: 'Trial', cls: 'bg-amber-100 text-amber-700', icon: Clock },
 };
 
 export default function UserTable({ users, brands, creators, selectedIds, onSelectIds, onUserClick, sortField, sortDir, onSort, density = 'default', onActionComplete }) {
@@ -60,9 +58,16 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
     onSelectIds(selectedIds.includes(id) ? selectedIds.filter(i => i !== id) : [...selectedIds, id]);
   };
 
-  const renderSubBadge = (status) => {
-    const c = SUB_BADGE[status] || SUB_BADGE.starter;
-    return <Badge className={`${c.cls} border-0 text-xs px-2 py-0.5`}>{c.label}</Badge>;
+  const renderSubBadge = (profile) => {
+    const isTrialing = profile?.subscription_status === 'premium' && profile?.trial_end_date && new Date(profile.trial_end_date) > new Date();
+    const key = isTrialing ? 'trial' : (profile?.subscription_status || 'starter');
+    const c = SUB_BADGE[key] || SUB_BADGE.starter;
+    let label = c.label;
+    if (isTrialing) {
+      const daysLeft = Math.ceil((new Date(profile.trial_end_date) - Date.now()) / 86400000);
+      label = `Trial · ${daysLeft}d`;
+    }
+    return <Badge className={`${c.cls} border-0 text-xs px-2 py-0.5`}>{label}</Badge>;
   };
 
   const compact = density === 'compact';
@@ -129,7 +134,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                     {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                   </Badge>
                 </div>
-                <div>{renderSubBadge(profile?.subscription_status)}</div>
+                <div>{renderSubBadge(profile)}</div>
                 <div>
                   <Badge className={`border-0 text-[10px] px-1.5 py-0 ${profile?.account_state === 'ready' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                     {profile?.account_state === 'ready' ? 'Pronta' : 'Incompleta'}
@@ -179,7 +184,7 @@ export default function UserTable({ users, brands, creators, selectedIds, onSele
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                       {type === 'brand' ? 'Marca' : type === 'creator' ? 'Criador' : '?'}
                     </Badge>
-                    {renderSubBadge(profile?.subscription_status)}
+                    {renderSubBadge(profile)}
                     <UserStatusBadges user={user} profile={profile} maxShow={2} />
                     {profile?.is_verified && (
                       <Badge className="bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">

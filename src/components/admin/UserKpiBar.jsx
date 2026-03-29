@@ -43,10 +43,10 @@ export default function UserKpiBar({ users, brands, creators }) {
       if (!firstActive && !u.first_active) neverActive++;
       if (lastActive && (now - lastActive) < 7 * DAY_MS) activeWeek++;
       if (!lastActive || (now - lastActive) > 30 * DAY_MS) inactive30++;
-      if (u.visibility_status === 'hidden') hidden++;
+      if (profile?.is_hidden) hidden++;
 
       const sub = profile?.subscription_status;
-      if ((sub === 'premium' || sub === 'legacy' || sub === 'trial') && (!lastActive || (now - lastActive) > 30 * DAY_MS)) {
+      if (sub === 'premium' && (!lastActive || (now - lastActive) > 30 * DAY_MS)) {
         premiumInactive++;
       }
     });

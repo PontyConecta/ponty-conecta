@@ -120,8 +120,10 @@ export default function AdminUsers() {
         if (quickFilter === 'inactive' && lastActive && (now.getTime() - lastActive) <= 30 * DAY_MS) return false;
         if (quickFilter === 'hidden' && !profile?.is_hidden) return false;
         if (quickFilter === 'premium') {
-          const sub = profile?.subscription_status;
-          if (sub !== 'premium' && sub !== 'legacy' && sub !== 'trial') return false;
+          if (profile?.subscription_status !== 'premium') return false;
+        }
+        if (quickFilter === 'trial') {
+          if (profile?.subscription_status !== 'premium' || !profile?.trial_end_date || new Date(profile.trial_end_date) <= new Date()) return false;
         }
         if (quickFilter === 'feedback_beta') {
           if (!user.feedback_status || user.feedback_status === 'none') return false;
@@ -147,12 +149,15 @@ export default function AdminUsers() {
       
       // Status filter
       if (statusFilter !== 'all') {
-        if (statusFilter === 'premium' && profile?.subscription_status !== 'premium') return false;
+        if (statusFilter === 'premium') {
+          if (profile?.subscription_status !== 'premium') return false;
+          // Exclude active trials from "premium" filter
+          if (profile?.trial_end_date && new Date(profile.trial_end_date) > new Date()) return false;
+        }
         if (statusFilter === 'starter' && profile?.subscription_status !== 'starter') return false;
-        if (statusFilter === 'trial' && profile?.subscription_status !== 'trial') return false;
-        if (statusFilter === 'legacy' && profile?.subscription_status !== 'legacy') return false;
-        if (statusFilter === 'ready' && profile?.account_state !== 'ready') return false;
-        if (statusFilter === 'incomplete' && profile?.account_state !== 'incomplete') return false;
+        if (statusFilter === 'trial') {
+          if (profile?.subscription_status !== 'premium' || !profile?.trial_end_date || new Date(profile.trial_end_date) <= new Date()) return false;
+        }
       }
 
       // State filter
