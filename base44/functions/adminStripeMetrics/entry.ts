@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import Stripe from 'npm:stripe@17.4.0';
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
@@ -53,18 +53,29 @@ Deno.serve(async (req) => {
     const now = Math.floor(Date.now() / 1000);
     const oneYearAgo = now - (365 * 24 * 60 * 60);
 
-    const invoices = [];
+    const invoicesRaw = [];
     hasMore = true;
     startingAfter = undefined;
     
     while (hasMore) {
-      const params = { limit: 100, created: { gte: oneYearAgo }, status: 'paid' };
+      const params = { limit: 100, created: { gte: oneYearAgo }, status: 'paid', expand: ['data.charge'] };
       if (startingAfter) params.starting_after = startingAfter;
       const batch = await stripe.invoices.list(params);
-      invoices.push(...batch.data);
+      invoicesRaw.push(...batch.data);
       hasMore = batch.has_more;
       if (batch.data.length > 0) startingAfter = batch.data[batch.data.length - 1].id;
     }
+
+    // Filter out invoices whose charge was refunded
+    const invoices = invoicesRaw.filter(inv => {
+      const charge = inv.charge;
+      if (charge && typeof charge === 'object' && charge.refunded) {
+        console.log(`Excluding refunded invoice ${inv.id} (charge ${charge.id}, amount ${inv.amount_paid / 100})`);
+        return false;
+      }
+      return true;
+    });
+    console.log(`Invoices: ${invoicesRaw.length} total, ${invoicesRaw.length - invoices.length} refunded excluded, ${invoices.length} valid`);
 
     const BRAND_PRODUCT = 'prod_U0gIiVNyRmWGIs';
     const CREATOR_PRODUCT = 'prod_U0gCi96g4grdc0';
