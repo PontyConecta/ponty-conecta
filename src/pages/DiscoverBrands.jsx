@@ -110,7 +110,7 @@ export default function DiscoverBrands() {
   }
 
   return (
-    <div className="space-y-5 pb-[calc(var(--bottom-nav-height,72px)+env(safe-area-inset-bottom,0px)+24px)] lg:pb-0">
+    <div className="space-y-5">
       <div>
         <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Descobrir Marcas</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Explore marcas parceiras</p>

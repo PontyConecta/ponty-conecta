@@ -217,7 +217,7 @@ export default function InboxThread() {
   }
 
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100dvh - var(--header-height, 56px) - var(--bottom-nav-height, 72px) - 2rem)' }}>
+    <div className="flex flex-col lg:h-[calc(100dvh-var(--header-height,64px)-2rem)]" style={{ height: 'calc(100dvh - var(--header-height, 56px) - var(--bottom-nav-height, 72px) - env(safe-area-inset-bottom, 0px) - 2rem)' }}>
       {/* Header */}
       <div className="flex items-center gap-3 pb-3 border-b mb-3 flex-shrink-0">
         <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => window.history.length > 2 ? window.history.back() : navigate(createPageUrl('Inbox'))}>

@@ -172,7 +172,12 @@ html[data-theme="neon"], html[data-theme="musk"] {
 
 @layer utilities {
   .pb-mobile-safe {
-    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 0; /* desktop default */
+  }
+  @media (max-width: 1023px) {
+    .pb-mobile-safe {
+      padding-bottom: calc(var(--bottom-nav-height, 72px) + env(safe-area-inset-bottom, 0px) + 16px);
+    }
   }
 }
 
@@ -212,11 +217,4 @@ html[data-theme="neon"], html[data-theme="musk"] {
   box-shadow: 0 0 24px -4px hsl(279 70% 72% / 0.50);
 }
 
-@layer utilities {
-  /* Mobile bottom nav safe area */
-  @media (max-width: 1023px) {
-    .pb-mobile-safe {
-      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px);
-    }
-  }
-}
+/* duplicate removed — see unified .pb-mobile-safe above */
