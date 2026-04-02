@@ -65,6 +65,15 @@ function LayoutContent({ children, currentPageName }) {
     return null;
   }
 
+  // Redirect incomplete profiles to onboarding — BEFORE noLayoutPages early return
+  if (!loading && user && profile && profile.account_state !== 'ready') {
+    const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
+    if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
+      navigate(createPageUrl(onboardingPage));
+      return null;
+    }
+  }
+
   // Pages without full layout
   if (noLayoutPages.includes(currentPageName)) {
     return (
@@ -72,15 +81,6 @@ function LayoutContent({ children, currentPageName }) {
         {children}
       </div>
     );
-  }
-
-  // Redirect incomplete profiles to onboarding
-  if (!loading && user && profile && profile.account_state !== 'ready') {
-    const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
-    if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
-      navigate(createPageUrl(onboardingPage));
-      return null;
-    }
   }
 
   return (

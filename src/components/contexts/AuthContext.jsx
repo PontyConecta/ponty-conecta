@@ -27,26 +27,49 @@ export function AuthProvider({ children }) {
       const userData = await base44.auth.me();
       setUser(userData);
 
-      // Buscar perfil (Brand ou Creator)
+      // Buscar ambos os perfis em paralelo
       try {
-        const brandProfiles = await base44.entities.Brand.filter({ user_id: userData.id });
-        if (brandProfiles.length > 0) {
-          let brandProfile = brandProfiles[0];
+        const [brandProfiles, creatorProfiles] = await Promise.all([
+          base44.entities.Brand.filter({ user_id: userData.id }),
+          base44.entities.Creator.filter({ user_id: userData.id }),
+        ]);
 
-          // Keep incomplete state - onboarding flow handles the transition to 'ready'
+        const hasBrand = brandProfiles.length > 0;
+        const hasCreator = creatorProfiles.length > 0;
 
-          setProfile(brandProfile);
+        if (hasBrand && hasCreator) {
+          const brandReady = brandProfiles[0].account_state === 'ready';
+          const creatorReady = creatorProfiles[0].account_state === 'ready';
+
+          if (creatorReady && !brandReady) {
+            setProfile(creatorProfiles[0]);
+            setProfileType('creator');
+          } else if (brandReady && !creatorReady) {
+            setProfile(brandProfiles[0]);
+            setProfileType('brand');
+          } else {
+            // Ambos ready ou ambos incomplete — priorizar o mais recente
+            const brandDate = new Date(brandProfiles[0].created_date || 0);
+            const creatorDate = new Date(creatorProfiles[0].created_date || 0);
+            if (creatorDate > brandDate) {
+              setProfile(creatorProfiles[0]);
+              setProfileType('creator');
+            } else {
+              setProfile(brandProfiles[0]);
+              setProfileType('brand');
+            }
+          }
+          return true;
+        }
+
+        if (hasBrand) {
+          setProfile(brandProfiles[0]);
           setProfileType('brand');
           return true;
         }
 
-        const creatorProfiles = await base44.entities.Creator.filter({ user_id: userData.id });
-        if (creatorProfiles.length > 0) {
-          let creatorProfile = creatorProfiles[0];
-
-          // Keep incomplete state - onboarding flow handles the transition to 'ready'
-
-          setProfile(creatorProfile);
+        if (hasCreator) {
+          setProfile(creatorProfiles[0]);
           setProfileType('creator');
           return true;
         }
