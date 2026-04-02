@@ -13,6 +13,7 @@ function SafeImage({ src, alt, className, fallback }) {
 }
 
 export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall, onMessage, onInvite }) {
+  if (!creator) return null;
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
