@@ -34,6 +34,8 @@ import CampaignCreateMultiStep from '@/components/campaign/CampaignCreateMultiSt
 import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import InviteCreatorSearchSheet from '@/components/campaign/InviteCreatorSearchSheet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Applications from './Applications';
 
 export default function CampaignManager() {
   const { user, profile: brand, profileType, loading: authLoading } = useAuth();
@@ -66,7 +68,6 @@ export default function CampaignManager() {
     }
 
     try {
-      // Validar completude do perfil
       const validation = validateBrandProfile(brand);
       setProfileValidation(validation);
       
@@ -94,7 +95,6 @@ export default function CampaignManager() {
     const campaign = campaigns.find(c => c.id === campaignId);
     if (!campaign) return;
 
-    // Valida transição
     const validation = validateTransition('campaign', campaign, newStatus);
     if (!validation.valid) {
       toast.error(validation.error || validation.errors?.[0]);
@@ -124,8 +124,6 @@ export default function CampaignManager() {
     const matchesStatus = filterStatus === 'all' || c.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
-
-
 
   const getRemunerationIcon = (type) => {
     switch (type) {
@@ -198,216 +196,228 @@ export default function CampaignManager() {
         />
       )}
 
-      {/* Filters */}
-      <Card className="border bg-card shadow-sm">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <SearchFilter
-              value={searchTerm}
-              onChange={setSearchTerm}
-              placeholder="Buscar campanhas..."
-              className="flex-1"
-            />
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-full sm:w-44">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos Status</SelectItem>
-                <SelectItem value="draft">Rascunho</SelectItem>
-                <SelectItem value="active">Ativa</SelectItem>
-                <SelectItem value="paused">Pausada</SelectItem>
-                <SelectItem value="applications_closed">Inscrições Fechadas</SelectItem>
-                <SelectItem value="completed">Concluída</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="campaigns" className="space-y-6">
+        <TabsList className="w-full max-w-md">
+          <TabsTrigger value="campaigns" className="flex-1">Campanhas</TabsTrigger>
+          <TabsTrigger value="applications" className="flex-1">Candidaturas</TabsTrigger>
+        </TabsList>
 
-      {/* Campaigns List */}
-      {filteredCampaigns.length > 0 ? (
-        <div className="grid gap-4">
-          {filteredCampaigns.map((campaign, index) => {
-            const RemunerationIcon = getRemunerationIcon(campaign.remuneration_type);
-            
-            return (
-              <motion.div
-                key={campaign.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <Card className="border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <CardContent className="p-4 lg:p-6 relative">
-                    <div
-                      className="flex flex-col lg:flex-row lg:items-center gap-4 cursor-pointer"
-                      onClick={() => setDetailCampaign(campaign)}
-                    >
-                      {/* Cover Image */}
-                      {campaign.cover_image_url && (
-                        <div className="lg:w-24 lg:h-24 w-full h-32 rounded-lg overflow-hidden flex-shrink-0">
-                          <img src={campaign.cover_image_url} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-2 pr-12">
-                          <h3 className="text-lg font-semibold truncate">
-                            {campaign.title}
-                          </h3>
-                          <StatusBadge type="campaign" status={campaign.status} />
-                        </div>
-                        
-                        <p className="text-sm line-clamp-2 mb-3 text-muted-foreground">
-                          {campaign.description}
-                        </p>
-                        
-                        <div className="flex flex-wrap items-center gap-3 lg:gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Users className="w-4 h-4" />
-                            {campaign.slots_filled || 0}/{campaign.slots_total || 1}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {formatDate(campaign.deadline)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <RemunerationIcon className="w-4 h-4" />
-                            {campaign.remuneration_type === 'cash' && formatCurrencyRange(campaign.budget_min, campaign.budget_max)}
-                            {campaign.remuneration_type === 'barter' && 'Permuta'}
-                            {campaign.remuneration_type === 'mixed' && 'Misto'}
-                          </span>
-                          {campaign.total_applications > 0 && (
-                            <span onClick={(e) => e.stopPropagation()} className="inline-block">
-                              <Link to={createPageUrl('ApplicationsManager')} state={{ from: 'CampaignManager', fromLabel: 'Campanhas' }} className="flex items-center gap-1 text-primary hover:underline">
-                                <Target className="w-4 h-4" />
-                                {campaign.total_applications} candidaturas
-                              </Link>
-                            </span>
-                          )}
-                        </div>
-                        {(campaign.status === 'active' || campaign.status === 'draft') && isSubscribed && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="mt-3 h-8 text-xs border-primary/30 text-primary hover:bg-primary/5"
-                            onClick={(e) => { e.stopPropagation(); setInviteForCampaign(campaign); }}
-                          >
-                            <UserPlus className="w-3 h-3 mr-1" />
-                            Buscar criadoras
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+        <TabsContent value="campaigns" className="space-y-6">
+          {/* Filters */}
+          <Card className="border bg-card shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <SearchFilter
+                  value={searchTerm}
+                  onChange={setSearchTerm}
+                  placeholder="Buscar campanhas..."
+                  className="flex-1"
+                />
+                <Select value={filterStatus} onValueChange={setFilterStatus}>
+                  <SelectTrigger className="w-full sm:w-44">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos Status</SelectItem>
+                    <SelectItem value="draft">Rascunho</SelectItem>
+                    <SelectItem value="active">Ativa</SelectItem>
+                    <SelectItem value="paused">Pausada</SelectItem>
+                    <SelectItem value="applications_closed">Inscrições Fechadas</SelectItem>
+                    <SelectItem value="completed">Concluída</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
 
-                    {/* DropdownMenu outside clickable area */}
-                    <div className="absolute top-4 right-4 lg:top-6 lg:right-6">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-9 w-9 min-h-[44px] min-w-[44px]" onClick={(e) => e.stopPropagation()}>
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEditDialog(campaign)}>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          {campaign.status === 'draft' && (
-                            <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
-                              <Play className="w-4 h-4 mr-2 text-emerald-600" />
-                              Publicar
-                            </DropdownMenuItem>
+          {/* Campaigns List */}
+          {filteredCampaigns.length > 0 ? (
+            <div className="grid gap-4">
+              {filteredCampaigns.map((campaign, index) => {
+                const RemunerationIcon = getRemunerationIcon(campaign.remuneration_type);
+                
+                return (
+                  <motion.div
+                    key={campaign.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                  >
+                    <Card className="border bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
+                      <CardContent className="p-4 lg:p-6 relative">
+                        <div
+                          className="flex flex-col lg:flex-row lg:items-center gap-4 cursor-pointer"
+                          onClick={() => setDetailCampaign(campaign)}
+                        >
+                          {campaign.cover_image_url && (
+                            <div className="lg:w-24 lg:h-24 w-full h-32 rounded-lg overflow-hidden flex-shrink-0">
+                              <img src={campaign.cover_image_url} alt="" className="w-full h-full object-cover" />
+                            </div>
                           )}
-                          {campaign.status === 'active' && (
-                            <>
-                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'paused')}>
-                                <Pause className="w-4 h-4 mr-2 text-orange-600" />
-                                Pausar
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-2 pr-12">
+                              <h3 className="text-lg font-semibold truncate">
+                                {campaign.title}
+                              </h3>
+                              <StatusBadge type="campaign" status={campaign.status} />
+                            </div>
+                            
+                            <p className="text-sm line-clamp-2 mb-3 text-muted-foreground">
+                              {campaign.description}
+                            </p>
+                            
+                            <div className="flex flex-wrap items-center gap-3 lg:gap-4 text-sm text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <Users className="w-4 h-4" />
+                                {campaign.slots_filled || 0}/{campaign.slots_total || 1}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                {formatDate(campaign.deadline)}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <RemunerationIcon className="w-4 h-4" />
+                                {campaign.remuneration_type === 'cash' && formatCurrencyRange(campaign.budget_min, campaign.budget_max)}
+                                {campaign.remuneration_type === 'barter' && 'Permuta'}
+                                {campaign.remuneration_type === 'mixed' && 'Misto'}
+                              </span>
+                              {campaign.total_applications > 0 && (
+                                <span onClick={(e) => e.stopPropagation()} className="inline-block">
+                                  <Link to={createPageUrl('ApplicationsManager')} state={{ from: 'CampaignManager', fromLabel: 'Campanhas' }} className="flex items-center gap-1 text-primary hover:underline">
+                                    <Target className="w-4 h-4" />
+                                    {campaign.total_applications} candidaturas
+                                  </Link>
+                                </span>
+                              )}
+                            </div>
+                            {(campaign.status === 'active' || campaign.status === 'draft') && isSubscribed && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="mt-3 h-8 text-xs border-primary/30 text-primary hover:bg-primary/5"
+                                onClick={(e) => { e.stopPropagation(); setInviteForCampaign(campaign); }}
+                              >
+                                <UserPlus className="w-3 h-3 mr-1" />
+                                Buscar criadoras
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* DropdownMenu */}
+                        <div className="absolute top-4 right-4 lg:top-6 lg:right-6">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-9 w-9 min-h-[44px] min-w-[44px]" onClick={(e) => e.stopPropagation()}>
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEditDialog(campaign)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'applications_closed')}>
-                                <XCircle className="w-4 h-4 mr-2 text-blue-600" />
-                                Fechar Inscrições
+                              <DropdownMenuSeparator />
+                              {campaign.status === 'draft' && (
+                                <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                                  <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                                  Publicar
+                                </DropdownMenuItem>
+                              )}
+                              {campaign.status === 'active' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'paused')}>
+                                    <Pause className="w-4 h-4 mr-2 text-orange-600" />
+                                    Pausar
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'applications_closed')}>
+                                    <XCircle className="w-4 h-4 mr-2 text-blue-600" />
+                                    Fechar Inscrições
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
+                                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
+                                    Marcar como Concluída
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              {campaign.status === 'paused' && (
+                                <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                                  <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                                  Reativar
+                                </DropdownMenuItem>
+                              )}
+                              {campaign.status === 'applications_closed' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
+                                    <Play className="w-4 h-4 mr-2 text-emerald-600" />
+                                    Reabrir Inscrições
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
+                                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
+                                    Marcar como Concluída
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem 
+                                onClick={() => updateCampaignStatus(campaign.id, 'cancelled')}
+                                className="text-red-600"
+                              >
+                                <Ban className="w-4 h-4 mr-2" />
+                                Cancelar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
-                                <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
-                                Marcar como Concluída
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                          {campaign.status === 'paused' && (
-                            <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
-                              <Play className="w-4 h-4 mr-2 text-emerald-600" />
-                              Reativar
-                            </DropdownMenuItem>
-                          )}
-                          {campaign.status === 'applications_closed' && (
-                            <>
-                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'active')}>
-                                <Play className="w-4 h-4 mr-2 text-emerald-600" />
-                                Reabrir Inscrições
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => updateCampaignStatus(campaign.id, 'completed')}>
-                                <CheckCircle2 className="w-4 h-4 mr-2 text-primary" />
-                                Marcar como Concluída
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem 
-                            onClick={() => updateCampaignStatus(campaign.id, 'cancelled')}
-                            className="text-red-600"
-                          >
-                            <Ban className="w-4 h-4 mr-2" />
-                            Cancelar
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-      ) : (
-        <Card className="border bg-card shadow-sm">
-          <CardContent className="p-12 text-center">
-            <Megaphone className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              {searchTerm || filterStatus !== 'all' 
-                ? 'Nenhuma campanha encontrada' 
-                : 'Nenhuma campanha criada'}
-            </h3>
-            <p className="mb-6 text-muted-foreground">
-              {searchTerm || filterStatus !== 'all'
-                ? 'Tente ajustar seus filtros'
-                : 'Crie sua primeira campanha para conectar com criadoras'}
-            </p>
-            {!searchTerm && filterStatus === 'all' && (
-              <Button 
-              onClick={() => {
-                if (!profileValidation.isComplete) {
-                  toast.error('Complete seu perfil antes de criar campanhas');
-                  return;
-                }
-                if (!isSubscribed) {
-                  setShowPaywall(true);
-                } else {
-                  setIsCreateOpen(true);
-                }
-              }} 
-              className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Criar Campanha
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            <Card className="border bg-card shadow-sm">
+              <CardContent className="p-12 text-center">
+                <Megaphone className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  {searchTerm || filterStatus !== 'all' 
+                    ? 'Nenhuma campanha encontrada' 
+                    : 'Nenhuma campanha criada'}
+                </h3>
+                <p className="mb-6 text-muted-foreground">
+                  {searchTerm || filterStatus !== 'all'
+                    ? 'Tente ajustar seus filtros'
+                    : 'Crie sua primeira campanha para conectar com criadoras'}
+                </p>
+                {!searchTerm && filterStatus === 'all' && (
+                  <Button 
+                  onClick={() => {
+                    if (!profileValidation.isComplete) {
+                      toast.error('Complete seu perfil antes de criar campanhas');
+                      return;
+                    }
+                    if (!isSubscribed) {
+                      setShowPaywall(true);
+                    } else {
+                      setIsCreateOpen(true);
+                    }
+                  }} 
+                  className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Criar Campanha
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="applications">
+          <Applications embedded />
+        </TabsContent>
+      </Tabs>
 
       {/* Paywall Modal */}
       <PaywallModal
@@ -484,7 +494,7 @@ export default function CampaignManager() {
         </DialogContent>
       </Dialog>
 
-      {/* Invite Creator (linked from "Buscar criadoras" per campaign) */}
+      {/* Invite Creator */}
       {inviteForCampaign && (
         <InviteCreatorSearchSheet
           campaign={inviteForCampaign}

@@ -20,6 +20,8 @@ import OpportunityCard from '@/components/opportunities/OpportunityCard';
 import OpportunityFilters from '@/components/opportunities/OpportunityFilters';
 import OpportunityDetailDialog from '@/components/opportunities/OpportunityDetailDialog';
 import ApplyToCampaignDialog from '@/components/opportunities/ApplyToCampaignDialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Applications from './Applications';
 
 export default function OpportunityFeed() {
   const { profile: authProfile, profileType } = useAuth();
@@ -86,86 +88,99 @@ export default function OpportunityFeed() {
         <ProfileIncompleteAlert missingFields={vm.profileValidation.missingFields} profileType="creator" />
       )}
 
-      {/* Subscription Banner */}
-      {!vm.isSubscribed && vm.profileValidation.isComplete && (
-        <Card className="border bg-card shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Crown className="w-6 h-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold">
-                  Sua próxima parceria está aqui
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Assine e candidate-se a campanhas com orçamentos reais — sem intermediários.
-                </p>
-              </div>
-              <Button
-                className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]"
-                onClick={() => vm.setShowPaywall(true)}
+      <Tabs defaultValue="feed" className="space-y-5">
+        <TabsList className="w-full max-w-md">
+          <TabsTrigger value="feed" className="flex-1">Campanhas</TabsTrigger>
+          <TabsTrigger value="applications" className="flex-1">Minhas Candidaturas</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="feed" className="space-y-5">
+          {/* Subscription Banner */}
+          {!vm.isSubscribed && vm.profileValidation.isComplete && (
+            <Card className="border bg-card shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Crown className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">
+                      Sua próxima parceria está aqui
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Assine e candidate-se a campanhas com orçamentos reais — sem intermediários.
+                    </p>
+                  </div>
+                  <Button
+                    className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]"
+                    onClick={() => vm.setShowPaywall(true)}
+                  >
+                    Assinar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Filters */}
+          <OpportunityFilters
+            searchTerm={vm.searchTerm}
+            onSearchChange={vm.setSearchTerm}
+            filterPlatform={vm.filterPlatform}
+            onPlatformChange={vm.setFilterPlatform}
+            filterRemuneration={vm.filterRemuneration}
+            onRemunerationChange={vm.setFilterRemuneration}
+          />
+
+          {/* Campaigns Grid */}
+          {vm.filteredCampaigns.length > 0 ? (
+            <>
+              <motion.div
+                className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-5"
+                initial="hidden" animate="visible"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
               >
-                Assinar
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Filters */}
-      <OpportunityFilters
-        searchTerm={vm.searchTerm}
-        onSearchChange={vm.setSearchTerm}
-        filterPlatform={vm.filterPlatform}
-        onPlatformChange={vm.setFilterPlatform}
-        filterRemuneration={vm.filterRemuneration}
-        onRemunerationChange={vm.setFilterRemuneration}
-      />
-
-      {/* Campaigns Grid */}
-      {vm.filteredCampaigns.length > 0 ? (
-        <>
-          <motion.div
-            className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-5"
-            initial="hidden" animate="visible"
-            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
-          >
-            {vm.filteredCampaigns.map((campaign, index) => (
-              <motion.div key={campaign.id} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
-                <OpportunityCard
-                  campaign={campaign}
-                  brand={vm.brands[campaign.brand_id]}
-                  applied={vm.hasApplied(campaign.id)}
-                  index={index}
-                  onView={vm.openCampaignDetails}
-                />
+                {vm.filteredCampaigns.map((campaign, index) => (
+                  <motion.div key={campaign.id} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
+                    <OpportunityCard
+                      campaign={campaign}
+                      brand={vm.brands[campaign.brand_id]}
+                      applied={vm.hasApplied(campaign.id)}
+                      index={index}
+                      onView={vm.openCampaignDetails}
+                    />
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
 
-          {/* Infinite scroll sentinel */}
-          <div ref={loadMoreRef} className="flex justify-center py-6">
-            {vm.isFetchingNextPage && (
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            )}
-          </div>
-        </>
-      ) : (
-        <Card className="border bg-card shadow-sm">
-          <CardContent className="p-12">
-            <EmptyState
-              icon={Megaphone}
-              title="Nenhuma campanha encontrada"
-              description={
-                vm.searchTerm || vm.filterPlatform !== 'all' || vm.filterRemuneration !== 'all'
-                  ? 'Tente ajustar seus filtros'
-                  : getEmptyMessage(creatorType)
-              }
-            />
-          </CardContent>
-        </Card>
-      )}
+              {/* Infinite scroll sentinel */}
+              <div ref={loadMoreRef} className="flex justify-center py-6">
+                {vm.isFetchingNextPage && (
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                )}
+              </div>
+            </>
+          ) : (
+            <Card className="border bg-card shadow-sm">
+              <CardContent className="p-12">
+                <EmptyState
+                  icon={Megaphone}
+                  title="Nenhuma campanha encontrada"
+                  description={
+                    vm.searchTerm || vm.filterPlatform !== 'all' || vm.filterRemuneration !== 'all'
+                      ? 'Tente ajustar seus filtros'
+                      : getEmptyMessage(creatorType)
+                  }
+                />
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="applications">
+          <Applications embedded />
+        </TabsContent>
+      </Tabs>
 
       {/* Campaign Details / Application Dialog */}
       <Dialog open={!!vm.selectedCampaign} onOpenChange={vm.closeDialog}>

@@ -5,28 +5,26 @@ import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
   Megaphone, 
-  FileText, 
   Search,
   Building2,
   MessageCircle,
-  User,
-  Send
+  User
 } from 'lucide-react';
 
 export default function BottomNav({ profileType, currentPageName, unreadCount = 0 }) {
   const brandNavItems = [
     { name: 'Início', page: 'BrandDashboard', icon: LayoutDashboard },
-    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
-    { name: 'Candidaturas', page: 'Applications', icon: FileText },
+    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone, alsoActive: ['Applications'] },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
+    { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
   const creatorNavItems = [
     { name: 'Início', page: 'CreatorDashboard', icon: LayoutDashboard },
-    { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone },
-    { name: 'Candidaturas', page: 'Applications', icon: Send },
+    { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone, alsoActive: ['Applications'] },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
+    { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
@@ -48,7 +46,7 @@ export default function BottomNav({ profileType, currentPageName, unreadCount = 
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card border-t shadow-[0_-2px_8px_rgba(0,0,0,0.06)]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       <div className="flex items-stretch" style={{ height: 'var(--bottom-nav-height, 72px)' }}>
         {navItems.map((item) => {
-          const isActive = currentPageName === item.page;
+          const isActive = currentPageName === item.page || (item.alsoActive && item.alsoActive.includes(currentPageName));
           return (
             <Link
               key={item.page}

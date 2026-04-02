@@ -13,7 +13,7 @@ import CreatorProfileModal from '../components/modals/CreatorProfileModal';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-export default function Applications() {
+export default function Applications({ embedded = false }) {
   const { profile: authProfile, profileType, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const vm = useApplicationsViewModel(profileType, authProfile);
@@ -24,12 +24,14 @@ export default function Applications() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">
-          {profileType === 'brand' ? 'Candidaturas' : 'Minhas Candidaturas'}
-        </h1>
-        <p className="mt-1">{vm.filteredApplications.length} candidaturas encontradas</p>
-      </div>
+      {!embedded && (
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">
+            {profileType === 'brand' ? 'Candidaturas' : 'Minhas Candidaturas'}
+          </h1>
+          <p className="mt-1">{vm.filteredApplications.length} candidaturas encontradas</p>
+        </div>
+      )}
 
       {/* Filters */}
       <ApplicationsFilters
