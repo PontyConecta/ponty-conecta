@@ -421,11 +421,7 @@ export default function ApplicationsManager() {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => {
-                        if (rejectionReason || window.confirm('Deseja realmente recusar esta candidatura?')) {
-                          handleReject();
-                        }
-                      }}
+                      onClick={handleReject}
                       disabled={processing}
                       className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
                     >

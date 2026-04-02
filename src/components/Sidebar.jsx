@@ -26,7 +26,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
   const brandNavItems = [
     { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Descobrir Criadores', page: 'DiscoverCreators', icon: Search },
-    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone },
+    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone, alsoActive: ['Applications'] },
     { name: 'Candidaturas', page: 'Applications', icon: Users },
     { name: 'Entregas de Criadores', page: 'Deliveries', icon: FileText },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
@@ -37,7 +37,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
   const creatorNavItems = [
     { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Descobrir Marcas', page: 'DiscoverBrands', icon: Building2 },
-    { name: 'Campanhas', page: 'OpportunityFeed', icon: Compass },
+    { name: 'Campanhas', page: 'OpportunityFeed', icon: Compass, alsoActive: ['Applications'] },
     { name: 'Minhas Candidaturas', page: 'Applications', icon: Send },
     { name: 'Minhas Entregas', page: 'MyDeliveries', icon: PackageCheck },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
@@ -67,7 +67,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
             if (item.type === 'divider') {
               return <div key={`divider-${index}`} className="my-3 border-t" />;
             }
-            const isActive = currentPageName === item.page;
+            const isActive = currentPageName === item.page || item.alsoActive?.includes(currentPageName);
             const linkContent = (
               <Link
                 key={item.page}
