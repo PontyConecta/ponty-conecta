@@ -187,7 +187,7 @@ function LayoutContent({ children, currentPageName }) {
            Mobile: pt-14 (header) + pb for bottom nav safe area
       */}
       <main className={`pt-14 lg:pt-16 min-h-[100dvh] transition-[margin-left] duration-200 ease-in-out ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
-        <div className="px-3 py-4 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto pb-28 lg:pb-6">
+        <div className="px-3 pt-4 sm:px-4 sm:pt-4 lg:px-6 lg:pt-6 xl:px-8 xl:pt-8 max-w-7xl mx-auto pb-28 lg:pb-6">
           {children}
         </div>
       </main>
