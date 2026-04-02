@@ -13,9 +13,9 @@ const PRESENCE_TYPES = [
   { value: 'website', label: 'Website', icon: Globe, placeholder: 'https://suamarca.com.br', color: 'bg-blue-100 text-blue-700' },
   { value: 'instagram', label: 'Instagram', icon: Instagram, placeholder: 'suamarca (sem @)', color: 'bg-pink-100 text-pink-700' },
   { value: 'linkedin', label: 'LinkedIn', icon: Linkedin, placeholder: 'linkedin.com/company/suamarca', color: 'bg-sky-100 text-sky-700' },
-  { value: 'tiktok', label: 'TikTok', icon: Globe, placeholder: 'suamarca (sem @)', color: 'bg-purple-100 text-purple-700' },
+  { value: 'tiktok', label: 'TikTok', icon: Globe, placeholder: 'suamarca (sem @)', color: 'bg-slate-100 text-slate-700' },
   { value: 'youtube', label: 'YouTube', icon: Youtube, placeholder: 'youtube.com/@suamarca', color: 'bg-red-100 text-red-700' },
-  { value: 'facebook', label: 'Facebook', icon: Facebook, placeholder: 'facebook.com/suamarca', color: 'bg-indigo-100 text-indigo-700' },
+  { value: 'facebook', label: 'Facebook', icon: Facebook, placeholder: 'facebook.com/suamarca', color: 'bg-blue-100 text-blue-700' },
   { value: 'twitter', label: 'Twitter / X', icon: Twitter, placeholder: 'suamarca (sem @)', color: 'bg-slate-100 text-slate-700' },
 ];
 

@@ -41,22 +41,35 @@ export default function Inbox() {
       const directKeys = appIds.filter(id => id.includes('__direct__'));
 
       const directPartnerMap = {};
-      for (const key of directKeys) {
-        const parts = key.split('__direct__');
-        const partnerId = parts[0] === user.id ? parts[1] : parts[0];
-        const [crs, brs] = await Promise.all([
-          base44.entities.Creator.filter({ user_id: partnerId }),
-          base44.entities.Brand.filter({ user_id: partnerId }),
+      if (directKeys.length > 0) {
+        const partnerUserIds = directKeys.map(key => {
+          const parts = key.split('__direct__');
+          return parts[0] === user.id ? parts[1] : parts[0];
+        });
+        const uniquePartnerIds = [...new Set(partnerUserIds)];
+        const [allCreators, allBrands] = await Promise.all([
+          base44.entities.Creator.filter({ user_id: { $in: uniquePartnerIds } }),
+          base44.entities.Brand.filter({ user_id: { $in: uniquePartnerIds } }),
         ]);
         if (aborted) return;
-        directPartnerMap[key] = {
-          name: crs[0]?.display_name || brs[0]?.company_name || 'Usuário',
-          avatarUrl: crs[0]?.avatar_url || brs[0]?.logo_url || null,
-        };
+        const creatorByUserId = {};
+        allCreators.forEach(c => { creatorByUserId[c.user_id] = c; });
+        const brandByUserId = {};
+        allBrands.forEach(b => { brandByUserId[b.user_id] = b; });
+        for (const key of directKeys) {
+          const parts = key.split('__direct__');
+          const partnerId = parts[0] === user.id ? parts[1] : parts[0];
+          const cr = creatorByUserId[partnerId];
+          const br = brandByUserId[partnerId];
+          directPartnerMap[key] = {
+            name: cr?.display_name || br?.company_name || 'Usuário',
+            avatarUrl: cr?.avatar_url || br?.logo_url || null,
+          };
+        }
       }
       
       if (realAppIds.length > 0) {
-        const apps = await Promise.all(realAppIds.map(id => base44.entities.Application.filter({ id }).then(r => r[0])));
+        const apps = await base44.entities.Application.filter({ id: { $in: realAppIds } });
         if (aborted) return;
         const appMap = {};
         const campaignIds = new Set();
@@ -71,9 +84,9 @@ export default function Inbox() {
         setApplications(appMap);
 
         const [campsArr, brandsArr, creatorsArr] = await Promise.all([
-          Promise.all([...campaignIds].map(id => base44.entities.Campaign.filter({ id }).then(r => r[0]))),
-          Promise.all([...brandIds].map(id => base44.entities.Brand.filter({ id }).then(r => r[0]))),
-          Promise.all([...creatorIds].map(id => base44.entities.Creator.filter({ id }).then(r => r[0]))),
+          campaignIds.size > 0 ? base44.entities.Campaign.filter({ id: { $in: [...campaignIds] } }) : [],
+          brandIds.size > 0 ? base44.entities.Brand.filter({ id: { $in: [...brandIds] } }) : [],
+          creatorIds.size > 0 ? base44.entities.Creator.filter({ id: { $in: [...creatorIds] } }) : [],
         ]);
         if (aborted) return;
 
@@ -172,7 +185,7 @@ export default function Inbox() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <MessageCircle className="w-6 h-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Mensagens</h1>
+          <h1 className="text-xl font-bold text-foreground">Direct</h1>
           {totalUnread > 0 && (
             <Badge className="bg-primary text-primary-foreground border-0">{totalUnread}</Badge>
           )}

@@ -112,7 +112,7 @@ export default function SelectProfile() {
       icon: Sparkles,
       title: 'Sou Criador',
       subtitle: 'Quero trabalhar com marcas',
-      bgColor: '#B5956A',
+      bgColor: 'hsl(var(--accent))',
       shadowColor: 'shadow-primary/25',
       features: [
         'Acesse oportunidades filtradas',

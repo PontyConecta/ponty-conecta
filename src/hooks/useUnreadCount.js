@@ -15,7 +15,8 @@ export function useUnreadCount(userId) {
     load();
 
     const unsub = base44.entities.Message.subscribe((event) => {
-      if (event.type === 'create' || event.type === 'update') {
+      if ((event.type === 'create' || event.type === 'update') &&
+          (event.data?.recipient_id === userId || event.data?.sender_id === userId)) {
         load();
       }
     });
