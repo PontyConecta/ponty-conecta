@@ -26,6 +26,7 @@ export default function ApplicationCard({
   onView,
   onAccept,
   onWithdraw,
+  onViewCreatorProfile,
 }) {
   return (
     <motion.div
@@ -40,14 +41,20 @@ export default function ApplicationCard({
             <div className="flex items-center gap-4 flex-1 min-w-0">
               {profileType === 'brand' ? (
                 <>
-                  <Avatar className="w-12 h-12">
+                  <Avatar
+                    className="w-12 h-12 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+                    onClick={() => onViewCreatorProfile?.(creator)}
+                  >
                     <AvatarImage src={creator?.avatar_url} />
                     <AvatarFallback className="bg-orange-100 text-orange-700">
                       {creator?.display_name?.[0] || 'C'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold truncate">
+                    <h3
+                      className="font-semibold truncate cursor-pointer hover:text-primary transition-colors"
+                      onClick={() => onViewCreatorProfile?.(creator)}
+                    >
                       {creator?.display_name || 'Criador'}
                     </h3>
                     <p className="text-sm truncate">

@@ -5,8 +5,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { Eye } from 'lucide-react';
 import StatusBadge from '../common/StatusBadge';
 
 export default function ApplicationDetailDialog({
@@ -17,6 +19,7 @@ export default function ApplicationDetailDialog({
   creator,
   campaign,
   brand,
+  onViewCreatorProfile,
 }) {
   if (!application) return null;
 
@@ -41,10 +44,22 @@ export default function ApplicationDetailDialog({
                   {creator?.display_name || 'Criador'}
                 </h4>
                 <p className="text-sm">
-                  {creator?.bio?.slice(0, 100)}...
+                  {creator?.bio ? `${creator.bio.slice(0, 100)}${creator.bio.length > 100 ? '...' : ''}` : ''}
                 </p>
               </div>
             </div>
+
+            {onViewCreatorProfile && creator && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => onViewCreatorProfile(creator)}
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Ver Perfil Completo
+              </Button>
+            )}
 
             <div>
               <Label className="text-sm">Campanha</Label>

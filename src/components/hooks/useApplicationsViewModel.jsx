@@ -27,7 +27,7 @@ export function useApplicationsViewModel(profileType, profile) {
 
   // Filter state
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('pending');
+  const [filterStatus, setFilterStatus] = useState('all');
   const [filterCampaign, setFilterCampaign] = useState('all');
 
   // Dialog state

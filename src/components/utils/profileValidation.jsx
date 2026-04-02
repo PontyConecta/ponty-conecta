@@ -17,7 +17,6 @@ const CREATOR_REQUIRED_FIELDS = [
 // Campos básicos obrigatórios para Brand
 const BRAND_REQUIRED_FIELDS = [
   { key: 'company_name', label: 'Nome da Empresa' },
-  { key: 'logo_url', label: 'Logo' },
   { key: 'industry', label: 'Setor' },
   { key: 'description', label: 'Descrição' },
   { key: 'contact_email', label: 'Email de Contato' },

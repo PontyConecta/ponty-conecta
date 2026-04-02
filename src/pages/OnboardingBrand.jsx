@@ -113,6 +113,14 @@ export default function OnboardingBrand() {
       const userData = await base44.auth.me();
       setUser(userData);
 
+      // Verificar se já tem perfil de creator
+      const existingCreators = await base44.entities.Creator.filter({ user_id: userData.id });
+      if (existingCreators.length > 0) {
+        toast.info('Você já possui um perfil de criador(a). Redirecionando...');
+        navigate(createPageUrl('CreatorDashboard'));
+        return;
+      }
+
       const brands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (brands.length > 0) {
         const existing = brands[0];

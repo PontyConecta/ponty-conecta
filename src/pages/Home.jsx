@@ -24,6 +24,9 @@ export default function Home() {
       const dashboardPage = profileType === 'brand' ? 'BrandDashboard' : 'CreatorDashboard';
       navigate(createPageUrl(dashboardPage));
     }
+    if (!loading && user && !profileType) {
+      navigate(createPageUrl('SelectProfile'));
+    }
   }, [user, profileType, loading, navigate]);
 
   const scrollToSection = () => {

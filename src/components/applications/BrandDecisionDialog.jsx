@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, XCircle, Loader2, Eye } from 'lucide-react';
 
 export default function BrandDecisionDialog({
   open,
@@ -25,6 +25,7 @@ export default function BrandDecisionDialog({
   processing,
   onAccept,
   onReject,
+  onViewCreatorProfile,
 }) {
   if (!application) return null;
 
@@ -43,10 +44,21 @@ export default function BrandDecisionDialog({
                 {creator?.display_name?.[0] || 'C'}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <h4 className="font-semibold">
-                {creator?.display_name || 'Criador'}
-              </h4>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h4 className="font-semibold">
+                  {creator?.display_name || 'Criador'}
+                </h4>
+                {onViewCreatorProfile && creator && (
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:underline flex items-center gap-1"
+                    onClick={() => onViewCreatorProfile(creator)}
+                  >
+                    <Eye className="w-3 h-3" /> Ver perfil
+                  </button>
+                )}
+              </div>
               <p className="text-sm">
                 {creator?.bio ? `${creator.bio.slice(0, 100)}${creator.bio.length > 100 ? '...' : ''}` : ''}
               </p>
@@ -86,6 +98,16 @@ export default function BrandDecisionDialog({
               />
             </div>
 
+            <div>
+              <Label>Motivo da Recusa (opcional)</Label>
+              <Textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Explique brevemente o motivo..."
+                className="mt-2"
+              />
+            </div>
+
             <div className="flex gap-3">
               <Button
                 onClick={onAccept}
@@ -101,27 +123,13 @@ export default function BrandDecisionDialog({
               </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                  if (rejectionReason || window.confirm('Deseja realmente recusar esta candidatura?')) {
-                    onReject();
-                  }
-                }}
+                onClick={() => onReject()}
                 disabled={processing}
                 className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
               >
                 <XCircle className="w-4 h-4 mr-2" />
                 Recusar
               </Button>
-            </div>
-
-            <div>
-              <Label>Motivo da Recusa (opcional)</Label>
-              <Textarea
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Explique brevemente o motivo..."
-                className="mt-2"
-              />
             </div>
           </div>
         </div>

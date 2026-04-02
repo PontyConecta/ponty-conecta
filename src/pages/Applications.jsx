@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Target } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -9,6 +9,7 @@ import ApplicationCard from '../components/applications/ApplicationCard';
 import ApplicationsFilters from '../components/applications/ApplicationsFilters';
 import ApplicationDetailDialog from '../components/applications/ApplicationDetailDialog';
 import BrandDecisionDialog from '../components/applications/BrandDecisionDialog';
+import CreatorProfileModal from '../components/modals/CreatorProfileModal';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -16,11 +17,7 @@ export default function Applications() {
   const { profile: authProfile, profileType, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const vm = useApplicationsViewModel(profileType, authProfile);
-
-  if (!authLoading && profileType && profileType !== 'brand') {
-    navigate(createPageUrl('Home'));
-    return null;
-  }
+  const [viewingCreator, setViewingCreator] = useState(null);
 
   if (vm.isLoading) return <LoadingSpinner />;
 
@@ -61,6 +58,7 @@ export default function Applications() {
               onView={vm.openView}
               onAccept={vm.openDecision}
               onWithdraw={vm.handleWithdraw}
+              onViewCreatorProfile={(creator) => setViewingCreator(creator)}
             />
           ))}
 
@@ -111,6 +109,7 @@ export default function Applications() {
         creator={vm.selectedApplication ? vm.creators[vm.selectedApplication.creator_id] : null}
         campaign={vm.selectedApplication ? vm.campaigns[vm.selectedApplication.campaign_id] : null}
         brand={vm.selectedApplication ? vm.brands[vm.selectedApplication.brand_id] : null}
+        onViewCreatorProfile={(creator) => setViewingCreator(creator)}
       />
 
       {/* Brand Decision Dialog (accept/reject for pending) */}
@@ -127,6 +126,14 @@ export default function Applications() {
         processing={vm.processing}
         onAccept={vm.handleAccept}
         onReject={vm.handleReject}
+        onViewCreatorProfile={(creator) => setViewingCreator(creator)}
+      />
+
+      {/* Creator Profile Modal */}
+      <CreatorProfileModal
+        open={!!viewingCreator}
+        onClose={() => setViewingCreator(null)}
+        creator={viewingCreator}
       />
     </div>
   );
