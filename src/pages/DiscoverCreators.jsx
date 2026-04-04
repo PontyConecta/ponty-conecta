@@ -26,6 +26,7 @@ import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const NICHES = [
   { value: 'Moda', label: 'Moda' },
@@ -89,6 +90,7 @@ export default function DiscoverCreators() {
       setCreators(allCreators.filter(c => c.display_name?.trim()));
     } catch (error) {
       console.error('Error loading creators:', error);
+      toast.error('Erro ao carregar criadoras. Tente recarregar a página.');
     } finally {
       setLoading(false);
     }

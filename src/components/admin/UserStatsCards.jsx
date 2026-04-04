@@ -27,7 +27,11 @@ function TrendIndicator({ current, previous }) {
 export default function UserStatsCards({ brands, creators, onStatClick }) {
   const totalPremium = [...brands, ...creators].filter(p => p.subscription_status === 'premium').length;
   const totalVerified = [...brands, ...creators].filter(p => p.is_verified).length;
-  const totalTrial = [...brands, ...creators].filter(p => p.subscription_status === 'trial').length;
+  const totalTrial = [...brands, ...creators].filter(p =>
+    p.subscription_status === 'premium' &&
+    p.trial_end_date &&
+    !p.stripe_customer_id
+  ).length;
   const totalIncomplete = [...brands, ...creators].filter(p => p.account_state === 'incomplete').length;
 
   // Calculate 7-day trends

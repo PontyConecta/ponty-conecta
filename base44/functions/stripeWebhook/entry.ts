@@ -213,10 +213,22 @@ async function handleCheckoutCompleted(base44, session) {
     console.error('Failed to create/update subscription record:', e.message);
   }
 
+  // Derive plan_level from subscription interval
+  let planLevel = 'premium_monthly';
+  if (subscriptionId) {
+    try {
+      const subDetails = await stripe.subscriptions.retrieve(subscriptionId);
+      const interval = subDetails.items?.data?.[0]?.price?.recurring?.interval;
+      planLevel = interval === 'year' ? 'premium_annual' : 'premium_monthly';
+    } catch (e) {
+      console.error('Could not derive plan interval:', e.message);
+    }
+  }
+
   // Update profile with premium status
   const updateData = {
     subscription_status: 'premium',
-    plan_level: 'premium',
+    plan_level: planLevel,
     stripe_customer_id: session.customer
   };
   console.log('Updating profile with:', JSON.stringify(updateData));
@@ -278,11 +290,17 @@ async function handleSubscriptionUpdate(base44, subscription) {
     });
   }
 
+  // Derive plan_level from subscription interval
+  let derivedPlanLevel = null;
+  if (mappedStatus === 'premium') {
+    const interval = subscription.items?.data?.[0]?.price?.recurring?.interval;
+    derivedPlanLevel = interval === 'year' ? 'premium_annual' : 'premium_monthly';
+  }
+
   // Update profile
-  const planLevel = mappedStatus === 'premium' ? 'premium' : null;
   const profileUpdate = {
     subscription_status: mappedStatus,
-    plan_level: planLevel,
+    plan_level: derivedPlanLevel,
     stripe_customer_id: subscription.customer
   };
   console.log('Updating profile:', entityName, profile.id, JSON.stringify(profileUpdate));

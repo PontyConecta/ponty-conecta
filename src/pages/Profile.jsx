@@ -165,7 +165,8 @@ export default function Profile() {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       handleChange(field, file_url);
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error('Upload error:', error);
+      toast.error('Erro ao enviar imagem. Tente novamente.');
     }
   };
 
@@ -180,7 +181,8 @@ export default function Profile() {
         portfolio_images: [...(prev.portfolio_images || []), file_url]
       }));
     } catch (error) {
-      console.error('Error uploading portfolio image:', error);
+      console.error('Upload error:', error);
+      toast.error('Erro ao enviar imagem. Tente novamente.');
     }
   };
 

@@ -78,7 +78,46 @@ export function AuthProvider({ children }) {
         setProfile(null);
         setProfileType(null);
       } catch (profileError) {
-        console.error('Erro ao buscar perfil:', profileError);
+        console.error('Error loading profile:', profileError);
+        // Retry once
+        try {
+          const [brandProfiles, creatorProfiles] = await Promise.all([
+            base44.entities.Brand.filter({ user_id: userData.id }),
+            base44.entities.Creator.filter({ user_id: userData.id }),
+          ]);
+
+          const hasBrand = brandProfiles.length > 0;
+          const hasCreator = creatorProfiles.length > 0;
+
+          if (hasBrand && hasCreator) {
+            const brandReady = brandProfiles[0].account_state === 'ready';
+            const creatorReady = creatorProfiles[0].account_state === 'ready';
+            if (creatorReady && !brandReady) {
+              setProfile(creatorProfiles[0]);
+              setProfileType('creator');
+            } else if (brandReady && !creatorReady) {
+              setProfile(brandProfiles[0]);
+              setProfileType('brand');
+            } else {
+              const brandDate = new Date(brandProfiles[0].created_date || 0);
+              const creatorDate = new Date(creatorProfiles[0].created_date || 0);
+              if (creatorDate > brandDate) {
+                setProfile(creatorProfiles[0]);
+                setProfileType('creator');
+              } else {
+                setProfile(brandProfiles[0]);
+                setProfileType('brand');
+              }
+            }
+            return true;
+          }
+          if (hasBrand) { setProfile(brandProfiles[0]); setProfileType('brand'); return true; }
+          if (hasCreator) { setProfile(creatorProfiles[0]); setProfileType('creator'); return true; }
+          setProfile(null);
+          setProfileType(null);
+        } catch (retryError) {
+          console.error('Profile load retry failed:', retryError);
+        }
       }
 
       return true;

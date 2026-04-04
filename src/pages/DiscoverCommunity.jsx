@@ -10,6 +10,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Search, Users, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import BrandProfileModal from '@/components/modals/BrandProfileModal';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import PaywallModal from '@/components/PaywallModal';
@@ -70,6 +71,7 @@ export default function DiscoverCommunity() {
       }
     } catch (error) {
       console.error('Error loading community:', error);
+      toast.error('Erro ao carregar comunidade. Tente recarregar a página.');
     } finally {
       setLoading(false);
     }

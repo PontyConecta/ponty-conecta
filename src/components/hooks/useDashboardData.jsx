@@ -85,7 +85,7 @@ export function useBrandDashboardData(brandId) {
       // 1) Stats from backend (1 request) + recent items in parallel
       const [statsRes, recentCampaigns, recentApps, recentDeliveries] = await Promise.all([
         base44.functions.invoke('brandDashboardStats', { brandId, range: 'all' }),
-        base44.entities.Campaign.filter({ brand_id: brandId }, '-created_date', RECENT_LIMIT),
+        base44.entities.Campaign.filter({ brand_id: brandId }, '-created_date', 200),
         base44.entities.Application.filter({ brand_id: brandId, status: 'pending' }, '-created_date', 100),
         base44.entities.Delivery.filter({ brand_id: brandId }, '-created_date', RECENT_LIMIT),
       ]);

@@ -23,6 +23,7 @@ import { createPageUrl } from '@/utils';
 import { BRAZIL_STATES } from '@/components/common/BrazilStateSelect';
 import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
 import { useAuth } from '@/components/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const INDUSTRIES = [
   { value: 'fashion', label: 'Moda' },
@@ -79,6 +80,7 @@ export default function DiscoverBrands() {
       setBrands(enriched);
     } catch (error) {
       console.error('Error loading brands:', error);
+      toast.error('Erro ao carregar marcas. Tente recarregar a página.');
     } finally {
       setLoading(false);
     }

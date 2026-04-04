@@ -161,10 +161,15 @@ export default function OnboardingCreator() {
   };
 
   const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    handleChange('avatar_url', file_url);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      handleChange('avatar_url', file_url);
+    } catch (error) {
+      console.error('Avatar upload error:', error);
+      toast.error('Erro ao enviar foto. Tente novamente.');
+    }
   };
 
   const addPlatform = () => {

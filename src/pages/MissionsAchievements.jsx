@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Loader2, Flame, Star, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function MissionsAchievements() {
   const { user } = useAuth();
@@ -22,6 +23,7 @@ export default function MissionsAchievements() {
       setMissions(missionsData);
     } catch (error) {
       console.error('Error loading data:', error);
+      toast.error('Erro ao carregar missões.');
     } finally {
       setLoading(false);
     }

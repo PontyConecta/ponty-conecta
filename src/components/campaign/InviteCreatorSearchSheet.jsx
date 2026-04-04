@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Loader2 } from 'lucide-react';
-import { toast } from '@/components/utils/toast';
+import { toast } from 'sonner';
 
 export default function InviteCreatorSearchSheet({ campaign, onClose }) {
   const { user } = useAuth();
@@ -26,15 +26,20 @@ export default function InviteCreatorSearchSheet({ campaign, onClose }) {
 
   const handleInvite = async (creator) => {
     setSending(creator.id);
-    const conversationId = [user.id, creator.user_id].sort().join('__direct__');
     const content = `🎯 *Convite para campanha: "${campaign.title}"*\n\nOlá! Seu perfil chamou nossa atenção e gostaríamos de te convidar para participar desta campanha. Candidate-se pelo app!`;
-    await base44.functions.invoke('sendMessage', {
-      recipient_id: creator.user_id,
-      content,
-      application_id: null,
-    });
-    toast.success(`Convite enviado para ${creator.display_name?.split(' ')[0]}! ✨`);
-    setSending(null);
+    try {
+      await base44.functions.invoke('sendMessage', {
+        recipient_id: creator.user_id,
+        content,
+        application_id: null,
+      });
+      toast.success(`Convite enviado para ${creator.display_name?.split(' ')[0]}! ✨`);
+    } catch (error) {
+      console.error('Error sending invite:', error);
+      toast.error('Erro ao enviar convite. Tente novamente.');
+    } finally {
+      setSending(null);
+    }
   };
 
   return (
