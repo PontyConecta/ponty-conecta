@@ -387,17 +387,8 @@ async function handleInvoicePaid(base44, invoice) {
 }
 
 async function handleInvoicePaymentFailed(base44, invoice) {
-  console.error('Invoice payment failed:', invoice.id);
-
-  const metadata = invoice.subscription_details?.metadata || {};
-  const result = await findProfile(base44, invoice.customer, metadata);
-
-  if (result) {
-    const { profile, profileType, entityName } = result;
-    await base44.asServiceRole.entities[entityName].update(profile.id, {
-      subscription_status: 'starter',
-      plan_level: null
-    });
-    console.log(`Payment failed for ${profileType} ${profile.id} -> starter`);
-  }
+  console.log('[stripeWebhook] Invoice payment failed — no immediate action. Grace period handled by subscription.updated event.');
+  // Do NOT downgrade here — let handleSubscriptionUpdate manage the transition
+  // When Stripe gives up retrying, it will fire subscription.updated with status 'canceled' or 'unpaid'
+  // which handleSubscriptionUpdate already maps to 'starter'
 }
