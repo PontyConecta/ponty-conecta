@@ -10,6 +10,7 @@ import ApplicationsFilters from '../components/applications/ApplicationsFilters'
 import ApplicationDetailDialog from '../components/applications/ApplicationDetailDialog';
 import BrandDecisionDialog from '../components/applications/BrandDecisionDialog';
 import CreatorProfileModal from '../components/modals/CreatorProfileModal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -132,11 +133,20 @@ export default function Applications({ embedded = false }) {
       />
 
       {/* Creator Profile Modal */}
-      <CreatorProfileModal
-        open={!!viewingCreator}
-        onClose={() => setViewingCreator(null)}
-        creator={viewingCreator}
-      />
+      {viewingCreator && (
+        <Dialog open={!!viewingCreator} onOpenChange={(open) => { if (!open) setViewingCreator(null); }}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Perfil da Criadora</DialogTitle></DialogHeader>
+            <CreatorProfileModal
+              creator={viewingCreator}
+              isSubscribed={true}
+              formatFollowers={(n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n || 0)}
+              getTotalFollowers={(c) => (c?.platforms || []).reduce((s, p) => s + (p.followers || 0), 0)}
+              onPaywall={() => {}}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
