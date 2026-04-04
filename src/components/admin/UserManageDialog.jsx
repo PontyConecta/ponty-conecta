@@ -41,6 +41,7 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
   const [hiddenReason, setHiddenReason] = useState('');
   const [showHideForm, setShowHideForm] = useState(false);
   const [showConvertConfirm, setShowConvertConfirm] = useState(false);
+  const [isTrialMode, setIsTrialMode] = useState(false);
 
   React.useEffect(() => {
     if (user && profile) {
@@ -85,8 +86,6 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
     }
     handleAction('set_subscription_status', data);
   };
-
-  const [isTrialMode, setIsTrialMode] = useState(false);
 
   const handleSaveAccountState = () => handleAction('set_account_state', { account_state: newAccountState });
   const handleToggleVerified = () => handleAction('toggle_verified');
