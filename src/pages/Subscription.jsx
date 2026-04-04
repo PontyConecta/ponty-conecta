@@ -52,14 +52,30 @@ export default function Subscription() {
 
     setProcessingPayment(true);
     let attempts = 0;
+    let cancelled = false;
+    let timeoutId;
     const poll = async () => {
+      if (cancelled) return;
       attempts++;
       await refreshProfile();
-      if (attempts < 15) setTimeout(poll, 2000);
-      else setProcessingPayment(false);
+      if (cancelled) return;
+      if (attempts < 15) {
+        timeoutId = setTimeout(poll, 2000);
+      } else {
+        setProcessingPayment(false);
+      }
     };
     poll();
+    return () => { cancelled = true; clearTimeout(timeoutId); };
   }, [profile?.id, profileType]);
+
+  // Stop processing overlay once subscription is confirmed
+  const isSubscribedEarly = isProfileSubscribed(profile);
+  useEffect(() => {
+    if (isSubscribedEarly && processingPayment) {
+      setProcessingPayment(false);
+    }
+  }, [isSubscribedEarly, processingPayment]);
 
   const handleSubscribe = async () => {
     if (window.self !== window.top) {
@@ -121,14 +137,6 @@ export default function Subscription() {
 
   const isBrand = profileType === 'brand';
   const isSubscribed = isProfileSubscribed(profile);
-
-  // Stop processing overlay once subscription is confirmed
-  // (placed before any early returns so hook order is stable)
-  useEffect(() => {
-    if (isSubscribed && processingPayment) {
-      setProcessingPayment(false);
-    }
-  }, [isSubscribed, processingPayment]);
 
   // Show payment confirmation screen
   if (processingPayment && !isSubscribed) {
