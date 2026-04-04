@@ -50,17 +50,15 @@ Deno.serve(async (req) => {
         } else {
           console.log('Reusing existing customer:', customerId);
           // Verificar se já tem assinatura ativa
-          const activeSubs = await stripe.subscriptions.list({
+          const existingSubs = await stripe.subscriptions.list({
             customer: customerId,
-            status: 'active',
-            limit: 1
+            limit: 10
           });
-          if (activeSubs.data.length > 0) {
-            console.log('Customer already has active subscription:', activeSubs.data[0].id);
-            return Response.json({
-              error: 'Você já possui uma assinatura ativa.',
-              code: 'ALREADY_SUBSCRIBED'
-            }, { status: 400 });
+          const blockingStatuses = ['active', 'trialing', 'past_due'];
+          const hasExisting = existingSubs.data.some(s => blockingStatuses.includes(s.status));
+          if (hasExisting) {
+            console.log('Customer already has blocking subscription');
+            return Response.json({ error: 'Você já possui uma assinatura ativa.', code: 'ALREADY_SUBSCRIBED' }, { status: 400 });
           }
         }
       } catch (e) {
