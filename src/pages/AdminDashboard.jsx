@@ -82,14 +82,14 @@ export default function AdminDashboard() {
       const response = await base44.functions.invoke('adminAnalyticsV2', {
         mode: 'lists', list_type: 'list_users', range: '30d'
       });
-      const { users: u, brands: b, creators: c } = response.data;
+      const { users: u, brands: b, creators: c } = response.data || {};
       setUserListData({ users: u || [], brands: b || [], creators: c || [] });
       setUserListLoaded(true);
     } catch (err) {
       console.error('Error loading user list for dashboard:', err);
       try {
         const fallback = await base44.functions.invoke('adminListUsers', {});
-        const { users: u, brands: b, creators: c } = fallback.data;
+        const { users: u, brands: b, creators: c } = fallback.data || {};
         setUserListData({ users: u || [], brands: b || [], creators: c || [] });
         setUserListLoaded(true);
       } catch (err2) {
