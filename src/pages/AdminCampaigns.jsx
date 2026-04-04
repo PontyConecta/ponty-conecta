@@ -443,11 +443,16 @@ export default function AdminCampaigns() {
       </Dialog>
 
       {viewingBrand && (
-        <BrandProfileModal
-          brand={viewingBrand}
-          isOpen={!!viewingBrand}
-          onClose={() => setViewingBrand(null)}
-        />
+        <Dialog open={!!viewingBrand} onOpenChange={(open) => { if (!open) setViewingBrand(null); }}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Perfil da Marca</DialogTitle></DialogHeader>
+            <BrandProfileModal
+              brand={viewingBrand}
+              isSubscribed={true}
+              onPaywall={() => {}}
+            />
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
