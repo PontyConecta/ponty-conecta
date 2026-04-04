@@ -108,6 +108,21 @@ Deno.serve(async (req) => {
       await base44.entities.Campaign.update(campaign_id, { status: data.status });
       console.log(`[${FN}] Status ${currentStatus} → ${data.status} for campaign ${campaign_id}`);
 
+      // ── 5b. CASCADE on cancellation ──
+      if (data.status === 'cancelled') {
+        const pendingApps = await base44.entities.Application.filter({ campaign_id, status: 'pending' });
+        for (const app of pendingApps) {
+          await base44.entities.Application.update(app.id, { status: 'rejected', rejection_reason: 'Campanha cancelada', rejected_at: new Date().toISOString() });
+        }
+        const openDeliveries = await base44.entities.Delivery.filter({ campaign_id });
+        for (const del of openDeliveries) {
+          if (del.status === 'pending' || del.status === 'submitted') {
+            await base44.entities.Delivery.update(del.id, { status: 'closed' });
+          }
+        }
+        console.log(`[${FN}] Cascade: rejected ${pendingApps.length} pending apps, closed open deliveries for campaign ${campaign_id}`);
+      }
+
       // ── 6. AUDIT LOG ──
       try {
         await base44.entities.AuditLog.create({
