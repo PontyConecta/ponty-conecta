@@ -102,21 +102,6 @@ Deno.serve(async (req) => {
     }
   }
 
-  // === DELIVERY SUBMITTED (creator mission: submit_delivery) ===
-  if (entity_name === 'Delivery' && eventType === 'create') {
-    const creatorId = data.creator_id;
-    if (creatorId) {
-      const creators = await base44.asServiceRole.entities.Creator.filter({ id: creatorId });
-      if (creators.length > 0) {
-        updates.push({
-          user_id: creators[0].user_id,
-          profile_type: 'creator',
-          target_action: 'submit_delivery'
-        });
-      }
-    }
-  }
-
   // === DELIVERY SUBMITTED via update (status changed to submitted) ===
   if (entity_name === 'Delivery' && eventType === 'update') {
     const wasNotSubmitted = !old_data || old_data.status !== 'submitted';
