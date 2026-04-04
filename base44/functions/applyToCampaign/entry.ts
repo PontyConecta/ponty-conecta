@@ -28,6 +28,14 @@ Deno.serve(async (req) => {
       return err('Assinatura ativa necessária', 'SUBSCRIPTION_REQUIRED', 403);
     }
 
+    // 4b. TRIAL EXPIRY CHECK
+    if (creator.trial_end_date && !creator.stripe_customer_id) {
+      if (new Date(creator.trial_end_date) < new Date()) {
+        await base44.entities.Creator.update(creator.id, { subscription_status: 'starter' });
+        return err('Seu período de teste expirou', 'TRIAL_EXPIRED', 403);
+      }
+    }
+
     // 5. CAMPAIGN CHECK
     const campaigns = await base44.entities.Campaign.filter({ id: campaign_id });
     if (campaigns.length === 0) return err('Campanha não encontrada', 'NOT_FOUND', 404);

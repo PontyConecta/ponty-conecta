@@ -5,7 +5,11 @@
 
 export function isProfileSubscribed(profile) {
   if (!profile) return false;
-  return profile.subscription_status === 'premium';
+  if (profile.subscription_status !== 'premium') return false;
+  if (profile.trial_end_date && !profile.stripe_customer_id) {
+    return new Date(profile.trial_end_date) > new Date();
+  }
+  return true;
 }
 
 export function isOnTrial(profile) {
