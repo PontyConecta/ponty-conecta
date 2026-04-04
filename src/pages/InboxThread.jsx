@@ -331,6 +331,10 @@ export default function InboxThread() {
               brand={otherBrand}
               isSubscribed={true}
               onPaywall={() => {}}
+              onViewCampaign={(campaign) => {
+                setShowOtherProfile(false);
+                navigate(createPageUrl('OpportunityFeed') + `?campaignId=${campaign.id}`);
+              }}
             />
           )}
         </DialogContent>

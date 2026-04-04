@@ -366,6 +366,10 @@ export default function MyApplications() {
                   { state: { from: 'MyApplications', fromLabel: 'Candidaturas' } }
                 );
               }}
+              onViewCampaign={(campaign) => {
+                setSelectedBrand(null);
+                navigate(createPageUrl('OpportunityFeed') + `?campaignId=${campaign.id}`);
+              }}
             />
           )}
         </DialogContent>

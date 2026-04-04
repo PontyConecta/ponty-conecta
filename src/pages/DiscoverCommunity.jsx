@@ -30,6 +30,11 @@ export default function DiscoverCommunity() {
   const { user, profile, profileType } = useAuth();
   const { isSubscribed } = useSubscription();
   const navigate = useNavigate();
+
+  const handleViewCampaign = (campaign) => {
+    setSelectedItem(null);
+    navigate(createPageUrl('OpportunityFeed') + `?campaignId=${campaign.id}`);
+  };
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -163,6 +168,7 @@ export default function DiscoverCommunity() {
                 isSubscribed={isSubscribed}
                 onPaywall={() => setShowPaywall(true)}
                 onMessage={handleMessage}
+                onViewCampaign={handleViewCampaign}
               />
             ) : (
               <CreatorProfileModal

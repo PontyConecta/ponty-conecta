@@ -240,6 +240,10 @@ export default function DiscoverBrands() {
                 setSelectedBrand(null);
                 navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
               } : undefined}
+              onViewCampaign={(campaign) => {
+                setSelectedBrand(null);
+                navigate(createPageUrl('OpportunityFeed') + `?campaignId=${campaign.id}`);
+              }}
             />
           )}
         </DialogContent>

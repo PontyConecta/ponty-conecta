@@ -33,6 +33,16 @@ export default function OpportunityFeed() {
   const vm = useOpportunityFeedViewModel(authProfile, profileType);
   const { loadMoreRef } = useInfiniteScroll(vm.handleLoadMore, vm.hasNextPage);
 
+  // Deep-link: open campaign from URL param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const campaignId = params.get('campaignId');
+    if (campaignId && vm.filteredCampaigns.length > 0) {
+      const target = vm.filteredCampaigns.find(c => c.id === campaignId);
+      if (target) vm.openCampaignDetails(target);
+    }
+  }, [vm.filteredCampaigns.length]);
+
   // Pull to refresh (touch)
   useEffect(() => {
     const handleTouchStart = (e) => {
@@ -237,6 +247,10 @@ export default function OpportunityFeed() {
               onMessage={(b) => {
                 setViewingBrand(null);
                 navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
+              }}
+              onViewCampaign={(campaign) => {
+                setViewingBrand(null);
+                vm.openCampaignDetails(campaign);
               }}
             />
           </DialogContent>

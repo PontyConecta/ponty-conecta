@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, CheckCircle2, MapPin, Mail, Phone, Globe, MessageCircle } from 'lucide-react';
+import { Building2, CheckCircle2, MapPin, Mail, Phone, Globe, MessageCircle, Megaphone, ArrowRight } from 'lucide-react';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
 import { getPresenceUrl, getPresenceLabel } from '@/components/utils/phoneFormatter';
 
@@ -13,8 +13,9 @@ const INDUSTRY_LABELS = {
   retail: 'Varejo', automotive: 'Automotivo', other: 'Outros',
 };
 
-export default function BrandProfileModal({ brand, isSubscribed, onPaywall, onMessage }) {
+export default function BrandProfileModal({ brand, isSubscribed, onPaywall, onMessage, onViewCampaign }) {
   const [enrichedBrand, setEnrichedBrand] = useState(brand);
+  const [brandCampaigns, setBrandCampaigns] = useState([]);
 
   useEffect(() => {
     if (brand && (brand.total_campaigns === 0 || brand.total_campaigns === undefined)) {
@@ -24,9 +25,15 @@ export default function BrandProfileModal({ brand, isSubscribed, onPaywall, onMe
           total_campaigns: campaigns.length,
           active_campaigns: campaigns.filter(c => c.status === 'active').length
         });
+        setBrandCampaigns(campaigns.filter(c => c.status === 'active').slice(0, 10));
       }).catch(() => setEnrichedBrand(brand));
     } else {
       setEnrichedBrand(brand);
+      if (brand?.id) {
+        base44.entities.Campaign.filter({ brand_id: brand.id, status: 'active' }, '-created_date', 10)
+          .then(setBrandCampaigns)
+          .catch(() => {});
+      }
     }
   }, [brand?.id]);
 
@@ -72,6 +79,39 @@ export default function BrandProfileModal({ brand, isSubscribed, onPaywall, onMe
           <div><div className="text-2xl font-bold">{b.total_campaigns || 0}</div><div className="text-sm text-muted-foreground">Campanhas</div></div>
           <div><div className="text-2xl font-bold text-emerald-600">{b.active_campaigns || 0}</div><div className="text-sm text-muted-foreground">Ativas</div></div>
         </div>
+
+        {brandCampaigns.length > 0 && (
+          <div>
+            <h4 className="font-medium mb-2">Campanhas Ativas</h4>
+            <div className="space-y-2">
+              {brandCampaigns.map(c => (
+                <div
+                  key={c.id}
+                  className={`p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors ${onViewCampaign ? 'cursor-pointer' : ''}`}
+                  onClick={() => onViewCampaign?.(c)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Megaphone className="w-4 h-4 text-primary flex-shrink-0" />
+                      <span className="font-medium text-sm truncate">{c.title}</span>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-xs text-muted-foreground">
+                        {c.slots_filled || 0}/{c.slots_total || 1} vagas
+                      </span>
+                      {onViewCampaign && <ArrowRight className="w-3 h-3 text-muted-foreground" />}
+                    </div>
+                  </div>
+                  {c.remuneration_type && (
+                    <span className="text-xs text-muted-foreground mt-1 block">
+                      {c.remuneration_type === 'cash' ? `R$ ${c.budget_min || 0} - ${c.budget_max || 0}` : c.remuneration_type === 'barter' ? 'Permuta' : 'Misto'}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {b.target_audience && <div><h4 className="font-medium mb-2">Público-Alvo</h4><p className="text-muted-foreground">{b.target_audience}</p></div>}
         {b.content_guidelines && <div><h4 className="font-medium mb-2">Diretrizes de Conteúdo</h4><p className="text-muted-foreground">{b.content_guidelines}</p></div>}

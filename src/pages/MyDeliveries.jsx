@@ -428,6 +428,10 @@ export default function MyDeliveries() {
                 setSelectedBrand(null);
                 navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
               }}
+              onViewCampaign={(campaign) => {
+                setSelectedBrand(null);
+                navigate(createPageUrl('OpportunityFeed') + `?campaignId=${campaign.id}`);
+              }}
             />
           )}
         </DialogContent>
