@@ -203,10 +203,10 @@ Deno.serve(async (req) => {
     // ── 5b. RECOMPUTE profile_size from platforms if updated ──
     if (profile_type === 'creator' && sanitizedUpdates.platforms && Array.isArray(sanitizedUpdates.platforms)) {
       const maxFollowers = Math.max(0, ...sanitizedUpdates.platforms.map(p => p.followers || 0));
-      if (maxFollowers >= 1000000) sanitizedUpdates.profile_size = 'mega';
-      else if (maxFollowers >= 500000) sanitizedUpdates.profile_size = 'macro';
-      else if (maxFollowers >= 100000) sanitizedUpdates.profile_size = 'mid';
-      else if (maxFollowers >= 10000) sanitizedUpdates.profile_size = 'micro';
+      if (maxFollowers > 1000000) sanitizedUpdates.profile_size = 'mega';
+      else if (maxFollowers > 500000) sanitizedUpdates.profile_size = 'macro';
+      else if (maxFollowers > 50000) sanitizedUpdates.profile_size = 'mid';
+      else if (maxFollowers > 10000) sanitizedUpdates.profile_size = 'micro';
       else sanitizedUpdates.profile_size = 'nano';
     }
 
