@@ -35,7 +35,6 @@ const deliveryTransitions = {
   approved: ['in_dispute'],
   contested: ['in_dispute', 'approved'],
   in_dispute: ['approved', 'closed'],
-  resolved: ['closed'],
   closed: []
 };
 
