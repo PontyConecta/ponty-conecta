@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/components/contexts/AuthContext';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,8 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import SearchFilter from '../components/common/SearchFilter';
 
 export default function AdminAuditLogs() {
+  const { user: authUser } = useAuth();
+
   const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -98,6 +101,10 @@ export default function AdminAuditLogs() {
     a.href = url; a.download = 'audit_logs.csv'; a.click();
     URL.revokeObjectURL(url);
   };
+
+  if (!authUser || authUser.role !== 'admin') {
+    return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-muted-foreground">Acesso negado</p></div>;
+  }
 
   if (loading) {
     return <LoadingSpinner />;

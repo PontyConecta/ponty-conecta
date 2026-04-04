@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/components/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Loader2, RefreshCw, LayoutGrid, List } from 'lucide-react';
@@ -18,6 +19,8 @@ import SelectAllFilteredBanner from '../components/admin/SelectAllFilteredBanner
 const PAGE_SIZE = 20;
 
 export default function AdminUsers() {
+  const { user: authUser } = useAuth();
+
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -282,6 +285,10 @@ export default function AdminUsers() {
   };
 
   const selectedUserProfile = selectedUser ? getUserProfile(selectedUser.id) : null;
+
+  if (!authUser || authUser.role !== 'admin') {
+    return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-muted-foreground">Acesso negado</p></div>;
+  }
 
   if (loading) {
     return (

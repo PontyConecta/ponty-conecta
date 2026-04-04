@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/components/contexts/AuthContext';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AdminCampaigns() {
+  const { user: authUser } = useAuth();
+
   const [loading, setLoading] = useState(true);
   const [campaigns, setCampaigns] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -118,6 +121,10 @@ export default function AdminCampaigns() {
     
     return matchesSearch && matchesStatus;
   });
+
+  if (!authUser || authUser.role !== 'admin') {
+    return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-muted-foreground">Acesso negado</p></div>;
+  }
 
   if (loading) {
     return (
