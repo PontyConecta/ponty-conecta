@@ -39,6 +39,7 @@ function LayoutContent({ children, currentPageName }) {
   const navigate = useNavigate();
   const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const unreadCount = useUnreadCount(user?.id);
 
   const isAdmin = user?.role === 'admin';
@@ -60,19 +61,26 @@ function LayoutContent({ children, currentPageName }) {
     setSidebarCollapsed(prev => !prev);
   };
 
-  if (!loading && !user && !noLayoutPages.includes(currentPageName)) {
-    navigate(createPageUrl('Home'));
-    return null;
-  }
-
-  // Redirect incomplete profiles to onboarding — BEFORE noLayoutPages early return
-  if (!loading && user && profile && profile.account_state !== 'ready') {
-    const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
-    if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
-      navigate(createPageUrl(onboardingPage));
-      return null;
+  // Redirect logic wrapped in useEffect to avoid navigate-during-render
+  useEffect(() => {
+    if (loading) return;
+    if (!user && !noLayoutPages.includes(currentPageName)) {
+      setRedirecting(true);
+      navigate(createPageUrl('Home'));
+      return;
     }
-  }
+    if (user && profile && profile.account_state !== 'ready') {
+      const onboardingPage = profileType === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator';
+      if (currentPageName !== onboardingPage && currentPageName !== 'Subscription') {
+        setRedirecting(true);
+        navigate(createPageUrl(onboardingPage));
+        return;
+      }
+    }
+    setRedirecting(false);
+  }, [loading, user, profile, profileType, currentPageName, navigate]);
+
+  if (redirecting || loading) return null;
 
   // Pages without full layout
   if (noLayoutPages.includes(currentPageName)) {
