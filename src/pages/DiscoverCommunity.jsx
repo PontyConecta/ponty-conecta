@@ -43,12 +43,28 @@ export default function DiscoverCommunity() {
   const loadData = async () => {
     setLoading(true);
     try {
-      if (profileType === 'brand') {
-        // Show other brands - no enrichment needed for brand community
-        const data = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date', 50);
-        setItems(data.filter(item => item.user_id !== user?.id && item.id !== profile?.id));
+      if (profileType === 'creator') {
+        // Creator sees brands — enrich with campaign counts
+        const [data, allCampaigns] = await Promise.all([
+          base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date', 50),
+          base44.entities.Campaign.filter({}, '-created_date', 1000),
+        ]);
+        const totalMap = {};
+        const activeMap = {};
+        allCampaigns.forEach(c => {
+          if (c.brand_id) {
+            totalMap[c.brand_id] = (totalMap[c.brand_id] || 0) + 1;
+            if (c.status === 'active') activeMap[c.brand_id] = (activeMap[c.brand_id] || 0) + 1;
+          }
+        });
+        const filtered = data.filter(item => item.user_id !== user?.id && item.id !== profile?.id);
+        setItems(filtered.map(b => ({
+          ...b,
+          total_campaigns: totalMap[b.id] || 0,
+          active_campaigns: activeMap[b.id] || 0,
+        })));
       } else {
-        // Show creators community — but if we later show brands, enrich them
+        // Brand sees creators — no enrichment needed
         const data = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 50);
         setItems(data.filter(item => item.user_id !== user?.id && item.id !== profile?.id));
       }

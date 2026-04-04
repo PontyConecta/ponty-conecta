@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import CreatorProfileModal from '../components/modals/CreatorProfileModal';
+import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
 import { FileCheck, FileText, Loader2 } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import Pagination from '../components/common/Pagination';
@@ -19,6 +21,15 @@ export default function Deliveries() {
   const { profile: authProfile, profileType } = useAuth();
   const navigate = useNavigate();
   const [viewingCreator, setViewingCreator] = useState(null);
+  const [inviteTarget, setInviteTarget] = useState(null);
+  const [brandCampaigns, setBrandCampaigns] = useState([]);
+
+  // Load brand campaigns for invite modal
+  useEffect(() => {
+    if (profileType === 'brand' && authProfile?.id) {
+      base44.entities.Campaign.filter({ brand_id: authProfile.id, status: 'active' }, '-created_date', 50).then(setBrandCampaigns);
+    }
+  }, [profileType, authProfile?.id]);
 
   const vm = useDeliveriesViewModel(profileType, authProfile?.id);
 
@@ -148,9 +159,23 @@ export default function Deliveries() {
                 setViewingCreator(null);
                 navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Criadora')}`);
               }}
+              onInvite={profileType === 'brand' ? (c) => {
+                setViewingCreator(null);
+                setInviteTarget(c);
+              } : undefined}
             />
           </DialogContent>
         </Dialog>
+      )}
+
+      {/* Invite Creator Modal */}
+      {inviteTarget && (
+        <InviteCreatorModal
+          open={!!inviteTarget}
+          onClose={() => setInviteTarget(null)}
+          creator={inviteTarget}
+          campaigns={brandCampaigns}
+        />
       )}
 
       {/* Creator Submit Dialog */}
