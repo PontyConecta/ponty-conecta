@@ -103,6 +103,7 @@ export default function OnboardingBrand() {
     state: '',
     city: '',
   });
+  const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
     loadData();
@@ -156,8 +157,6 @@ export default function OnboardingBrand() {
       setLoading(false);
     }
   };
-
-  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (field, value) => {
     if (fieldErrors[field]) {
