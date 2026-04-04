@@ -244,11 +244,14 @@ async function handleSubscriptionUpdate(base44, subscription) {
   const { profile, profileType, entityName } = result;
 
   // Map Stripe status to our system: only 'starter' or 'premium'
+  // past_due keeps premium during Stripe's grace period (retry cycle)
+  // Only downgrade on unpaid (after all retries fail) or canceled
   const statusMap = {
     'active': 'premium',
-    'past_due': 'starter',
+    'past_due': 'premium',
     'canceled': 'starter',
     'unpaid': 'starter',
+    'incomplete_expired': 'starter',
     'trialing': 'premium'
   };
   let mappedStatus = statusMap[subscription.status] || 'starter';

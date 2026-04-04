@@ -39,13 +39,34 @@ Deno.serve(async (req) => {
       }
 
       // ── 4. VALIDATE TRANSITION ──
-      if (application.status !== 'pending') {
-        return err('Only pending applications can be withdrawn', 'INVALID_TRANSITION');
+      if (!['pending', 'accepted'].includes(application.status)) {
+        return err('Só é possível cancelar candidaturas pendentes ou aceitas', 'INVALID_TRANSITION');
       }
+
+      const wasAccepted = application.status === 'accepted';
 
       // ── 5. EXECUTE ──
       await base44.entities.Application.update(application_id, { status: 'withdrawn' });
-      console.log(`[${FN}] Application ${application_id} withdrawn by creator ${creators[0].id}`);
+
+      // If was accepted, decrement slots and close pending deliveries
+      if (wasAccepted) {
+        const campaigns = await base44.entities.Campaign.filter({ id: application.campaign_id });
+        if (campaigns.length > 0) {
+          const camp = campaigns[0];
+          const newSlots = Math.max(0, (camp.slots_filled || 0) - 1);
+          await base44.entities.Campaign.update(camp.id, { slots_filled: newSlots });
+          // Reopen if was auto-closed due to full slots
+          if (camp.status === 'applications_closed' && newSlots < (camp.slots_total || 1)) {
+            await base44.entities.Campaign.update(camp.id, { status: 'active' });
+          }
+        }
+        const deliveries = await base44.entities.Delivery.filter({ application_id: application.id, status: 'pending' });
+        for (const del of deliveries) {
+          await base44.entities.Delivery.update(del.id, { status: 'closed' });
+        }
+      }
+
+      console.log(`[${FN}] Application ${application_id} withdrawn by creator ${creators[0].id} (was ${wasAccepted ? 'accepted' : 'pending'})`);
       return Response.json({ success: true });
     }
 
@@ -58,9 +79,11 @@ Deno.serve(async (req) => {
       }
 
       // ── 4. VALIDATE TRANSITION ──
-      if (application.status !== 'pending') {
-        return err('Only pending applications can be rejected', 'INVALID_TRANSITION');
+      if (!['pending', 'accepted'].includes(application.status)) {
+        return err('Only pending or accepted applications can be rejected', 'INVALID_TRANSITION');
       }
+
+      const wasAccepted = application.status === 'accepted';
 
       // ── 5. EXECUTE ──
       await base44.entities.Application.update(application_id, {
@@ -68,6 +91,17 @@ Deno.serve(async (req) => {
         rejected_at: new Date().toISOString(),
         rejection_reason: (typeof data?.rejection_reason === 'string' ? data.rejection_reason.trim() : '') || '',
       });
+
+      // If was accepted, decrement slots_filled
+      if (wasAccepted) {
+        const campaigns = await base44.entities.Campaign.filter({ id: application.campaign_id });
+        if (campaigns.length > 0) {
+          await base44.entities.Campaign.update(campaigns[0].id, {
+            slots_filled: Math.max(0, (campaigns[0].slots_filled || 0) - 1)
+          });
+        }
+      }
+
       console.log(`[${FN}] Application ${application_id} rejected by brand ${brands[0].id}`);
       return Response.json({ success: true });
     }

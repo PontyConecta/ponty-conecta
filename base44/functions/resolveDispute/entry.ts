@@ -60,13 +60,22 @@ Deno.serve(async (req) => {
       if (deliveries.length > 0) {
         const delivery = deliveries[0];
         const newDeliveryStatus = resolution_type === 'resolved_creator_favor' ? 'approved' : 'closed';
-        await base44.asServiceRole.entities.Delivery.update(delivery.id, {
+
+        // Compute on_time for creator-favor resolution
+        const deliveryUpdate = {
           status: newDeliveryStatus,
           approved_at: resolution_type === 'resolved_creator_favor' ? now : delivery.approved_at,
           payment_status: resolution_type === 'resolved_creator_favor' ? 'completed' : 'disputed',
-        });
+        };
+        if (resolution_type === 'resolved_creator_favor') {
+          deliveryUpdate.on_time = delivery.deadline
+            ? new Date(delivery.submitted_at || delivery.updated_date) <= new Date(delivery.deadline)
+            : true;
+        }
+        await base44.asServiceRole.entities.Delivery.update(delivery.id, deliveryUpdate);
 
-        // 4c. If creator won → complete application + bump stats + recalculate on_time_rate
+        // 4c. If creator won → complete application + recalculate on_time_rate
+        // NOTE: Do NOT increment completed_campaigns — already counted at first approval.
         if (resolution_type === 'resolved_creator_favor') {
           if (delivery.application_id) {
             await base44.asServiceRole.entities.Application.update(delivery.application_id, {
@@ -77,12 +86,10 @@ Deno.serve(async (req) => {
             const creators = await base44.asServiceRole.entities.Creator.filter({ id: delivery.creator_id });
             if (creators.length > 0) {
               const creator = creators[0];
-              // Recalculate on_time_rate from all approved deliveries
               const allApproved = await base44.asServiceRole.entities.Delivery.filter({ creator_id: creator.id, status: 'approved' });
               const onTimeDels = allApproved.filter(d => d.on_time === true);
               const newRate = allApproved.length > 0 ? Math.round((onTimeDels.length / allApproved.length) * 100) : 100;
               await base44.asServiceRole.entities.Creator.update(creator.id, {
-                completed_campaigns: (creator.completed_campaigns || 0) + 1,
                 on_time_rate: newRate,
               });
             }

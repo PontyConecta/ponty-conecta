@@ -185,7 +185,7 @@ export default function OnboardingCreator() {
     });
   };
 
-  const saveStepData = async (nextStep) => {
+  const saveStepData = async (nextStep, advance = true) => {
     setSaving(true);
     const dataToSave = {};
 
@@ -244,7 +244,16 @@ export default function OnboardingCreator() {
     }
   };
 
-  const handleBack = () => { if (step > 1) setStep(step - 1); };
+  const handleBack = async () => {
+    if (step > 1) {
+      try {
+        await saveStepData(step, false);
+      } catch (e) {
+        console.warn('Could not save step before going back:', e.message);
+      }
+      setStep(step - 1);
+    }
+  };
 
   const handleFinalize = async () => {
     setSaving(true);

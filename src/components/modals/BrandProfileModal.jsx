@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Building2, CheckCircle2, MapPin, Mail, Phone, Globe, MessageCircle } from 'lucide-react';
@@ -13,15 +14,33 @@ const INDUSTRY_LABELS = {
 };
 
 export default function BrandProfileModal({ brand, isSubscribed, onPaywall, onMessage }) {
+  const [enrichedBrand, setEnrichedBrand] = useState(brand);
+
+  useEffect(() => {
+    if (brand && (brand.total_campaigns === 0 || brand.total_campaigns === undefined)) {
+      base44.entities.Campaign.filter({ brand_id: brand.id }, '-created_date', 500).then(campaigns => {
+        setEnrichedBrand({
+          ...brand,
+          total_campaigns: campaigns.length,
+          active_campaigns: campaigns.filter(c => c.status === 'active').length
+        });
+      }).catch(() => setEnrichedBrand(brand));
+    } else {
+      setEnrichedBrand(brand);
+    }
+  }, [brand?.id]);
+
+  const b = enrichedBrand;
+
   return (
     <div className="space-y-6 py-4">
       <div className="relative">
         <div className="h-32 rounded-xl overflow-hidden bg-gradient-to-r from-primary to-accent">
-          {brand.cover_image_url && <img src={brand.cover_image_url} alt="" className="w-full h-full object-cover" />}
+          {b.cover_image_url && <img src={b.cover_image_url} alt="" className="w-full h-full object-cover" />}
         </div>
         <div className="absolute -bottom-12 left-6">
-          {brand.logo_url ? (
-            <img src={brand.logo_url} alt={brand.company_name} className="w-24 h-24 rounded-xl border-4 border-card shadow-lg object-cover bg-card" />
+          {b.logo_url ? (
+            <img src={b.logo_url} alt={b.company_name} className="w-24 h-24 rounded-xl border-4 border-card shadow-lg object-cover bg-card" />
           ) : (
             <div className="w-24 h-24 rounded-xl border-4 border-card shadow-lg bg-primary/10 flex items-center justify-center">
               <Building2 className="w-12 h-12 text-primary" />
@@ -33,46 +52,46 @@ export default function BrandProfileModal({ brand, isSubscribed, onPaywall, onMe
       <div className="pt-10 space-y-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold">{brand.company_name || 'Marca'}</h2>
-            {brand.is_verified && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
+            <h2 className="text-2xl font-bold">{b.company_name || 'Marca'}</h2>
+            {b.is_verified && <CheckCircle2 className="w-6 h-6 text-blue-500" />}
           </div>
           <div className="flex flex-wrap gap-2 mt-2">
-            {brand.industry && <Badge variant="outline">{INDUSTRY_LABELS[brand.industry] || brand.industry}</Badge>}
-            {brand.state && (
+            {b.industry && <Badge variant="outline">{INDUSTRY_LABELS[b.industry] || b.industry}</Badge>}
+            {b.state && (
               <Badge variant="outline" className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                {brand.city ? `${brand.city}, ` : ''}{getStateLabel(brand.state)}
+                {b.city ? `${b.city}, ` : ''}{getStateLabel(b.state)}
               </Badge>
             )}
           </div>
         </div>
 
-        <p className="text-muted-foreground">{brand.description || 'Marca parceira'}</p>
+        <p className="text-muted-foreground">{b.description || 'Marca parceira'}</p>
 
         <div className="flex items-center gap-6">
-          <div><div className="text-2xl font-bold">{brand.total_campaigns || 0}</div><div className="text-sm text-muted-foreground">Campanhas</div></div>
-          <div><div className="text-2xl font-bold text-emerald-600">{brand.active_campaigns || 0}</div><div className="text-sm text-muted-foreground">Ativas</div></div>
+          <div><div className="text-2xl font-bold">{b.total_campaigns || 0}</div><div className="text-sm text-muted-foreground">Campanhas</div></div>
+          <div><div className="text-2xl font-bold text-emerald-600">{b.active_campaigns || 0}</div><div className="text-sm text-muted-foreground">Ativas</div></div>
         </div>
 
-        {brand.target_audience && <div><h4 className="font-medium mb-2">Público-Alvo</h4><p className="text-muted-foreground">{brand.target_audience}</p></div>}
-        {brand.content_guidelines && <div><h4 className="font-medium mb-2">Diretrizes de Conteúdo</h4><p className="text-muted-foreground">{brand.content_guidelines}</p></div>}
+        {b.target_audience && <div><h4 className="font-medium mb-2">Público-Alvo</h4><p className="text-muted-foreground">{b.target_audience}</p></div>}
+        {b.content_guidelines && <div><h4 className="font-medium mb-2">Diretrizes de Conteúdo</h4><p className="text-muted-foreground">{b.content_guidelines}</p></div>}
 
         {isSubscribed ? (
           <div className="space-y-3">
             <div className="p-4 bg-primary/5 rounded-xl space-y-3">
               <h4 className="font-medium text-primary">Contato</h4>
-              {brand.contact_email && <a href={`mailto:${brand.contact_email}`} className="flex items-center gap-2 text-primary hover:underline"><Mail className="w-4 h-4" />{brand.contact_email}</a>}
-              {brand.contact_phone && <a href={`tel:${brand.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{brand.contact_phone}</a>}
-              {brand.online_presences?.length > 0 ? (
-                brand.online_presences.map((p, i) => (
+              {b.contact_email && <a href={`mailto:${b.contact_email}`} className="flex items-center gap-2 text-primary hover:underline"><Mail className="w-4 h-4" />{b.contact_email}</a>}
+              {b.contact_phone && <a href={`tel:${b.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 text-primary hover:underline"><Phone className="w-4 h-4" />{b.contact_phone}</a>}
+              {b.online_presences?.length > 0 ? (
+                b.online_presences.map((p, i) => (
                   <a key={i} href={getPresenceUrl(p)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Globe className="w-4 h-4" />{getPresenceLabel(p)}</a>
                 ))
               ) : (
-                <>{brand.website && <a href={brand.website.startsWith('http') ? brand.website : `https://${brand.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Globe className="w-4 h-4" />Website</a>}</>
+                <>{b.website && <a href={b.website.startsWith('http') ? b.website : `https://${b.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Globe className="w-4 h-4" />Website</a>}</>
               )}
             </div>
-            {onMessage && brand.user_id && (
-              <Button onClick={() => onMessage(brand)} className="w-full min-h-[44px] bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+            {onMessage && b.user_id && (
+              <Button onClick={() => onMessage(b)} className="w-full min-h-[44px] bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
                 <MessageCircle className="w-4 h-4" />
                 Enviar Mensagem
               </Button>

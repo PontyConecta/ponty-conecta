@@ -86,17 +86,22 @@ Deno.serve(async (req) => {
         });
       });
 
-      // Step B: Increment slots_filled
-      console.log(`[acceptApplication] Incrementing slots_filled on campaign ${campaign.id}: ${freshSlotsFilled} -> ${freshSlotsFilled + 1}`);
-      const updatedCampaign = await base44.entities.Campaign.update(campaign.id, {
-        slots_filled: freshSlotsFilled + 1
-      });
+      // Step B: Increment slots_filled + auto-close if full
+      const newSlotsFilled = freshSlotsFilled + 1;
+      const shouldAutoClose = newSlotsFilled >= slotsTotal && freshCampaign.status === 'active';
+      console.log(`[acceptApplication] Incrementing slots_filled on campaign ${campaign.id}: ${freshSlotsFilled} -> ${newSlotsFilled}${shouldAutoClose ? ' (auto-closing)' : ''}`);
+      const campaignUpdate = { slots_filled: newSlotsFilled };
+      if (shouldAutoClose) campaignUpdate.status = 'applications_closed';
+      const updatedCampaign = await base44.entities.Campaign.update(campaign.id, campaignUpdate);
       rollbackActions.push(async () => {
         console.log(`[acceptApplication] ROLLBACK: reverting slots_filled on campaign ${campaign.id}`);
-        await base44.entities.Campaign.update(campaign.id, {
-          slots_filled: freshSlotsFilled
-        });
+        const rollbackData = { slots_filled: freshSlotsFilled };
+        if (shouldAutoClose) rollbackData.status = 'active';
+        await base44.entities.Campaign.update(campaign.id, rollbackData);
       });
+      if (shouldAutoClose) {
+        console.log(`[acceptApplication] Auto-closed applications: all ${slotsTotal} slots filled`);
+      }
 
       // Step C: Create delivery
       console.log(`[acceptApplication] Creating delivery for application ${application_id}`);

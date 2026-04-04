@@ -179,7 +179,7 @@ export default function OnboardingBrand() {
     setUploadingLogo(false);
   };
 
-  const saveStepData = async (nextStep) => {
+  const saveStepData = async (nextStep, advance = true) => {
     setSaving(true);
     const dataToSave = {};
 
@@ -237,8 +237,15 @@ export default function OnboardingBrand() {
     }
   };
 
-  const handleBack = () => {
-    if (step > 1) setStep(step - 1);
+  const handleBack = async () => {
+    if (step > 1) {
+      try {
+        await saveStepData(step, false);
+      } catch (e) {
+        console.warn('Could not save step before going back:', e.message);
+      }
+      setStep(step - 1);
+    }
   };
 
   const handleStepClick = (targetStep) => {
