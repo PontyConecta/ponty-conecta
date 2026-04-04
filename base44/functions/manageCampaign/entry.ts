@@ -51,12 +51,11 @@ Deno.serve(async (req) => {
       // ── 4. SANITIZE ──
       // ── SUBSCRIPTION CHECK ──
       if (brand.subscription_status !== 'premium') {
-        if (brand.trial_end_date && !brand.stripe_customer_id && new Date(brand.trial_end_date) < new Date()) {
-          await base44.entities.Brand.update(brand.id, { subscription_status: 'starter' });
-        }
-        if (brand.subscription_status !== 'premium') {
-          return Response.json({ error: 'Assinatura necessária para criar campanhas', code: 'SUBSCRIPTION_REQUIRED' }, { status: 403 });
-        }
+        return Response.json({ error: 'Assinatura necessária para criar campanhas', code: 'SUBSCRIPTION_REQUIRED' }, { status: 403 });
+      }
+      if (brand.trial_end_date && !brand.stripe_customer_id && new Date(brand.trial_end_date) < new Date()) {
+        await base44.entities.Brand.update(brand.id, { subscription_status: 'starter' });
+        return Response.json({ error: 'Seu período de teste expirou', code: 'TRIAL_EXPIRED' }, { status: 403 });
       }
 
       const VALID_INITIAL_STATUSES = ['draft', 'active'];
