@@ -60,9 +60,11 @@ Deno.serve(async (req) => {
             await base44.entities.Campaign.update(camp.id, { status: 'active' });
           }
         }
-        const deliveries = await base44.entities.Delivery.filter({ application_id: application.id, status: 'pending' });
+        const deliveries = await base44.entities.Delivery.filter({ application_id: application.id });
         for (const del of deliveries) {
-          await base44.entities.Delivery.update(del.id, { status: 'closed' });
+          if (del.status === 'pending' || del.status === 'submitted') {
+            await base44.entities.Delivery.update(del.id, { status: 'closed' });
+          }
         }
       }
 
