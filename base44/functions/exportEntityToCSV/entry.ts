@@ -17,6 +17,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Entity name is required' }, { status: 400 });
     }
 
+    const ALLOWED_EXPORT_ENTITIES = ['Brand', 'Creator', 'Campaign', 'Application', 'Delivery', 'Subscription'];
+    if (!ALLOWED_EXPORT_ENTITIES.includes(entityName)) {
+      return Response.json({ error: 'Entidade não permitida para exportação', code: 'FORBIDDEN_ENTITY' }, { status: 403 });
+    }
+
     // Fetch all records from the entity
     const records = await base44.asServiceRole.entities[entityName].list();
 
