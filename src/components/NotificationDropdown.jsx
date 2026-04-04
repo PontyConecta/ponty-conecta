@@ -26,7 +26,7 @@ export default function NotificationDropdown({ triggerClassName }) {
       const interval = setInterval(loadNotifications, 30000);
       return () => clearInterval(interval);
     }
-  }, [user, profile]);
+  }, [user?.id, profile?.id]);
 
   const loadNotifications = async () => {
     try {
