@@ -17,6 +17,7 @@ export default function OpportunityDetailDialog({
   applied,
   onStartApplication,
   onClose,
+  onViewBrand,
 }) {
   if (!campaign) return null;
 
@@ -31,16 +32,21 @@ export default function OpportunityDetailDialog({
 
       {/* Brand & Title */}
       <div className="flex items-center gap-4">
-        {brand?.logo_url ? (
-          <img src={brand.logo_url} alt="" className="w-14 h-14 rounded-lg object-cover" />
-        ) : (
-          <div className="w-14 h-14 rounded-lg flex items-center justify-center bg-muted">
-            <Building2 className="w-7 h-7 text-muted-foreground" />
-          </div>
-        )}
+        <button onClick={() => onViewBrand?.(brand)} className="flex items-center gap-4 hover:opacity-80 cursor-pointer text-left">
+          {brand?.logo_url ? (
+            <img src={brand.logo_url} alt="" className="w-14 h-14 rounded-lg object-cover" />
+          ) : (
+            <div className="w-14 h-14 rounded-lg flex items-center justify-center bg-muted">
+              <Building2 className="w-7 h-7 text-muted-foreground" />
+            </div>
+          )}
+        </button>
         <div>
           <h2 className="text-xl font-bold">{campaign.title}</h2>
-          <p className="text-muted-foreground">{brand?.company_name}</p>
+          <button onClick={() => onViewBrand?.(brand)} className="text-primary hover:underline cursor-pointer flex items-center gap-2">
+            <span>{brand?.company_name}</span>
+            <span className="text-xs">Ver perfil</span>
+          </button>
         </div>
       </div>
 

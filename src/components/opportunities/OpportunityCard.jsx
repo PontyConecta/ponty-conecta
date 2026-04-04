@@ -30,7 +30,7 @@ function getRemunerationLabel(type, campaign) {
   };
 }
 
-export default function OpportunityCard({ campaign, brand, applied, index, onView }) {
+export default function OpportunityCard({ campaign, brand, applied, index, onView, onViewBrand }) {
   const remuneration = getRemunerationLabel(campaign.remuneration_type, campaign);
 
   return (
@@ -63,7 +63,7 @@ export default function OpportunityCard({ campaign, brand, applied, index, onVie
 
         <CardContent className="p-4">
           {/* Brand Info */}
-          <div className="flex items-center gap-2.5 mb-3">
+          <button onClick={(e) => { e.stopPropagation(); onViewBrand?.(brand); }} className="flex items-center gap-2.5 mb-3 hover:opacity-80 cursor-pointer">
             {brand?.logo_url ? (
               <img src={brand.logo_url} alt={brand.company_name} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
             ) : (
@@ -71,8 +71,8 @@ export default function OpportunityCard({ campaign, brand, applied, index, onVie
                 <Building2 className="w-4 h-4 text-muted-foreground" />
               </div>
             )}
-            <h4 className="font-medium text-sm truncate">{brand?.company_name || 'Marca'}</h4>
-          </div>
+            <h4 className="font-medium text-sm truncate text-primary">{brand?.company_name || 'Marca'}</h4>
+          </button>
 
           {/* Title & Description */}
           <h3 className="text-base font-semibold mb-1 line-clamp-2">{campaign.title}</h3>

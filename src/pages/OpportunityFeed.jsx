@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import BrandProfileModal from '../components/modals/BrandProfileModal';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -25,6 +26,7 @@ import Applications from './Applications';
 
 export default function OpportunityFeed() {
   const { profile: authProfile, profileType } = useAuth();
+  const [viewingBrand, setViewingBrand] = useState(null);
   const vm = useOpportunityFeedViewModel(authProfile, profileType);
   const { loadMoreRef } = useInfiniteScroll(vm.handleLoadMore, vm.hasNextPage);
 
@@ -148,6 +150,7 @@ export default function OpportunityFeed() {
                       applied={vm.hasApplied(campaign.id)}
                       index={index}
                       onView={vm.openCampaignDetails}
+                      onViewBrand={(brand) => setViewingBrand(brand)}
                     />
                   </motion.div>
                 ))}
@@ -199,6 +202,7 @@ export default function OpportunityFeed() {
                   applied={vm.hasApplied(vm.selectedCampaign.id)}
                   onStartApplication={vm.startApplication}
                   onClose={vm.closeDialog}
+                  onViewBrand={(brand) => setViewingBrand(brand)}
                 />
               ) : (
                 <ApplyToCampaignDialog
@@ -217,6 +221,20 @@ export default function OpportunityFeed() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Brand Profile Modal */}
+      {viewingBrand && (
+        <Dialog open={!!viewingBrand} onOpenChange={(open) => { if (!open) setViewingBrand(null); }}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Perfil da Marca</DialogTitle></DialogHeader>
+            <BrandProfileModal
+              brand={viewingBrand}
+              isSubscribed={true}
+              onPaywall={() => {}}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Paywall Modal */}
       <PaywallModal
