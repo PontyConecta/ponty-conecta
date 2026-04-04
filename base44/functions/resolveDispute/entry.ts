@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
           payment_status: resolution_type === 'resolved_creator_favor' ? 'completed' : 'disputed',
         });
 
-        // 4c. If creator won → complete application + bump stats
+        // 4c. If creator won → complete application + bump stats + recalculate on_time_rate
         if (resolution_type === 'resolved_creator_favor') {
           if (delivery.application_id) {
             await base44.asServiceRole.entities.Application.update(delivery.application_id, {
@@ -76,8 +76,14 @@ Deno.serve(async (req) => {
           if (delivery.creator_id) {
             const creators = await base44.asServiceRole.entities.Creator.filter({ id: delivery.creator_id });
             if (creators.length > 0) {
-              await base44.asServiceRole.entities.Creator.update(creators[0].id, {
-                completed_campaigns: (creators[0].completed_campaigns || 0) + 1,
+              const creator = creators[0];
+              // Recalculate on_time_rate from all approved deliveries
+              const allApproved = await base44.asServiceRole.entities.Delivery.filter({ creator_id: creator.id, status: 'approved' });
+              const onTimeDels = allApproved.filter(d => d.on_time === true);
+              const newRate = allApproved.length > 0 ? Math.round((onTimeDels.length / allApproved.length) * 100) : 100;
+              await base44.asServiceRole.entities.Creator.update(creator.id, {
+                completed_campaigns: (creator.completed_campaigns || 0) + 1,
+                on_time_rate: newRate,
               });
             }
           }

@@ -43,10 +43,15 @@ export default function DiscoverCommunity() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const entity = profileType === 'brand' ? base44.entities.Brand : base44.entities.Creator;
-      const data = await entity.filter({ account_state: 'ready' }, '-created_date', 50);
-      const filtered = data.filter(item => item.user_id !== user?.id && item.id !== profile?.id);
-      setItems(filtered);
+      if (profileType === 'brand') {
+        // Show other brands - no enrichment needed for brand community
+        const data = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date', 50);
+        setItems(data.filter(item => item.user_id !== user?.id && item.id !== profile?.id));
+      } else {
+        // Show creators community — but if we later show brands, enrich them
+        const data = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 50);
+        setItems(data.filter(item => item.user_id !== user?.id && item.id !== profile?.id));
+      }
     } catch (error) {
       console.error('Error loading community:', error);
     } finally {

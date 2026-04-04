@@ -58,7 +58,7 @@ export default function CreatorCardHeader({ creator, compact = false }) {
               {creator.location}
             </Badge>
           )}
-          {creator.subscription_status === 'active' && (
+          {creator.subscription_status === 'premium' && (
             <Badge className="bg-emerald-100 text-emerald-700 border-0">
               Pro
             </Badge>

@@ -52,7 +52,7 @@ export default function BrandCardHeader({ brand, compact = false }) {
           <Badge variant="outline" className="capitalize">
             {brand.industry?.replace('_', ' ')}
           </Badge>
-          {brand.subscription_status === 'active' && (
+          {brand.subscription_status === 'premium' && (
             <Badge className="bg-emerald-100 text-emerald-700 border-0">
               Pro
             </Badge>

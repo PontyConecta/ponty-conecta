@@ -55,8 +55,28 @@ export default function DiscoverBrands() {
 
   const loadData = async () => {
     try {
-      const allBrands = await base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date', 500);
-      setBrands(allBrands.filter(b => b.company_name?.trim()));
+      const [allBrands, allCampaigns] = await Promise.all([
+        base44.entities.Brand.filter({ account_state: 'ready' }, '-created_date', 500),
+        base44.entities.Campaign.filter({}, '-created_date', 1000),
+      ]);
+      const campaignCountByBrand = {};
+      const activeCampaignCountByBrand = {};
+      allCampaigns.forEach(c => {
+        if (c.brand_id) {
+          campaignCountByBrand[c.brand_id] = (campaignCountByBrand[c.brand_id] || 0) + 1;
+          if (c.status === 'active') {
+            activeCampaignCountByBrand[c.brand_id] = (activeCampaignCountByBrand[c.brand_id] || 0) + 1;
+          }
+        }
+      });
+      const enriched = allBrands
+        .filter(b => b.company_name?.trim())
+        .map(b => ({
+          ...b,
+          total_campaigns: campaignCountByBrand[b.id] || 0,
+          active_campaigns: activeCampaignCountByBrand[b.id] || 0,
+        }));
+      setBrands(enriched);
     } catch (error) {
       console.error('Error loading brands:', error);
     } finally {

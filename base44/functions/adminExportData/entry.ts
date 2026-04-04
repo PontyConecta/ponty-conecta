@@ -50,12 +50,17 @@ Deno.serve(async (req) => {
       }
 
       case 'campaigns': {
-        const campaigns = await base44.asServiceRole.entities.Campaign.list('-created_date', LIMIT);
+        const [campaigns, allApps] = await Promise.all([
+          base44.asServiceRole.entities.Campaign.list('-created_date', LIMIT),
+          base44.asServiceRole.entities.Application.list('-created_date', 5000),
+        ]);
+        const appCountMap = {};
+        allApps.forEach(a => { appCountMap[a.campaign_id] = (appCountMap[a.campaign_id] || 0) + 1; });
         
         csvData = 'Campaign ID,Title,Status,Brand ID,Created Date,Deadline,Remuneration Type,Budget Min,Budget Max,Slots Total,Slots Filled,Total Applications\n';
         
         for (const c of campaigns) {
-          csvData += `${escapeCSV(c.id)},${escapeCSV(c.title)},${escapeCSV(c.status)},${escapeCSV(c.brand_id)},${escapeCSV(c.created_date)},${escapeCSV(c.deadline)},${escapeCSV(c.remuneration_type)},${escapeCSV(c.budget_min)},${escapeCSV(c.budget_max)},${escapeCSV(c.slots_total)},${escapeCSV(c.slots_filled)},${escapeCSV(c.total_applications)}\n`;
+          csvData += `${escapeCSV(c.id)},${escapeCSV(c.title)},${escapeCSV(c.status)},${escapeCSV(c.brand_id)},${escapeCSV(c.created_date)},${escapeCSV(c.deadline)},${escapeCSV(c.remuneration_type)},${escapeCSV(c.budget_min)},${escapeCSV(c.budget_max)},${escapeCSV(c.slots_total)},${escapeCSV(c.slots_filled)},${escapeCSV(appCountMap[c.id] || 0)}\n`;
         }
         
         filename = 'campaigns_export.csv';

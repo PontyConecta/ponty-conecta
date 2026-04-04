@@ -77,7 +77,10 @@ function computeBrandLabels(brand, campaigns, apps, deliveries) {
   const labels = [];
   if (brand.account_state !== 'ready') labels.push('onboarding_incomplete');
   if (campaigns.length === 0 && brand.account_state === 'ready') labels.push('created_no_campaign');
-  const withZeroApps = campaigns.filter(c => (c.total_applications || 0) === 0 && c.status === 'active');
+  // Build app count map from real applications
+  const _appCountMap = {};
+  apps.forEach(a => { _appCountMap[a.campaign_id] = (_appCountMap[a.campaign_id] || 0) + 1; });
+  const withZeroApps = campaigns.filter(c => (_appCountMap[c.id] || 0) === 0 && c.status === 'active');
   if (withZeroApps.length > 0) labels.push('campaign_no_apps');
   const pending = apps.filter(a => a.status === 'pending');
   if (pending.length > 0) {
@@ -202,7 +205,10 @@ async function handleSummary(base44, range, filters) {
 
   // ── MARKETPLACE METRICS ──
   const activeCampaigns = allCampaigns.filter(c => c.status === 'active');
-  const campaignsZeroApps = activeCampaigns.filter(c => (c.total_applications || 0) === 0);
+  // Build app count map for real-time counts
+  const appCountByCampaign = {};
+  allApps.forEach(a => { appCountByCampaign[a.campaign_id] = (appCountByCampaign[a.campaign_id] || 0) + 1; });
+  const campaignsZeroApps = activeCampaigns.filter(c => (appCountByCampaign[c.id] || 0) === 0);
 
   // Time active → first app
   const activeToFirstAppTimes = [];
@@ -215,7 +221,7 @@ async function handleSummary(base44, range, filters) {
     }
   }
 
-  const appsPerCampaign = allCampaigns.filter(c => c.total_applications > 0).map(c => c.total_applications || 0);
+  const appsPerCampaign = allCampaigns.filter(c => (appCountByCampaign[c.id] || 0) > 0).map(c => appCountByCampaign[c.id] || 0);
   const acceptedApps = allApps.filter(a => a.status === 'accepted' || a.status === 'completed');
   const pendingApps = allApps.filter(a => a.status === 'pending');
 
@@ -472,6 +478,7 @@ async function handleSummary(base44, range, filters) {
     newBrands: newBrands.length,
     newCreators: newCreators.length,
     previousNewUsers,
+    previousNewApplications: allApps.filter(a => inRange(a.created_date, prevStart, start)).length,
     growthRate,
     activeCampaigns: activeCampaigns.length,
     totalApplications: allApps.length,
@@ -576,8 +583,13 @@ async function handleLists(base44, range, listType, limit, cursor) {
   }
 
   if (listType === 'campaigns_zero_apps') {
-    const camps = await base44.asServiceRole.entities.Campaign.filter({ status: 'active' });
-    const zero = camps.filter(c => (c.total_applications || 0) === 0);
+    const [camps, allAppsForZero] = await Promise.all([
+      base44.asServiceRole.entities.Campaign.filter({ status: 'active' }),
+      base44.asServiceRole.entities.Application.list(),
+    ]);
+    const appCountMap = {};
+    allAppsForZero.forEach(a => { appCountMap[a.campaign_id] = (appCountMap[a.campaign_id] || 0) + 1; });
+    const zero = camps.filter(c => (appCountMap[c.id] || 0) === 0);
     const paged = paginateWithCursor(zero, cursor, pageSize);
     const brandIds = [...new Set(paged.items.map(c => c.brand_id))];
     const brands = await batchFetch(base44.asServiceRole.entities.Brand, brandIds);
