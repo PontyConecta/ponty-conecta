@@ -49,6 +49,16 @@ Deno.serve(async (req) => {
       if (!data) return err('Missing data', 'MISSING_FIELDS');
 
       // ── 4. SANITIZE ──
+      // ── SUBSCRIPTION CHECK ──
+      if (brand.subscription_status !== 'premium') {
+        if (brand.trial_end_date && !brand.stripe_customer_id && new Date(brand.trial_end_date) < new Date()) {
+          await base44.entities.Brand.update(brand.id, { subscription_status: 'starter' });
+        }
+        if (brand.subscription_status !== 'premium') {
+          return Response.json({ error: 'Assinatura necessária para criar campanhas', code: 'SUBSCRIPTION_REQUIRED' }, { status: 403 });
+        }
+      }
+
       const VALID_INITIAL_STATUSES = ['draft', 'active'];
       const requestedStatus = data.status && VALID_INITIAL_STATUSES.includes(data.status) ? data.status : 'draft';
       const sanitized = { brand_id: brand.id, status: requestedStatus };
