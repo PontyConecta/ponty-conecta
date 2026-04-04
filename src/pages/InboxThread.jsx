@@ -147,7 +147,6 @@ export default function InboxThread() {
 
   const handleSend = async () => {
     if (!newMessage.trim() || sending) return;
-    setSending(true);
 
     let recipientUserId;
 
@@ -155,10 +154,16 @@ export default function InboxThread() {
       recipientUserId = recipientIdParam;
     } else {
       recipientUserId = profileType === 'brand'
-        ? (otherCreator?.user_id || application?.creator_id)
-        : (otherBrand?.user_id || application?.brand_id);
+        ? otherCreator?.user_id
+        : otherBrand?.user_id;
     }
 
+    if (!recipientUserId) {
+      toast.error('Aguarde o carregamento do perfil do destinatário.');
+      return;
+    }
+
+    setSending(true);
     const tempId = 'temp-' + Date.now();
     const tempMsg = {
       id: tempId,
