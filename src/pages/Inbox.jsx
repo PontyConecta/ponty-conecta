@@ -112,8 +112,11 @@ export default function Inbox() {
 
     load();
     const unsub = base44.entities.Message.subscribe((event) => {
-      if (!aborted && (event.data?.sender_id === user.id || event.data?.recipient_id === user.id)) {
-        load();
+      if (!aborted && event.type === 'create' && (event.data?.sender_id === user.id || event.data?.recipient_id === user.id)) {
+        setMessages(prev => {
+          if (prev.some(m => m.id === event.data.id)) return prev;
+          return [...prev, event.data];
+        });
       }
     });
 
