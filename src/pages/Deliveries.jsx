@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import CreatorProfileModal from '../components/modals/CreatorProfileModal';
 import { FileCheck, FileText, Loader2 } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import Pagination from '../components/common/Pagination';
@@ -13,6 +15,7 @@ import CreatorSubmitDialog from '../components/deliveries/CreatorSubmitDialog';
 
 export default function Deliveries() {
   const { profile: authProfile, profileType } = useAuth();
+  const [viewingCreator, setViewingCreator] = useState(null);
 
   const vm = useDeliveriesViewModel(profileType, authProfile?.id);
 
@@ -75,6 +78,7 @@ export default function Deliveries() {
               index={index}
               onView={vm.setSelectedDelivery}
               onSubmit={vm.openSubmitDialog}
+              onViewCreatorProfile={(creator) => setViewingCreator(creator)}
             />
           ))}
 
@@ -122,7 +126,24 @@ export default function Deliveries() {
           onClose={() => vm.setSelectedDelivery(null)}
           onApprove={vm.handleApprove}
           onContest={vm.handleContest}
+          onViewCreatorProfile={(creator) => setViewingCreator(creator)}
         />
+      )}
+
+      {/* Creator Profile Modal */}
+      {viewingCreator && (
+        <Dialog open={!!viewingCreator} onOpenChange={(open) => { if (!open) setViewingCreator(null); }}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Perfil do Criador</DialogTitle></DialogHeader>
+            <CreatorProfileModal
+              creator={viewingCreator}
+              isSubscribed={true}
+              formatFollowers={(n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n || 0)}
+              getTotalFollowers={(c) => (c?.platforms || []).reduce((s, p) => s + (p.followers || 0), 0)}
+              onPaywall={() => {}}
+            />
+          </DialogContent>
+        </Dialog>
       )}
 
       {/* Creator Submit Dialog */}

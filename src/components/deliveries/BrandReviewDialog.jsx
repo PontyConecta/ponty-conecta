@@ -28,6 +28,7 @@ export default function BrandReviewDialog({
   onClose,
   onApprove,
   onContest,
+  onViewCreatorProfile,
 }) {
   const [contestReason, setContestReason] = useState('');
 
@@ -49,7 +50,10 @@ export default function BrandReviewDialog({
             </div>
             <div className="p-4 rounded-xl">
               <Label className="text-sm">Criador</Label>
-              <p className="font-medium">{creator?.display_name}</p>
+              <button onClick={() => onViewCreatorProfile?.(creator)} className="flex items-center gap-2 text-primary hover:underline cursor-pointer mt-1">
+                <span className="font-medium">{creator?.display_name}</span>
+                <span className="text-xs">Ver perfil</span>
+              </button>
             </div>
           </div>
 
