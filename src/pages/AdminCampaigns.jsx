@@ -314,15 +314,18 @@ export default function AdminCampaigns() {
                   onClick={async () => {
                     setSaving(true);
                     try {
-                      await base44.entities.Campaign.update(selectedCampaign.id, editData);
-                      const user = await base44.auth.me();
-                      await base44.entities.AuditLog.create({
-                        admin_id: user.id, admin_email: user.email,
-                        action: 'campaign_status_change',
-                        target_entity_id: selectedCampaign.id,
-                        details: `Campanha "${editData.title}" editada pelo admin. Status: ${editData.status}`,
-                        timestamp: new Date().toISOString(),
+                      await base44.functions.invoke('manageCampaign', {
+                        action: 'update',
+                        campaign_id: selectedCampaign.id,
+                        data: { title: editData.title, description: editData.description, deadline: editData.deadline }
                       });
+                      if (editData.status !== selectedCampaign.status) {
+                        await base44.functions.invoke('manageCampaign', {
+                          action: 'update_status',
+                          campaign_id: selectedCampaign.id,
+                          data: { status: editData.status }
+                        });
+                      }
                       toast.success('Campanha atualizada');
                       setEditing(false);
                       setSelectedCampaign(null);

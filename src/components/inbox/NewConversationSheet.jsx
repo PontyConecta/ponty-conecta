@@ -98,12 +98,10 @@ export default function NewConversationSheet({ open, onClose }) {
     try {
       const conversationId = [user.id, selectedBrand.user_id].sort().join('__direct__');
       const content = `🎯 Pitch de Parceria\nNicho: ${pitchNiche || 'Não informado'}\nAlcance: ${pitchReach || 'Não informado'}\nProposta: ${pitchProposal}`;
-      await base44.entities.Message.create({
-        application_id: conversationId,
-        sender_id: user.id,
-        sender_type: 'creator',
+      await base44.functions.invoke('sendMessage', {
         recipient_id: selectedBrand.user_id,
         content,
+        application_id: conversationId,
       });
       toast.success('Pitch enviado com sucesso! ✨');
       onClose();

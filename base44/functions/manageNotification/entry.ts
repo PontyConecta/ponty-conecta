@@ -71,6 +71,11 @@ Deno.serve(async (req) => {
         return err('Missing notification_keys array', 'MISSING_FIELDS');
       }
 
+      const MAX_KEYS = 200;
+      if (notification_keys.length > MAX_KEYS) {
+        return err(`Limite máximo de ${MAX_KEYS} chaves por requisição`, 'LIMIT_EXCEEDED');
+      }
+
       const notificationsArr = Array.isArray(notification_data) ? notification_data : [];
 
       for (let i = 0; i < notification_keys.length; i++) {

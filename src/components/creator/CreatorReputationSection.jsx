@@ -2,8 +2,16 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { TrendingUp, CheckCircle2, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const BADGE_DESCRIPTIONS = {
+  "Top Creator": "Completou 10+ entregas aprovadas",
+  "Pontual": "Mais de 90% de entregas no prazo",
+  "Verificada": "Perfil verificado pela equipe Ponty",
+  "Nova": "Criou conta nos últimos 30 dias",
+};
 
 export default function CreatorReputationSection({ reputation, delCounts = {}, totalDeliveries = 0, onTimeRate: onTimeRateProp }) {
   const submittedDeliveries = delCounts.submitted || 0;
@@ -114,13 +122,24 @@ export default function CreatorReputationSection({ reputation, delCounts = {}, t
             {reputation?.badges?.length > 0 && (
               <div className="mt-4 pt-4 border-t">
                 <p className="text-xs mb-2 font-medium text-muted-foreground">Badges</p>
-                <div className="flex flex-wrap gap-2">
-                  {reputation.badges.slice(0, 3).map((badge, i) => (
-                    <Badge key={i} variant="outline" className="bg-primary/5 border-primary/20 text-primary text-xs">
-                      {badge}
-                    </Badge>
-                  ))}
-                </div>
+                <TooltipProvider>
+                  <div className="flex flex-wrap gap-2">
+                    {reputation.badges.slice(0, 3).map((badge, i) => (
+                      <Tooltip key={i}>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary text-xs cursor-help">
+                              {badge}
+                            </Badge>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">{BADGE_DESCRIPTIONS[badge] || badge}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                  </div>
+                </TooltipProvider>
               </div>
             )}
           </motion.div>

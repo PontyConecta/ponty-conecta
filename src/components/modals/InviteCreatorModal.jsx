@@ -32,12 +32,10 @@ export default function InviteCreatorModal({ open, onClose, creator, campaigns }
     const content = `🎯 *Convite para campanha: "${campaign?.title || 'Campanha'}"*\n\n${message.trim() || defaultMsg}`;
 
     try {
-      await base44.entities.Message.create({
-        application_id: conversationId,
-        sender_id: user.id,
-        sender_type: 'brand',
+      await base44.functions.invoke('sendMessage', {
         recipient_id: creator.user_id,
         content,
+        application_id: conversationId,
       });
       toast.success(`Convite enviado para ${firstName}! ✨`);
       onClose();
@@ -71,6 +69,9 @@ export default function InviteCreatorModal({ open, onClose, creator, campaigns }
             <div className="text-center py-6">
               <UserPlus className="w-10 h-10 text-muted-foreground/30 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Você não tem campanhas ativas para convidar.</p>
+              <Button size="sm" className="mt-3" onClick={() => { onClose(); navigate(createPageUrl('CampaignManager')); }}>
+                Criar Campanha
+              </Button>
             </div>
           ) : (
             <>

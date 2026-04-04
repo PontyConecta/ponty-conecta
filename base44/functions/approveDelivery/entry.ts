@@ -87,18 +87,26 @@ Deno.serve(async (req) => {
         });
       });
 
-      // Step C: Increment creator's completed_campaigns
+      // Step C: Increment creator's completed_campaigns + recalculate on_time_rate
       let updatedCreator = null;
       if (creator) {
         const newCount = (creator.completed_campaigns || 0) + 1;
-        console.log(`[approveDelivery] Updating creator ${creator.id} completed_campaigns: ${creator.completed_campaigns || 0} -> ${newCount}`);
+
+        // Recalculate on_time_rate from all approved deliveries
+        const allApproved = await base44.entities.Delivery.filter({ creator_id: creator.id, status: 'approved' });
+        const onTimeDels = allApproved.filter(d => d.on_time === true);
+        const newRate = allApproved.length > 0 ? Math.round((onTimeDels.length / allApproved.length) * 100) : 100;
+
+        console.log(`[approveDelivery] Updating creator ${creator.id} completed_campaigns: ${creator.completed_campaigns || 0} -> ${newCount}, on_time_rate: ${creator.on_time_rate} -> ${newRate}`);
         updatedCreator = await base44.entities.Creator.update(creator.id, {
-          completed_campaigns: newCount
+          completed_campaigns: newCount,
+          on_time_rate: newRate
         });
         rollbackActions.push(async () => {
-          console.log(`[approveDelivery] ROLLBACK: reverting creator ${creator.id} completed_campaigns`);
+          console.log(`[approveDelivery] ROLLBACK: reverting creator ${creator.id} completed_campaigns and on_time_rate`);
           await base44.entities.Creator.update(creator.id, {
-            completed_campaigns: creator.completed_campaigns || 0
+            completed_campaigns: creator.completed_campaigns || 0,
+            on_time_rate: creator.on_time_rate
           });
         });
       }

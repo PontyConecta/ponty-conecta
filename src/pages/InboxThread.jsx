@@ -180,12 +180,10 @@ export default function InboxThread() {
     setNewMessage('');
 
     try {
-      await base44.entities.Message.create({
-        application_id: conversationKey,
-        sender_id: user.id,
-        sender_type: profileType,
+      await base44.functions.invoke('sendMessage', {
         recipient_id: recipientUserId,
         content: tempMsg.content,
+        application_id: conversationKey,
       });
     } catch (error) {
       setMessages(prev => prev.filter(m => m.id !== tempId));

@@ -632,21 +632,13 @@ export default function AdminDisputes() {
                             onClick={async () => {
                               setReopening(true);
                               try {
-                                const me = await base44.auth.me();
-                                await base44.entities.Dispute.update(selectedDispute.id, {
-                                  status: 'under_review',
-                                  resolution: null,
-                                  resolved_by: null,
-                                  resolved_at: null,
+                                const response = await base44.functions.invoke('reopenDispute', {
+                                  dispute_id: selectedDispute.id,
+                                  reason: reopenReason.trim(),
                                 });
-                                await base44.entities.AuditLog.create({
-                                  admin_id: me.id, admin_email: me.email,
-                                  action: 'dispute_resolved',
-                                  target_entity_id: selectedDispute.id,
-                                  details: `Disputa reaberta pelo admin. Status anterior: ${selectedDispute.status}`,
-                                  note: reopenReason.trim(),
-                                  timestamp: new Date().toISOString(),
-                                });
+                                if (!response.data?.success) {
+                                  throw new Error(response.data?.error || 'Erro ao reabrir disputa');
+                                }
                                 toast.success('Disputa reaberta');
                                 setSelectedDispute(null);
                                 setShowReopenForm(false);
@@ -654,7 +646,7 @@ export default function AdminDisputes() {
                                 loadData();
                               } catch (err) {
                                 console.error(err);
-                                toast.error('Erro ao reabrir disputa');
+                                toast.error(err.message || 'Erro ao reabrir disputa');
                               } finally { setReopening(false); }
                             }}
                           >

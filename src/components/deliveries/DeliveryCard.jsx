@@ -59,21 +59,42 @@ export default function DeliveryCard({
                 </>
               ) : (
                 <>
-                  {delivery.status === 'pending' && (
-                    <Button onClick={() => onSubmit(delivery)} className="bg-orange-500 hover:bg-orange-600 min-h-[44px]">
-                      <Send className="w-4 h-4 mr-2" />
-                      Enviar Entrega
-                    </Button>
+                  {brand?.logo_url ? (
+                    <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                      <Building2 className="w-6 h-6 text-muted-foreground" />
+                    </div>
                   )}
-                  {delivery.status === 'submitted' && (
-                    <Button variant="outline" onClick={() => onSubmit(delivery)} className="min-h-[44px]">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Ver Entrega
-                    </Button>
-                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold truncate">{campaign?.title || 'Campanha'}</h3>
+                    <p className="text-sm text-muted-foreground">{brand?.company_name || 'Marca'}</p>
+                    <div className="flex gap-3 mt-1 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{formatDate(delivery.deadline || campaign?.deadline)}</span>
+                    </div>
+                  </div>
                 </>
               )}
             </div>
+
+            {/* Status + Actions for creator */}
+            {profileType !== 'brand' && (
+              <div className="flex flex-wrap items-center gap-3">
+                <StatusBadge type="delivery" status={delivery.status} />
+                {delivery.status === 'pending' && (
+                  <Button onClick={() => onSubmit(delivery)} className="bg-orange-500 hover:bg-orange-600 min-h-[44px]">
+                    <Send className="w-4 h-4 mr-2" />
+                    Enviar Entrega
+                  </Button>
+                )}
+                {delivery.status === 'submitted' && (
+                  <Button variant="outline" onClick={() => onSubmit(delivery)} className="min-h-[44px]">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Ver Entrega
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Requirements Preview (Creator) */}

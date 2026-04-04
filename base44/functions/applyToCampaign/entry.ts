@@ -48,7 +48,15 @@ Deno.serve(async (req) => {
       return err('Você já se candidatou a esta campanha', 'DUPLICATE_APPLICATION');
     }
 
-    // 7. CREATE APPLICATION
+    // 7. VALIDATE PROPOSED RATE
+    if (proposed_rate !== undefined && proposed_rate !== null) {
+      const rate = parseFloat(proposed_rate);
+      if (isNaN(rate) || rate < 0 || rate > 100000) {
+        return err('proposed_rate deve ser entre 0 e 100.000', 'INVALID_RATE');
+      }
+    }
+
+    // 8. CREATE APPLICATION
     const application = await base44.entities.Application.create({
       campaign_id,
       creator_id: creator.id,

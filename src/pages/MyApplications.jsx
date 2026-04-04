@@ -251,16 +251,28 @@ export default function MyApplications() {
                       </div>
 
                       {/* Actions */}
-                      {application.status === 'pending' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setWithdrawTarget(application.id)}
-                        >
-                          <XCircle className="w-4 h-4 mr-1" />
-                          Cancelar
-                        </Button>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {application.status === 'pending' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setWithdrawTarget(application.id)}
+                          >
+                            <XCircle className="w-4 h-4 mr-1" />
+                            Cancelar
+                          </Button>
+                        )}
+                        {application.status === 'accepted' && (
+                          <Button
+                            size="sm"
+                            onClick={() => navigate(createPageUrl('MyDeliveries'))}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white min-h-[44px]"
+                          >
+                            <CheckCircle2 className="w-4 h-4 mr-1" />
+                            Ver Entrega
+                          </Button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Message */}

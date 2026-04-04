@@ -182,9 +182,14 @@ async function handleCheckoutCompleted(base44, session) {
     }
   }
 
-  // Create subscription record
+  // Create or update subscription record (idempotent for Stripe retries)
   try {
-    await base44.asServiceRole.entities.Subscription.create({
+    let existingSubs = [];
+    if (subscriptionId) {
+      existingSubs = await base44.asServiceRole.entities.Subscription.filter({ stripe_subscription_id: subscriptionId });
+    }
+
+    const subData = {
       user_id: userId || profile.user_id,
       plan_type: planType || `${profileType}_monthly`,
       status: 'premium',
@@ -195,10 +200,17 @@ async function handleCheckoutCompleted(base44, session) {
       stripe_customer_id: session.customer,
       next_billing_date: nextBillingDate,
       plan_name: `Ponty ${profileType === 'brand' ? 'Marcas' : 'Criadores'}`
-    });
-    console.log('Subscription record created');
+    };
+
+    if (existingSubs.length > 0) {
+      await base44.asServiceRole.entities.Subscription.update(existingSubs[0].id, subData);
+      console.log('Subscription record updated (idempotent)');
+    } else {
+      await base44.asServiceRole.entities.Subscription.create(subData);
+      console.log('Subscription record created');
+    }
   } catch (e) {
-    console.error('Failed to create subscription record:', e.message);
+    console.error('Failed to create/update subscription record:', e.message);
   }
 
   // Update profile with premium status

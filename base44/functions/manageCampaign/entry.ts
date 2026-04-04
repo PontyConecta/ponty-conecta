@@ -49,7 +49,9 @@ Deno.serve(async (req) => {
       if (!data) return err('Missing data', 'MISSING_FIELDS');
 
       // ── 4. SANITIZE ──
-      const sanitized = { brand_id: brand.id, status: 'active' };
+      const VALID_INITIAL_STATUSES = ['draft', 'active'];
+      const requestedStatus = data.status && VALID_INITIAL_STATUSES.includes(data.status) ? data.status : 'draft';
+      const sanitized = { brand_id: brand.id, status: requestedStatus };
       for (const key of ALLOWED_CREATE_FIELDS) {
         if (data[key] !== undefined) {
           sanitized[key] = data[key];

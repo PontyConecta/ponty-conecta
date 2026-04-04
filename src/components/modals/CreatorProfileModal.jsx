@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock, MessageCircle, UserPlus } from 'lucide-react';
 import { TYPE_LABELS } from '@/components/utils/creatorTypeConfig';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
@@ -13,6 +14,7 @@ function SafeImage({ src, alt, className, fallback }) {
 }
 
 export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall, onMessage, onInvite }) {
+  const [lightboxUrl, setLightboxUrl] = useState(null);
   if (!creator) return null;
   return (
     <div className="space-y-6 py-4">
@@ -93,12 +95,13 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
             <h4 className="font-medium mb-2">Portfólio</h4>
             <div className="grid grid-cols-3 gap-2">
               {creator.portfolio_images.slice(0, 6).map((url, i) => (
-                <SafeImage
-                  key={i}
-                  src={url}
-                  className="aspect-square rounded-lg object-cover w-full"
-                  fallback={<div className="aspect-square rounded-lg bg-muted" />}
-                />
+                <button key={i} onClick={() => setLightboxUrl(url)} className="cursor-zoom-in">
+                  <SafeImage
+                    src={url}
+                    className="aspect-square rounded-lg object-cover w-full"
+                    fallback={<div className="aspect-square rounded-lg bg-muted" />}
+                  />
+                </button>
               ))}
             </div>
           </div>
@@ -145,6 +148,14 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
           </div>
         )}
       </div>
+
+      {lightboxUrl && (
+        <Dialog open={!!lightboxUrl} onOpenChange={() => setLightboxUrl(null)}>
+          <DialogContent className="max-w-4xl p-2 bg-black/90">
+            <img src={lightboxUrl} alt="Portfolio" className="max-h-[85dvh] w-auto mx-auto rounded-lg" />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

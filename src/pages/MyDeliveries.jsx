@@ -427,161 +427,152 @@ export default function MyDeliveries() {
           </DialogHeader>
           
           {selectedDelivery && (
-            <div className="space-y-6 py-4">
-              {/* Campaign Info */}
-              <div className="p-4 rounded-xl">
-                <h4 className="font-semibold">
-                  {campaigns[selectedDelivery.campaign_id]?.title}
-                </h4>
-                <button
-                  onClick={() => {
-                    const b = brands[selectedDelivery.brand_id];
-                    b && setSelectedBrand(b);
-                  }}
-                  className="text-sm text-primary hover:underline text-left mt-0.5"
-                >
-                  {brands[selectedDelivery.brand_id]?.company_name}
-                </button>
-              </div>
-
-              {/* Proof Requirements */}
-              {campaigns[selectedDelivery.campaign_id]?.proof_requirements && (
-                <div className="p-4 bg-amber-50 rounded-xl">
-                  <Label className="text-sm text-amber-700 font-medium">Requisitos de Prova</Label>
-                  <p className="text-amber-800 mt-1">
-                    {campaigns[selectedDelivery.campaign_id].proof_requirements}
-                  </p>
+            selectedDelivery.status !== 'pending' ? (
+              /* Read-only view for non-pending deliveries */
+              <div className="space-y-6 py-4">
+                <div className="p-4 rounded-xl">
+                  <h4 className="font-semibold">{campaigns[selectedDelivery.campaign_id]?.title}</h4>
+                  <button
+                    onClick={() => {
+                      const b = brands[selectedDelivery.brand_id];
+                      b && setSelectedBrand(b);
+                    }}
+                    className="text-sm text-primary hover:underline text-left mt-0.5"
+                  >
+                    {brands[selectedDelivery.brand_id]?.company_name}
+                  </button>
                 </div>
-              )}
+                <div className="flex items-center gap-2">
+                  <Badge className={`${getStatusConfig(selectedDelivery.status).color} border-0`}>
+                    {getStatusConfig(selectedDelivery.status).label}
+                  </Badge>
+                </div>
 
-              {/* Proof Files Upload */}
-              <div>
-                <Label>Arquivos de Prova (Screenshots, etc.)</Label>
-                <div className="mt-2 space-y-2">
-                  {proofUrls.map((url, i) => (
-                    <div key={i} className="flex items-center gap-2 p-2 rounded-lg">
-                      <span className="text-sm truncate flex-1">Arquivo {i + 1}</span>
-                      {selectedDelivery.status === 'pending' && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setProofUrls(prev => prev.filter((_, idx) => idx !== i))}
-                          className="h-8 w-8"
-                        >
+                {proofUrls.length > 0 && (
+                  <div>
+                    <Label className="text-sm font-medium">Provas enviadas</Label>
+                    <div className="mt-2 space-y-2">
+                      {proofUrls.map((url, i) => (
+                        <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg bg-muted hover:bg-muted/80 text-sm">
+                          <ExternalLink className="w-4 h-4 text-primary" />
+                          Arquivo {i + 1}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {contentUrls.filter(u => u.trim()).length > 0 && (
+                  <div>
+                    <Label className="text-sm font-medium">Links do conteúdo</Label>
+                    <div className="mt-2 space-y-2">
+                      {contentUrls.filter(u => u.trim()).map((url, i) => (
+                        <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
+                          <ExternalLink className="w-4 h-4" />
+                          {url}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {proofNotes && (
+                  <div>
+                    <Label className="text-sm font-medium">Observações</Label>
+                    <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">{proofNotes}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Submit form for pending deliveries */
+              <div className="space-y-6 py-4">
+                <div className="p-4 rounded-xl">
+                  <h4 className="font-semibold">{campaigns[selectedDelivery.campaign_id]?.title}</h4>
+                  <button
+                    onClick={() => {
+                      const b = brands[selectedDelivery.brand_id];
+                      b && setSelectedBrand(b);
+                    }}
+                    className="text-sm text-primary hover:underline text-left mt-0.5"
+                  >
+                    {brands[selectedDelivery.brand_id]?.company_name}
+                  </button>
+                </div>
+
+                {campaigns[selectedDelivery.campaign_id]?.proof_requirements && (
+                  <div className="p-4 bg-amber-50 rounded-xl">
+                    <Label className="text-sm text-amber-700 font-medium">Requisitos de Prova</Label>
+                    <p className="text-amber-800 mt-1">
+                      {campaigns[selectedDelivery.campaign_id].proof_requirements}
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <Label>Arquivos de Prova (Screenshots, etc.)</Label>
+                  <div className="mt-2 space-y-2">
+                    {proofUrls.map((url, i) => (
+                      <div key={i} className="flex items-center gap-2 p-2 rounded-lg">
+                        <span className="text-sm truncate flex-1">Arquivo {i + 1}</span>
+                        <Button variant="ghost" size="icon" onClick={() => setProofUrls(prev => prev.filter((_, idx) => idx !== i))} className="h-8 w-8">
                           <X className="w-4 h-4" />
                         </Button>
-                      )}
-                      <a href={url} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="w-4 h-4 text-slate-400" />
-                      </a>
-                    </div>
-                  ))}
-                  
-                  {selectedDelivery.status === 'pending' && (
+                        <a href={url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4 text-slate-400" />
+                        </a>
+                      </div>
+                    ))}
                     <label className="cursor-pointer">
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*,.pdf"
-                        className="hidden"
-                        onChange={handleFileUpload}
-                      />
+                      <input type="file" multiple accept="image/*,.pdf" className="hidden" onChange={handleFileUpload} />
                       <div className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
                         <Upload className="w-5 h-5" />
                         <span className="text-sm">Clique para fazer upload</span>
                       </div>
                     </label>
-                  )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Content URLs */}
-              <div>
-                <Label>Links do Conteúdo Publicado</Label>
-                <div className="mt-2 space-y-2">
-                  {contentUrls.map((url, i) => (
-                    <div key={i} className="flex gap-2">
-                      <div className="relative flex-1">
-                        <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
-                        <Input
-                          value={url}
-                          onChange={(e) => {
-                            const newUrls = [...contentUrls];
-                            newUrls[i] = e.target.value;
-                            setContentUrls(newUrls);
-                          }}
-                          placeholder="https://instagram.com/p/..."
-                          className="pl-10"
-                          disabled={selectedDelivery.status !== 'pending'}
-                        />
+                <div>
+                  <Label>Links do Conteúdo Publicado</Label>
+                  <div className="mt-2 space-y-2">
+                    {contentUrls.map((url, i) => (
+                      <div key={i} className="flex gap-2">
+                        <div className="relative flex-1">
+                          <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
+                          <Input value={url} onChange={(e) => { const newUrls = [...contentUrls]; newUrls[i] = e.target.value; setContentUrls(newUrls); }} placeholder="https://instagram.com/p/..." className="pl-10" />
+                        </div>
+                        {contentUrls.length > 1 && (
+                          <Button variant="ghost" size="icon" onClick={() => setContentUrls(prev => prev.filter((_, idx) => idx !== i))}>
+                            <X className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
-                      {selectedDelivery.status === 'pending' && contentUrls.length > 1 && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setContentUrls(prev => prev.filter((_, idx) => idx !== i))}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                  
-                  {selectedDelivery.status === 'pending' && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setContentUrls(prev => [...prev, ''])}
-                    >
+                    ))}
+                    <Button variant="outline" size="sm" onClick={() => setContentUrls(prev => [...prev, ''])}>
                       <Plus className="w-4 h-4 mr-2" />
                       Adicionar Link
                     </Button>
-                  )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Notes */}
-              <div>
-                <Label>Observações (opcional)</Label>
-                <Textarea
-                  value={proofNotes}
-                  onChange={(e) => setProofNotes(e.target.value)}
-                  placeholder="Informações adicionais sobre a entrega..."
-                  className="mt-2"
-                  disabled={selectedDelivery.status !== 'pending'}
-                />
-              </div>
+                <div>
+                  <Label>Observações (opcional)</Label>
+                  <Textarea value={proofNotes} onChange={(e) => setProofNotes(e.target.value)} placeholder="Informações adicionais sobre a entrega..." className="mt-2" />
+                </div>
 
-              {/* Submit Button */}
-              {selectedDelivery.status === 'pending' && (
                 <div className="pt-4 border-t">
                   <div className={`p-3 rounded-lg mb-3 ${proofUrls.length === 0 ? 'bg-red-50' : 'bg-emerald-50'}`}>
                     <p className={`text-sm font-medium ${proofUrls.length === 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                      {proofUrls.length === 0 
-                        ? '⚠️ Você precisa anexar pelo menos uma prova para enviar' 
-                        : '✓ Prova anexada'}
+                      {proofUrls.length === 0 ? '⚠️ Você precisa anexar pelo menos uma prova para enviar' : '✓ Prova anexada'}
                     </p>
                   </div>
-                  <Button
-                  onClick={handleSubmitDelivery}
-                  disabled={submitting || proofUrls.length === 0}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]"
-                  >
-                    {submitting ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4 mr-2" />
-                        Enviar para Avaliação
-                      </>
-                    )}
+                  <Button onClick={handleSubmitDelivery} disabled={submitting || proofUrls.length === 0} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]">
+                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4 mr-2" />Enviar para Avaliação</>}
                   </Button>
-                  <p className="text-xs text-center mt-2">
-                    Certifique-se de que a entrega atende todos os requisitos antes de enviar.
-                  </p>
+                  <p className="text-xs text-center mt-2">Certifique-se de que a entrega atende todos os requisitos antes de enviar.</p>
                 </div>
-              )}
-            </div>
+              </div>
+            )
           )}
         </DialogContent>
       </Dialog>
