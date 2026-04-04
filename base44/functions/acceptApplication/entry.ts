@@ -62,6 +62,14 @@ Deno.serve(async (req) => {
     const rate = agreed_rate ? parseFloat(agreed_rate) : application.proposed_rate;
 
     try {
+      // Re-read campaign to minimize race window
+      const freshCampaigns = await base44.entities.Campaign.filter({ id: application.campaign_id });
+      const freshCampaign = freshCampaigns[0];
+      const freshSlotsFilled = freshCampaign.slots_filled || 0;
+      if (freshSlotsFilled >= slotsTotal) {
+        return Response.json({ error: 'Campaign slots were just filled' }, { status: 409 });
+      }
+
       // Step A: Update application
       console.log(`[acceptApplication] Updating application ${application_id} to accepted`);
       const updatedApplication = await base44.entities.Application.update(application_id, {
@@ -79,14 +87,14 @@ Deno.serve(async (req) => {
       });
 
       // Step B: Increment slots_filled
-      console.log(`[acceptApplication] Incrementing slots_filled on campaign ${campaign.id}: ${currentSlotsFilled} -> ${currentSlotsFilled + 1}`);
+      console.log(`[acceptApplication] Incrementing slots_filled on campaign ${campaign.id}: ${freshSlotsFilled} -> ${freshSlotsFilled + 1}`);
       const updatedCampaign = await base44.entities.Campaign.update(campaign.id, {
-        slots_filled: currentSlotsFilled + 1
+        slots_filled: freshSlotsFilled + 1
       });
       rollbackActions.push(async () => {
         console.log(`[acceptApplication] ROLLBACK: reverting slots_filled on campaign ${campaign.id}`);
         await base44.entities.Campaign.update(campaign.id, {
-          slots_filled: currentSlotsFilled
+          slots_filled: freshSlotsFilled
         });
       });
 
@@ -101,14 +109,14 @@ Deno.serve(async (req) => {
         deadline: campaign.deadline
       });
 
-      console.log(`[acceptApplication] SUCCESS: application=${application_id}, delivery=${delivery.id}, slots=${currentSlotsFilled + 1}/${slotsTotal}`);
+      console.log(`[acceptApplication] SUCCESS: application=${application_id}, delivery=${delivery.id}, slots=${freshSlotsFilled + 1}/${slotsTotal}`);
 
       return Response.json({
         success: true,
         application: updatedApplication,
         campaign: updatedCampaign,
         delivery: delivery,
-        slotsFilled: currentSlotsFilled + 1,
+        slotsFilled: freshSlotsFilled + 1,
         slotsTotal: slotsTotal
       });
 

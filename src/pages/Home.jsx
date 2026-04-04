@@ -298,7 +298,7 @@ export default function Home() {
           <Button 
             size="lg" 
             className="bg-background text-primary hover:bg-secondary"
-            onClick={scrollToSection}
+            onClick={() => base44.auth.redirectToLogin(createPageUrl('SelectProfile'))}
           >
             Começar Agora
             <ArrowRight className="w-5 h-5 ml-2" />

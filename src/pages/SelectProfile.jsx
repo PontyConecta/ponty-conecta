@@ -205,9 +205,9 @@ export default function SelectProfile() {
       <div className="max-w-2xl mx-auto mt-12 text-center">
         <p className="text-sm text-muted-foreground">
           Ao continuar, você concorda com nossos{' '}
-          <a href="#" className="text-primary hover:underline">Termos de Uso</a>
+          <span className="text-primary">Termos de Uso</span>
           {' '}e{' '}
-          <a href="#" className="text-primary hover:underline">Política de Privacidade</a>.
+          <span className="text-primary">Política de Privacidade</span>.
         </p>
       </div>
     </div>

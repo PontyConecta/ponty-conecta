@@ -27,6 +27,7 @@ export default function ApplicationCard({
   onAccept,
   onWithdraw,
   onViewCreatorProfile,
+  onViewBrand,
 }) {
   return (
     <motion.div
@@ -69,20 +70,28 @@ export default function ApplicationCard({
                 </>
               ) : (
                 <>
-                  {brand?.logo_url ? (
-                    <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
-                  ) : (
-                    <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center">
-                      <Building2 className="w-6 h-6 text-slate-400" />
-                    </div>
-                  )}
+                  <div
+                    className="cursor-pointer hover:opacity-80"
+                    onClick={(e) => { e.stopPropagation(); onViewBrand?.(brand); }}
+                  >
+                    {brand?.logo_url ? (
+                      <img src={brand.logo_url} alt={brand.company_name} className="w-12 h-12 rounded-lg object-cover" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center">
+                        <Building2 className="w-6 h-6 text-slate-400" />
+                      </div>
+                    )}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold truncate">
                       {campaign?.title || 'Campanha'}
                     </h3>
-                    <p className="text-sm">
+                    <button
+                      className="text-sm text-primary hover:underline text-left"
+                      onClick={(e) => { e.stopPropagation(); onViewBrand?.(brand); }}
+                    >
                       {brand?.company_name || 'Marca'}
-                    </p>
+                    </button>
                     <div className="flex flex-wrap gap-3 mt-2 text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />

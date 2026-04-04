@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import BrandProfileModal from '../components/modals/BrandProfileModal';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +28,7 @@ import Applications from './Applications';
 
 export default function OpportunityFeed() {
   const { profile: authProfile, profileType } = useAuth();
+  const navigate = useNavigate();
   const [viewingBrand, setViewingBrand] = useState(null);
   const vm = useOpportunityFeedViewModel(authProfile, profileType);
   const { loadMoreRef } = useInfiniteScroll(vm.handleLoadMore, vm.hasNextPage);
@@ -231,6 +234,10 @@ export default function OpportunityFeed() {
               brand={viewingBrand}
               isSubscribed={true}
               onPaywall={() => {}}
+              onMessage={(b) => {
+                setViewingBrand(null);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${b.user_id}&recipientName=${encodeURIComponent(b.company_name || 'Marca')}`);
+              }}
             />
           </DialogContent>
         </Dialog>

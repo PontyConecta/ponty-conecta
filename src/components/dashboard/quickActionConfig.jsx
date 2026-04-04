@@ -10,6 +10,6 @@ export const brandActions = [
 export const creatorActions = [
   { label: 'Campanhas', icon: Megaphone, page: 'OpportunityFeed', bg: 'hsl(var(--primary))' },
   { label: 'Descobrir Marcas', icon: Building2, page: 'DiscoverBrands', bg: 'hsl(var(--accent))' },
-  { label: 'Candidaturas', icon: FileText, page: 'Applications', bg: '#f59e0b' },
+  { label: 'Candidaturas', icon: FileText, page: 'MyApplications', bg: '#f59e0b' },
   { label: 'Meu Perfil', icon: UserCircle, page: 'Profile', bg: '#10b981' },
 ];

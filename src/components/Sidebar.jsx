@@ -38,7 +38,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
     { name: 'Dashboard', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Descobrir Marcas', page: 'DiscoverBrands', icon: Building2 },
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Compass, alsoActive: ['Applications'] },
-    { name: 'Minhas Candidaturas', page: 'Applications', icon: Send },
+    { name: 'Minhas Candidaturas', page: 'MyApplications', icon: Send },
     { name: 'Minhas Entregas', page: 'MyDeliveries', icon: PackageCheck },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
     { type: 'divider' },

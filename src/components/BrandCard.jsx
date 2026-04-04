@@ -195,8 +195,8 @@ export default function BrandCard({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="flex-1 border-primary/20 text-primary bg-primary/5 cursor-not-allowed"
-                disabled
+                className="flex-1 border-primary/20 text-primary bg-primary/5 hover:bg-primary/10"
+                onClick={onContact}
               >
                 <Lock className="w-4 h-4 mr-1" />
                 Premium

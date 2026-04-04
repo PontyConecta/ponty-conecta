@@ -7,6 +7,12 @@ Deno.serve(async (req) => {
   const body = await req.json();
   const { event, data, old_data } = body;
 
+  // Validate event source — only allow known entity types
+  const ALLOWED_ENTITIES = ['Campaign', 'Application', 'Delivery'];
+  if (!event?.entity_name || !ALLOWED_ENTITIES.includes(event.entity_name)) {
+    return Response.json({ error: 'Invalid event source' }, { status: 403 });
+  }
+
   if (!event || !data) {
     return Response.json({ error: 'Missing event or data' }, { status: 400 });
   }
