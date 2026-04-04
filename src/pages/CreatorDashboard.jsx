@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -6,8 +6,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Sparkles, Megaphone, FileText, ArrowRight, Crown, Target, CheckCircle2, CalendarDays
+  Sparkles, Megaphone, FileText, ArrowRight, Crown, Target, CheckCircle2, CalendarDays, Eye
 } from 'lucide-react';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import { motion } from 'framer-motion';
 import { TYPE_COPY } from '@/components/utils/creatorTypeConfig';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
@@ -23,10 +27,14 @@ import ProfileStrength from '@/components/dashboard/ProfileStrength';
 import CampaignsForYou from '@/components/dashboard/CampaignsForYou';
 import { useCreatorDashboardData } from '@/components/hooks/useDashboardData';
 
+const formatFollowers = (n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n || 0);
+const getTotalFollowers = (c) => (c?.platforms || []).reduce((s, p) => s + (p.followers || 0), 0);
+
 export default function CreatorDashboard() {
   const { user, profile: authProfile } = useAuth();
   const queryClient = useQueryClient();
   const creator = authProfile;
+  const [showMyProfile, setShowMyProfile] = useState(false);
   const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
 
   const { data, isLoading } = useCreatorDashboardData(creator?.id, user?.id);
@@ -156,8 +164,14 @@ export default function CreatorDashboard() {
         ))}
       </motion.div>
 
-      {/* BLOCK 4 — Profile strength */}
-      <ProfileStrength profile={creator} />
+      {/* BLOCK 4 — Profile strength + preview */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1"><ProfileStrength profile={creator} /></div>
+      </div>
+      <Button variant="outline" size="sm" onClick={() => setShowMyProfile(true)} className="min-h-[44px]">
+        <Eye className="w-4 h-4 mr-1" />
+        Ver como marcas me veem
+      </Button>
 
       {/* BLOCK 5 — Campaigns for you */}
       {isSubscribed && <CampaignsForYou creatorNiches={creator?.niche || []} />}
@@ -214,6 +228,22 @@ export default function CreatorDashboard() {
 
       {/* Metrics */}
       <CreatorMetricsChart appCounts={appCounts} delCounts={delCounts} totalApps={totalApps} totalDeliveries={totalDeliveries} onTimeRate={data?.onTimeRate ?? 100} />
+
+      {/* Profile Preview Modal */}
+      {showMyProfile && (
+        <Dialog open={showMyProfile} onOpenChange={setShowMyProfile}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Seu Perfil Público</DialogTitle></DialogHeader>
+            <CreatorProfileModal
+              creator={creator}
+              isSubscribed={true}
+              formatFollowers={formatFollowers}
+              getTotalFollowers={getTotalFollowers}
+              onPaywall={() => {}}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

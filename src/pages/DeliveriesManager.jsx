@@ -40,6 +40,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
+import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
 import { useDeliveriesQuery, useApproveMutation, useContestMutation } from '../components/hooks/useEntityQuery';
 
 export default function DeliveriesManager() {
@@ -58,7 +59,26 @@ export default function DeliveriesManager() {
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [contestReason, setContestReason] = useState('');
   const [viewingCreator, setViewingCreator] = useState(null);
+  const [inviteTarget, setInviteTarget] = useState(null);
+  const [brandCampaigns, setBrandCampaigns] = useState([]);
   const navigate = useNavigate();
+
+  // Load brand campaigns for invite modal
+  useEffect(() => {
+    if (authProfile?.id) {
+      base44.entities.Campaign.filter({ brand_id: authProfile.id, status: 'active' }, '-created_date', 50).then(setBrandCampaigns);
+    }
+  }, [authProfile?.id]);
+
+  // Deep-link: open delivery from URL param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const targetDeliveryId = params.get('deliveryId');
+    if (targetDeliveryId && deliveries.length > 0 && !selectedDelivery) {
+      const target = deliveries.find(d => d.id === targetDeliveryId);
+      if (target) setSelectedDelivery(target);
+    }
+  }, [deliveries]);
 
   const processing = approveMutation.isPending || contestMutation.isPending;
 
@@ -486,12 +506,21 @@ export default function DeliveriesManager() {
               }}
               onInvite={(c) => {
                 setViewingCreator(null);
-                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Criadora')}`);
+                setInviteTarget(c);
               }}
             />
           )}
         </DialogContent>
       </Dialog>
+
+      {inviteTarget && (
+        <InviteCreatorModal
+          open={!!inviteTarget}
+          onClose={() => setInviteTarget(null)}
+          creator={inviteTarget}
+          campaigns={brandCampaigns}
+        />
+      )}
     </div>
   );
 }

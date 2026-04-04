@@ -56,7 +56,7 @@ export default function NotificationDropdown({ triggerClassName }) {
               id: key, type: 'application', title: 'Nova Candidatura',
               message: 'Um criador se candidatou para sua campanha', icon: MessageSquare,
               color: 'text-blue-600', timestamp: app.created_date, read: !!readMap[key],
-              actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
+              actionUrl: createPageUrl('Applications') + '?applicationId=' + app.id, relatedEntityId: app.id
             });
           }
         });
@@ -68,7 +68,7 @@ export default function NotificationDropdown({ triggerClassName }) {
               id: key, type: 'delivery', title: 'Entrega Pendente',
               message: 'Criador enviou conteúdo para revisão', icon: CheckCircle2,
               color: 'text-green-600', timestamp: del.submitted_at || del.created_date, read: !!readMap[key],
-              actionUrl: createPageUrl('Deliveries'), relatedEntityId: del.id
+              actionUrl: createPageUrl('Deliveries') + '?deliveryId=' + del.id, relatedEntityId: del.id
             });
           }
         });
@@ -120,7 +120,7 @@ export default function NotificationDropdown({ triggerClassName }) {
               id: key, type: 'application_accepted', title: 'Candidatura Aceita! 🎉',
               message: 'Sua candidatura foi aceita para uma campanha', icon: CheckCircle2,
               color: 'text-green-600', timestamp: app.accepted_at || app.created_date, read: !!readMap[key],
-              actionUrl: createPageUrl('Applications'), relatedEntityId: app.id
+              actionUrl: createPageUrl('MyApplications') + '?applicationId=' + app.id, relatedEntityId: app.id
             });
           }
         });

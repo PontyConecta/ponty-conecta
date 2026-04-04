@@ -41,6 +41,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../components/contexts/AuthContext';
 import { useApplicationsQuery, useAcceptApplicationMutation, useRejectApplicationMutation } from '../components/hooks/useEntityQuery';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
+import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
 import { useSubscription } from '@/components/contexts/SubscriptionContext';
 
 export default function ApplicationsManager() {
@@ -61,8 +62,17 @@ export default function ApplicationsManager() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [agreedRate, setAgreedRate] = useState('');
   const [viewingCreator, setViewingCreator] = useState(null);
+  const [inviteTarget, setInviteTarget] = useState(null);
+  const [brandCampaigns, setBrandCampaigns] = useState([]);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Load brand campaigns for invite modal
+  useEffect(() => {
+    if (profileType === 'brand' && authProfile?.id) {
+      base44.entities.Campaign.filter({ brand_id: authProfile.id, status: 'active' }, '-created_date', 50).then(setBrandCampaigns);
+    }
+  }, [profileType, authProfile?.id]);
 
   // Deep-link: open application dialog from URL param
   useEffect(() => {
@@ -463,16 +473,27 @@ export default function ApplicationsManager() {
               formatFollowers={formatFollowers}
               getTotalFollowers={getTotalFollowers}
               onPaywall={() => {}}
-              onInvite={(creator) => {
+              onMessage={(c) => {
                 setViewingCreator(null);
-                navigate(createPageUrl('InboxThread') +
-                  '?recipientId=' + creator.user_id +
-                  '&recipientName=' + encodeURIComponent(creator.display_name));
+                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Criadora')}`);
+              }}
+              onInvite={(c) => {
+                setViewingCreator(null);
+                setInviteTarget(c);
               }}
             />
           )}
         </DialogContent>
       </Dialog>
+
+      {inviteTarget && (
+        <InviteCreatorModal
+          open={!!inviteTarget}
+          onClose={() => setInviteTarget(null)}
+          creator={inviteTarget}
+          campaigns={brandCampaigns}
+        />
+      )}
     </div>
   );
 }

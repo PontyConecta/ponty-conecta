@@ -265,7 +265,7 @@ export default function MyApplications() {
                         {application.status === 'accepted' && (
                           <Button
                             size="sm"
-                            onClick={() => navigate(createPageUrl('MyDeliveries'))}
+                            onClick={() => navigate(createPageUrl('MyDeliveries') + `?applicationId=${application.id}`)}
                             className="bg-emerald-600 hover:bg-emerald-700 text-white min-h-[44px]"
                           >
                             <CheckCircle2 className="w-4 h-4 mr-1" />

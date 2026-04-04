@@ -281,7 +281,8 @@ export default function DiscoverCreators() {
           {nicheCreators.map(c => (
             <div key={c.id} className="w-[160px] flex-shrink-0">
               <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                onClick={() => setSelectedCreator(c)} />
+                onClick={() => setSelectedCreator(c)}
+                showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
             </div>
           ))}
         </HorizontalSection>

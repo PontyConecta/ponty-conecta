@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { Eye } from 'lucide-react';
+import { Eye, CheckCircle2 } from 'lucide-react';
 import StatusBadge from '../common/StatusBadge';
 
 export default function ApplicationDetailDialog({
@@ -20,7 +22,9 @@ export default function ApplicationDetailDialog({
   campaign,
   brand,
   onViewCreatorProfile,
+  onViewBrand,
 }) {
+  const navigate = useNavigate();
   if (!application) return null;
 
   return (
@@ -90,10 +94,22 @@ export default function ApplicationDetailDialog({
           </div>
         ) : (
           <div className="space-y-4 py-4">
-            <div className="p-4 rounded-xl">
-              <h4 className="font-semibold">{campaign?.title}</h4>
-              <p className="text-sm">{brand?.company_name}</p>
-            </div>
+            <button
+              onClick={() => onViewBrand?.(brand)}
+              className="p-4 rounded-xl w-full text-left hover:opacity-80 cursor-pointer flex items-center gap-3"
+            >
+              {brand?.logo_url ? (
+                <img src={brand.logo_url} alt={brand.company_name} className="w-10 h-10 rounded-lg object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                  <span className="font-bold text-muted-foreground">{brand?.company_name?.[0]}</span>
+                </div>
+              )}
+              <div>
+                <h4 className="font-semibold">{campaign?.title}</h4>
+                <p className="text-sm text-primary hover:underline">{brand?.company_name}</p>
+              </div>
+            </button>
 
             {application.message && (
               <div>
@@ -120,6 +136,16 @@ export default function ApplicationDetailDialog({
                   <strong>Valor Acordado:</strong> R$ {application.agreed_rate}
                 </p>
               </div>
+            )}
+            {application.status === 'accepted' && (
+              <Button
+                size="sm"
+                onClick={() => navigate(createPageUrl('MyDeliveries') + `?applicationId=${application.id}`)}
+                className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-1" />
+                Ver Entrega
+              </Button>
             )}
           </div>
         )}

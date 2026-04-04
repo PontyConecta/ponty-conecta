@@ -123,6 +123,14 @@ export default function MyDeliveries() {
       toast.error('Erro ao carregar entregas.');
     } finally {
       setLoading(false);
+
+      // Deep-link: open delivery from URL param
+      const params = new URLSearchParams(window.location.search);
+      const targetAppId = params.get('applicationId');
+      if (targetAppId && deliveriesData.length > 0) {
+        const target = deliveriesData.find(d => d.application_id === targetAppId);
+        if (target) openSubmitDialog(target);
+      }
     }
   };
 

@@ -234,8 +234,15 @@ export default function InboxThread() {
           <p className="text-sm font-semibold truncate">{otherName}</p>
           {campaign && !isDirect && <p className="text-xs text-muted-foreground truncate">{campaign.title}</p>}
         </div>
-        <Button variant="ghost" size="sm" onClick={() => setShowOtherProfile(true)} className="text-xs text-primary">
-          Ver perfil
+        <Button
+          variant="ghost" size="sm"
+          onClick={() => setShowOtherProfile(true)}
+          disabled={profileType === 'brand' ? !otherCreator : !otherBrand}
+          className="text-xs text-primary"
+        >
+          {(profileType === 'brand' ? !otherCreator : !otherBrand) ? (
+            <><Loader2 className="w-3 h-3 mr-1 animate-spin" />Carregando...</>
+          ) : 'Ver perfil'}
         </Button>
       </div>
 
