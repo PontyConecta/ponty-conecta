@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ export default function DashboardMissions({ userId, profileType }) {
       setMissions(data.sort((a, b) => (a.order || 0) - (b.order || 0)));
     } catch (error) {
       console.error('Error loading missions:', error);
+      toast.error('Erro ao carregar missões.');
     } finally {
       setLoading(false);
     }
