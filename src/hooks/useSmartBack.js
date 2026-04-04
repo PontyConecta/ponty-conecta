@@ -13,13 +13,14 @@ const BACK_MAP = {
   AdminCampaigns:       { page: 'AdminDashboard',   label: 'Admin'         },
   AdminDisputes:        { page: 'AdminDashboard',   label: 'Admin'         },
   AdminAuditLogs:       { page: 'AdminDashboard',   label: 'Admin'         },
+  AdminTransactions:    { page: 'AdminDashboard',   label: 'Admin'         },
 };
 
 export const LEAF_PAGES = new Set([
   'InboxThread', 'ApplicationsManager', 'DeliveriesManager',
   'MyApplications', 'MyDeliveries', 'Settings', 'Profile',
   'Subscription', 'Feedback', 'MissionsAchievements',
-  'AdminUsers', 'AdminCampaigns', 'AdminDisputes', 'AdminAuditLogs',
+  'AdminUsers', 'AdminCampaigns', 'AdminDisputes', 'AdminAuditLogs', 'AdminTransactions',
 ]);
 
 export default function useSmartBack(currentPage) {
