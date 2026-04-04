@@ -12,6 +12,7 @@ import {
 import { Search, Users, Loader2 } from 'lucide-react';
 import BrandProfileModal from '@/components/modals/BrandProfileModal';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
+import PaywallModal from '@/components/PaywallModal';
 
 const formatFollowers = (num) => {
   if (!num) return '0';
@@ -32,6 +33,7 @@ export default function DiscoverCommunity() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   useEffect(() => {
     if (!profileType || !profile) return;
@@ -114,6 +116,15 @@ export default function DiscoverCommunity() {
         </div>
       )}
 
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        title="Recurso Premium"
+        description="Assine para desbloquear contato direto, redes sociais e valores."
+        feature="Perfil completo"
+        isAuthenticated={true}
+      />
+
       {/* Profile Modal */}
       {selectedItem && (
         <Dialog open={!!selectedItem} onOpenChange={(open) => { if (!open) setSelectedItem(null); }}>
@@ -127,7 +138,7 @@ export default function DiscoverCommunity() {
               <BrandProfileModal
                 brand={selectedItem}
                 isSubscribed={isSubscribed}
-                onPaywall={() => {}}
+                onPaywall={() => setShowPaywall(true)}
                 onMessage={handleMessage}
               />
             ) : (
@@ -136,7 +147,7 @@ export default function DiscoverCommunity() {
                 isSubscribed={isSubscribed}
                 formatFollowers={formatFollowers}
                 getTotalFollowers={getTotalFollowers}
-                onPaywall={() => {}}
+                onPaywall={() => setShowPaywall(true)}
                 onMessage={handleMessage}
               />
             )}

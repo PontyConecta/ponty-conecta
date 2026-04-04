@@ -93,7 +93,21 @@ export default function DeliveryCard({
                     Ver Entrega
                   </Button>
                 )}
+                {['approved', 'contested', 'in_dispute', 'resolved', 'closed'].includes(delivery.status) && (
+                  <Button variant="outline" size="sm" onClick={() => onSubmit(delivery)} className="min-h-[44px]">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Ver Detalhes
+                  </Button>
+                )}
               </div>
+            )}
+
+            {/* Brand view action */}
+            {profileType === 'brand' && (
+              <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); onView?.(delivery); }} className="mt-2">
+                <Eye className="w-4 h-4 mr-1" />
+                Ver Entrega
+              </Button>
             )}
           </div>
 

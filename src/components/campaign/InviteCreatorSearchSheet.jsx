@@ -28,12 +28,10 @@ export default function InviteCreatorSearchSheet({ campaign, onClose }) {
     setSending(creator.id);
     const conversationId = [user.id, creator.user_id].sort().join('__direct__');
     const content = `🎯 *Convite para campanha: "${campaign.title}"*\n\nOlá! Seu perfil chamou nossa atenção e gostaríamos de te convidar para participar desta campanha. Candidate-se pelo app!`;
-    await base44.entities.Message.create({
-      application_id: conversationId,
-      sender_id: user.id,
-      sender_type: 'brand',
+    await base44.functions.invoke('sendMessage', {
       recipient_id: creator.user_id,
       content,
+      application_id: null,
     });
     toast.success(`Convite enviado para ${creator.display_name?.split(' ')[0]}! ✨`);
     setSending(null);

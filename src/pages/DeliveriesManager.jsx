@@ -480,11 +480,13 @@ export default function DeliveriesManager() {
               formatFollowers={(n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n||0)}
               getTotalFollowers={(c) => (c?.platforms||[]).reduce((s,p) => s + (p.followers||0), 0)}
               onPaywall={() => {}}
+              onMessage={(c) => {
+                setViewingCreator(null);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Criadora')}`);
+              }}
               onInvite={(c) => {
                 setViewingCreator(null);
-                navigate(createPageUrl('InboxThread') +
-                  '?recipientId=' + c.user_id +
-                  '&recipientName=' + encodeURIComponent(c.display_name));
+                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Criadora')}`);
               }}
             />
           )}

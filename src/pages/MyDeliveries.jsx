@@ -107,12 +107,16 @@ export default function MyDeliveries() {
       // Load vouchers for approved deliveries
       const approvedIds = deliveriesData.filter(d => d.status === 'approved').map(d => d.id);
       if (approvedIds.length > 0) {
-        const vouchersData = await Promise.all(
-          approvedIds.map(id => base44.entities.Voucher.filter({ delivery_id: id }).then(r => r[0]))
-        );
-        const voucherMap = {};
-        vouchersData.filter(Boolean).forEach(v => { voucherMap[v.delivery_id] = v; });
-        setVouchers(voucherMap);
+        try {
+          const vouchersData = await Promise.all(
+            approvedIds.map(id => base44.entities.Voucher.filter({ delivery_id: id }).then(r => r[0]))
+          );
+          const voucherMap = {};
+          vouchersData.filter(Boolean).forEach(v => { voucherMap[v.delivery_id] = v; });
+          setVouchers(voucherMap);
+        } catch (e) {
+          console.warn('[MyDeliveries] Voucher entity not available:', e.message);
+        }
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -333,6 +337,12 @@ export default function MyDeliveries() {
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           Ver Entrega
+                        </Button>
+                      )}
+                      {['approved', 'contested', 'in_dispute', 'resolved', 'closed'].includes(delivery.status) && (
+                        <Button variant="outline" size="sm" onClick={() => openSubmitDialog(delivery)} className="min-h-[44px]">
+                          <Eye className="w-4 h-4 mr-2" />
+                          Ver Detalhes
                         </Button>
                       )}
                     </div>

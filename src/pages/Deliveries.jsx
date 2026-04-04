@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import CreatorProfileModal from '../components/modals/CreatorProfileModal';
@@ -15,6 +17,7 @@ import CreatorSubmitDialog from '../components/deliveries/CreatorSubmitDialog';
 
 export default function Deliveries() {
   const { profile: authProfile, profileType } = useAuth();
+  const navigate = useNavigate();
   const [viewingCreator, setViewingCreator] = useState(null);
 
   const vm = useDeliveriesViewModel(profileType, authProfile?.id);
@@ -141,6 +144,10 @@ export default function Deliveries() {
               formatFollowers={(n) => n >= 1000000 ? `${(n/1000000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : String(n || 0)}
               getTotalFollowers={(c) => (c?.platforms || []).reduce((s, p) => s + (p.followers || 0), 0)}
               onPaywall={() => {}}
+              onMessage={(c) => {
+                setViewingCreator(null);
+                navigate(createPageUrl('InboxThread') + `?recipientId=${c.user_id}&recipientName=${encodeURIComponent(c.display_name || 'Criadora')}`);
+              }}
             />
           </DialogContent>
         </Dialog>
