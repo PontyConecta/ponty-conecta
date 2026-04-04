@@ -17,6 +17,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function SelectProfile() {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ export default function SelectProfile() {
       }
     } catch (error) {
       console.error('Error checking profile:', error);
+      toast.error('Erro ao criar perfil. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -79,6 +81,7 @@ export default function SelectProfile() {
       navigate(createPageUrl(type === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator'));
     } catch (error) {
       console.error('Error creating profile:', error);
+      toast.error('Erro ao criar perfil. Tente novamente.');
     } finally {
       setSelecting(false);
     }
