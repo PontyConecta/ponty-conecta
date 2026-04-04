@@ -311,6 +311,37 @@ Deno.serve(async (req) => {
           await base44.asServiceRole.entities.Brand.create(brandData);
         }
 
+        // Cascade: cancel/close related entities before deleting old profile
+        if (entityName === 'Brand') {
+          const campaigns = await base44.asServiceRole.entities.Campaign.filter({ brand_id: profile.id });
+          for (const c of campaigns) {
+            if (c.status !== 'cancelled' && c.status !== 'completed') {
+              await base44.asServiceRole.entities.Campaign.update(c.id, { status: 'cancelled' });
+              const pendingApps = await base44.asServiceRole.entities.Application.filter({ campaign_id: c.id, status: 'pending' });
+              for (const app of pendingApps) {
+                await base44.asServiceRole.entities.Application.update(app.id, { status: 'rejected', rejection_reason: 'Perfil convertido' });
+              }
+              const deliveries = await base44.asServiceRole.entities.Delivery.filter({ campaign_id: c.id });
+              for (const del of deliveries) {
+                if (del.status === 'pending' || del.status === 'submitted') {
+                  await base44.asServiceRole.entities.Delivery.update(del.id, { status: 'closed' });
+                }
+              }
+            }
+          }
+        } else if (entityName === 'Creator') {
+          const pendingApps = await base44.asServiceRole.entities.Application.filter({ creator_id: profile.id, status: 'pending' });
+          for (const app of pendingApps) {
+            await base44.asServiceRole.entities.Application.update(app.id, { status: 'withdrawn' });
+          }
+          const deliveries = await base44.asServiceRole.entities.Delivery.filter({ creator_id: profile.id });
+          for (const del of deliveries) {
+            if (del.status === 'pending' || del.status === 'submitted') {
+              await base44.asServiceRole.entities.Delivery.update(del.id, { status: 'closed' });
+            }
+          }
+        }
+
         // Delete old profile
         await base44.asServiceRole.entities[entityName].delete(profile.id);
 
