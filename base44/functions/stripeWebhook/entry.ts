@@ -356,11 +356,20 @@ async function handleInvoicePaid(base44, invoice) {
   if (result) {
     const { profile, entityName } = result;
     if (profile.subscription_status !== 'premium') {
+      // Derive plan_level from subscription interval
+      let planLevel = 'premium_monthly';
+      try {
+        const sub = await stripe.subscriptions.retrieve(subscriptionId);
+        const interval = sub.items?.data?.[0]?.price?.recurring?.interval;
+        planLevel = interval === 'year' ? 'premium_annual' : 'premium_monthly';
+      } catch (e) {
+        console.error('Could not derive plan interval in invoice.paid:', e.message);
+      }
       await base44.asServiceRole.entities[entityName].update(profile.id, {
         subscription_status: 'premium',
-        plan_level: 'premium'
+        plan_level: planLevel
       });
-      console.log('Profile updated to premium via invoice.paid');
+      console.log('Profile updated to premium via invoice.paid, plan_level:', planLevel);
     }
   }
 
