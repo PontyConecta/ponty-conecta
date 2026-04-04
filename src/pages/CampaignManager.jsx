@@ -71,8 +71,15 @@ export default function CampaignManager() {
       const validation = validateBrandProfile(brand);
       setProfileValidation(validation);
       
-      const campaignsData = await base44.entities.Campaign.filter({ brand_id: brand.id }, '-created_date', 500);
-      setCampaigns(campaignsData);
+      const [campaignsData, allApplications] = await Promise.all([
+        base44.entities.Campaign.filter({ brand_id: brand.id }, '-created_date', 500),
+        base44.entities.Application.filter({ brand_id: brand.id }),
+      ]);
+      const appCountByCampaign = {};
+      allApplications.forEach(app => {
+        appCountByCampaign[app.campaign_id] = (appCountByCampaign[app.campaign_id] || 0) + 1;
+      });
+      setCampaigns(campaignsData.map(c => ({ ...c, total_applications: appCountByCampaign[c.id] || 0 })));
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Erro ao carregar campanhas');

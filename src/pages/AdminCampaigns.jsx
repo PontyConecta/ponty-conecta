@@ -55,11 +55,16 @@ export default function AdminCampaigns() {
 
   const loadCampaigns = async () => {
     try {
-      const [campaignsData, brandsData] = await Promise.all([
+      const [campaignsData, brandsData, allApplications] = await Promise.all([
         base44.entities.Campaign.list('-created_date', 500),
-        base44.entities.Brand.list('-created_date', 500)
+        base44.entities.Brand.list('-created_date', 500),
+        base44.entities.Application.list('-created_date', 5000),
       ]);
-      setCampaigns(campaignsData);
+      const appCountByCampaign = {};
+      allApplications.forEach(app => {
+        appCountByCampaign[app.campaign_id] = (appCountByCampaign[app.campaign_id] || 0) + 1;
+      });
+      setCampaigns(campaignsData.map(c => ({ ...c, total_applications: appCountByCampaign[c.id] || 0 })));
       setBrands(brandsData);
     } catch (error) {
       console.error('Error loading campaigns:', error);
