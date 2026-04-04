@@ -101,9 +101,8 @@ export default function InboxThread() {
       // Mark unread as read
       const unread = msgs.filter(m => m.recipient_id === user.id && !m.read_at);
       if (unread.length > 0) {
-        Promise.all(
-          unread.map(m => base44.entities.Message.update(m.id, { read_at: new Date().toISOString() }))
-        ).catch(() => {});
+        const unreadIds = unread.map(m => m.id);
+        base44.functions.invoke('markMessagesRead', { message_ids: unreadIds }).catch(() => {});
       }
       } catch (err) {
         console.error('Erro ao carregar thread:', err);
@@ -124,7 +123,7 @@ export default function InboxThread() {
           return [...prev, event.data];
         });
         if (event.data.recipient_id === user.id && !event.data.read_at) {
-          base44.entities.Message.update(event.data.id, { read_at: new Date().toISOString() }).catch(() => {});
+          base44.functions.invoke('markMessagesRead', { message_ids: [event.data.id] }).catch(() => {});
         }
       }
     });
