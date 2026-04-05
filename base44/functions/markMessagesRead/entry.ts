@@ -5,15 +5,13 @@ Deno.serve(async (req) => {
   try {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-
     const { message_ids } = await req.json();
     if (!message_ids || !Array.isArray(message_ids) || message_ids.length === 0) {
       return Response.json({ error: 'message_ids required' }, { status: 400 });
     }
     if (message_ids.length > 100) {
-      return Response.json({ error: 'Max 100 messages per request' }, { status: 400 });
+      return Response.json({ error: 'Max 100 messages' }, { status: 400 });
     }
-
     const now = new Date().toISOString();
     let marked = 0;
     for (const id of message_ids) {
@@ -23,7 +21,6 @@ Deno.serve(async (req) => {
         marked++;
       }
     }
-
     return Response.json({ success: true, marked });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
