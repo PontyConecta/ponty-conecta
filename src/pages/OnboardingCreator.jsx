@@ -431,7 +431,7 @@ export default function OnboardingCreator() {
                                 className="pl-8 h-12" 
                               />
                             </div>
-                            <Select value={formData.instagram_followers} onValueChange={(v) => handleChange('instagram_followers', v)}>
+                            <Select value={formData.instagram_followers || undefined} onValueChange={(v) => handleChange('instagram_followers', v)}>
                               <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Seguidores" /></SelectTrigger>
                               <SelectContent>
                                 {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
@@ -452,7 +452,7 @@ export default function OnboardingCreator() {
                                 className="pl-8 h-12" 
                               />
                             </div>
-                            <Select value={formData.tiktok_followers} onValueChange={(v) => handleChange('tiktok_followers', v)}>
+                            <Select value={formData.tiktok_followers || undefined} onValueChange={(v) => handleChange('tiktok_followers', v)}>
                               <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Seguidores" /></SelectTrigger>
                               <SelectContent>
                                 {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
@@ -473,7 +473,7 @@ export default function OnboardingCreator() {
                                 className="pl-8 h-12" 
                               />
                             </div>
-                            <Select value={formData.youtube_followers} onValueChange={(v) => handleChange('youtube_followers', v)}>
+                            <Select value={formData.youtube_followers || undefined} onValueChange={(v) => handleChange('youtube_followers', v)}>
                               <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Inscritos" /></SelectTrigger>
                               <SelectContent>
                                 {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
