@@ -10,7 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { 
   User, ArrowRight, ArrowLeft, Upload, MapPin,
   Link as LinkIcon, Loader2, Building
@@ -429,14 +431,12 @@ export default function OnboardingCreator() {
                                 className="pl-8 h-12" 
                               />
                             </div>
-                            <select
-                              value={formData.instagram_followers || ''}
-                              onChange={(e) => handleChange('instagram_followers', e.target.value)}
-                              className="w-[140px] h-12 rounded-lg border border-input bg-background px-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                            >
-                              <option value="" disabled>Seguidores</option>
-                              {FOLLOWER_RANGES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-                            </select>
+                            <Select value={formData.instagram_followers || undefined} onValueChange={(v) => handleChange('instagram_followers', v)}>
+                              <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Seguidores" /></SelectTrigger>
+                              <SelectContent>
+                                {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
 
@@ -452,14 +452,12 @@ export default function OnboardingCreator() {
                                 className="pl-8 h-12" 
                               />
                             </div>
-                            <select
-                              value={formData.tiktok_followers || ''}
-                              onChange={(e) => handleChange('tiktok_followers', e.target.value)}
-                              className="w-[140px] h-12 rounded-lg border border-input bg-background px-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                            >
-                              <option value="" disabled>Seguidores</option>
-                              {FOLLOWER_RANGES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-                            </select>
+                            <Select value={formData.tiktok_followers || undefined} onValueChange={(v) => handleChange('tiktok_followers', v)}>
+                              <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Seguidores" /></SelectTrigger>
+                              <SelectContent>
+                                {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
 
@@ -475,14 +473,12 @@ export default function OnboardingCreator() {
                                 className="pl-8 h-12" 
                               />
                             </div>
-                            <select
-                              value={formData.youtube_followers || ''}
-                              onChange={(e) => handleChange('youtube_followers', e.target.value)}
-                              className="w-[140px] h-12 rounded-lg border border-input bg-background px-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                            >
-                              <option value="" disabled>Inscritos</option>
-                              {FOLLOWER_RANGES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-                            </select>
+                            <Select value={formData.youtube_followers || undefined} onValueChange={(v) => handleChange('youtube_followers', v)}>
+                              <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Inscritos" /></SelectTrigger>
+                              <SelectContent>
+                                {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
                       </div>
