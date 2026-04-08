@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { 
   User, ArrowRight, ArrowLeft, Upload, MapPin,
-  Link as LinkIcon, Loader2, Plus, X, Building
+  Link as LinkIcon, Loader2, Building
 } from 'lucide-react';
 import BrazilStateSelect from '@/components/common/BrazilStateSelect';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,16 +24,14 @@ import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import FieldHint from '@/components/onboarding/FieldHint';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
 import { toast } from 'sonner';
-import { computeProfileSize, FOLLOWER_RANGES, formatFollowers as fmtFollowers, getProfileSizeLabel } from '@/components/utils/profileSizeUtils';
+import { computeProfileSize, FOLLOWER_RANGES } from '@/components/utils/profileSizeUtils';
 import { CREATOR_TYPE_OPTIONS } from '@/components/utils/creatorTypeConfig';
 
 const STEPS = [
-  { number: 1, title: 'Identidade' },
-  { number: 2, title: 'Especialização' },
-  { number: 3, title: 'Tipo' },
-  { number: 4, title: 'Redes Sociais' },
-  { number: 5, title: 'Contato & Valores' },
-  { number: 6, title: 'Finalização' },
+  { number: 1, title: 'Perfil' },
+  { number: 2, title: 'Conteúdo' },
+  { number: 3, title: 'Redes Sociais' },
+  { number: 4, title: 'Finalização' },
 ];
 
 const NICHES = [
@@ -47,17 +45,6 @@ const CONTENT_TYPES = [
   'Fotos', 'Reels', 'Stories', 'Vídeos Longos', 'Lives', 'Podcasts', 'Blogs', 'Unboxing', 'Reviews'
 ];
 
-// profile_size is now auto-calculated — PROFILE_SIZES kept only for reference
-const PROFILE_SIZES = [
-  { value: 'nano', label: 'Nano (até 10K)', desc: 'Comunidade íntima e engajada' },
-  { value: 'micro', label: 'Micro (10K - 50K)', desc: 'Influência de nicho' },
-  { value: 'mid', label: 'Mid (50K - 500K)', desc: 'Alcance moderado' },
-  { value: 'macro', label: 'Macro (500K - 1M)', desc: 'Grande alcance' },
-  { value: 'mega', label: 'Mega (1M+)', desc: 'Celebridade digital' },
-];
-
-const PLATFORM_OPTIONS = ['Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn', 'Threads', 'Pinterest', 'Twitch'];
-
 export default function OnboardingCreator() {
   const { refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -66,7 +53,6 @@ export default function OnboardingCreator() {
   const [creator, setCreator] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [newPlatform, setNewPlatform] = useState({ name: '', handle: '', followers: '' });
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
@@ -84,6 +70,12 @@ export default function OnboardingCreator() {
     accepts_barter: true,
     contact_email: '',
     contact_whatsapp: '',
+    instagram_handle: '',
+    instagram_followers: '',
+    tiktok_handle: '',
+    tiktok_followers: '',
+    youtube_handle: '',
+    youtube_followers: '',
   });
 
   useEffect(() => { loadData(); }, []);
@@ -93,7 +85,6 @@ export default function OnboardingCreator() {
       const userData = await base44.auth.me();
       setUser(userData);
 
-      // Verificar se já tem perfil de marca
       const existingBrands = await base44.entities.Brand.filter({ user_id: userData.id });
       if (existingBrands.length > 0) {
         toast.info('Você já possui um perfil de marca. Redirecionando...');
@@ -109,7 +100,19 @@ export default function OnboardingCreator() {
           return;
         }
         setCreator(existing);
-        setStep(existing.onboarding_step || 1);
+        // Map old 6-step to new 4-step
+        const oldStep = existing.onboarding_step || 1;
+        let mappedStep = 1;
+        if (oldStep <= 1) mappedStep = 1;
+        else if (oldStep <= 3) mappedStep = 2;
+        else if (oldStep <= 5) mappedStep = 3;
+        else mappedStep = 4;
+        setStep(mappedStep);
+
+        const ig = (existing.platforms || []).find(p => p.name === 'Instagram');
+        const tk = (existing.platforms || []).find(p => p.name === 'TikTok');
+        const yt = (existing.platforms || []).find(p => p.name === 'YouTube');
+
         setFormData({
           display_name: existing.display_name || userData.full_name || '',
           bio: existing.bio || '',
@@ -127,6 +130,12 @@ export default function OnboardingCreator() {
           accepts_barter: existing.accepts_barter !== false,
           contact_email: existing.contact_email || userData.email || '',
           contact_whatsapp: existing.contact_whatsapp || '',
+          instagram_handle: ig?.handle || '',
+          instagram_followers: ig?.followers ? String(ig.followers) : '',
+          tiktok_handle: tk?.handle || '',
+          tiktok_followers: tk?.followers ? String(tk.followers) : '',
+          youtube_handle: yt?.handle || '',
+          youtube_followers: yt?.followers ? String(yt.followers) : '',
         });
       }
     } catch (error) {
@@ -139,16 +148,14 @@ export default function OnboardingCreator() {
   const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (field, value) => {
-    // Clear field error when user changes value
     if (fieldErrors[field]) {
       setFieldErrors(prev => { const n = { ...prev }; delete n[field]; return n; });
     }
-    // Reset city when state changes
-    if (field === 'state') {
-      setFormData(prev => ({ ...prev, state: value, city: '' }));
-      return;
-    }
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const next = { ...prev, [field]: value };
+      if (field === 'state') next.city = '';
+      return next;
+    });
   };
 
   const toggleArrayItem = (field, item) => {
@@ -172,24 +179,6 @@ export default function OnboardingCreator() {
     }
   };
 
-  const addPlatform = () => {
-    if (newPlatform.name && newPlatform.handle) {
-      const followers = parseInt(newPlatform.followers) || 0;
-      setFormData(prev => {
-        const updatedPlatforms = [...prev.platforms, { ...newPlatform, followers }];
-        return { ...prev, platforms: updatedPlatforms, profile_size: computeProfileSize(updatedPlatforms) };
-      });
-      setNewPlatform({ name: '', handle: '', followers: '' });
-    }
-  };
-
-  const removePlatform = (index) => {
-    setFormData(prev => {
-      const updatedPlatforms = prev.platforms.filter((_, i) => i !== index);
-      return { ...prev, platforms: updatedPlatforms, profile_size: computeProfileSize(updatedPlatforms) };
-    });
-  };
-
   const saveStepData = async (nextStep, advance = true) => {
     setSaving(true);
     const dataToSave = {};
@@ -203,14 +192,15 @@ export default function OnboardingCreator() {
     } else if (step === 2) {
       dataToSave.niche = formData.niche;
       dataToSave.content_types = formData.content_types;
-      dataToSave.profile_size = formData.profile_size;
-    } else if (step === 3) {
       dataToSave.creator_type = formData.creator_type;
-    } else if (step === 4) {
-      dataToSave.platforms = formData.platforms;
-      dataToSave.profile_size = computeProfileSize(formData.platforms);
+    } else if (step === 3) {
+      const platforms = [];
+      if (formData.instagram_handle) platforms.push({ name: 'Instagram', handle: formData.instagram_handle, followers: parseInt(formData.instagram_followers) || 0 });
+      if (formData.tiktok_handle) platforms.push({ name: 'TikTok', handle: formData.tiktok_handle, followers: parseInt(formData.tiktok_followers) || 0 });
+      if (formData.youtube_handle) platforms.push({ name: 'YouTube', handle: formData.youtube_handle, followers: parseInt(formData.youtube_followers) || 0 });
+      dataToSave.platforms = platforms;
+      dataToSave.profile_size = computeProfileSize(platforms);
       dataToSave.portfolio_url = formData.portfolio_url;
-    } else if (step === 5) {
       dataToSave.contact_email = formData.contact_email;
       dataToSave.contact_whatsapp = formData.contact_whatsapp;
       dataToSave.rate_cash_min = formData.rate_cash_min ? parseFloat(formData.rate_cash_min) : null;
@@ -234,7 +224,6 @@ export default function OnboardingCreator() {
       if (body?.field_errors) {
         setFieldErrors(body.field_errors);
       }
-      // Don't advance step on error — handled in handleNext
       setSaving(false);
       return false;
     }
@@ -243,7 +232,7 @@ export default function OnboardingCreator() {
   };
 
   const handleNext = async () => {
-    if (step < 6) {
+    if (step < 4) {
       const ok = await saveStepData(step + 1);
       if (ok !== false) setStep(step + 1);
     }
@@ -284,12 +273,10 @@ export default function OnboardingCreator() {
 
   const isStepValid = () => {
     switch (step) {
-      case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state && formData.state.length === 2;
+      case 1: return formData.display_name?.trim().length >= 2 && formData.bio?.length >= 20 && formData.state?.length === 2;
       case 2: return formData.niche.length > 0 && formData.content_types.length > 0;
-      case 3: return true; // creator_type is optional (can skip)
-      case 4: return formData.platforms.length > 0;
-      case 5: return isValidEmail(formData.contact_email) && formData.contact_whatsapp?.replace(/\D/g, '').length >= 10;
-      case 6: return true;
+      case 3: return formData.instagram_handle?.trim().length > 0 && isValidEmail(formData.contact_email) && formData.contact_whatsapp?.replace(/\D/g, '').length >= 10;
+      case 4: return true;
       default: return false;
     }
   };
@@ -311,249 +298,268 @@ export default function OnboardingCreator() {
 
         <Card className="shadow-xl border mb-24 bg-card">
           <CardContent className="p-6 sm:p-8">
-            <AnimatePresence mode="wait">
-              <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
-                
-                {step === 1 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-6">
-                      <div className="relative">
-                        {formData.avatar_url ? (
-                          <img src={formData.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
-                        ) : (
-                          <div className="w-24 h-24 rounded-full flex items-center justify-center border-4 border-card shadow-lg bg-primary/10">
-                            <User className="w-10 h-10 text-primary/60" />
-                          </div>
-                        )}
-                        <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/80 transition-colors shadow-lg">
-                          <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                          <Upload className="w-4 h-4 text-white" />
-                        </label>
-                      </div>
-                      <div className="flex-1">
-                        <Label className="text-sm font-medium text-foreground">Nome Artístico *</Label>
-                        <Input value={formData.display_name} onChange={(e) => handleChange('display_name', e.target.value)} placeholder="Como você quer ser conhecido" className="mt-2 h-12" />
-                        <FieldHint text="O nome que será exibido no seu perfil público." />
-                        </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Bio * (mínimo 20 caracteres)</Label>
-                      <Textarea value={formData.bio} onChange={(e) => handleChange('bio', e.target.value)} placeholder="Conte sobre você, seu estilo de conteúdo..." className="mt-2 min-h-[120px]" />
-                      <p className={`text-xs mt-1 font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-primary'}`}>
-                        {formData.bio.length}/20
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Estado *</Label>
-                      <div className="mt-2">
-                        <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione seu estado" />
-                      </div>
-                      {fieldErrors.state && (
-                        <p className="text-xs mt-1 text-red-500">{fieldErrors.state}</p>
-                      )}
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Cidade</Label>
-                      <div className="relative mt-2">
-                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                        <Input value={formData.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="Ex: São Paulo" className="pl-11 h-12" />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Nichos de Conteúdo *</Label>
-                      <FieldHint text="Nos ajuda a conectar você com as melhores campanhas para o seu perfil." />
-                      <p className="text-sm mt-1 mb-3 text-muted-foreground">Selecione até 5 nichos</p>
-                      <div className="flex flex-wrap gap-2">
-                        {NICHES.map(niche => (
-                          <Badge key={niche} variant={formData.niche.includes(niche) ? "default" : "outline"}
-                            className={`cursor-pointer transition-all ${formData.niche.includes(niche) ? 'bg-primary hover:bg-primary/80 text-primary-foreground' : 'hover:bg-primary/10 hover:border-primary/30'}`}
-                            onClick={() => { if (formData.niche.length < 5 || formData.niche.includes(niche)) toggleArrayItem('niche', niche); }}>
-                            {niche}
-                          </Badge>
-                        ))}
-                      </div>
-                      <p className="text-xs mt-2 text-muted-foreground">{formData.niche.length}/5 selecionados</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Tipos de Conteúdo *</Label>
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {CONTENT_TYPES.map(type => (
-                          <Badge key={type} variant={formData.content_types.includes(type) ? "default" : "outline"}
-                            className={`cursor-pointer transition-all ${formData.content_types.includes(type) ? 'bg-primary/80 hover:bg-primary/70 text-primary-foreground' : 'hover:bg-primary/10 hover:border-primary/30'}`}
-                            onClick={() => toggleArrayItem('content_types', type)}>
-                            {type}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Tamanho do Perfil</Label>
-                      <p className="text-xs mt-1 text-muted-foreground">Calculado automaticamente com base na sua maior plataforma.</p>
-                      <div className="mt-2 h-12 flex items-center px-4 rounded-lg bg-muted/50 border">
-                        <Badge variant="outline" className="capitalize text-sm">
-                          {formData.profile_size ? getProfileSizeLabel(formData.profile_size) : 'Adicione plataformas no passo 3'}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Qual tipo de creator melhor te define?</Label>
-                      <p className="text-xs mt-1 text-muted-foreground">Ajuda a personalizar sua experiência na plataforma</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {CREATOR_TYPE_OPTIONS.map(opt => (
-                        <button
-                          key={opt.value}
-                          type="button"
-                          onClick={() => handleChange('creator_type', opt.value)}
-                          className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all text-center ${
-                            formData.creator_type === opt.value
-                              ? 'border-primary bg-primary/10'
-                              : 'border-transparent bg-muted/50 hover:bg-muted'
-                          }`}
-                        >
-                          <span className="text-3xl" aria-hidden="true">{opt.emoji}</span>
-                          <span className="text-sm font-bold text-foreground">{opt.label}</span>
-                          <span className="text-xs text-muted-foreground leading-tight">{opt.desc}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {step === 4 && (
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Suas Plataformas *</Label>
-                      <FieldHint text="Marcas verificam seus perfis para avaliar candidaturas. Adicione pelo menos uma." />
-                      <p className="text-sm mt-1 mb-4 text-muted-foreground">Adicione suas redes sociais</p>
-                      {formData.platforms.length > 0 && (
-                        <div className="space-y-2 mb-4">
-                          {formData.platforms.map((p, i) => (
-                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                              <div className="flex-1">
-                                <span className="font-medium text-foreground">{p.name}</span>
-                                <span className="ml-2 text-muted-foreground">@{p.handle}</span>
-                              </div>
-                              <Badge variant="outline">{fmtFollowers(p.followers)} seguidores</Badge>
-                              <Button variant="ghost" size="icon" onClick={() => removePlatform(i)} className="h-8 w-8 text-red-400 hover:text-red-500">
-                                <X className="w-4 h-4" />
-                              </Button>
+            <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+              <AnimatePresence mode="wait">
+                <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                  
+                  {step === 1 && (
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-6">
+                        <div className="relative">
+                          {formData.avatar_url ? (
+                            <img src={formData.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
+                          ) : (
+                            <div className="w-24 h-24 rounded-full flex items-center justify-center border-4 border-card shadow-lg bg-primary/10">
+                              <User className="w-10 h-10 text-primary/60" />
                             </div>
+                          )}
+                          <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/80 transition-colors shadow-lg">
+                            <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                            <Upload className="w-4 h-4 text-white" />
+                          </label>
+                        </div>
+                        <div className="flex-1">
+                          <Label className="text-sm font-medium text-foreground">Nome Artístico *</Label>
+                          <Input value={formData.display_name} onChange={(e) => handleChange('display_name', e.target.value)} placeholder="Como você quer ser conhecido" className="mt-2 h-12" />
+                          <FieldHint text="O nome que será exibido no seu perfil público." />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Bio * (mínimo 20 caracteres)</Label>
+                        <Textarea 
+                          key="bio-field"
+                          autoComplete="off"
+                          value={formData.bio} 
+                          onChange={(e) => handleChange('bio', e.target.value)} 
+                          placeholder="Conte sobre você, seu estilo de conteúdo..." 
+                          className="mt-2 min-h-[120px]" 
+                        />
+                        <p className={`text-xs mt-1 font-medium ${formData.bio.length >= 20 ? 'text-emerald-600' : 'text-primary'}`}>
+                          {formData.bio.length}/20
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Estado *</Label>
+                        <div className="mt-2">
+                          <BrazilStateSelect value={formData.state} onValueChange={(v) => handleChange('state', v)} placeholder="Selecione seu estado" />
+                        </div>
+                        {fieldErrors.state && (
+                          <p className="text-xs mt-1 text-red-500">{fieldErrors.state}</p>
+                        )}
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Cidade</Label>
+                        <div className="relative mt-2">
+                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                          <Input value={formData.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="Ex: São Paulo" className="pl-11 h-12" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 2 && (
+                    <div className="space-y-6">
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Nichos de Conteúdo *</Label>
+                        <FieldHint text="Nos ajuda a conectar você com as melhores campanhas para o seu perfil." />
+                        <p className="text-sm mt-1 mb-3 text-muted-foreground">Selecione até 5 nichos</p>
+                        <div className="flex flex-wrap gap-2">
+                          {NICHES.map(niche => (
+                            <Badge key={niche} variant={formData.niche.includes(niche) ? "default" : "outline"}
+                              className={`cursor-pointer transition-all ${formData.niche.includes(niche) ? 'bg-primary hover:bg-primary/80 text-primary-foreground' : 'hover:bg-primary/10 hover:border-primary/30'}`}
+                              onClick={() => { if (formData.niche.length < 5 || formData.niche.includes(niche)) toggleArrayItem('niche', niche); }}>
+                              {niche}
+                            </Badge>
                           ))}
                         </div>
-                      )}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <Select value={newPlatform.name} onValueChange={(v) => setNewPlatform(p => ({ ...p, name: v }))}>
-                          <SelectTrigger><SelectValue placeholder="Plataforma" /></SelectTrigger>
-                          <SelectContent>{PLATFORM_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                        </Select>
-                        <Input value={newPlatform.handle} onChange={(e) => setNewPlatform(p => ({ ...p, handle: e.target.value.replace(/^@/, '') }))} placeholder="usuario (sem @)" />
-                        <Select value={newPlatform.followers} onValueChange={(v) => setNewPlatform(p => ({ ...p, followers: v }))}>
-                          <SelectTrigger><SelectValue placeholder="Seguidores" /></SelectTrigger>
-                          <SelectContent>
-                            {FOLLOWER_RANGES.map(r => (
-                              <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <p className="text-xs mt-2 text-muted-foreground">{formData.niche.length}/5 selecionados</p>
                       </div>
-                      <Button variant="outline" onClick={addPlatform} disabled={!newPlatform.name || !newPlatform.handle} className="w-full mt-2">
-                        <Plus className="w-4 h-4 mr-2" /> Adicionar Plataforma
-                      </Button>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Portfólio / Media Kit</Label>
-                      <div className="relative mt-2">
-                        <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                        <Input value={formData.portfolio_url} onChange={(e) => handleChange('portfolio_url', e.target.value)} placeholder="https://seumediakit.com" className="pl-11 h-12" />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {step === 5 && (
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Email de Contato *</Label>
-                      <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="seu@email.com" className="mt-2 h-12" />
-                      {formData.contact_email && !isValidEmail(formData.contact_email) && (
-                        <p className="text-xs mt-1 text-red-500">Digite um email válido (ex: nome@email.com)</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">WhatsApp *</Label>
-                      <Input 
-                        value={formData.contact_whatsapp} 
-                        onChange={(e) => handleChange('contact_whatsapp', formatPhoneNumber(e.target.value))} 
-                        placeholder="(11) 99999-9999" 
-                        className="mt-2 h-12"
-                        maxLength={15}
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">Faixa de Valores (R$)</Label>
-                      <p className="text-xs mt-1 mb-2 text-muted-foreground">Quanto você cobra por publicação/campanha</p>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Mínimo</Label>
-                          <Input type="number" value={formData.rate_cash_min} onChange={(e) => handleChange('rate_cash_min', e.target.value)} placeholder="500" className="mt-1 h-12" />
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Tipos de Conteúdo *</Label>
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {CONTENT_TYPES.map(type => (
+                            <Badge key={type} variant={formData.content_types.includes(type) ? "default" : "outline"}
+                              className={`cursor-pointer transition-all ${formData.content_types.includes(type) ? 'bg-primary/80 hover:bg-primary/70 text-primary-foreground' : 'hover:bg-primary/10 hover:border-primary/30'}`}
+                              onClick={() => toggleArrayItem('content_types', type)}>
+                              {type}
+                            </Badge>
+                          ))}
                         </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Máximo</Label>
-                          <Input type="number" value={formData.rate_cash_max} onChange={(e) => handleChange('rate_cash_max', e.target.value)} placeholder="5000" className="mt-1 h-12" />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Qual tipo de creator melhor te define?</Label>
+                        <p className="text-xs mt-1 mb-3 text-muted-foreground">Ajuda a personalizar sua experiência na plataforma</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          {CREATOR_TYPE_OPTIONS.map(opt => (
+                            <button
+                              key={opt.value}
+                              type="button"
+                              onClick={() => handleChange('creator_type', opt.value)}
+                              className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all text-center ${
+                                formData.creator_type === opt.value
+                                  ? 'border-primary bg-primary/10'
+                                  : 'border-transparent bg-muted/50 hover:bg-muted'
+                              }`}
+                            >
+                              <span className="text-3xl" aria-hidden="true">{opt.emoji}</span>
+                              <span className="text-sm font-bold text-foreground">{opt.label}</span>
+                              <span className="text-xs text-muted-foreground leading-tight">{opt.desc}</span>
+                            </button>
+                          ))}
                         </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/50">
-                      <Checkbox id="accepts_barter" checked={formData.accepts_barter} onCheckedChange={(c) => handleChange('accepts_barter', c)} />
-                      <div className="flex-1">
-                        <Label htmlFor="accepts_barter" className="text-sm font-medium cursor-pointer text-foreground">Aceito permutas (produtos/serviços)</Label>
-                        <p className="text-xs mt-0.5 text-muted-foreground">Marcas poderão oferecer produtos ao invés de pagamento</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {step === 6 && (
-                  <OnboardingSuccess profileType="creator" onContinue={handleFinalize} />
-                )}
-              </motion.div>
-            </AnimatePresence>
-
-            {step < 6 && (
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-                <Button variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
-                  <ArrowLeft className="w-4 h-4" /> Voltar
-                </Button>
-                {step === 3 && (
-                  <Button variant="ghost" disabled={saving} onClick={async () => {
-                    const ok = await saveStepData();
-                    if (ok !== false) setStep(step + 1);
-                  }} className="gap-2 text-muted-foreground">
-                    Pular
-                  </Button>
-                )}
-                <Button onClick={handleNext} disabled={!isStepValid() || saving} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2 disabled:opacity-50">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-                    <>Próximo <ArrowRight className="w-4 h-4" /></>
                   )}
-                </Button>
-              </div>
-            )}
+
+                  {step === 3 && (
+                    <div className="space-y-6">
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Suas Redes Sociais</Label>
+                        <FieldHint text="Marcas verificam seus perfis para avaliar candidaturas." />
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-sm font-medium text-foreground">Instagram *</Label>
+                          <div className="flex gap-2 mt-2">
+                            <div className="relative flex-1">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
+                              <Input 
+                                value={formData.instagram_handle} 
+                                onChange={(e) => handleChange('instagram_handle', e.target.value.replace(/^@/, ''))} 
+                                placeholder="seuinstagram" 
+                                className="pl-8 h-12" 
+                              />
+                            </div>
+                            <Select value={formData.instagram_followers} onValueChange={(v) => handleChange('instagram_followers', v)}>
+                              <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Seguidores" /></SelectTrigger>
+                              <SelectContent>
+                                {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-medium text-foreground">TikTok</Label>
+                          <div className="flex gap-2 mt-2">
+                            <div className="relative flex-1">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
+                              <Input 
+                                value={formData.tiktok_handle} 
+                                onChange={(e) => handleChange('tiktok_handle', e.target.value.replace(/^@/, ''))} 
+                                placeholder="seutiktok" 
+                                className="pl-8 h-12" 
+                              />
+                            </div>
+                            <Select value={formData.tiktok_followers} onValueChange={(v) => handleChange('tiktok_followers', v)}>
+                              <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Seguidores" /></SelectTrigger>
+                              <SelectContent>
+                                {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-medium text-foreground">YouTube</Label>
+                          <div className="flex gap-2 mt-2">
+                            <div className="relative flex-1">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
+                              <Input 
+                                value={formData.youtube_handle} 
+                                onChange={(e) => handleChange('youtube_handle', e.target.value.replace(/^@/, ''))} 
+                                placeholder="seucanal" 
+                                className="pl-8 h-12" 
+                              />
+                            </div>
+                            <Select value={formData.youtube_followers} onValueChange={(v) => handleChange('youtube_followers', v)}>
+                              <SelectTrigger className="w-[140px] h-12"><SelectValue placeholder="Inscritos" /></SelectTrigger>
+                              <SelectContent>
+                                {FOLLOWER_RANGES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Portfólio / Media Kit</Label>
+                        <div className="relative mt-2">
+                          <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                          <Input value={formData.portfolio_url} onChange={(e) => handleChange('portfolio_url', e.target.value)} placeholder="https://seumediakit.com" className="pl-11 h-12" />
+                        </div>
+                      </div>
+
+                      <div className="border-t pt-6">
+                        <h3 className="text-sm font-semibold text-foreground mb-4">Contato & Valores</h3>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-sm font-medium text-foreground">Email de Contato *</Label>
+                            <Input type="email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} placeholder="seu@email.com" className="mt-2 h-12" />
+                            {formData.contact_email && !isValidEmail(formData.contact_email) && (
+                              <p className="text-xs mt-1 text-red-500">Digite um email válido (ex: nome@email.com)</p>
+                            )}
+                          </div>
+
+                          <div>
+                            <Label className="text-sm font-medium text-foreground">WhatsApp *</Label>
+                            <Input 
+                              value={formData.contact_whatsapp} 
+                              onChange={(e) => handleChange('contact_whatsapp', formatPhoneNumber(e.target.value))} 
+                              placeholder="(11) 99999-9999" 
+                              className="mt-2 h-12"
+                              maxLength={15}
+                            />
+                          </div>
+
+                          <div>
+                            <Label className="text-sm font-medium text-foreground">Faixa de Valores (R$)</Label>
+                            <p className="text-xs mt-1 mb-2 text-muted-foreground">Quanto você cobra por publicação/campanha</p>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <Label className="text-xs text-muted-foreground">Mínimo</Label>
+                                <Input type="number" value={formData.rate_cash_min} onChange={(e) => handleChange('rate_cash_min', e.target.value)} placeholder="500" className="mt-1 h-12" />
+                              </div>
+                              <div>
+                                <Label className="text-xs text-muted-foreground">Máximo</Label>
+                                <Input type="number" value={formData.rate_cash_max} onChange={(e) => handleChange('rate_cash_max', e.target.value)} placeholder="5000" className="mt-1 h-12" />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/50">
+                            <Checkbox id="accepts_barter" checked={formData.accepts_barter} onCheckedChange={(c) => handleChange('accepts_barter', c)} />
+                            <div className="flex-1">
+                              <Label htmlFor="accepts_barter" className="text-sm font-medium cursor-pointer text-foreground">Aceito permutas (produtos/serviços)</Label>
+                              <p className="text-xs mt-0.5 text-muted-foreground">Marcas poderão oferecer produtos ao invés de pagamento</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 4 && (
+                    <OnboardingSuccess profileType="creator" onContinue={handleFinalize} />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              {step < 4 && (
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+                  <Button type="button" variant="ghost" onClick={handleBack} disabled={step === 1} className="gap-2">
+                    <ArrowLeft className="w-4 h-4" /> Voltar
+                  </Button>
+                  <Button type="button" onClick={handleNext} disabled={!isStepValid() || saving} className="bg-primary hover:bg-primary/80 text-primary-foreground gap-2 disabled:opacity-50">
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                      <>Próximo <ArrowRight className="w-4 h-4" /></>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </form>
           </CardContent>
         </Card>
       </div>
