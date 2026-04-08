@@ -1,11 +1,4 @@
 import React from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export const BRAZIL_STATES = [
   { value: 'AC', label: 'Acre' },
@@ -41,19 +34,19 @@ export function getStateLabel(value) {
   return BRAZIL_STATES.find(s => s.value === value)?.label || value || '';
 }
 
-export default function BrazilStateSelect({ value, onValueChange, placeholder = "Selecione o estado", className = "" }) {
+export default function BrazilStateSelect({ value, onValueChange, placeholder = "Selecione seu estado", className = "" }) {
   return (
-    <Select value={value || undefined} onValueChange={onValueChange}>
-      <SelectTrigger className={`h-12 ${className}`}>
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        {BRAZIL_STATES.map(state => (
-          <SelectItem key={state.value} value={state.value}>
-            {state.label} ({state.value})
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <select
+      value={value || ''}
+      onChange={(e) => onValueChange(e.target.value)}
+      className={`h-12 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring ${className}`}
+    >
+      <option value="" disabled>{placeholder}</option>
+      {BRAZIL_STATES.map(state => (
+        <option key={state.value} value={state.value}>
+          {state.label} ({state.value})
+        </option>
+      ))}
+    </select>
   );
 }
