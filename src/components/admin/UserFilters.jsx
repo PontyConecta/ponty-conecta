@@ -116,6 +116,7 @@ export default function UserFilters({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os Status</SelectItem>
+                <SelectItem value="free">Free (Marcas)</SelectItem>
                 <SelectItem value="premium">Premium</SelectItem>
                 <SelectItem value="starter">Starter</SelectItem>
                 <SelectItem value="trial">Em Trial</SelectItem>

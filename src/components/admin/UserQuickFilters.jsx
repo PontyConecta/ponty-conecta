@@ -7,6 +7,7 @@ const FILTERS = [
   { key: 'never_active', label: 'Nunca acessaram' },
   { key: 'inactive', label: 'Inativos' },
   { key: 'hidden', label: 'Ocultos' },
+  { key: 'free', label: 'Free' },
   { key: 'premium', label: 'Premium' },
   { key: 'trial', label: 'Em Trial' },
   { key: 'feedback_beta', label: 'Pesquisa' },

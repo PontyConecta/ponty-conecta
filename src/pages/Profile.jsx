@@ -773,7 +773,8 @@ export default function Profile() {
         {/* Account Tab */}
         <TabsContent value="account">
           <div className="space-y-6">
-            {/* Subscription */}
+            {/* Subscription — only for creators */}
+            {profileType !== 'brand' && (
             <Card className="border bg-card shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -813,6 +814,7 @@ export default function Profile() {
                 )}
               </CardContent>
             </Card>
+            )}
 
             {/* Security */}
             <Card className="border bg-card shadow-sm">

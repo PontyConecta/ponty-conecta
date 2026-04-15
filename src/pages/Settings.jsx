@@ -88,7 +88,8 @@ export default function Settings() {
         </CardContent>
       </Card>
 
-      {/* Subscription */}
+      {/* Subscription — only for creators */}
+      {profileType !== 'brand' && (
       <Card className="border bg-card shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -128,6 +129,7 @@ export default function Settings() {
           )}
         </CardContent>
       </Card>
+      )}
 
       {/* Theme */}
       <Card className="border bg-card shadow-sm">

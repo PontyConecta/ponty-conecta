@@ -122,6 +122,9 @@ export default function AdminUsers() {
         if (quickFilter === 'never_active' && user.first_active) return false;
         if (quickFilter === 'inactive' && lastActive && (now.getTime() - lastActive) <= 30 * DAY_MS) return false;
         if (quickFilter === 'hidden' && !profile?.is_hidden) return false;
+        if (quickFilter === 'free') {
+          if (profile?.subscription_status !== 'free') return false;
+        }
         if (quickFilter === 'premium') {
           if (profile?.subscription_status !== 'premium') return false;
         }
@@ -157,6 +160,7 @@ export default function AdminUsers() {
           // Exclude active trials from "premium" filter
           if (profile?.trial_end_date && new Date(profile.trial_end_date) > new Date()) return false;
         }
+        if (statusFilter === 'free' && profile?.subscription_status !== 'free') return false;
         if (statusFilter === 'starter' && profile?.subscription_status !== 'starter') return false;
         if (statusFilter === 'trial') {
           if (profile?.subscription_status !== 'premium' || !profile?.trial_end_date || new Date(profile.trial_end_date) <= new Date()) return false;
