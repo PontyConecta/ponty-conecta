@@ -297,8 +297,8 @@ export default function OnboardingBrand() {
               <span className="text-white font-bold text-xl">P</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2 text-foreground">Configure sua Marca</h1>
-          <p className="text-muted-foreground">Complete seu perfil para começar a criar campanhas</p>
+          <h1 className="text-3xl font-bold mb-2 text-foreground">Entre no clube</h1>
+          <p className="text-muted-foreground">Complete seu perfil e conecte com os criadores certos</p>
         </div>
 
         <OnboardingProgress steps={STEPS} currentStep={step} accentColor="indigo" onStepClick={handleStepClick} />
@@ -315,6 +315,7 @@ export default function OnboardingBrand() {
               >
                 {step === 1 && (
                   <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-foreground">Apresente sua marca ao clube</h2>
                     <div>
                       <Label className="text-sm font-medium text-foreground">Nome da Empresa *</Label>
                       <Input value={formData.company_name} onChange={(e) => handleChange('company_name', e.target.value)} placeholder="Ex: Minha Empresa LTDA" className="mt-2 h-12" />
@@ -366,6 +367,7 @@ export default function OnboardingBrand() {
 
                 {step === 2 && (
                   <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-foreground">Em que universo sua marca vive?</h2>
                     <div>
                       <Label className="text-sm font-medium text-foreground">Segmento *</Label>
                       <Select value={formData.industry} onValueChange={(v) => handleChange('industry', v)}>
@@ -404,14 +406,18 @@ export default function OnboardingBrand() {
                 )}
 
                 {step === 3 && (
+                  <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-foreground">Onde o clube pode te encontrar</h2>
                   <OnlinePresenceManager
                     presences={formData.online_presences}
                     onChange={(presences) => handleChange('online_presences', presences)}
                   />
+                  </div>
                 )}
 
                 {step === 4 && (
                   <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-foreground">Como falamos com você</h2>
                     <div>
                       <Label className="text-sm font-medium text-foreground">Email de Contato *</Label>
                       <div className="relative mt-2">

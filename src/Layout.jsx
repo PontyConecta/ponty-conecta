@@ -33,6 +33,22 @@ import { useUnreadCount } from '@/hooks/useUnreadCount';
 import BackButton from '@/components/BackButton';
 import { LEAF_PAGES } from '@/hooks/useSmartBack';
 
+function useBrandSEO(profileType) {
+  useEffect(() => {
+    if (profileType !== 'brand') return;
+    const origTitle = document.title;
+    const origDesc = document.querySelector('meta[name="description"]')?.getAttribute('content');
+    document.title = 'Ponty — o clube entre marcas e criadores';
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) { meta = document.createElement('meta'); meta.name = 'description'; document.head.appendChild(meta); }
+    meta.setAttribute('content', 'Marcas e criadores conectados por autoridade e confiança. Entrada gratuita para marcas.');
+    return () => {
+      document.title = origTitle || 'Base44 APP';
+      if (origDesc) meta.setAttribute('content', origDesc);
+    };
+  }, [profileType]);
+}
+
 function LayoutContent({ children, currentPageName }) {
   const { user, profile, profileType, loading, logout } = useAuth();
   const { isSubscribed } = useSubscription();
@@ -41,6 +57,7 @@ function LayoutContent({ children, currentPageName }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const unreadCount = useUnreadCount(user?.id);
+  useBrandSEO(profileType);
 
   const isAdmin = user?.role === 'admin';
   const noLayoutPages = ['Home', 'SelectProfile', 'OnboardingBrand', 'OnboardingCreator'];

@@ -57,6 +57,32 @@ Deno.serve(async (req) => {
       console.warn(`[${FN}] Mission creation failed (non-critical):`, e.message);
     }
 
+    // Fire-and-forget: send brand welcome email
+    if (profile_type === 'brand') {
+      try {
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: user.email,
+          subject: 'Sua marca entrou no Ponty',
+          body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 16px">
+<h1 style="font-size:22px;margin-bottom:12px">Bem-vinda ao clube.</h1>
+<p style="font-size:15px;line-height:1.6;color:#444">A partir de agora você pode conectar sua marca aos criadores certos — sem custo, sem contrato longo, sem enrolação.</p>
+<h3 style="font-size:16px;margin-top:24px">Primeiros passos</h3>
+<ul style="font-size:14px;line-height:1.8;color:#555">
+<li>Crie sua primeira campanha e defina o que precisa.</li>
+<li>Receba candidaturas de criadores alinhados ao seu perfil.</li>
+<li>Avalie, aprove e acompanhe as entregas — tudo na plataforma.</li>
+</ul>
+<div style="margin-top:28px">
+<a href="https://app.ponty.com.br/BrandDashboard" style="display:inline-block;background:#6b5475;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px">Entrar no dashboard</a>
+</div>
+<p style="margin-top:32px;font-size:13px;color:#999">Equipe Ponty</p>
+</div>`,
+        });
+      } catch (e) {
+        console.warn(`[${FN}] Brand welcome email failed (non-critical):`, e.message);
+      }
+    }
+
     // ── 5. RESPOND ──
     console.log(`[${FN}] Finalized ${profile_type} for user ${user.id}`);
     return Response.json({

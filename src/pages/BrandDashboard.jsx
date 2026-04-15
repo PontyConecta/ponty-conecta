@@ -103,9 +103,9 @@ export default function BrandDashboard() {
             {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, c => c.toUpperCase())}
           </p>
         </div>
-        <Link to={createPageUrl('CampaignManager')}>
-          <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]">
-            <Plus className="w-4 h-4 mr-2" />Nova Campanha
+        <Link to={createPageUrl('CampaignManager')} title="Escolha os criadores. O clube conecta.">
+          <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]" title="Escolha os criadores. O clube conecta.">
+            <Plus className="w-4 h-4 mr-2" />Criar Campanha
           </Button>
         </Link>
       </div>
@@ -166,10 +166,10 @@ export default function BrandDashboard() {
             ) : (
               <div className="text-center py-8">
                 <Megaphone className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-3">Nenhuma campanha criada</p>
+                <p className="text-sm text-muted-foreground mb-3">Ative sua primeira conexão. Escolha criadores do clube que combinam com a sua marca.</p>
                 <Link to={createPageUrl('CampaignManager')}>
                   <Button variant="outline" size="sm" className="min-h-[44px]">
-                    <Plus className="w-4 h-4 mr-2" />Criar Primeira Campanha
+                    <Plus className="w-4 h-4 mr-2" />Criar conexão
                   </Button>
                 </Link>
               </div>

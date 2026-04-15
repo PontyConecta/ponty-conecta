@@ -29,9 +29,7 @@ export default function WelcomeBanner({ profileType, name, isSubscribed }) {
               </h2>
               <p className="text-muted-foreground mb-5 max-w-lg">
                 {isBrand
-                  ? isSubscribed
-                    ? 'Sua marca está configurada. Comece criando sua primeira campanha para encontrar criadores perfeitos.'
-                    : 'Sua marca está configurada. Assine para criar campanhas e encontrar criadores perfeitos.'
+                  ? 'Bem-vinda ao Ponty. Aqui marcas e criadores constroem conexões reais — sem ruído, sem vaidade, com autoridade. Sua conta é gratuita. Ative sua primeira campanha quando quiser.'
                   : 'Seu perfil está pronto. Explore campanhas e candidate-se para trabalhar com grandes marcas.'
                 }
               </p>
