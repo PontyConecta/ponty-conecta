@@ -39,6 +39,11 @@ export default function Subscription() {
 
   useEffect(() => {
     if (authProfile && authProfileType) {
+      // Brands are free-forever — redirect to dashboard
+      if (authProfileType === 'brand') {
+        navigate(createPageUrl('BrandDashboard'), { replace: true });
+        return;
+      }
       setProfile(authProfile);
       setProfileType(authProfileType);
       setLoading(false);

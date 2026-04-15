@@ -81,43 +81,16 @@ export default function MyDeliveries() {
 
   const loadPageData = async (creatorProfile) => {
     if (!creatorProfile) return;
+    let loadedDeliveries = [];
     try {
       const deliveriesData = await base44.entities.Delivery.filter(
         { creator_id: creatorProfile.id }, 
         '-created_date',
         500
       );
+      loadedDeliveries = deliveriesData;
       setDeliveries(deliveriesData);
-
-      const campaignIds = [...new Set(deliveriesData.map(d => d.campaign_id))];
-      const brandIds = [...new Set(deliveriesData.map(d => d.brand_id))];
-      
-      const [campaignsData, brandsData] = await Promise.all([
-        campaignIds.length > 0 ? Promise.all(campaignIds.map(id => base44.entities.Campaign.filter({ id }))) : Promise.resolve([]),
-        brandIds.length > 0 ? Promise.all(brandIds.map(id => base44.entities.Brand.filter({ id }))) : Promise.resolve([])
-      ]);
-      
-      const campaignsMap = {};
-      campaignsData.flat().forEach(c => { campaignsMap[c.id] = c; });
-      setCampaigns(campaignsMap);
-      const brandsMap = {};
-      brandsData.flat().forEach(b => { brandsMap[b.id] = b; });
-      setBrands(brandsMap);
-
-      // Load vouchers for approved deliveries
-      const approvedIds = deliveriesData.filter(d => d.status === 'approved').map(d => d.id);
-      if (approvedIds.length > 0) {
-        try {
-          const vouchersData = await Promise.all(
-            approvedIds.map(id => base44.entities.Voucher.filter({ delivery_id: id }).then(r => r[0]))
-          );
-          const voucherMap = {};
-          vouchersData.filter(Boolean).forEach(v => { voucherMap[v.delivery_id] = v; });
-          setVouchers(voucherMap);
-        } catch (e) {
-          console.warn('[MyDeliveries] Voucher entity not available:', e.message);
-        }
-      }
+...
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Erro ao carregar entregas.');
@@ -127,8 +100,8 @@ export default function MyDeliveries() {
       // Deep-link: open delivery from URL param
       const params = new URLSearchParams(window.location.search);
       const targetAppId = params.get('applicationId');
-      if (targetAppId && deliveriesData.length > 0) {
-        const target = deliveriesData.find(d => d.application_id === targetAppId);
+      if (targetAppId && loadedDeliveries.length > 0) {
+        const target = loadedDeliveries.find(d => d.application_id === targetAppId);
         if (target) openSubmitDialog(target);
       }
     }

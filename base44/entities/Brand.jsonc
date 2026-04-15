@@ -109,7 +109,7 @@
         "legacy"
       ],
       "default": "free",
-      "description": "Subscription status: free (default for brands), starter, premium, or legacy"
+      "description": "Subscription status: free (default for brands), legacy (grandfathered)"
     },
     "plan_level": {
       "type": "string",
@@ -122,7 +122,7 @@
     "trial_end_date": {
       "type": "string",
       "format": "date-time",
-      "description": "When the free trial period ends (null if not on trial)"
+      "description": "Deprecated - brands are free forever"
     },
     "total_campaigns": {
       "type": "number",

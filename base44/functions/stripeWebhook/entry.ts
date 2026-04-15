@@ -159,6 +159,12 @@ async function handleCheckoutCompleted(base44, session) {
   const { profile, profileType, entityName } = result;
   console.log('Profile found:', entityName, profile.id, 'user_id:', profile.user_id);
 
+  // Brands are free-forever — ignore Stripe events for brands
+  if (profileType === 'brand') {
+    console.log('[stripeWebhook] Ignoring checkout.session.completed for Brand profile', profile.id, '— brands are free-forever');
+    return;
+  }
+
   // Brand is free-forever — ignore Stripe events for brands
   if (profileType === 'brand') {
     console.log('[stripeWebhook] Ignoring checkout.session.completed for Brand profile — brands are free-forever');
