@@ -52,11 +52,6 @@ export default function Home() {
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14 lg:h-16">
           <Logo size="sm" />
-          <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => scrollTo('por-que-ponty')} className="hidden sm:inline text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Como funciona</button>
-            <button onClick={() => base44.auth.redirectToLogin()} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Entrar</button>
-            <Button size="sm" onClick={() => scrollTo('cta-final')} className="bg-primary text-primary-foreground hover:bg-primary/80">Começar</Button>
-          </div>
         </div>
       </nav>
 
