@@ -1,23 +1,15 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { ArrowRight, Zap, Users, TrendingUp, Shield, Sparkles, CheckCircle } from 'lucide-react';
+import { ArrowRight, Check, Search, FileText, UserCheck, Eye, Send, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/components/contexts/AuthContext';
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0);
   const { user, profileType, loading } = useAuth();
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   React.useEffect(() => {
     if (!loading && user && profileType) {
@@ -29,314 +21,262 @@ export default function Home() {
     }
   }, [user, profileType, loading, navigate]);
 
-  const scrollToSection = () => {
-    const element = document.getElementById('por-que-ponty');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <section className="relative px-4 sm:px-6 lg:px-8 pt-8 pb-4 sm:py-12 lg:py-16 bg-background overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-4 lg:mb-10">
-            <div className="flex items-center gap-2 lg:gap-3 group">
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform bg-primary">
-                <span className="text-primary-foreground font-bold text-xl lg:text-2xl">P</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl lg:text-2xl font-bold leading-tight text-primary">Ponty</span>
-                <span className="text-xs lg:text-sm font-medium text-muted-foreground leading-tight">Conecta</span>
-              </div>
+    <div className="min-h-screen bg-background text-foreground scroll-smooth">
+
+      {/* ── SEÇÃO 1 — NAV ── */}
+      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 h-14 lg:h-16">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-primary">
+              <span className="text-primary-foreground font-bold text-lg">P</span>
             </div>
+            <span className="text-lg font-bold text-primary">Ponty</span>
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-8 lg:mb-16">
-            <div className="flex flex-col gap-4 sm:gap-5 lg:gap-7">
-              <div className="hidden lg:inline-flex items-center gap-2 bg-primary/10 text-primary px-5 py-3 rounded-full w-fit text-sm font-semibold shadow-sm">
-                <Zap className="w-4 h-4 animate-pulse" />
-                <span>Mediação Profissional de Última Geração</span>
-              </div>
-
-              <h1 className="headline-display text-3xl sm:text-4xl lg:text-6xl">
-              A <span className="text-primary">Ponte Profissional</span> Entre Marcas e Criadoras
-              </h1>
-
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-md">
-                Organize, execute e escale suas relações profissionais com regras automatizadas e entrega garantida.
-              </p>
-
-              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 px-4 py-2.5 rounded-lg w-fit text-sm font-medium">
-                <CheckCircle className="w-4 h-4" />
-                <span>Explore gratuitamente • Sem cartão de crédito</span>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
-                  size="lg" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/80 w-full sm:w-auto shadow-lg shadow-primary/25 h-11 sm:h-12"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
-                >
-                  Sou uma Marca
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto border-2 border-primary text-primary bg-background hover:bg-primary/5 h-11 sm:h-12"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
-                >
-                  Começar como Criadora
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative hidden lg:flex min-h-[420px] items-center justify-center">
-              <div className="absolute inset-0 rounded-3xl overflow-hidden bg-primary/5">
-              </div>
-
-              <div className="relative z-10 grid grid-cols-2 gap-3 p-6 w-full max-w-lg">
-                {[
-                  { icon: '🤝', title: 'Conexões Estratégicas', description: 'Parcerias ideais' },
-                  { icon: '📊', title: 'Gestão Simples', description: 'Campanhas organizadas' },
-                  { icon: '✅', title: 'Resultados Garantidos', description: 'Transparência total' },
-                  { icon: '📈', title: 'Crescimento', description: 'Reputação sólida' }
-                ].map((benefit, idx) => (
-                  <Card
-                    key={idx}
-                    className="bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all border-0"
-                    style={{
-                      animation: `float 4s ease-in-out infinite`,
-                      animationDelay: `${idx * 0.4}s`
-                    }}
-                  >
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl mb-2">{benefit.icon}</div>
-                      <h4 className="font-bold text-xs mb-1 text-foreground">{benefit.title}</h4>
-                      <p className="text-[11px] text-muted-foreground leading-tight">{benefit.description}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button onClick={() => scrollTo('como-funciona')} className="hidden sm:inline text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Como funciona
+            </button>
+            <button onClick={() => base44.auth.redirectToLogin()} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Entrar
+            </button>
+            <Button size="sm" onClick={() => scrollTo('cta-final')} className="bg-primary text-primary-foreground hover:bg-primary/80">
+              Começar
+            </Button>
           </div>
         </div>
-      </section>
+      </nav>
 
-      <section id="por-que-ponty" className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-3">
-              Por que escolher Ponty
-            </h2>
-            <p className="text-lg text-muted-foreground">A solução certa para cada perfil</p>
-          </div>
-
-          <Tabs defaultValue="brands" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-6 sm:mb-10">
-              <TabsTrigger value="brands" className="text-base">
-                <span className="mr-2">🏢</span>
-                Para Marcas
-              </TabsTrigger>
-              <TabsTrigger value="creators" className="text-base">
-                <span className="mr-2">✨</span>
-                Para Criadoras
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="brands" className="mt-8">
-              <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0 bg-primary/5"></div>
-
-                  <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
-                    <div className="space-y-6 max-w-md w-full">
-                      <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-card rounded-2xl shadow-lg mb-3">
-                          <Shield className="w-8 h-8 text-primary" />
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-black leading-tight mb-2">
-                          Ferramentas profissionais para marcas
-                        </h3>
-                      </div>
-
-                      <div className="space-y-3">
-                        {[
-                         { icon: Users, title: 'Criadores Verificados', description: 'Perfis com histórico comprovado' },
-                         { icon: TrendingUp, title: 'Campanhas Estruturadas', description: 'Requisitos claros desde o início' },
-                         { icon: Shield, title: 'Gestão Simplificada', description: 'Acompanhe entregas em um só lugar' }
-                        ].map((feature, idx) => (
-                         <div key={idx} className="flex gap-3 bg-card/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center">
-                            <feature.icon className="w-4 h-4 text-primary" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-sm text-foreground">{feature.title}</h4>
-                              <p className="text-xs text-muted-foreground mt-0.5">{feature.description}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <Button 
-                        size="lg" 
-                        className="bg-primary hover:bg-primary/80 text-primary-foreground w-full"
-                        onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
-                      >
-                        Começar como Marca
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-            </TabsContent>
-
-            <TabsContent value="creators" className="mt-8">
-              <div className="relative rounded-3xl overflow-hidden">
-                  <div className="absolute inset-0 bg-accent/5"></div>
-
-                  <div className="relative flex items-center justify-center p-6 sm:p-10 lg:p-14">
-                    <div className="space-y-6 max-w-md w-full">
-                      <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-card rounded-2xl shadow-lg mb-3">
-                          <Sparkles className="w-8 h-8 text-primary" />
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-black leading-tight mb-2">
-                          Conecte sua criatividade com marcas que valorizam autenticidade
-                        </h3>
-                      </div>
-
-                      <div className="space-y-3">
-                        {[
-                          { icon: Sparkles, title: 'Campanhas Profissionais', description: 'Briefings detalhados e objetivos' },
-                           { icon: CheckCircle, title: 'Requisitos Claros', description: 'Saiba o que entregar e quando' },
-                           { icon: TrendingUp, title: 'Criadoras verificadas', description: 'Ganham 3x mais oportunidades' }
-                        ].map((feature, idx) => (
-                          <div key={idx} className="flex gap-3 bg-card/50 backdrop-blur-sm p-3 rounded-lg">
-                            <div className="flex-shrink-0 w-9 h-9 bg-accent/10 rounded-lg flex items-center justify-center">
-                              <feature.icon className="w-4 h-4 text-accent" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-sm text-foreground">{feature.title}</h4>
-                              <p className="text-xs text-muted-foreground mt-0.5">{feature.description}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <Button 
-                        size="lg" 
-                        className="bg-accent hover:bg-accent/80 text-accent-foreground w-full"
-                        onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
-                      >
-                        Começar como Criadora
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </section>
-
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-3">
-              Simples para ambos os lados
-            </h2>
-            <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">Processo transparente e estruturado do início ao fim</p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 relative z-10">
-            {[
-              {
-                number: '01',
-                title: 'Conectar',
-                description: 'Marcas encontram criadores verificados e criadores descobrem oportunidades profissionais'
-              },
-              {
-                number: '02',
-                title: 'Estruturar',
-                description: 'Defina requisitos, prazos e expectativas de forma clara e automatizada'
-              },
-              {
-                number: '03',
-                title: 'Executar',
-                description: 'Criadores entregam conteúdo com prova de entrega e marcas aprovam ou rejeitam'
-              },
-              {
-                number: '04',
-                title: 'Escalar',
-                description: 'Relacionamentos bem-sucedidos geram histórico e abrem portas para novas oportunidades'
-              }
-            ].map((step, idx) => (
-              <Card key={idx} className="bg-card hover:shadow-lg transition-all hover:-translate-y-1">
-                <CardContent className="p-4 sm:pt-6 lg:pt-8">
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black mb-2 sm:mb-4 text-primary">
-                    {step.number}
-                  </div>
-                  <h3 className="text-sm sm:text-base lg:text-xl font-bold mb-1.5 sm:mb-3">{step.title}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-primary">
-        <div className="max-w-3xl mx-auto text-center text-primary-foreground">
-          <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-4">
-            Pronto para começar?
-          </h2>
-          <p className="text-sm sm:text-lg mb-8 opacity-95">
-            Junte-se a centenas de marcas e criadoras que já estão transformando suas relações profissionais
+      {/* ── SEÇÃO 2 — HERO ── */}
+      <section className="px-4 sm:px-6 pt-16 pb-12 sm:pt-24 sm:pb-16 lg:pt-32 lg:pb-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="headline-display text-4xl sm:text-5xl lg:text-6xl mb-5">
+            O clube entre marcas e criadores.
+          </h1>
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            Conexões reais entre marcas que têm algo a dizer e criadores com autoridade pra dizer. Sem ruído, sem vaidade, sem enrolação.
           </p>
 
-          <Button 
-            size="lg" 
-            className="bg-background text-primary hover:bg-secondary"
-            onClick={() => base44.auth.redirectToLogin(createPageUrl('SelectProfile'))}
-          >
-            Começar Agora
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            <HeroCard
+              title="Pra marcas"
+              bullets={[
+                'Entrada gratuita, sem contrato longo',
+                'Acesse criadores por nicho e autoridade',
+                'Pague só o que combinar com cada criador',
+              ]}
+              cta="Entrar como marca"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
+            />
+            <HeroCard
+              title="Pra criadores"
+              bullets={[
+                'Oportunidades de marcas alinhadas ao seu nicho',
+                'Controle total sobre o que aceita',
+                'Pagamento direto, sem intermediário escondido',
+              ]}
+              cta="Entrar como criador"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
+            />
+          </div>
         </div>
       </section>
 
-      <footer className="bg-card border-t px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center gap-6">
-            <div className="text-center">
-              <h3 className="font-bold text-xl mb-2 text-foreground">Ponty</h3>
-              <p className="text-muted-foreground text-sm">A ponte profissional entre marcas e criadoras</p>
-            </div>
+      {/* ── SEÇÃO 3 — POR QUE PONTY ── */}
+      <section id="por-que-ponty" className="px-4 sm:px-6 py-12 sm:py-16 lg:py-24 bg-muted/40">
+        <div className="max-w-5xl mx-auto text-center mb-10 sm:mb-14">
+          <h2 className="headline-display text-2xl sm:text-3xl lg:text-4xl mb-3">
+            Nem tudo que tem audiência tem autoridade.
+          </h2>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+            Ponty é o clube onde marcas encontram criadores com voz real no nicho deles. Curadoria antes de volume.
+          </p>
+        </div>
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+          <ValueCard
+            icon={<Search className="w-6 h-6 text-primary" />}
+            title="Curadoria por nicho"
+            description="Criadores organizados por universo: estética, fitness, nutrição, longevidade, performance. Você encontra quem fala com seu público."
+          />
+          <ValueCard
+            icon={<Send className="w-6 h-6 text-primary" />}
+            title="Conexão direta"
+            description="Sem intermediário cobrando %. Marca e criador conversam, alinham e fecham dentro da plataforma."
+          />
+          <ValueCard
+            icon={<BadgeCheck className="w-6 h-6 text-primary" />}
+            title="Proof, não promessa"
+            description="Histórico de entregas, reputação visível, disputas resolvidas com transparência. Decisão baseada em dado."
+          />
+        </div>
+      </section>
 
-            <div className="flex items-center gap-6">
-              <a href="https://www.instagram.com/pontycreators/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition text-sm font-medium">
-                Instagram
-              </a>
-              <span className="text-border">•</span>
-              <a href="https://wa.me/5561998591499?text=Olá%2C%20entrei%20em%20contato%20por%20meio%20da%20página%2C%20gostaria%20de%20mais%20informações." target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition text-sm font-medium">
-                Contato Suporte
-              </a>
-            </div>
-
-            <div className="text-center text-xs text-muted-foreground border-t border-border pt-6 w-full">
-              <p>&copy; 2026 Ponty Conecta. Todos os direitos reservados.</p>
-            </div>
+      {/* ── SEÇÃO 4 — COMO FUNCIONA ── */}
+      <section id="como-funciona" className="px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="headline-display text-2xl sm:text-3xl lg:text-4xl text-center mb-10 sm:mb-14">
+            Simples como tem que ser.
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
+            <StepsColumn
+              title="Fluxo da Marca"
+              steps={[
+                'Crie sua conta — gratuita, sem cartão.',
+                'Publique uma campanha — descreva o que precisa.',
+                'Aprove os criadores certos e acompanhe as entregas.',
+              ]}
+            />
+            <StepsColumn
+              title="Fluxo do Criador"
+              steps={[
+                'Crie seu perfil — mostre seu nicho e autoridade.',
+                'Veja oportunidades — só das marcas alinhadas ao que você faz.',
+                'Candidate-se, entregue, receba.',
+              ]}
+            />
           </div>
         </div>
-      </footer>
+      </section>
 
-        <style>{`
-          @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-          }
-        `}</style>
+      {/* ── SEÇÃO 5 — PRA QUEM É ── */}
+      <section className="px-4 sm:px-6 py-12 sm:py-16 lg:py-24 bg-muted/40">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="headline-display text-2xl sm:text-3xl lg:text-4xl text-center mb-10 sm:mb-14">
+            Pra quem o clube foi feito.
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            <Card className="border bg-card">
+              <CardContent className="p-6 sm:p-8">
+                <h3 className="text-lg font-bold mb-3 text-foreground">Marcas</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Marcas que preferem ser escolhidas a gritar. Que entendem que confiança vale mais que publicidade, e que um criador certo supera dez creators errados.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border bg-card">
+              <CardContent className="p-6 sm:p-8">
+                <h3 className="text-lg font-bold mb-3 text-foreground">Criadores</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Criadores que construíram autoridade em um nicho específico e querem monetizar sem virar outdoor ambulante.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SEÇÃO 6 — CTA FINAL ── */}
+      <section id="cta-final" className="px-4 sm:px-6 py-14 sm:py-20 lg:py-28 bg-primary">
+        <div className="max-w-3xl mx-auto text-center text-primary-foreground">
+          <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-4">
+            Entre no clube.
+          </h2>
+          <p className="text-base sm:text-lg mb-8 opacity-90">
+            Gratuito pra marcas. Direto pra criadores. Pronto pra quem leva o que faz a sério.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              size="lg"
+              className="bg-background text-primary hover:bg-secondary h-12"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
+            >
+              Entrar como marca
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <Button
+              size="lg"
+              className="bg-background text-primary hover:bg-secondary h-12"
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
+            >
+              Entrar como criador
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SEÇÃO 7 — FOOTER ── */}
+      <footer className="bg-card border-t px-4 sm:px-6 py-10">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-5">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary">
+              <span className="text-primary-foreground font-bold text-sm">P</span>
+            </div>
+            <span className="text-base font-bold text-primary">Ponty</span>
+          </div>
+          <p className="text-sm text-muted-foreground">O clube entre marcas e criadores.</p>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span>Termos</span>
+            <span className="text-border">·</span>
+            <span>Privacidade</span>
+            <span className="text-border">·</span>
+            <a href="https://wa.me/5561998591499?text=Olá%2C%20entrei%20em%20contato%20por%20meio%20da%20página." target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+              Contato
+            </a>
+          </div>
+          <p className="text-xs text-muted-foreground">&copy; 2026 Ponty. Todos os direitos reservados.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+/* ── Sub-components ── */
+
+function HeroCard({ title, bullets, cta, onClick }) {
+  return (
+    <Card className="border bg-card text-left">
+      <CardContent className="p-6">
+        <h3 className="text-lg font-bold mb-4 text-foreground">{title}</h3>
+        <ul className="space-y-2.5 mb-6">
+          {bullets.map((b, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+              <Check className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+        <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80 h-11" onClick={onClick}>
+          {cta}
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ValueCard({ icon, title, description }) {
+  return (
+    <Card className="border bg-card">
+      <CardContent className="p-6">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary/10 mb-4">
+          {icon}
+        </div>
+        <h3 className="text-base font-bold mb-2 text-foreground">{title}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function StepsColumn({ title, steps }) {
+  return (
+    <div>
+      <h3 className="text-base font-bold mb-5 text-foreground">{title}</h3>
+      <ol className="space-y-4">
+        {steps.map((step, i) => (
+          <li key={i} className="flex items-start gap-3">
+            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
+              {i + 1}
+            </span>
+            <p className="text-sm text-muted-foreground pt-1 leading-relaxed">{step}</p>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
