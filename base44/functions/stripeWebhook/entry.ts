@@ -165,12 +165,6 @@ async function handleCheckoutCompleted(base44, session) {
     return;
   }
 
-  // Brand is free-forever — ignore Stripe events for brands
-  if (profileType === 'brand') {
-    console.log('[stripeWebhook] Ignoring checkout.session.completed for Brand profile — brands are free-forever');
-    return;
-  }
-
   // Get the subscription from Stripe and update its metadata
   const subscriptionId = session.subscription;
   let nextBillingDate = null;
@@ -211,7 +205,7 @@ async function handleCheckoutCompleted(base44, session) {
       stripe_subscription_id: subscriptionId,
       stripe_customer_id: session.customer,
       next_billing_date: nextBillingDate,
-      plan_name: `Ponty ${profileType === 'brand' ? 'Marcas' : 'Criadores'}`
+      plan_name: 'Ponty Criadores'
     };
 
     if (existingSubs.length > 0) {
