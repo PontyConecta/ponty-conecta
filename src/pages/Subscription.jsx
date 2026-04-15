@@ -135,6 +135,12 @@ export default function Subscription() {
     );
   }
 
+  // Brands are free-forever — redirect to dashboard
+  if (profileType === 'brand') {
+    navigate(createPageUrl('BrandDashboard'), { replace: true });
+    return null;
+  }
+
   const isBrand = profileType === 'brand';
   const isSubscribed = isProfileSubscribed(profile);
 

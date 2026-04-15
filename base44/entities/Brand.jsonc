@@ -103,11 +103,13 @@
     "subscription_status": {
       "type": "string",
       "enum": [
+        "free",
         "starter",
-        "premium"
+        "premium",
+        "legacy"
       ],
-      "default": "starter",
-      "description": "Subscription status: starter (free) or premium (active paid/trial)"
+      "default": "free",
+      "description": "Subscription status: free (default for brands), starter, premium, or legacy"
     },
     "plan_level": {
       "type": "string",

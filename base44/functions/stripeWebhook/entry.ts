@@ -159,6 +159,12 @@ async function handleCheckoutCompleted(base44, session) {
   const { profile, profileType, entityName } = result;
   console.log('Profile found:', entityName, profile.id, 'user_id:', profile.user_id);
 
+  // Brand is free-forever — ignore Stripe events for brands
+  if (profileType === 'brand') {
+    console.log('[stripeWebhook] Ignoring checkout.session.completed for Brand profile — brands are free-forever');
+    return;
+  }
+
   // Get the subscription from Stripe and update its metadata
   const subscriptionId = session.subscription;
   let nextBillingDate = null;
@@ -255,6 +261,12 @@ async function handleSubscriptionUpdate(base44, subscription) {
 
   const { profile, profileType, entityName } = result;
 
+  // Brand is free-forever — ignore Stripe events for brands
+  if (profileType === 'brand') {
+    console.log('[stripeWebhook] Ignoring subscription update for Brand profile — brands are free-forever');
+    return;
+  }
+
   // Map Stripe status to our system: only 'starter' or 'premium'
   // past_due keeps premium during Stripe's grace period (retry cycle)
   // Only downgrade on unpaid (after all retries fail) or canceled
@@ -322,6 +334,12 @@ async function handleSubscriptionDeleted(base44, subscription) {
 
   const { profile, profileType, entityName } = result;
 
+  // Brand is free-forever — ignore Stripe events for brands
+  if (profileType === 'brand') {
+    console.log('[stripeWebhook] Ignoring subscription deletion for Brand profile — brands are free-forever');
+    return;
+  }
+
   // Update subscription record
   const subs = await base44.asServiceRole.entities.Subscription.filter({ 
     stripe_subscription_id: subscription.id 
@@ -354,7 +372,12 @@ async function handleInvoicePaid(base44, invoice) {
   const result = await findProfile(base44, invoice.customer, metadata);
   
   if (result) {
-    const { profile, entityName } = result;
+    const { profile, profileType: resultProfileType, entityName } = result;
+    // Brand is free-forever — ignore Stripe events for brands
+    if (resultProfileType === 'brand') {
+      console.log('[stripeWebhook] Ignoring invoice.paid for Brand profile — brands are free-forever');
+      return;
+    }
     if (profile.subscription_status !== 'premium') {
       // Derive plan_level from subscription interval
       let planLevel = 'premium_monthly';

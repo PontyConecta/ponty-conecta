@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 const SubscriptionContext = createContext(null);
 
 export function SubscriptionProvider({ children }) {
-  const { profile } = useAuth();
+  const { profile, profileType } = useAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState('starter');
   const [planLevel, setPlanLevel] = useState(null);
@@ -17,6 +17,14 @@ export function SubscriptionProvider({ children }) {
       return;
     }
 
+    // Brands are always free — treat as subscribed so no paywall triggers
+    if (profileType === 'brand') {
+      setSubscriptionStatus('free');
+      setIsSubscribed(true);
+      setPlanLevel(null);
+      return;
+    }
+
     const status = profile.subscription_status || 'starter';
     const isPremium = status === 'premium';
     const currentPlanLevel = profile.plan_level || null;
@@ -24,7 +32,7 @@ export function SubscriptionProvider({ children }) {
     setSubscriptionStatus(status);
     setIsSubscribed(isPremium);
     setPlanLevel(currentPlanLevel);
-  }, [profile]);
+  }, [profile, profileType]);
 
   const value = {
     isSubscribed,

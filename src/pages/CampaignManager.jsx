@@ -40,7 +40,9 @@ import Applications from './Applications';
 export default function CampaignManager() {
   const { user, profile: brand, profileType, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { isSubscribed } = useSubscription();
+  const { isSubscribed: rawIsSubscribed } = useSubscription();
+  // Brands are free-forever — always treat as subscribed
+  const isSubscribed = profileType === 'brand' ? true : rawIsSubscribed;
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

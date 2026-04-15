@@ -49,13 +49,9 @@ Deno.serve(async (req) => {
       if (!data) return err('Missing data', 'MISSING_FIELDS');
 
       // ── 4. SANITIZE ──
-      // ── SUBSCRIPTION CHECK ──
-      if (brand.subscription_status !== 'premium') {
-        return Response.json({ error: 'Assinatura necessária para criar campanhas', code: 'SUBSCRIPTION_REQUIRED' }, { status: 403 });
-      }
-      if (brand.trial_end_date && !brand.stripe_customer_id && new Date(brand.trial_end_date) < new Date()) {
-        await base44.entities.Brand.update(brand.id, { subscription_status: 'starter' });
-        return Response.json({ error: 'Seu período de teste expirou', code: 'TRIAL_EXPIRED' }, { status: 403 });
+      // ── ACCOUNT CHECK — Brand is free-forever, just needs completed onboarding ──
+      if (brand.account_state !== 'ready') {
+        return Response.json({ error: 'Complete seu perfil antes de criar campanhas', code: 'PROFILE_INCOMPLETE' }, { status: 403 });
       }
 
       const VALID_INITIAL_STATUSES = ['draft', 'active'];

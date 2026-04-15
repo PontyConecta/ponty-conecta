@@ -156,8 +156,8 @@ function LayoutContent({ children, currentPageName }) {
               </Link>
             )}
 
-            {/* Subscription Button */}
-            {!isSubscribed && (
+            {/* Subscription Button — only for creators */}
+            {!isSubscribed && profileType !== 'brand' && (
               <Button 
                 onClick={() => navigate(createPageUrl('Subscription'))}
                 className="h-10 px-4 font-bold rounded-lg shadow-sm bg-primary hover:bg-primary/80 text-primary-foreground min-h-[44px]"

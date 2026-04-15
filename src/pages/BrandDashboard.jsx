@@ -6,12 +6,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Megaphone, Users, FileCheck, TrendingUp, Plus, ArrowRight, Crown
+  Megaphone, Users, FileCheck, TrendingUp, Plus, ArrowRight
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
-import { isProfileSubscribed } from '@/components/utils/subscriptionUtils';
+
 import { useAuth } from '@/components/contexts/AuthContext';
 import CampaignMetricsChart from '@/components/charts/CampaignMetricsChart';
 import StatCard from '@/components/dashboard/StatCard';
@@ -82,8 +82,6 @@ export default function BrandDashboard() {
   const pendingAppsCount = appCounts.pending || 0;
   const submittedDelCount = delCounts.submitted || 0;
   const approvedDelCount = delCounts.approved || 0;
-  const isSubscribed = isProfileSubscribed(brand);
-
   const stats = [
     { label: 'Campanhas Ativas', value: activeCampaignsCount, total: totalCampaigns, icon: Megaphone, color: 'bg-primary', href: createPageUrl('CampaignManager') },
     { label: 'Candidaturas Pendentes', value: pendingAppsCount, total: totalApps, icon: Users, color: 'bg-primary/60', href: createPageUrl('ApplicationsManager') },
@@ -105,9 +103,9 @@ export default function BrandDashboard() {
             {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^\w/, c => c.toUpperCase())}
           </p>
         </div>
-        <Link to={createPageUrl(isSubscribed ? 'CampaignManager' : 'Subscription')}>
+        <Link to={createPageUrl('CampaignManager')}>
           <Button className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm min-h-[44px]">
-            {isSubscribed ? <><Plus className="w-4 h-4 mr-2" />Nova Campanha</> : <><Crown className="w-4 h-4 mr-2" />Assinar</>}
+            <Plus className="w-4 h-4 mr-2" />Nova Campanha
           </Button>
         </Link>
       </div>
@@ -169,13 +167,11 @@ export default function BrandDashboard() {
               <div className="text-center py-8">
                 <Megaphone className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground mb-3">Nenhuma campanha criada</p>
-                {isSubscribed && (
-                  <Link to={createPageUrl('CampaignManager')}>
-                    <Button variant="outline" size="sm" className="min-h-[44px]">
-                      <Plus className="w-4 h-4 mr-2" />Criar Primeira Campanha
-                    </Button>
-                  </Link>
-                )}
+                <Link to={createPageUrl('CampaignManager')}>
+                  <Button variant="outline" size="sm" className="min-h-[44px]">
+                    <Plus className="w-4 h-4 mr-2" />Criar Primeira Campanha
+                  </Button>
+                </Link>
               </div>
             )}
           </CardContent>
@@ -271,21 +267,19 @@ export default function BrandDashboard() {
       </Card>
 
       {/* BLOCK 6 — Discover Creators teaser */}
-      {isSubscribed && (
-        <Card className="border bg-card shadow-sm">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-foreground">Descobrir Creators</p>
-              <p className="text-xs text-muted-foreground">Encontre os melhores criadores para sua marca</p>
-            </div>
-            <Link to={createPageUrl('DiscoverCreators')}>
-              <Button variant="outline" size="sm" className="min-h-[44px]">
-                Ver todos <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      )}
+      <Card className="border bg-card shadow-sm">
+        <CardContent className="p-4 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Descobrir Creators</p>
+            <p className="text-xs text-muted-foreground">Encontre os melhores criadores para sua marca</p>
+          </div>
+          <Link to={createPageUrl('DiscoverCreators')}>
+            <Button variant="outline" size="sm" className="min-h-[44px]">
+              Ver todos <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   );
 }

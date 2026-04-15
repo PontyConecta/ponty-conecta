@@ -111,8 +111,8 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
           })}
         </nav>
 
-        {/* Premium CTA */}
-        {!isSubscribed && !isCollapsed && (
+        {/* Premium CTA — only for creators */}
+        {!isSubscribed && profileType !== 'brand' && !isCollapsed && (
           <div className="p-4 border-t">
             <Link to={createPageUrl('Subscription')}>
               <div className="p-4 rounded-xl text-primary-foreground cursor-pointer hover:shadow-lg transition-shadow bg-primary">
@@ -127,7 +127,7 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
             </Link>
           </div>
         )}
-        {!isSubscribed && isCollapsed && (
+        {!isSubscribed && profileType !== 'brand' && isCollapsed && (
           <div className="p-2 pb-4">
             <Tooltip>
               <TooltipTrigger asChild>
