@@ -49,8 +49,9 @@ Deno.serve(async (req) => {
       if (!data) return err('Missing data', 'MISSING_FIELDS');
 
       // ── 4. SANITIZE ──
-      // ── ACCOUNT CHECK — Brand is free-forever, just needs completed onboarding ──
-      if (brand.account_state !== 'ready') {
+      // ── ACCOUNT CHECK — Legacy brands (sem account_state) passam; bloquear só quem está explicitamente em onboarding ──
+      const isIncomplete = brand.account_state && brand.account_state !== 'ready';
+      if (isIncomplete) {
         return Response.json({ error: 'Complete seu perfil antes de criar campanhas', code: 'PROFILE_INCOMPLETE' }, { status: 403 });
       }
 
