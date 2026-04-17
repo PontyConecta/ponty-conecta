@@ -24,6 +24,12 @@ Deno.serve(async (req) => {
     }
 
     const { plan_type, profile_type } = body;
+
+    // Brands are free-forever — block checkout
+    if (profile_type === 'brand') {
+      return Response.json({ error: 'Marcas têm acesso gratuito e não precisam de assinatura', code: 'BRAND_FREE' }, { status: 403 });
+    }
+
     const priceId = PLANS[plan_type];
     if (!priceId) {
       return Response.json({ error: 'Invalid plan type' }, { status: 400 });

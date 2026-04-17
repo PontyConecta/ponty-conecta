@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -25,7 +25,6 @@ function Logo({ size = 'lg' }) {
 }
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0);
   const { user, profileType, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -39,12 +38,6 @@ export default function Home() {
     if (found) {
       localStorage.setItem('ponty_utm', JSON.stringify({ ...utms, captured_at: Date.now() }));
     }
-  }, []);
-
-  React.useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   React.useEffect(() => {
@@ -308,7 +301,7 @@ export default function Home() {
             <a href="https://wa.me/5561998591499?text=Olá%2C%20entrei%20em%20contato%20por%20meio%20da%20página." target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition text-sm font-medium">Contato</a>
           </div>
           <div className="text-center text-xs text-muted-foreground border-t border-border pt-6 w-full">
-            <p>&copy; 2026 Ponty Health Club. Todos os direitos reservados.</p>
+            <p>&copy; 2026 Ponty. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

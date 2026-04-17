@@ -143,14 +143,13 @@ export default function AdminTransactions() {
                     <th className="text-left p-3 font-medium">Plano</th>
                     <th className="text-right p-3 font-medium">Valor</th>
                     <th className="text-left p-3 font-medium">Status</th>
-                    <th className="text-left p-3 font-medium hidden lg:table-cell">Sub ID</th>
                     <th className="text-center p-3 font-medium">Excluído</th>
                     <th className="text-center p-3 font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((t, i) => (
-                    <tr key={t.stripe_subscription_id + i} className={`border-b last:border-0 hover:bg-muted/30 ${t.is_excluded ? 'opacity-50' : ''}`}>
+                    <tr key={t.email + i} className={`border-b last:border-0 hover:bg-muted/30 ${t.is_excluded ? 'opacity-50' : ''}`}>
                       <td className="p-3 whitespace-nowrap">
                         {new Date(t.date).toLocaleDateString('pt-BR')}
                       </td>
@@ -166,9 +165,6 @@ export default function AdminTransactions() {
                         <Badge variant="secondary" className={`text-[10px] ${STATUS_COLORS[t.status] || ''}`}>
                           {t.status}
                         </Badge>
-                      </td>
-                      <td className="p-3 hidden lg:table-cell font-mono text-[10px] text-muted-foreground max-w-[180px] truncate" title={t.stripe_subscription_id}>
-                        {t.stripe_subscription_id}
                       </td>
                       <td className="p-3 text-center">
                         {t.is_excluded ? (
@@ -200,7 +196,7 @@ export default function AdminTransactions() {
                   ))}
                   {filtered.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="p-8 text-center text-muted-foreground">
+                      <td colSpan={8} className="p-8 text-center text-muted-foreground">
                         Nenhuma transação encontrada com os filtros atuais.
                       </td>
                     </tr>

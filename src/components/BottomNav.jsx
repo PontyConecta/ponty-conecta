@@ -8,23 +8,25 @@ import {
   Search,
   Building2,
   MessageCircle,
-  User
+  User,
+  PackageCheck,
+  FileText
 } from 'lucide-react';
 
 export default function BottomNav({ profileType, currentPageName, unreadCount = 0 }) {
   const brandNavItems = [
     { name: 'Início', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone, alsoActive: ['Applications'] },
+    { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
-    { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
   const creatorNavItems = [
     { name: 'Início', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone, alsoActive: ['Applications'] },
+    { name: 'Entregas', page: 'MyDeliveries', icon: PackageCheck },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
-    { name: 'Marcas', page: 'DiscoverBrands', icon: Search },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 

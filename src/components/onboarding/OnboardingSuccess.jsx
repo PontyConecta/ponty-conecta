@@ -33,7 +33,7 @@ const SUCCESS_COPY = {
   },
 };
 
-export default function OnboardingSuccess({ profileType, onContinue }) {
+export default function OnboardingSuccess({ profileType, onContinue, saving = false }) {
   useEffect(() => {
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   }, []);
@@ -71,10 +71,11 @@ export default function OnboardingSuccess({ profileType, onContinue }) {
       <div className="space-y-3 max-w-sm mx-auto">
         <Button
           onClick={onContinue}
+          disabled={saving}
           className="w-full h-12 text-base gap-2 bg-primary hover:bg-primary/80 text-primary-foreground"
         >
-          Ir para o Dashboard
-          <ArrowRight className="w-5 h-5" />
+          {saving ? 'Finalizando...' : 'Ir para o Dashboard'}
+          {!saving && <ArrowRight className="w-5 h-5" />}
         </Button>
       </div>
     </motion.div>

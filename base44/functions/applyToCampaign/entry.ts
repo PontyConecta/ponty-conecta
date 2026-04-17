@@ -14,6 +14,12 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return err('Unauthorized', 'UNAUTHORIZED', 401);
 
+    // 1b. BRAND GUARD — only creators can apply
+    const brandCheck = await base44.entities.Brand.filter({ user_id: user.id });
+    if (brandCheck.length > 0) {
+      return err('Apenas criadores podem se candidatar', 'FORBIDDEN', 403);
+    }
+
     // 2. INPUT
     const { campaign_id, message, proposed_rate } = await req.json();
     if (!campaign_id) return err('campaign_id é obrigatório', 'MISSING_FIELDS');

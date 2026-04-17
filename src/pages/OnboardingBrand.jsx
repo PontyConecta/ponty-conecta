@@ -446,7 +446,7 @@ export default function OnboardingBrand() {
                 )}
 
                 {step === 5 && (
-                  <OnboardingSuccess profileType="brand" onContinue={handleFinalize} />
+                  <OnboardingSuccess profileType="brand" onContinue={handleFinalize} saving={saving} />
                 )}
               </motion.div>
             </AnimatePresence>

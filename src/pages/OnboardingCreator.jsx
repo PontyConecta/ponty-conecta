@@ -546,7 +546,7 @@ export default function OnboardingCreator() {
                   )}
 
                   {step === 4 && (
-                    <OnboardingSuccess profileType="creator" onContinue={handleFinalize} />
+                    <OnboardingSuccess profileType="creator" onContinue={handleFinalize} saving={saving} />
                   )}
                 </motion.div>
               </AnimatePresence>

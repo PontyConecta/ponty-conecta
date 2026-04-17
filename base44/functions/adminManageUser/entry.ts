@@ -109,6 +109,11 @@ Deno.serve(async (req) => {
           return Response.json({ error: 'role must be "user" or "admin"' }, { status: 400 });
         }
 
+        // Only super_admin can promote to admin
+        if (newRole === 'admin' && admin.role !== 'super_admin') {
+          return Response.json({ error: 'Apenas super admins podem promover admins' }, { status: 403 });
+        }
+
         console.log(`[adminManageUser] set_user_role: adminId=${admin.id} targetUserId=${userId} newRole=${newRole}`);
 
         // Fetch all users and find target by ID
