@@ -15,7 +15,6 @@ import {
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import PaywallModal from '@/components/PaywallModal';
 import ProfileIncompleteAlert from '@/components/ProfileIncompleteAlert';
 import { validateBrandProfile } from '@/components/utils/profileValidation';
 import {
@@ -39,15 +38,12 @@ import Applications from './Applications';
 export default function CampaignManager() {
   const { user, profile: brand, profileType, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  // Brands are free-forever — no subscription gate needed
-  const isSubscribed = true;
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
-  const [showPaywall, setShowPaywall] = useState(false);
   const [profileValidation, setProfileValidation] = useState({ isComplete: true, missingFields: [] });
   const [inviteForCampaign, setInviteForCampaign] = useState(null);
   const [detailCampaign, setDetailCampaign] = useState(null);
@@ -94,11 +90,6 @@ export default function CampaignManager() {
   };
 
   const updateCampaignStatus = async (campaignId, newStatus) => {
-    if (!isSubscribed && newStatus === 'active') {
-      setShowPaywall(true);
-      return;
-    }
-
     const campaign = campaigns.find(c => c.id === campaignId);
     if (!campaign) return;
 
@@ -182,12 +173,8 @@ export default function CampaignManager() {
               toast.error('Complete seu perfil antes de criar campanhas');
               return;
             }
-            if (!isSubscribed) {
-              setShowPaywall(true);
-            } else {
-              setEditingCampaign(null);
-              setIsCreateOpen(true); 
-            }
+            setEditingCampaign(null);
+            setIsCreateOpen(true); 
           }}
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -298,7 +285,7 @@ export default function CampaignManager() {
                                 </span>
                               )}
                             </div>
-                            {(campaign.status === 'active' || campaign.status === 'draft') && isSubscribed && (
+                            {(campaign.status === 'active' || campaign.status === 'draft') && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -404,11 +391,7 @@ export default function CampaignManager() {
                       toast.error('Complete seu perfil antes de criar campanhas');
                       return;
                     }
-                    if (!isSubscribed) {
-                      setShowPaywall(true);
-                    } else {
-                      setIsCreateOpen(true);
-                    }
+                    setIsCreateOpen(true);
                   }} 
                   className="bg-primary hover:bg-primary/80 text-primary-foreground shadow-sm"
                   >
@@ -425,16 +408,6 @@ export default function CampaignManager() {
           <Applications embedded />
         </TabsContent>
       </Tabs>
-
-      {/* Paywall Modal */}
-      <PaywallModal
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        title="Recurso Premium"
-        description="Você precisa de uma assinatura ativa para criar e publicar campanhas."
-        feature="Criar campanhas ilimitadas"
-        isAuthenticated={true}
-      />
 
       {/* Campaign Detail Dialog */}
       <Dialog open={!!detailCampaign} onOpenChange={(v) => !v && setDetailCampaign(null)}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/components/contexts/AuthContext';
+import { getUtmLoginUrl } from '@/utils/utmUtils';
 
 function Logo({ size = 'lg' }) {
   const isLg = size === 'lg';
@@ -27,6 +28,18 @@ export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const { user, profileType, loading } = useAuth();
   const navigate = useNavigate();
+
+  // UTM Capture
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    const utms = {};
+    let found = false;
+    keys.forEach(k => { if (params.has(k)) { utms[k] = params.get(k); found = true; } });
+    if (found) {
+      localStorage.setItem('ponty_utm', JSON.stringify({ ...utms, captured_at: Date.now() }));
+    }
+  }, []);
 
   React.useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -87,7 +100,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   className="bg-primary text-primary-foreground hover:bg-primary/80 w-full sm:w-auto shadow-lg shadow-primary/25 h-11 sm:h-12"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}
+                  onClick={() => base44.auth.redirectToLogin(getUtmLoginUrl(createPageUrl('OnboardingBrand')))}
                 >
                   Entrar como marca
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -95,7 +108,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   className="w-full sm:w-auto border-2 border-primary text-primary bg-background hover:bg-primary/5 h-11 sm:h-12"
-                  onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}
+                  onClick={() => base44.auth.redirectToLogin(getUtmLoginUrl(createPageUrl('OnboardingCreator')))}
                 >
                   Entrar como criador
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -173,7 +186,7 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
-                    <Button size="lg" className="bg-primary hover:bg-primary/80 text-primary-foreground w-full" onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}>
+                    <Button size="lg" className="bg-primary hover:bg-primary/80 text-primary-foreground w-full" onClick={() => base44.auth.redirectToLogin(getUtmLoginUrl(createPageUrl('OnboardingBrand')))}>
                       Entrar como marca <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                   </div>
@@ -209,7 +222,7 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
-                    <Button size="lg" className="bg-accent hover:bg-accent/80 text-accent-foreground w-full" onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}>
+                    <Button size="lg" className="bg-accent hover:bg-accent/80 text-accent-foreground w-full" onClick={() => base44.auth.redirectToLogin(getUtmLoginUrl(createPageUrl('OnboardingCreator')))}>
                       Entrar como criador <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                   </div>
@@ -274,10 +287,10 @@ export default function Home() {
           <h2 className="headline-display text-2xl sm:text-3xl lg:text-5xl mb-4">Entre no clube.</h2>
           <p className="text-sm sm:text-lg mb-8 opacity-95">Gratuito pra marcas. Direto pra criadores. Pro quem leva o que faz a sério.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button size="lg" className="bg-background text-primary hover:bg-secondary h-12" onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingBrand'))}>
+            <Button size="lg" className="bg-background text-primary hover:bg-secondary h-12" onClick={() => base44.auth.redirectToLogin(getUtmLoginUrl(createPageUrl('OnboardingBrand')))}>
               Entrar como marca <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button size="lg" className="bg-background text-primary hover:bg-secondary h-12" onClick={() => base44.auth.redirectToLogin(createPageUrl('OnboardingCreator'))}>
+            <Button size="lg" className="bg-background text-primary hover:bg-secondary h-12" onClick={() => base44.auth.redirectToLogin(getUtmLoginUrl(createPageUrl('OnboardingCreator')))}>
               Entrar como criador <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
