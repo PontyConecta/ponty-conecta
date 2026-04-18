@@ -47,10 +47,9 @@ Deno.serve(async (req) => {
       onboarding_step: 6,
     };
 
+    // Brands are free forever — no trial needed
     if (profile_type === 'brand') {
-      const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
-      updatePayload.subscription_status = 'trial';
-      updatePayload.trial_end_date = trialEnd;
+      updatePayload.subscription_status = 'free';
     }
 
     await base44.entities[entityName].update(profile.id, updatePayload);
