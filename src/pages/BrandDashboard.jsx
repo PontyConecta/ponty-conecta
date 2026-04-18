@@ -26,7 +26,7 @@ export default function BrandDashboard() {
   const brand = authProfile;
   const profileValidation = authProfile ? validateBrandProfile(authProfile) : { isComplete: true, missingFields: [] };
 
-  const { data, isLoading } = useBrandDashboardData(brand?.id);
+  const { data, isLoading, error } = useBrandDashboardData(brand?.id);
   const recentCampaigns = data?.recentCampaigns || [];
   const recentApplications = data?.recentApplications || [];
   const recentDeliveries = data?.recentDeliveries || [];
@@ -76,6 +76,10 @@ export default function BrandDashboard() {
         </div>
       </div>
     );
+  }
+
+  if (error) {
+    return <div className="text-center py-8 text-destructive">Erro ao carregar dashboard. Tente recarregar a página.</div>;
   }
 
   const activeCampaignsCount = campaignCounts.active || 0;

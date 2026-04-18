@@ -31,6 +31,7 @@ export function useCreatorDashboardData(creatorId, userId) {
   return useQuery({
     queryKey: ['dashboard', 'creator', creatorId],
     queryFn: async () => {
+      try {
       // 1) Stats from backend (1 request) + recent items + reputation in parallel
       const [statsRes, reputationData, recentApps, recentDeliveries] = await Promise.all([
         base44.functions.invoke('creatorDashboardStats', { creatorId, range: 'all' }),
@@ -70,6 +71,10 @@ export function useCreatorDashboardData(creatorId, userId) {
         appsByMonth: stats.appsByMonth || [],
         deliveriesByMonth: stats.deliveriesByMonth || [],
       };
+      } catch (error) {
+        console.error('[Dashboard] Falha ao carregar dados do creator:', error.message);
+        throw error;
+      }
     },
     enabled: !!creatorId && !!userId,
     ...QUERY_CONFIG,
@@ -82,6 +87,7 @@ export function useBrandDashboardData(brandId) {
   return useQuery({
     queryKey: ['dashboard', 'brand', brandId],
     queryFn: async () => {
+      try {
       // 1) Stats from backend (1 request) + recent items in parallel
       const [statsRes, recentCampaigns, recentApps, recentDeliveries] = await Promise.all([
         base44.functions.invoke('brandDashboardStats', { brandId, range: 'all' }),
@@ -109,6 +115,10 @@ export function useBrandDashboardData(brandId) {
         totalDeliveries: stats.totalDeliveries || 0,
         campaignsByMonth: stats.campaignsByMonth || [],
       };
+      } catch (error) {
+        console.error('[Dashboard] Falha ao carregar dados da brand:', error.message);
+        throw error;
+      }
     },
     enabled: !!brandId,
     ...QUERY_CONFIG,

@@ -37,7 +37,7 @@ export default function CreatorDashboard() {
   const [showMyProfile, setShowMyProfile] = useState(false);
   const profileValidation = authProfile ? validateCreatorProfile(authProfile) : { isComplete: true, missingFields: [] };
 
-  const { data, isLoading } = useCreatorDashboardData(creator?.id, user?.id);
+  const { data, isLoading, error } = useCreatorDashboardData(creator?.id, user?.id);
   const recentApplications = data?.recentApplications || [];
   const recentDeliveries = data?.recentDeliveries || [];
   const campaignsMap = data?.campaignsMap || {};
@@ -83,6 +83,10 @@ export default function CreatorDashboard() {
         <div className="rounded-2xl bg-muted animate-pulse h-48" />
       </div>
     );
+  }
+
+  if (error) {
+    return <div className="text-center py-8 text-destructive">Erro ao carregar dashboard. Tente recarregar a página.</div>;
   }
 
   const isSubscribed = isProfileSubscribed(creator);

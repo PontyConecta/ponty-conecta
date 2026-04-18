@@ -43,11 +43,21 @@ Deno.serve(async (req) => {
     }
 
     // ── 5. SANITIZE & EXECUTE ──
+    function isValidUrl(u) {
+      if (!u || typeof u !== 'string' || !u.trim()) return false;
+      try { new URL(u); return true; } catch { return false; }
+    }
+
+    const validProofUrls = proof_urls.filter(isValidUrl);
+    if (validProofUrls.length === 0) {
+      return err('Pelo menos uma URL de prova válida é necessária', 'INVALID_PROOF_URLS');
+    }
+
     const updateData = {
       status: 'submitted',
       submitted_at: new Date().toISOString(),
-      proof_urls: proof_urls.filter(u => typeof u === 'string' && u.trim()),
-      content_urls: (Array.isArray(content_urls) ? content_urls : []).filter(u => typeof u === 'string' && u.trim()),
+      proof_urls: validProofUrls,
+      content_urls: (Array.isArray(content_urls) ? content_urls : []).filter(isValidUrl),
       proof_notes: typeof proof_notes === 'string' ? proof_notes.trim() : '',
       on_time: delivery.deadline ? new Date() <= new Date(delivery.deadline) : true,
     };
