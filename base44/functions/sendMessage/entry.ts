@@ -6,6 +6,15 @@ function err(msg, code, status = 400) {
   return Response.json({ error: msg, code }, { status });
 }
 
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
@@ -70,7 +79,7 @@ Deno.serve(async (req) => {
       sender_id: user.id,
       sender_type: senderType,
       recipient_id,
-      content: content.trim(),
+      content: escapeHtml(content.trim()),
     });
 
     console.log(`[${FN}] Message sent from ${user.id} to ${recipient_id}`);

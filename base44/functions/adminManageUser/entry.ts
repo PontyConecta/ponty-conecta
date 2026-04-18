@@ -127,6 +127,17 @@ Deno.serve(async (req) => {
           return Response.json({ error: 'User not found' }, { status: 404 });
         }
 
+        // Protect last admin from downgrade
+        if (newRole === 'user' && targetUser.role === 'admin') {
+          const admins = allUsersForRole.filter(u => u.role === 'admin');
+          if (admins.length <= 1) {
+            return Response.json(
+              { error: 'Não é possível remover o último administrador', code: 'LAST_ADMIN' },
+              { status: 400 }
+            );
+          }
+        }
+
         const oldRole = targetUser.role || 'user';
         console.log(`[adminManageUser] Changing role: ${targetUser.email} from "${oldRole}" to "${newRole}"`);
         
