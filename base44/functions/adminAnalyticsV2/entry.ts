@@ -564,7 +564,7 @@ async function handleLists(base44, range, listType, limit, cursor) {
   }
 
   if (listType === 'open_disputes') {
-    const allDisputes = await base44.asServiceRole.entities.Dispute.list();
+    const allDisputes = await base44.asServiceRole.entities.Dispute.list('-created_date', 500);
     const open = allDisputes.filter(d => d.status === 'open' || d.status === 'under_review');
     const paged = paginateWithCursor(open, cursor, pageSize);
     return Response.json({
@@ -586,8 +586,8 @@ async function handleLists(base44, range, listType, limit, cursor) {
 
   if (listType === 'campaigns_zero_apps') {
     const [camps, allAppsForZero] = await Promise.all([
-      base44.asServiceRole.entities.Campaign.filter({ status: 'active' }),
-      base44.asServiceRole.entities.Application.list(),
+      base44.asServiceRole.entities.Campaign.filter({ status: 'active' }, '-created_date', 500),
+      base44.asServiceRole.entities.Application.list('-created_date', 5000),
     ]);
     const appCountMap = {};
     allAppsForZero.forEach(a => { appCountMap[a.campaign_id] = (appCountMap[a.campaign_id] || 0) + 1; });
@@ -612,9 +612,10 @@ async function handleLists(base44, range, listType, limit, cursor) {
   }
 
   if (listType === 'incomplete_onboarding') {
+    const LIST_CAP = 500;
     const [brands, creators] = await Promise.all([
-      base44.asServiceRole.entities.Brand.list(),
-      base44.asServiceRole.entities.Creator.list(),
+      base44.asServiceRole.entities.Brand.list('-created_date', LIST_CAP),
+      base44.asServiceRole.entities.Creator.list('-created_date', LIST_CAP),
     ]);
     const incomplete = [
       ...brands.filter(b => b.account_state !== 'ready').map(b => ({ ...b, _type: 'brand' })),
@@ -666,10 +667,11 @@ async function handleLists(base44, range, listType, limit, cursor) {
   }
 
   if (listType === 'dormant_users' || listType === 'dormant_premium') {
+    const LIST_CAP = 500;
     const [users, brands, creators] = await Promise.all([
-      base44.asServiceRole.entities.User.list(),
-      base44.asServiceRole.entities.Brand.list(),
-      base44.asServiceRole.entities.Creator.list(),
+      base44.asServiceRole.entities.User.list('-created_date', LIST_CAP),
+      base44.asServiceRole.entities.Brand.list('-created_date', LIST_CAP),
+      base44.asServiceRole.entities.Creator.list('-created_date', LIST_CAP),
     ]);
     const threshold = new Date(); threshold.setDate(threshold.getDate() - 30);
     let dormant = users.filter(u => !u.last_active || new Date(u.last_active) < threshold);

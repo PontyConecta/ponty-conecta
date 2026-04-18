@@ -145,16 +145,37 @@ Deno.serve(async (req) => {
       // ── 5b. CASCADE on cancellation ──
       if (data.status === 'cancelled') {
         const pendingApps = await base44.entities.Application.filter({ campaign_id, status: 'pending' });
+        // FIX #12: Collect creator IDs for notification
+        const creatorIdsToNotify = new Set();
         for (const app of pendingApps) {
           await base44.entities.Application.update(app.id, { status: 'rejected', rejection_reason: 'Campanha cancelada', rejected_at: new Date().toISOString() });
+          if (app.creator_id) creatorIdsToNotify.add(app.creator_id);
         }
         const openDeliveries = await base44.entities.Delivery.filter({ campaign_id });
         for (const del of openDeliveries) {
           if (del.status === 'pending' || del.status === 'submitted') {
             await base44.entities.Delivery.update(del.id, { status: 'closed' });
+            if (del.creator_id) creatorIdsToNotify.add(del.creator_id);
           }
         }
         console.log(`[${FN}] Cascade: rejected ${pendingApps.length} pending apps, closed open deliveries for campaign ${campaign_id}`);
+
+        // FIX #12: Notify affected creators
+        for (const cId of creatorIdsToNotify) {
+          try {
+            const cr = await base44.entities.Creator.filter({ id: cId });
+            if (cr[0]?.user_id) {
+              await base44.functions.invoke('createNotification', {
+                user_id: cr[0].user_id,
+                notification_key: `campaign-cancelled-${campaign_id}-${cId}`,
+                type: 'campaign',
+                title: 'Campanha cancelada',
+                message: `A campanha "${campaigns[0].title}" foi cancelada pela marca.`,
+                related_entity_id: campaign_id,
+              });
+            }
+          } catch (e) { /* non-blocking */ }
+        }
       }
 
       // ── 6. AUDIT LOG ──

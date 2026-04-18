@@ -148,6 +148,37 @@ Deno.serve(async (req) => {
       timestamp: now,
     });
 
+    // FIX #12: Notify both brand and creator about dispute resolution
+    try {
+      const resLabel = resolution_type === 'resolved_creator_favor' ? 'a favor do criador' : 'a favor da marca';
+      if (dispute.brand_id) {
+        const brands = await base44.asServiceRole.entities.Brand.filter({ id: dispute.brand_id });
+        if (brands[0]?.user_id) {
+          await base44.asServiceRole.functions.invoke('createNotification', {
+            user_id: brands[0].user_id,
+            notification_key: `dispute-resolved-brand-${dispute_id}`,
+            type: 'campaign',
+            title: 'Disputa resolvida',
+            message: `A disputa foi resolvida ${resLabel}.`,
+            related_entity_id: dispute_id,
+          });
+        }
+      }
+      if (dispute.creator_id) {
+        const creators = await base44.asServiceRole.entities.Creator.filter({ id: dispute.creator_id });
+        if (creators[0]?.user_id) {
+          await base44.asServiceRole.functions.invoke('createNotification', {
+            user_id: creators[0].user_id,
+            notification_key: `dispute-resolved-creator-${dispute_id}`,
+            type: 'campaign',
+            title: 'Disputa resolvida',
+            message: `A disputa foi resolvida ${resLabel}.`,
+            related_entity_id: dispute_id,
+          });
+        }
+      }
+    } catch (e) { console.warn('[resolveDispute] Notification failed (non-blocking):', e.message); }
+
     // ── 6. RESPOND ──
     console.log(`[${FN}] Dispute ${dispute_id} resolved as ${resolution_type} by admin ${user.email}`);
     return Response.json({ success: true });

@@ -65,6 +65,22 @@ Deno.serve(async (req) => {
 
     await base44.entities.Delivery.update(delivery_id, updateData);
 
+    // FIX #12: Notify brand that a delivery was submitted
+    try {
+      const campaigns = await base44.entities.Campaign.filter({ id: delivery.campaign_id });
+      const campTitle = campaigns[0]?.title || 'campanha';
+      const brands = await base44.entities.Brand.filter({ id: delivery.brand_id });
+      await base44.functions.invoke('createNotification', {
+        user_id: brands[0]?.user_id,
+        notification_key: `delivery-submitted-${delivery_id}`,
+        type: 'delivery',
+        title: 'Nova entrega recebida',
+        message: `Uma nova entrega foi enviada para "${campTitle}". Revise agora!`,
+        action_url: `/DeliveriesManager?deliveryId=${delivery_id}`,
+        related_entity_id: delivery_id,
+      });
+    } catch (e) { console.warn('[submitDelivery] Notification failed (non-blocking):', e.message); }
+
     // ── 6. RESPOND ──
     console.log(`[${FN}] Delivery ${delivery_id} submitted by creator ${creators[0].id}`);
     return Response.json({ success: true });

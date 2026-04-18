@@ -42,6 +42,7 @@ import { useAuth } from '../components/contexts/AuthContext';
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
 import { useDeliveriesQuery, useApproveMutation, useContestMutation } from '../components/hooks/useEntityQuery';
+import ListPagination, { useListPagination } from '@/components/common/ListPagination';
 
 export default function DeliveriesManager() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -130,6 +131,8 @@ export default function DeliveriesManager() {
     return matchesSearch && matchesStatus;
   });
 
+  const { paginatedItems: paginatedDeliveries, currentPage, totalPages, setCurrentPage, totalItems } = useListPagination(filteredDeliveries);
+
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -144,7 +147,7 @@ export default function DeliveriesManager() {
       <div>
         <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight">Entregas de Criadores</h1>
         <p className="text-sm mt-1 text-muted-foreground">
-          {filteredDeliveries.length} entregas encontradas
+          {totalItems} entregas encontradas
         </p>
       </div>
 
@@ -179,9 +182,9 @@ export default function DeliveriesManager() {
       </Card>
 
       {/* Deliveries List */}
-      {filteredDeliveries.length > 0 ? (
+      {paginatedDeliveries.length > 0 ? (
         <div className="space-y-4">
-          {filteredDeliveries.map((delivery, index) => {
+          {paginatedDeliveries.map((delivery, index) => {
             const creator = creators[delivery.creator_id];
             const campaign = campaigns[delivery.campaign_id];
             const statusConfig = getStatusConfig(delivery.status);
@@ -269,6 +272,7 @@ export default function DeliveriesManager() {
               </motion.div>
             );
           })}
+          <ListPagination currentPage={currentPage} totalPages={totalPages} totalItems={totalItems} onPageChange={setCurrentPage} />
         </div>
       ) : (
         <Card className="border bg-card shadow-sm">

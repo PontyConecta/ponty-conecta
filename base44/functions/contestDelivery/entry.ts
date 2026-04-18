@@ -71,6 +71,22 @@ Deno.serve(async (req) => {
 
       console.log(`[contestDelivery] SUCCESS: delivery=${delivery_id}, dispute=${dispute.id}`);
 
+      // FIX #12: Notify creator that their delivery was contested
+      try {
+        const campaigns = await base44.entities.Campaign.filter({ id: delivery.campaign_id });
+        const campTitle = campaigns[0]?.title || 'campanha';
+        const creators = await base44.entities.Creator.filter({ id: delivery.creator_id });
+        await base44.functions.invoke('createNotification', {
+          user_id: creators[0]?.user_id,
+          notification_key: `delivery-contested-${delivery_id}`,
+          type: 'delivery_contested',
+          title: 'Entrega contestada',
+          message: `A marca contestou sua entrega para "${campTitle}". Uma disputa foi aberta.`,
+          action_url: `/MyDeliveries`,
+          related_entity_id: delivery_id,
+        });
+      } catch (e) { console.warn('[contestDelivery] Notification failed (non-blocking):', e.message); }
+
       return Response.json({
         success: true,
         delivery: updatedDelivery,

@@ -138,6 +138,21 @@ Deno.serve(async (req) => {
 
       console.log(`[approveDelivery] SUCCESS: delivery=${delivery_id}, application=${delivery.application_id}, on_time=${isOnTime}`);
 
+      // FIX #12: Notify creator that their delivery was approved
+      try {
+        const campaigns = await base44.entities.Campaign.filter({ id: delivery.campaign_id });
+        const campTitle = campaigns[0]?.title || 'campanha';
+        await base44.functions.invoke('createNotification', {
+          user_id: creator?.user_id,
+          notification_key: `delivery-approved-${delivery_id}`,
+          type: 'delivery_approved',
+          title: 'Entrega aprovada!',
+          message: `Sua entrega para "${campTitle}" foi aprovada pela marca.`,
+          action_url: `/MyDeliveries`,
+          related_entity_id: delivery_id,
+        });
+      } catch (e) { console.warn('[approveDelivery] Notification failed (non-blocking):', e.message); }
+
       return Response.json({
         success: true,
         delivery: updatedDelivery,

@@ -123,6 +123,19 @@ Deno.serve(async (req) => {
 
       console.log(`[acceptApplication] SUCCESS: application=${application_id}, delivery=${delivery.id}, slots=${freshSlotsFilled + 1}/${slotsTotal}`);
 
+      // FIX #12: Notify creator that their application was accepted
+      try {
+        await base44.functions.invoke('createNotification', {
+          user_id: application.creator_id ? (await base44.entities.Creator.filter({ id: application.creator_id }))[0]?.user_id : null,
+          notification_key: `app-accepted-${application_id}`,
+          type: 'application_accepted',
+          title: 'Candidatura aceita!',
+          message: `Sua candidatura para "${campaign.title}" foi aceita. Agora envie sua entrega!`,
+          action_url: `/MyDeliveries?deliveryId=${delivery.id}`,
+          related_entity_id: application_id,
+        });
+      } catch (e) { console.warn('[acceptApplication] Notification failed (non-blocking):', e.message); }
+
       return Response.json({
         success: true,
         application: updatedApplication,

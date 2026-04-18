@@ -43,6 +43,7 @@ import { useApplicationsQuery, useAcceptApplicationMutation, useRejectApplicatio
 import CreatorProfileModal from '@/components/modals/CreatorProfileModal';
 import InviteCreatorModal from '@/components/modals/InviteCreatorModal';
 import { useSubscription } from '@/components/contexts/SubscriptionContext';
+import ListPagination, { useListPagination } from '@/components/common/ListPagination';
 
 export default function ApplicationsManager() {
   const { user, profile: authProfile, profileType } = useAuth();
@@ -144,6 +145,8 @@ export default function ApplicationsManager() {
     return matchesSearch && matchesStatus && matchesCampaign;
   });
 
+  const { paginatedItems: paginatedApplications, currentPage, totalPages, setCurrentPage, totalItems } = useListPagination(filteredApplications);
+
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -160,7 +163,7 @@ export default function ApplicationsManager() {
       <div>
         <h1 className="text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight">Candidaturas</h1>
         <p className="text-sm mt-1 text-muted-foreground">
-          {filteredApplications.length} candidaturas encontradas
+          {totalItems} candidaturas encontradas
         </p>
       </div>
 
@@ -206,9 +209,9 @@ export default function ApplicationsManager() {
       </Card>
 
       {/* Applications List */}
-      {filteredApplications.length > 0 ? (
+      {paginatedApplications.length > 0 ? (
         <div className="space-y-4">
-          {filteredApplications.map((application, index) => {
+          {paginatedApplications.map((application, index) => {
             const creator = creators[application.creator_id];
             const campaign = campaigns[application.campaign_id];
 
@@ -323,6 +326,7 @@ export default function ApplicationsManager() {
               </motion.div>
             );
           })}
+          <ListPagination currentPage={currentPage} totalPages={totalPages} totalItems={totalItems} onPageChange={setCurrentPage} />
         </div>
       ) : (
         <Card className="border bg-card shadow-sm">

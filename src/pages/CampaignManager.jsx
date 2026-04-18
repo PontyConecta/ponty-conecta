@@ -34,6 +34,7 @@ import { createPageUrl } from '@/utils';
 import InviteCreatorSearchSheet from '@/components/campaign/InviteCreatorSearchSheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Applications from './Applications';
+import ListPagination, { useListPagination } from '@/components/common/ListPagination';
 
 export default function CampaignManager() {
   const { user, profile: brand, profileType, loading: authLoading } = useAuth();
@@ -122,6 +123,8 @@ export default function CampaignManager() {
     const matchesStatus = filterStatus === 'all' || c.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const { paginatedItems: paginatedCampaigns, currentPage, totalPages, setCurrentPage, totalItems } = useListPagination(filteredCampaigns);
 
   const getRemunerationIcon = (type) => {
     switch (type) {
@@ -225,9 +228,9 @@ export default function CampaignManager() {
           </Card>
 
           {/* Campaigns List */}
-          {filteredCampaigns.length > 0 ? (
+          {paginatedCampaigns.length > 0 ? (
             <div className="grid gap-4">
-              {filteredCampaigns.map((campaign, index) => {
+              {paginatedCampaigns.map((campaign, index) => {
                 const RemunerationIcon = getRemunerationIcon(campaign.remuneration_type);
                 
                 return (
@@ -369,6 +372,7 @@ export default function CampaignManager() {
                   </motion.div>
                 );
               })}
+              <ListPagination currentPage={currentPage} totalPages={totalPages} totalItems={totalItems} onPageChange={setCurrentPage} />
             </div>
           ) : (
             <Card className="border bg-card shadow-sm">
