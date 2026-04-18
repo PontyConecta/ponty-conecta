@@ -55,6 +55,9 @@ export default function DiscoverCreators() {
   const { user, profile: authProfile, profileType } = useAuth();
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [offset, setOffset] = useState(100);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterNiche, setFilterNiche] = useState('all');
   const [filterSize, setFilterSize] = useState('all');
@@ -94,15 +97,35 @@ export default function DiscoverCreators() {
     setInviteTarget(creator);
   };
 
+  const PAGE_SIZE = 100;
+
   const loadData = async () => {
     try {
-      const allCreators = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', 500);
-      setCreators(allCreators.filter(c => c.display_name?.trim()));
+      const batch = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', PAGE_SIZE);
+      setCreators(batch.filter(c => c.display_name?.trim()));
+      setHasMore(batch.length >= PAGE_SIZE);
+      setOffset(PAGE_SIZE);
     } catch (error) {
       console.error('Error loading creators:', error);
       toast.error('Erro ao carregar criadoras. Tente recarregar a página.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const batch = await base44.entities.Creator.filter({ account_state: 'ready' }, '-created_date', PAGE_SIZE, offset);
+      const valid = batch.filter(c => c.display_name?.trim());
+      setCreators(prev => [...prev, ...valid]);
+      setOffset(prev => prev + PAGE_SIZE);
+      if (batch.length < PAGE_SIZE) setHasMore(false);
+    } catch (error) {
+      console.error('Error loading more creators:', error);
+      toast.error('Erro ao carregar mais criadoras.');
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -330,6 +353,14 @@ export default function DiscoverCreators() {
                   <p className="text-sm text-muted-foreground">Tente ajustar seus filtros</p>
                 </CardContent>
               </Card>
+            )}
+            {showSections && hasMore && displayCreators.length > 0 && (
+              <div className="flex justify-center mt-6">
+                <Button variant="outline" onClick={loadMore} disabled={loadingMore}>
+                  {loadingMore ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : null}
+                  Ver mais criadoras
+                </Button>
+              </div>
             )}
           </div>
         );
