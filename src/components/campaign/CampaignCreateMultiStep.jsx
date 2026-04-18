@@ -93,11 +93,18 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
       budget_max: formData.budget_max ? parseFloat(formData.budget_max) : null,
       barter_value: formData.barter_value ? parseFloat(formData.barter_value) : null,
       slots_total: parseInt(formData.slots_total) || 1,
+      profile_size_min: formData.profile_size_min || null,
+      application_deadline: formData.application_deadline || null,
+      location: formData.location || null,
+      target_audience: formData.target_audience || null,
+      content_guidelines: formData.content_guidelines || null,
+      proof_requirements: formData.proof_requirements || null,
+      barter_description: formData.barter_description || null,
       dos: formData.dos.filter(d => d.trim()),
       donts: formData.donts.filter(d => d.trim()),
       hashtags: formData.hashtags.filter(h => h.trim()),
       mentions: formData.mentions.filter(m => m.trim()),
-      status: editingCampaign ? editingCampaign.status : 'draft'
+      status: editingCampaign ? editingCampaign.status : 'active'
     };
 
     const validation = validate(campaignSchema, campaignData);
@@ -108,47 +115,21 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
 
     setSaving(true);
     try {
-      if (editingCampaign) {
-        const response = await base44.functions.invoke('manageCampaign', {
-          action: 'update',
-          campaign_id: editingCampaign.id,
-          data: campaignData,
-        });
-        if (!response.data?.success) {
-          toast.error(response.data?.error || 'Erro ao atualizar campanha');
-          return;
-        }
-        toast.success('Campanha atualizada!');
+      const action = editingCampaign ? 'update' : 'create';
+      const payload = editingCampaign
+        ? { action, campaign_id: editingCampaign.id, data: campaignData }
+        : { action, data: campaignData };
+
+      const response = await base44.functions.invoke('manageCampaign', payload);
+
+      if (response.data?.success) {
+        toast.success(editingCampaign ? 'Campanha atualizada!' : 'Campanha criada com sucesso!');
+        onSaved();
       } else {
-        // Create as draft first
-        const createResponse = await base44.functions.invoke('manageCampaign', {
-          action: 'create',
-          data: campaignData,
-        });
-        if (!createResponse.data?.success) {
-          toast.error(createResponse.data?.error || 'Erro ao criar campanha');
-          return;
-        }
-        // Then publish to active
-        const campaignId = createResponse.data.campaign?.id;
-        if (campaignId) {
-          const publishResponse = await base44.functions.invoke('manageCampaign', {
-            action: 'update_status',
-            campaign_id: campaignId,
-            data: { status: 'active' },
-          });
-          if (publishResponse.data?.success) {
-            toast.success('Campanha criada e publicada!');
-          } else {
-            toast.success('Campanha salva como rascunho. Publique manualmente.');
-          }
-        } else {
-          toast.success('Campanha salva como rascunho.');
-        }
+        toast.error(response.data?.error || (editingCampaign ? 'Erro ao atualizar campanha' : 'Erro ao criar campanha'));
       }
-      onSaved();
     } catch (error) {
-      console.error('handleSubmit error:', error);
+      console.error('[CampaignCreate] erro:', error);
       toast.error('Erro ao salvar campanha. Tente novamente.');
     } finally {
       setSaving(false);

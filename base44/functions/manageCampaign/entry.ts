@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
       const requestedStatus = data.status && VALID_INITIAL_STATUSES.includes(data.status) ? data.status : 'draft';
       const sanitized = { brand_id: brand.id, status: requestedStatus };
       for (const key of ALLOWED_CREATE_FIELDS) {
-        if (data[key] !== undefined) {
+        if (data[key] !== undefined && data[key] !== '') {
           sanitized[key] = data[key];
         }
       }
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
       // ── 4. SANITIZE ──
       const sanitized = {};
       for (const key of ALLOWED_CREATE_FIELDS) {
-        if (data[key] !== undefined) {
+        if (data[key] !== undefined && data[key] !== '') {
           sanitized[key] = data[key];
         }
       }
