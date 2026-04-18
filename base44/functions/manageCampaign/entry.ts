@@ -64,6 +64,20 @@ Deno.serve(async (req) => {
         }
       }
 
+      // ── 4b. VALIDATE NUMERIC FIELDS ──
+      if (sanitized.budget_min !== undefined) {
+        const v = parseFloat(sanitized.budget_min);
+        if (isNaN(v) || v < 0) return err('budget_min inválido', 'INVALID_VALUE');
+      }
+      if (sanitized.budget_max !== undefined) {
+        const v = parseFloat(sanitized.budget_max);
+        if (isNaN(v) || v < 0) return err('budget_max inválido', 'INVALID_VALUE');
+      }
+      if (sanitized.slots_total !== undefined) {
+        const v = parseInt(sanitized.slots_total, 10);
+        if (isNaN(v) || v < 1) return err('slots_total deve ser >= 1', 'INVALID_VALUE');
+      }
+
       // ── 5. EXECUTE ──
       const campaign = await base44.entities.Campaign.create(sanitized);
       console.log(`[${FN}] Created campaign ${campaign.id} for brand ${brand.id}`);
@@ -85,6 +99,20 @@ Deno.serve(async (req) => {
         if (data[key] !== undefined) {
           sanitized[key] = data[key];
         }
+      }
+
+      // ── 4b. VALIDATE NUMERIC FIELDS ──
+      if (sanitized.budget_min !== undefined) {
+        const v = parseFloat(sanitized.budget_min);
+        if (isNaN(v) || v < 0) return err('budget_min inválido', 'INVALID_VALUE');
+      }
+      if (sanitized.budget_max !== undefined) {
+        const v = parseFloat(sanitized.budget_max);
+        if (isNaN(v) || v < 0) return err('budget_max inválido', 'INVALID_VALUE');
+      }
+      if (sanitized.slots_total !== undefined) {
+        const v = parseInt(sanitized.slots_total, 10);
+        if (isNaN(v) || v < 1) return err('slots_total deve ser >= 1', 'INVALID_VALUE');
       }
 
       // ── 5. EXECUTE ──

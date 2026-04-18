@@ -29,8 +29,8 @@ Deno.serve(async (req) => {
     if (creators.length === 0) return err('Perfil de creator não encontrado', 'FORBIDDEN', 403);
     const creator = creators[0];
 
-    // 4. SUBSCRIPTION CHECK — only 'premium' grants access
-    if (creator.subscription_status !== 'premium') {
+    // 4. SUBSCRIPTION CHECK — 'premium' or 'legacy' grants access
+    if (!['premium', 'legacy'].includes(creator.subscription_status)) {
       return err('Assinatura ativa necessária', 'SUBSCRIPTION_REQUIRED', 403);
     }
 
@@ -64,6 +64,9 @@ Deno.serve(async (req) => {
 
     // 7. VALIDATE PROPOSED RATE
     if (proposed_rate !== undefined && proposed_rate !== null) {
+      if (typeof proposed_rate === 'string' && proposed_rate.length > 20) {
+        return err('proposed_rate inválido', 'INVALID_RATE');
+      }
       const rate = parseFloat(proposed_rate);
       if (isNaN(rate) || rate < 0 || rate > 100000) {
         return err('proposed_rate deve ser entre 0 e 100.000', 'INVALID_RATE');
