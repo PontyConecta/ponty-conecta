@@ -37,15 +37,23 @@ Deno.serve(async (req) => {
     }
 
     // Already ready — idempotent
-    if (profile.account_state === 'ready') {
+    if (profile.account_state === 'ready' && profile.subscription_status) {
       return Response.json({ success: true, profile });
     }
 
     // ── 4. EXECUTE ──
-    await base44.entities[entityName].update(profile.id, {
+    const updatePayload = {
       account_state: 'ready',
       onboarding_step: 6,
-    });
+    };
+
+    if (profile_type === 'brand') {
+      const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+      updatePayload.subscription_status = 'trial';
+      updatePayload.trial_end_date = trialEnd;
+    }
+
+    await base44.entities[entityName].update(profile.id, updatePayload);
 
     // Fire-and-forget: create onboarding missions
     try {
@@ -87,7 +95,7 @@ Deno.serve(async (req) => {
     console.log(`[${FN}] Finalized ${profile_type} for user ${user.id}`);
     return Response.json({
       success: true,
-      profile: { ...profile, account_state: 'ready', onboarding_step: 6 },
+      profile: { ...profile, ...updatePayload },
     });
   } catch (error) {
     console.error(`[${FN}] Error:`, error.message);

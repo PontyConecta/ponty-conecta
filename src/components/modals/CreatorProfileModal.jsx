@@ -14,6 +14,7 @@ function SafeImage({ src, alt, className, fallback }) {
 }
 
 export default function CreatorProfileModal({ creator, isSubscribed, formatFollowers, getTotalFollowers, onPaywall, onMessage, onInvite }) {
+  const canViewContact = isSubscribed;
   const [lightboxUrl, setLightboxUrl] = useState(null);
   if (!creator) return null;
   return (
@@ -73,7 +74,7 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
                 <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{p.name}</span>
-                    {isSubscribed ? (
+                    {canViewContact ? (
                       <a href={p.url || `https://${p.name.toLowerCase()}.com/${(p.handle || '').replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" onClick={e => e.stopPropagation()}>@{p.handle}</a>
                     ) : (
                       <span className="text-muted-foreground flex items-center gap-1">
@@ -107,7 +108,7 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
           </div>
         )}
 
-        {isSubscribed ? (
+        {canViewContact ? (
           <>
             {(creator.rate_cash_min || creator.rate_cash_max) && (
               <div className="p-4 rounded-xl bg-primary/10">

@@ -64,7 +64,7 @@ export default function DiscoverCreators() {
   const [selectedCreator, setSelectedCreator] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
 
-  const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
+  const isSubscribed = profileType === 'brand' ? true : (authProfile ? isProfileSubscribed(authProfile) : false);
 
   const handleCreatorClick = (creator) => {
     window.dataLayer = window.dataLayer || [];
