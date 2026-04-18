@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import Stripe from 'npm:stripe@17.5.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
@@ -44,6 +44,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Profile not found' }, { status: 404 });
     }
 
+    // Ownership check
+    if (profile.user_id !== user.id) {
+      console.error('Ownership mismatch:', { profile_user_id: profile.user_id, user_id: user.id });
+      return Response.json({ error: 'Acesso negado', code: 'FORBIDDEN' }, { status: 403 });
+    }
+
     // Reuse existing Stripe customer or create new one
     let customerId = profile.stripe_customer_id;
     
@@ -86,10 +92,6 @@ Deno.serve(async (req) => {
       });
       customerId = customer.id;
       console.log('Created new customer:', customerId);
-
-      // Save customer ID BEFORE creating checkout session (await to ensure it's saved)
-      await base44.entities[entityName].update(profile.id, { stripe_customer_id: customerId });
-      console.log('Customer ID saved to profile');
     }
 
     // Create checkout session
@@ -118,6 +120,12 @@ Deno.serve(async (req) => {
         }
       }
     });
+
+    // Save customer ID AFTER successful session creation (avoids orphan records)
+    if (!profile.stripe_customer_id) {
+      await base44.entities[entityName].update(profile.id, { stripe_customer_id: customerId });
+      console.log('Customer ID saved to profile after session creation');
+    }
 
     return Response.json({ url: session.url, sessionId: session.id });
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 
@@ -39,13 +39,10 @@ export default function Subscription() {
 
   useEffect(() => {
     if (authProfile && authProfileType) {
-      // Brands are free-forever — redirect to dashboard
-      if (authProfileType === 'brand') {
-        navigate(createPageUrl('BrandDashboard'), { replace: true });
-        return;
+      if (authProfileType !== 'brand') {
+        setProfile(authProfile);
+        setProfileType(authProfileType);
       }
-      setProfile(authProfile);
-      setProfileType(authProfileType);
       setLoading(false);
     }
   }, [authProfile, authProfileType]);
@@ -140,10 +137,9 @@ export default function Subscription() {
     );
   }
 
-  // Brands are free-forever — redirect to dashboard
-  if (profileType === 'brand') {
-    navigate(createPageUrl('BrandDashboard'), { replace: true });
-    return null;
+  // Brands are free-forever — instant redirect (no flash)
+  if (authProfileType === 'brand') {
+    return <Navigate to={createPageUrl('BrandDashboard')} replace />;
   }
 
   const isBrand = profileType === 'brand';

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { ArrowRight, Users, TrendingUp, Shield, Sparkles, CheckCircle } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,10 +17,7 @@ function Logo({ size = 'lg' }) {
       <div className={`${isLg ? 'w-12 h-12 lg:w-14 lg:h-14 rounded-2xl text-xl lg:text-2xl' : 'w-9 h-9 rounded-xl text-base'} flex items-center justify-center bg-primary shadow-lg shadow-primary/20`}>
         <span className="text-primary-foreground font-bold">P</span>
       </div>
-      <div className="flex flex-col">
-        <span className={`${isLg ? 'text-xl lg:text-2xl' : 'text-lg'} font-bold leading-tight text-primary`}>Ponty</span>
-        <span className={`${isLg ? 'text-xs lg:text-sm' : 'text-[11px]'} font-medium text-muted-foreground leading-tight`}>Health Club</span>
-      </div>
+      <span className={`${isLg ? 'text-xl lg:text-2xl' : 'text-lg'} font-bold leading-tight text-primary`}>Ponty</span>
     </div>
   );
 }

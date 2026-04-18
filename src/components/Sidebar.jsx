@@ -26,8 +26,8 @@ export default function Sidebar({ profileType, currentPageName, isSubscribed, is
   const brandNavItems = [
     { name: 'Dashboard', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Descobrir Criadores', page: 'DiscoverCreators', icon: Search },
-    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone, alsoActive: ['Applications'] },
-    { name: 'Candidaturas', page: 'Applications', icon: Users },
+    { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone, alsoActive: ['ApplicationsManager'] },
+    { name: 'Candidaturas', page: 'ApplicationsManager', icon: Users },
     { name: 'Entregas de Criadores', page: 'DeliveriesManager', icon: FileText },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
     { type: 'divider' },

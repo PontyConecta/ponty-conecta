@@ -105,6 +105,7 @@ export default function DeliveriesManager() {
     }
   };
 
+
   const getStatusConfig = (status) => {
     const configs = {
       pending: { label: 'Aguardando', color: 'bg-slate-100 text-slate-700', icon: Clock },

@@ -165,6 +165,7 @@ export default function MyDeliveries() {
     
     if (proofUrls.length === 0) {
       alert('É obrigatório anexar pelo menos uma prova da entrega (screenshot, foto, etc).');
+      setSubmitting(false);
       return;
     }
     

@@ -45,19 +45,29 @@ export default function OpportunityFeed() {
 
   // Pull to refresh (touch)
   useEffect(() => {
+    let activeMoveHandler = null;
     const handleTouchStart = (e) => {
       const startY = e.touches[0].clientY;
       const handleMove = (e2) => {
         if (e2.touches[0].clientY - startY > 100 && window.scrollY === 0) {
           vm.handleRefresh();
           document.removeEventListener('touchmove', handleMove);
+          activeMoveHandler = null;
         }
       };
+      activeMoveHandler = handleMove;
       document.addEventListener('touchmove', handleMove);
-      document.addEventListener('touchend', () => document.removeEventListener('touchmove', handleMove), { once: true });
+      const handleEnd = () => {
+        document.removeEventListener('touchmove', handleMove);
+        activeMoveHandler = null;
+      };
+      document.addEventListener('touchend', handleEnd, { once: true });
     };
     document.addEventListener('touchstart', handleTouchStart);
-    return () => document.removeEventListener('touchstart', handleTouchStart);
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      if (activeMoveHandler) document.removeEventListener('touchmove', activeMoveHandler);
+    };
   }, [vm.handleRefresh]);
 
   const creatorType = authProfile?.creator_type;

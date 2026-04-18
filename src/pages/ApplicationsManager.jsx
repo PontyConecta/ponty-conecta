@@ -114,6 +114,7 @@ export default function ApplicationsManager() {
     }
   };
 
+
   const getStatusBadge = (status) => {
     const styles = {
       pending: { label: 'Pendente', color: 'bg-amber-100 text-amber-700', icon: Clock },

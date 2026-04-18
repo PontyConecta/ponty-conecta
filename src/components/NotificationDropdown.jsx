@@ -207,6 +207,7 @@ export default function NotificationDropdown({ triggerClassName }) {
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error marking as read:', error);
+      toast.error('Erro ao atualizar notificação — tente novamente');
     }
   };
 
@@ -225,6 +226,7 @@ export default function NotificationDropdown({ triggerClassName }) {
       setUnreadCount(0);
     } catch (error) {
       console.error('Error marking all as read:', error);
+      toast.error('Erro ao atualizar notificação — tente novamente');
     }
   };
 
@@ -244,6 +246,7 @@ export default function NotificationDropdown({ triggerClassName }) {
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error dismissing notification:', error);
+      toast.error('Erro ao atualizar notificação — tente novamente');
     }
   };
 
