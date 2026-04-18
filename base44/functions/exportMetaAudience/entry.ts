@@ -9,16 +9,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
+    const ROW_CAP = 50000;
     const [creators, brands] = await Promise.all([
-      base44.asServiceRole.entities.Creator.list(),
-      base44.asServiceRole.entities.Brand.list(),
+      base44.asServiceRole.entities.Creator.list('-created_date', ROW_CAP),
+      base44.asServiceRole.entities.Brand.list('-created_date', ROW_CAP),
     ]);
+
+    if (creators.length === ROW_CAP) console.warn('[exportMetaAudience] WARNING: creators capped at 50000 — some records may be missing.');
+    if (brands.length === ROW_CAP) console.warn('[exportMetaAudience] WARNING: brands capped at 50000 — some records may be missing.');
 
     const userIds = new Set();
     for (const c of creators) { if (c.user_id) userIds.add(c.user_id); }
     for (const b of brands) { if (b.user_id) userIds.add(b.user_id); }
 
-    const allUsers = await base44.asServiceRole.entities.User.list();
+    const allUsers = await base44.asServiceRole.entities.User.list('-created_date', ROW_CAP);
+    if (allUsers.length === ROW_CAP) console.warn('[exportMetaAudience] WARNING: users capped at 50000 — some records may be missing.');
     const userMap = new Map(allUsers.map(u => [u.id, u]));
 
     const rows = [];

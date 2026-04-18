@@ -31,6 +31,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'User profile not found' }, { status: 404 });
     }
 
+    // Guard: prevent resetting an already-active trial
+    const now = new Date();
+    const hasActiveTrial = profile.subscription_status === 'premium'
+      && profile.trial_end_date
+      && new Date(profile.trial_end_date) > now;
+
+    if (hasActiveTrial) {
+      return Response.json({
+        error: 'User already has an active trial',
+        code: 'TRIAL_ALREADY_ACTIVE',
+        trial_ends_at: profile.trial_end_date
+      }, { status: 409 });
+    }
+
     const entityName = profileType === 'brand' ? 'Brand' : 'Creator';
 
     // Update profile with premium status + trial end date

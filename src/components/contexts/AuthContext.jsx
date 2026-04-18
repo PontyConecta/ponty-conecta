@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
       setUser(userData);
 
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'user_data', user_email: userData.email });
+      window.dataLayer.push({ event: 'user_data', user_id: userData.id });
 
       // Buscar ambos os perfis em paralelo
       try {

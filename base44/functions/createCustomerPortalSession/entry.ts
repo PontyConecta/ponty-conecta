@@ -26,7 +26,11 @@ Deno.serve(async (req) => {
       profile = creators[0];
     }
 
-    if (!profile || !profile.stripe_customer_id) {
+    if (!profile || profile.user_id !== user.id) {
+      return Response.json({ error: 'Forbidden', code: 'FORBIDDEN' }, { status: 403 });
+    }
+
+    if (!profile.stripe_customer_id) {
       return Response.json({ error: 'No active subscription found' }, { status: 404 });
     }
 
