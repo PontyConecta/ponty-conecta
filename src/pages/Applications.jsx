@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Target } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -19,6 +19,13 @@ export default function Applications({ embedded = false }) {
   const navigate = useNavigate();
   const vm = useApplicationsViewModel(profileType, authProfile);
   const [viewingCreator, setViewingCreator] = useState(null);
+
+  // Block creators from accessing standalone (non-embedded) Applications page
+  useEffect(() => {
+    if (!authLoading && !embedded && profileType === 'creator') {
+      navigate(createPageUrl('MyApplications'));
+    }
+  }, [authLoading, embedded, profileType, navigate]);
 
   if (vm.isLoading) return <LoadingSpinner />;
 

@@ -5,7 +5,7 @@
 
 export function isProfileSubscribed(profile) {
   if (!profile) return false;
-  if (profile.subscription_status !== 'premium') return false;
+  if (!['premium', 'legacy'].includes(profile.subscription_status)) return false;
   if (profile.trial_end_date && !profile.stripe_customer_id) {
     return new Date(profile.trial_end_date) > new Date();
   }
@@ -14,7 +14,7 @@ export function isProfileSubscribed(profile) {
 
 export function isOnTrial(profile) {
   if (!profile) return false;
-  if (profile.subscription_status !== 'premium') return false;
+  if (!['premium', 'legacy'].includes(profile.subscription_status)) return false;
   if (!profile.trial_end_date) return false;
   return new Date(profile.trial_end_date) > new Date();
 }

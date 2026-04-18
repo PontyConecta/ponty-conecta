@@ -27,11 +27,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Applications from './Applications';
 
 export default function OpportunityFeed() {
-  const { profile: authProfile, profileType } = useAuth();
+  const { profile: authProfile, profileType, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [viewingBrand, setViewingBrand] = useState(null);
   const vm = useOpportunityFeedViewModel(authProfile, profileType);
   const { loadMoreRef } = useInfiniteScroll(vm.handleLoadMore, vm.hasNextPage);
+
+  // Block brands from accessing this page
+  useEffect(() => {
+    if (!authLoading && profileType === 'brand') {
+      navigate(createPageUrl('DiscoverCreators'));
+    }
+  }, [authLoading, profileType, navigate]);
 
   // Deep-link: open campaign from URL param
   useEffect(() => {
