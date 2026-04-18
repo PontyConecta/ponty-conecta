@@ -27,6 +27,9 @@ export function AuthProvider({ children }) {
       const userData = await base44.auth.me();
       setUser(userData);
 
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'user_data', user_email: userData.email });
+
       // Buscar ambos os perfis em paralelo
       try {
         const [brandProfiles, creatorProfiles] = await Promise.all([

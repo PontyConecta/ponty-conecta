@@ -262,6 +262,8 @@ export default function OnboardingBrand() {
     setSaving(true);
     try {
       await base44.functions.invoke('onboardingFinalize', { profile_type: 'brand' });
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'complete_registration', profile_type: 'brand' });
       await refreshProfile();
       navigate(createPageUrl('BrandDashboard'));
     } catch (error) {

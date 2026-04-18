@@ -48,6 +48,16 @@ export default function DiscoverBrands() {
   const [showPaywall, setShowPaywall] = useState(false);
 
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
+
+  const handleBrandClick = (brand) => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'view_content',
+      content_name: brand.company_name || brand.display_name,
+      content_category: 'brand'
+    });
+    setSelectedBrand(brand);
+  };
   const isAdmin = user?.role === 'admin';
   const isCreator = profileType === 'creator';
   const navigate = useNavigate();
@@ -176,7 +186,7 @@ export default function DiscoverBrands() {
               {activeBrands.map(b => (
                 <div key={b.id} className="w-[160px] flex-shrink-0">
                   <DiscoverBrandCard brand={b} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedBrand(b)} />
+                    onClick={() => handleBrandClick(b)} />
                 </div>
               ))}
             </HorizontalSection>
@@ -186,7 +196,7 @@ export default function DiscoverBrands() {
               {newBrands.map(b => (
                 <div key={b.id} className="w-[160px] flex-shrink-0">
                   <DiscoverBrandCard brand={b} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedBrand(b)} />
+                    onClick={() => handleBrandClick(b)} />
                 </div>
               ))}
             </HorizontalSection>
@@ -213,7 +223,7 @@ export default function DiscoverBrands() {
                 {displayBrands.map(b => (
                   <motion.div key={b.id} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
                     <DiscoverBrandCard brand={b} isSubscribed={isSubscribed}
-                      onClick={() => setSelectedBrand(b)} />
+                      onClick={() => handleBrandClick(b)} />
                   </motion.div>
                 ))}
               </motion.div>

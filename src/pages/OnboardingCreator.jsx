@@ -255,6 +255,8 @@ export default function OnboardingCreator() {
     setSaving(true);
     try {
       await base44.functions.invoke('onboardingFinalize', { profile_type: 'creator' });
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'complete_registration', profile_type: 'creator' });
       await refreshProfile();
       navigate(createPageUrl('CreatorDashboard'));
     } catch (error) {

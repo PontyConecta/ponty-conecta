@@ -78,6 +78,9 @@ export default function SelectProfile() {
         return;
       }
 
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'sign_up', profile_type: type });
+
       navigate(createPageUrl(type === 'brand' ? 'OnboardingBrand' : 'OnboardingCreator'));
     } catch (error) {
       console.error('Error creating profile:', error);

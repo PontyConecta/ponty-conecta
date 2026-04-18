@@ -101,6 +101,8 @@ export default function Subscription() {
       });
 
       if (response.data?.url) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'initiate_checkout', value: selectedPlan === 'monthly' ? 45 : 450, currency: 'BRL' });
         window.location.href = response.data.url;
       } else {
         throw new Error('Failed to create checkout session');

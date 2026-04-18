@@ -65,6 +65,16 @@ export default function DiscoverCreators() {
   const [showPaywall, setShowPaywall] = useState(false);
 
   const isSubscribed = authProfile ? isProfileSubscribed(authProfile) : false;
+
+  const handleCreatorClick = (creator) => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'view_content',
+      content_name: creator.display_name,
+      content_category: creator.niche?.[0]
+    });
+    setSelectedCreator(creator);
+  };
   const isAdmin = user?.role === 'admin';
   const isBrand = profileType === 'brand';
   const navigate = useNavigate();
@@ -258,7 +268,7 @@ export default function DiscoverCreators() {
               {featuredCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
                   <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)}
+                    onClick={() => handleCreatorClick(c)}
                     showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
                 </div>
               ))}
@@ -269,7 +279,7 @@ export default function DiscoverCreators() {
               {newCreators.map(c => (
                 <div key={c.id} className="w-[160px] flex-shrink-0">
                   <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                    onClick={() => setSelectedCreator(c)}
+                    onClick={() => handleCreatorClick(c)}
                     showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
                 </div>
               ))}
@@ -283,7 +293,7 @@ export default function DiscoverCreators() {
           {nicheCreators.map(c => (
             <div key={c.id} className="w-[160px] flex-shrink-0">
               <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                onClick={() => setSelectedCreator(c)}
+                onClick={() => handleCreatorClick(c)}
                 showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
             </div>
           ))}
@@ -307,7 +317,7 @@ export default function DiscoverCreators() {
                 {displayCreators.map(c => (
                   <motion.div key={c.id} variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.28 } } }}>
                     <DiscoverCreatorCard creator={c} isSubscribed={isSubscribed}
-                      onClick={() => setSelectedCreator(c)}
+                      onClick={() => handleCreatorClick(c)}
                       showInvite={isBrand && isSubscribed} onInvite={handleInvite} />
                   </motion.div>
                 ))}

@@ -88,6 +88,25 @@ export default function AdminUsers() {
     }
   };
 
+  const handleExportMeta = async () => {
+    try {
+      toast.info('Gerando audiência para Meta Ads...');
+      const response = await base44.functions.invoke('exportMetaAudience', {});
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const date = new Date().toISOString().split('T')[0];
+      a.href = url;
+      a.download = `ponty_meta_audience_${date}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Audiência exportada com sucesso');
+    } catch (error) {
+      console.error('Meta export error:', error);
+      toast.error('Erro ao exportar audiência');
+    }
+  };
+
   const handleExport = async () => {
     try {
       toast.info('Exportando dados...');
@@ -343,6 +362,9 @@ export default function AdminUsers() {
           </Button>
           <Button onClick={handleExport} variant="outline" size="sm">
             <Download className="w-4 h-4 mr-1" /> Exportar
+          </Button>
+          <Button onClick={handleExportMeta} variant="outline" size="sm">
+            <Download className="w-4 h-4 mr-1" /> Meta Ads
           </Button>
         </div>
       </div>
