@@ -162,6 +162,11 @@ export default function InboxThread() {
       return;
     }
 
+    if (recipientUserId === user.id) {
+      toast.error('Você não pode enviar uma mensagem para si mesmo.');
+      return;
+    }
+
     setSending(true);
     const tempId = 'temp-' + Date.now();
     const tempMsg = {

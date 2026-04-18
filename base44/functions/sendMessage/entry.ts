@@ -40,6 +40,10 @@ Deno.serve(async (req) => {
       return err('Destinatário não encontrado', 'RECIPIENT_NOT_FOUND', 404);
     }
 
+    if (recipient_id === user.id) {
+      return err('Não é possível enviar mensagem para si mesmo', 'SELF_MESSAGE_NOT_ALLOWED', 400);
+    }
+
     // 4. RATE LIMIT — max 30 messages in 60 seconds
     const recentMessages = await base44.entities.Message.filter(
       { sender_id: user.id },
