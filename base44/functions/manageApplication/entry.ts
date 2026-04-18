@@ -34,7 +34,11 @@ Deno.serve(async (req) => {
     if (action === 'withdraw') {
       // ── 3. OWNERSHIP ──
       const creators = await base44.entities.Creator.filter({ user_id: user.id });
-      if (creators.length === 0 || creators[0].id !== application.creator_id) {
+      if (creators.length === 0) {
+        return err('Creator profile not found', 'NOT_FOUND', 404);
+      }
+      const creator = creators[0];
+      if (creator.id !== application.creator_id) {
         return err('Forbidden', 'FORBIDDEN', 403);
       }
 
@@ -68,7 +72,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      console.log(`[${FN}] Application ${application_id} withdrawn by creator ${creators[0].id} (was ${wasAccepted ? 'accepted' : 'pending'})`);
+      console.log(`[${FN}] Application ${application_id} withdrawn by creator ${creator.id} (was ${wasAccepted ? 'accepted' : 'pending'})`);
       return Response.json({ success: true });
     }
 
