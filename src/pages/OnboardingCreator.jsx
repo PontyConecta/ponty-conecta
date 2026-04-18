@@ -231,6 +231,10 @@ export default function OnboardingCreator() {
 
   const handleNext = async () => {
     if (step < 4) {
+      if (step === 1) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'lead', profile_type: 'creator' });
+      }
       const ok = await saveStepData(step + 1);
       if (ok !== false) setStep(step + 1);
     }

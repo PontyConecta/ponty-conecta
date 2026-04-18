@@ -75,6 +75,12 @@ export default function Subscription() {
   const isSubscribedEarly = isProfileSubscribed(profile);
   useEffect(() => {
     if (isSubscribedEarly && processingPayment) {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'purchase',
+        value: profile?.plan_level?.includes('annual') ? 450 : 45,
+        currency: 'BRL'
+      });
       setProcessingPayment(false);
     }
   }, [isSubscribedEarly, processingPayment]);

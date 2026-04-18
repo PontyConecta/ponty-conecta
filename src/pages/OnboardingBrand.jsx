@@ -232,6 +232,10 @@ export default function OnboardingBrand() {
 
   const handleNext = async () => {
     if (step < 5) {
+      if (step === 1) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'lead', profile_type: 'brand' });
+      }
       const ok = await saveStepData(step + 1);
       if (ok !== false) setStep(step + 1);
     }
