@@ -1,8 +1,23 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { getPersistedUtms } from '@/utils/utmUtils';
 
 const AuthContext = createContext(null);
+
+// Retroactive UTM backfill: if profile has no utm_source but localStorage has UTM data, save it
+function backfillUtm(profile, entityName) {
+  if (!profile || profile.utm_source) return;
+  const utmData = getPersistedUtms();
+  if (!utmData?.utm_source) return;
+  base44.entities[entityName].update(profile.id, {
+    utm_source: utmData.utm_source,
+    utm_medium: utmData.utm_medium || null,
+    utm_campaign: utmData.utm_campaign || null,
+    utm_content: utmData.utm_content || null,
+    utm_term: utmData.utm_term || null,
+  }).catch(() => {}); // fire-and-forget
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -47,19 +62,22 @@ export function AuthProvider({ children }) {
           if (creatorReady && !brandReady) {
             setProfile(creatorProfiles[0]);
             setProfileType('creator');
+            backfillUtm(creatorProfiles[0], 'Creator');
           } else if (brandReady && !creatorReady) {
             setProfile(brandProfiles[0]);
             setProfileType('brand');
+            backfillUtm(brandProfiles[0], 'Brand');
           } else {
-            // Ambos ready ou ambos incomplete — priorizar o mais recente
             const brandDate = new Date(brandProfiles[0].created_date || 0);
             const creatorDate = new Date(creatorProfiles[0].created_date || 0);
             if (creatorDate > brandDate) {
               setProfile(creatorProfiles[0]);
               setProfileType('creator');
+              backfillUtm(creatorProfiles[0], 'Creator');
             } else {
               setProfile(brandProfiles[0]);
               setProfileType('brand');
+              backfillUtm(brandProfiles[0], 'Brand');
             }
           }
           return true;
@@ -68,12 +86,14 @@ export function AuthProvider({ children }) {
         if (hasBrand) {
           setProfile(brandProfiles[0]);
           setProfileType('brand');
+          backfillUtm(brandProfiles[0], 'Brand');
           return true;
         }
 
         if (hasCreator) {
           setProfile(creatorProfiles[0]);
           setProfileType('creator');
+          backfillUtm(creatorProfiles[0], 'Creator');
           return true;
         }
 

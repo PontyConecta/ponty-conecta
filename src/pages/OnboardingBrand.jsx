@@ -22,6 +22,7 @@ import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import OnlinePresenceManager from '@/components/onboarding/OnlinePresenceManager';
 import FieldHint from '@/components/onboarding/FieldHint';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
+import { getPersistedUtms } from '@/utils/utmUtils';
 import { toast } from 'sonner';
 
 const STEPS = [
@@ -188,6 +189,14 @@ export default function OnboardingBrand() {
       dataToSave.logo_url = formData.logo_url;
       dataToSave.state = formData.state;
       dataToSave.city = formData.city;
+      const utmData = getPersistedUtms();
+      if (utmData) {
+        dataToSave.utm_source = utmData.utm_source || null;
+        dataToSave.utm_medium = utmData.utm_medium || null;
+        dataToSave.utm_campaign = utmData.utm_campaign || null;
+        dataToSave.utm_content = utmData.utm_content || null;
+        dataToSave.utm_term = utmData.utm_term || null;
+      }
     } else if (step === 2) {
       dataToSave.industry = formData.industry;
       dataToSave.company_size = formData.company_size;

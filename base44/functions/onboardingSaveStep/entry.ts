@@ -68,14 +68,14 @@ function sanitizeArray(val, maxItems = 20) {
 
 // Whitelists per step
 const BRAND_STEP_FIELDS = {
-  1: ['company_name', 'logo_url', 'state', 'city'],
+  1: ['company_name', 'logo_url', 'state', 'city', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
   2: ['industry', 'company_size', 'marketing_budget', 'description', 'target_audience'],
   3: ['online_presences', 'social_instagram', 'social_linkedin', 'website'],
   4: ['contact_email', 'contact_phone'],
 };
 
 const CREATOR_STEP_FIELDS = {
-  1: ['display_name', 'bio', 'avatar_url', 'state', 'city'],
+  1: ['display_name', 'bio', 'avatar_url', 'state', 'city', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
   2: ['niche', 'content_types'],
   3: ['creator_type'],
   4: ['platforms', 'profile_size', 'portfolio_url'],
@@ -116,6 +116,12 @@ const FIELD_SANITIZERS = {
   // numbers
   rate_cash_min: (v) => { const n = parseFloat(v); return isNaN(n) ? null : Math.max(0, n); },
   rate_cash_max: (v) => { const n = parseFloat(v); return isNaN(n) ? null : Math.max(0, n); },
+  // UTM fields
+  utm_source: (v) => sanitizeString(v, 200),
+  utm_medium: (v) => sanitizeString(v, 200),
+  utm_campaign: (v) => sanitizeString(v, 200),
+  utm_content: (v) => sanitizeString(v, 200),
+  utm_term: (v) => sanitizeString(v, 200),
 };
 
 Deno.serve(async (req) => {

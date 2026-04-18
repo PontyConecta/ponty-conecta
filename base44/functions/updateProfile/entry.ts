@@ -17,6 +17,7 @@ const ALLOWED_BRAND_FIELDS = [
   'online_presences', 'website', 'social_instagram', 'social_linkedin',
   'state', 'city',
   'target_audience', 'content_guidelines',
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
 ];
 
 const ALLOWED_CREATOR_FIELDS = [
@@ -26,6 +27,7 @@ const ALLOWED_CREATOR_FIELDS = [
   'portfolio_url', 'portfolio_images',
   'rate_cash_min', 'rate_cash_max', 'accepts_barter',
   'contact_email', 'contact_whatsapp',
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
 ];
 
 const PROTECTED_FIELDS = [
@@ -123,6 +125,11 @@ const FIELD_SANITIZERS = {
   online_presences: sanitizeOnlinePresences,
   platforms: sanitizePlatforms,
   portfolio_images: sanitizePortfolioImages,
+  utm_source: sanitizeString,
+  utm_medium: sanitizeString,
+  utm_campaign: sanitizeString,
+  utm_content: sanitizeString,
+  utm_term: sanitizeString,
 };
 
 // ─── Handler ───

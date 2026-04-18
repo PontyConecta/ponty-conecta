@@ -155,6 +155,26 @@
       "type": "number",
       "default": 1,
       "description": "Current onboarding step (1-5)"
+    },
+    "utm_source": {
+      "type": "string",
+      "description": "UTM source parameter captured at registration"
+    },
+    "utm_medium": {
+      "type": "string",
+      "description": "UTM medium parameter captured at registration"
+    },
+    "utm_campaign": {
+      "type": "string",
+      "description": "UTM campaign parameter captured at registration"
+    },
+    "utm_content": {
+      "type": "string",
+      "description": "UTM content parameter captured at registration"
+    },
+    "utm_term": {
+      "type": "string",
+      "description": "UTM term parameter captured at registration"
     }
   },
   "required": [

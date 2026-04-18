@@ -22,6 +22,7 @@ import OnboardingSuccess from '@/components/onboarding/OnboardingSuccess';
 import FieldHint from '@/components/onboarding/FieldHint';
 import { formatPhoneNumber, isValidEmail } from '@/components/utils/phoneFormatter';
 import { toast } from 'sonner';
+import { getPersistedUtms } from '@/utils/utmUtils';
 import { computeProfileSize, FOLLOWER_RANGES } from '@/components/utils/profileSizeUtils';
 import { CREATOR_TYPE_OPTIONS } from '@/components/utils/creatorTypeConfig';
 
@@ -187,6 +188,14 @@ export default function OnboardingCreator() {
       dataToSave.avatar_url = formData.avatar_url;
       dataToSave.state = formData.state;
       dataToSave.city = formData.city;
+      const utmData = getPersistedUtms();
+      if (utmData) {
+        dataToSave.utm_source = utmData.utm_source || null;
+        dataToSave.utm_medium = utmData.utm_medium || null;
+        dataToSave.utm_campaign = utmData.utm_campaign || null;
+        dataToSave.utm_content = utmData.utm_content || null;
+        dataToSave.utm_term = utmData.utm_term || null;
+      }
     } else if (step === 2) {
       dataToSave.niche = formData.niche;
       dataToSave.content_types = formData.content_types;
