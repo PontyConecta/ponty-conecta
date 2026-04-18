@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +50,7 @@ export default function MyApplications() {
   const { isSubscribed } = useSubscription();
   const navigate = useNavigate();
   const [withdrawTarget, setWithdrawTarget] = useState(null);
+  const [withdrawingId, setWithdrawingId] = useState(null);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [creator, setCreator] = useState(null);
@@ -100,12 +101,19 @@ export default function MyApplications() {
     }
   };
 
+  useEffect(() => {
+    if (!authLoading && profileType && profileType !== 'creator') {
+      navigate(createPageUrl('Home'));
+    }
+  }, [authLoading, profileType, navigate]);
+
   if (!authLoading && profileType && profileType !== 'creator') {
-    navigate(createPageUrl('Home'));
     return null;
   }
 
   const handleWithdraw = async (applicationId) => {
+    if (withdrawingId) return;
+    setWithdrawingId(applicationId);
     try {
       await base44.functions.invoke('manageApplication', {
         action: 'withdraw',
@@ -117,6 +125,8 @@ export default function MyApplications() {
     } catch (error) {
       console.error('Error withdrawing application:', error);
       toast.error('Erro ao cancelar candidatura.');
+    } finally {
+      setWithdrawingId(null);
     }
   };
 
@@ -342,9 +352,10 @@ export default function MyApplications() {
             <AlertDialogCancel>Manter candidatura</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => handleWithdraw(withdrawTarget)}
+              disabled={!!withdrawingId}
               className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             >
-              Sim, cancelar
+              {withdrawingId ? 'Cancelando...' : 'Sim, cancelar'}
             </AlertDialogAction>
           </div>
         </AlertDialogContent>

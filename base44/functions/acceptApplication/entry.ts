@@ -59,7 +59,14 @@ Deno.serve(async (req) => {
 
     // 6. Execute atomic operations with rollback tracking
     const rollbackActions = [];
-    const rate = agreed_rate ? parseFloat(agreed_rate) : application.proposed_rate;
+    let rate = application.proposed_rate;
+    if (agreed_rate !== undefined && agreed_rate !== null && agreed_rate !== '') {
+      const parsed = parseFloat(agreed_rate);
+      if (isNaN(parsed) || parsed < 0) {
+        return Response.json({ error: 'Taxa inválida', code: 'INVALID_RATE' }, { status: 400 });
+      }
+      rate = parsed;
+    }
 
     try {
       // Re-read campaign to minimize race window

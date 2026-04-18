@@ -9,7 +9,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { delivery_id, reason } = await req.json();
+    const body = await req.json();
+    const delivery_id = body.delivery_id;
+    const reason = typeof body.reason === 'string' ? body.reason.slice(0, 2000).trim() : '';
     console.log(`[contestDelivery] userId=${user.id} deliveryId=${delivery_id}`);
     if (!delivery_id || !reason) {
       return Response.json({ error: 'delivery_id and reason are required' }, { status: 400 });

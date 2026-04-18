@@ -77,9 +77,10 @@ export default function Profile() {
     if (!profile || !user) return;
 
     try {
-      const subscriptions = await base44.entities.Subscription.filter({ user_id: user.id, status: 'active' });
-      if (subscriptions.length > 0) {
-        setSubscription(subscriptions[0]);
+      const subscriptions = await base44.entities.Subscription.filter({ user_id: user.id });
+      const activeSub = subscriptions.find(s => s.status === 'premium');
+      if (activeSub) {
+        setSubscription(activeSub);
       }
 
       // Initialize form data from profile

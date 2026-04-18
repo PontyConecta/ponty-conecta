@@ -48,8 +48,8 @@ export default function Inbox() {
         });
         const uniquePartnerIds = [...new Set(partnerUserIds)];
         const [allCreators, allBrands] = await Promise.all([
-          base44.entities.Creator.filter({ user_id: { $in: uniquePartnerIds } }),
-          base44.entities.Brand.filter({ user_id: { $in: uniquePartnerIds } }),
+          Promise.all(uniquePartnerIds.map(uid => base44.entities.Creator.filter({ user_id: uid }))).then(r => r.flat()),
+          Promise.all(uniquePartnerIds.map(uid => base44.entities.Brand.filter({ user_id: uid }))).then(r => r.flat()),
         ]);
         if (aborted) return;
         const creatorByUserId = {};
@@ -69,7 +69,7 @@ export default function Inbox() {
       }
       
       if (realAppIds.length > 0) {
-        const apps = await base44.entities.Application.filter({ id: { $in: realAppIds } });
+        const apps = await Promise.all(realAppIds.map(id => base44.entities.Application.filter({ id }))).then(r => r.flat());
         if (aborted) return;
         const appMap = {};
         const campaignIds = new Set();
@@ -84,9 +84,9 @@ export default function Inbox() {
         setApplications(appMap);
 
         const [campsArr, brandsArr, creatorsArr] = await Promise.all([
-          campaignIds.size > 0 ? base44.entities.Campaign.filter({ id: { $in: [...campaignIds] } }) : [],
-          brandIds.size > 0 ? base44.entities.Brand.filter({ id: { $in: [...brandIds] } }) : [],
-          creatorIds.size > 0 ? base44.entities.Creator.filter({ id: { $in: [...creatorIds] } }) : [],
+          campaignIds.size > 0 ? Promise.all([...campaignIds].map(id => base44.entities.Campaign.filter({ id }))).then(r => r.flat()) : [],
+          brandIds.size > 0 ? Promise.all([...brandIds].map(id => base44.entities.Brand.filter({ id }))).then(r => r.flat()) : [],
+          creatorIds.size > 0 ? Promise.all([...creatorIds].map(id => base44.entities.Creator.filter({ id }))).then(r => r.flat()) : [],
         ]);
         if (aborted) return;
 
