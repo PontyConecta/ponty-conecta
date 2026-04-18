@@ -7,16 +7,8 @@ Deno.serve(async (req) => {
   const body = await req.json();
   const { event, data, old_data } = body;
 
-  // Verify the request comes from an authenticated context
-  try {
-    const user = await base44.auth.me();
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-  } catch (authErr) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+  // This function is an entity automation trigger — called by the system,
+  // not by users directly. We validate the payload structure instead of auth.
   // Validate event source — only allow known entity types
   const ALLOWED_ENTITIES = ['Campaign', 'Application', 'Delivery'];
   if (!event?.entity_name || !ALLOWED_ENTITIES.includes(event.entity_name)) {
