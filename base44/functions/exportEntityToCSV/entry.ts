@@ -17,8 +17,17 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Entity name is required' }, { status: 400 });
     }
 
-    const ALLOWED_EXPORT_ENTITIES = ['Brand', 'Creator', 'Campaign', 'Application', 'Delivery', 'Subscription'];
-    if (!ALLOWED_EXPORT_ENTITIES.includes(entityName)) {
+    // Whitelist of allowed entities and their exportable fields
+    const ALLOWED_EXPORT_FIELDS = {
+      Brand: ['id', 'created_date', 'updated_date', 'user_id', 'company_name', 'industry', 'company_size', 'marketing_budget', 'description', 'state', 'city', 'is_verified', 'is_hidden', 'subscription_status', 'plan_level', 'total_campaigns', 'active_campaigns', 'target_audience', 'account_state', 'onboarding_step', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
+      Creator: ['id', 'created_date', 'updated_date', 'user_id', 'display_name', 'bio', 'niche', 'platforms', 'profile_size', 'creator_type', 'content_types', 'state', 'city', 'location', 'rate_cash_min', 'rate_cash_max', 'accepts_barter', 'is_verified', 'is_hidden', 'subscription_status', 'plan_level', 'completed_campaigns', 'on_time_rate', 'featured', 'account_state', 'onboarding_step', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
+      Campaign: ['id', 'created_date', 'updated_date', 'brand_id', 'title', 'description', 'requirements', 'platforms', 'content_type', 'niche_required', 'location', 'deadline', 'application_deadline', 'remuneration_type', 'budget_min', 'budget_max', 'barter_description', 'barter_value', 'slots_total', 'slots_filled', 'profile_size_min', 'status', 'total_applications', 'featured'],
+      Application: ['id', 'created_date', 'updated_date', 'campaign_id', 'creator_id', 'brand_id', 'status', 'message', 'proposed_rate', 'invited', 'accepted_at', 'rejected_at', 'rejection_reason', 'agreed_rate'],
+      Delivery: ['id', 'created_date', 'updated_date', 'application_id', 'campaign_id', 'creator_id', 'brand_id', 'status', 'submitted_at', 'deadline', 'reviewed_at', 'approved_at', 'on_time', 'payment_status'],
+      Subscription: ['id', 'created_date', 'updated_date', 'user_id', 'plan_type', 'status', 'start_date', 'end_date', 'amount', 'currency', 'auto_renew', 'next_billing_date', 'last_billing_date', 'plan_name'],
+    };
+
+    if (!ALLOWED_EXPORT_FIELDS[entityName]) {
       return Response.json({ error: 'Entidade não permitida para exportação', code: 'FORBIDDEN_ENTITY' }, { status: 403 });
     }
 
@@ -33,13 +42,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Dataset muito grande — use filtros para exportar' }, { status: 400 });
     }
 
-    // Get entity schema to know field names
-    const schema = await base44.asServiceRole.entities[entityName].schema();
-    const fieldNames = Object.keys(schema.properties || {});
-
-    // Build CSV header — filter out sensitive fields
-    const allHeaders = ['id', 'created_date', 'updated_date', 'created_by', ...fieldNames];
-    const headers = allHeaders.filter(h => !/(password|token|secret|hash|key)/i.test(h));
+    // Use whitelist of allowed fields for this entity
+    const headers = ALLOWED_EXPORT_FIELDS[entityName];
     const csvHeader = headers.map(h => `"${h}"`).join(',');
 
     // Build CSV rows

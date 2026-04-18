@@ -76,7 +76,10 @@ Deno.serve(async (req) => {
     if (action === 'reject') {
       // ── 3. OWNERSHIP ──
       const brands = await base44.entities.Brand.filter({ user_id: user.id });
-      if (brands.length === 0 || brands[0].id !== application.brand_id) {
+      if (brands.length === 0) {
+        return err('Brand not found', 'NOT_FOUND', 404);
+      }
+      if (brands[0].id !== application.brand_id) {
         return err('Forbidden', 'FORBIDDEN', 403);
       }
 

@@ -77,6 +77,28 @@ Deno.serve(async (req) => {
     // Derive application_id for direct conversations if not provided
     const resolvedAppId = application_id || [user.id, recipient_id].sort().join('__direct__');
 
+    // 5b. AUTHORIZATION CHECK for direct conversations
+    if (!application_id) {
+      // Direct conversation — user must be one of the two parties
+      if (!resolvedAppId.includes(user.id)) {
+        return err('Forbidden', 'FORBIDDEN', 403);
+      }
+    } else {
+      // Application-based conversation — user must be sender or part of the application
+      const apps = await base44.entities.Application.filter({ id: application_id });
+      if (apps.length > 0) {
+        const app = apps[0];
+        // Verify user is the brand owner or the creator owner
+        const [appBrands, appCreators] = await Promise.all([
+          base44.entities.Brand.filter({ id: app.brand_id, user_id: user.id }),
+          base44.entities.Creator.filter({ id: app.creator_id, user_id: user.id }),
+        ]);
+        if (appBrands.length === 0 && appCreators.length === 0) {
+          return err('Forbidden', 'FORBIDDEN', 403);
+        }
+      }
+    }
+
     // 6. CREATE MESSAGE — sender_id always from auth, never from payload
     const message = await base44.entities.Message.create({
       application_id: resolvedAppId,
