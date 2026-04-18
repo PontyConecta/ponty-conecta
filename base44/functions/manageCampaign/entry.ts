@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
       const requestedStatus = data.status && VALID_INITIAL_STATUSES.includes(data.status) ? data.status : 'draft';
       const sanitized = { brand_id: brand.id, status: requestedStatus };
       for (const key of ALLOWED_CREATE_FIELDS) {
-        if (data[key] !== undefined && data[key] !== '') {
+        if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
           sanitized[key] = data[key];
         }
       }
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
       // ── 4. SANITIZE ──
       const sanitized = {};
       for (const key of ALLOWED_CREATE_FIELDS) {
-        if (data[key] !== undefined && data[key] !== '') {
+        if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
           sanitized[key] = data[key];
         }
       }
@@ -178,7 +178,7 @@ Deno.serve(async (req) => {
 
     return err('Invalid action', 'INVALID_ACTION');
   } catch (error) {
-    console.error(`[${FN}] Error:`, error.message);
+    console.error(`[${FN}] Error:`, error.message, error.stack || '');
     return err(error.message, 'INTERNAL_ERROR', 500);
   }
 });

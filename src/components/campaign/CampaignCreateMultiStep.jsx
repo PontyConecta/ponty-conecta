@@ -130,7 +130,8 @@ export default function CampaignCreateMultiStep({ brandId, editingCampaign, onCl
       }
     } catch (error) {
       console.error('[CampaignCreate] erro:', error);
-      toast.error('Erro ao salvar campanha. Tente novamente.');
+      const backendMsg = error?.response?.data?.error;
+      toast.error(backendMsg || 'Erro ao salvar campanha. Tente novamente.');
     } finally {
       setSaving(false);
     }
