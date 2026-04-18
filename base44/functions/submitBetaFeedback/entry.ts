@@ -1,4 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+// FIX #6: Rollback FeedbackResponse if User update fails + fix admin_id nomenclature
 
 Deno.serve(async (req) => {
   try {
@@ -27,7 +29,6 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'experience_rating is required' }, { status: 400 });
     }
 
-    const isMobile = (body.platform === 'ios' || body.platform === 'android');
     const platform = body.platform || 'web';
 
     // Create FeedbackResponse
@@ -54,15 +55,26 @@ Deno.serve(async (req) => {
 
     const created = await base44.asServiceRole.entities.FeedbackResponse.create(feedbackData);
 
-    // Update user status
-    await base44.asServiceRole.entities.User.update(user.id, {
-      feedback_status: 'submitted',
-      feedback_submitted_at: new Date().toISOString(),
-    });
+    // Update user status — rollback FeedbackResponse if this fails
+    try {
+      await base44.asServiceRole.entities.User.update(user.id, {
+        feedback_status: 'submitted',
+        feedback_submitted_at: new Date().toISOString(),
+      });
+    } catch (userUpdateError) {
+      console.error('[submitBetaFeedback] User update failed, rolling back FeedbackResponse:', userUpdateError.message);
+      try {
+        await base44.asServiceRole.entities.FeedbackResponse.delete(created.id);
+        console.log('[submitBetaFeedback] Rollback successful: deleted FeedbackResponse', created.id);
+      } catch (rollbackErr) {
+        console.error('[submitBetaFeedback] CRITICAL: Rollback also failed. FeedbackResponse', created.id, 'exists but user not marked as submitted.');
+      }
+      return Response.json({ error: 'Erro ao salvar feedback. Tente novamente.' }, { status: 500 });
+    }
 
-    // Audit log
+    // Audit log — FIX: use target_user_id instead of admin_id for non-admin action
     await base44.asServiceRole.entities.AuditLog.create({
-      admin_id: String(user.id),
+      admin_id: 'system',
       admin_email: user.email,
       action: 'feedback_status_update',
       target_user_id: String(user.id),

@@ -164,8 +164,7 @@ export default function MyDeliveries() {
     if (!selectedDelivery) return;
     
     if (proofUrls.length === 0) {
-      alert('É obrigatório anexar pelo menos uma prova da entrega (screenshot, foto, etc).');
-      setSubmitting(false);
+      toast.error('É obrigatório anexar pelo menos uma prova da entrega (screenshot, foto, etc).');
       return;
     }
     
@@ -186,7 +185,8 @@ export default function MyDeliveries() {
       closeSubmitDialog();
     } catch (error) {
       console.error('Error submitting delivery:', error);
-      toast.error('Erro ao enviar entrega. Tente novamente.');
+      const backendMsg = error?.response?.data?.error;
+      toast.error(backendMsg || 'Erro ao enviar entrega. Tente novamente.');
     } finally {
       setSubmitting(false);
     }

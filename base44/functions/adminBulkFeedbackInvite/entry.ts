@@ -1,4 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+// FIX #7: Idempotent — skip users already invited (feedback_invited_at set)
 
 Deno.serve(async (req) => {
   try {
@@ -17,10 +19,27 @@ Deno.serve(async (req) => {
 
     const now = new Date().toISOString();
     let successCount = 0;
+    let skippedCount = 0;
     let errorCount = 0;
 
     for (const userId of userIds) {
       try {
+        // FIX: Check if already invited before updating
+        const users = await base44.asServiceRole.entities.User.filter({ id: userId });
+        if (users.length === 0) {
+          console.warn(`[adminBulkFeedbackInvite] User ${userId} not found, skipping`);
+          skippedCount++;
+          continue;
+        }
+
+        const targetUser = users[0];
+        if (targetUser.feedback_invited_at) {
+          // Already invited — skip to avoid duplicates
+          console.log(`[adminBulkFeedbackInvite] User ${userId} already invited at ${targetUser.feedback_invited_at}, skipping`);
+          skippedCount++;
+          continue;
+        }
+
         const updateData = {
           feedback_status: 'invited',
           feedback_invited_at: now,
@@ -41,14 +60,14 @@ Deno.serve(async (req) => {
       admin_id: admin.id,
       admin_email: admin.email,
       action: 'feedback_beta_changed',
-      details: `Bulk feedback invite: ${successCount} invited, ${errorCount} errors. Total: ${userIds.length}`,
+      details: `Bulk feedback invite: ${successCount} invited, ${skippedCount} skipped (already invited or not found), ${errorCount} errors. Total: ${userIds.length}`,
       note: feedback_tags?.length ? `Tags: ${feedback_tags.join(', ')}` : '',
       timestamp: now,
     });
 
-    console.log(`[adminBulkFeedbackInvite] ${successCount} users invited by ${admin.email}`);
+    console.log(`[adminBulkFeedbackInvite] ${successCount} users invited, ${skippedCount} skipped by ${admin.email}`);
 
-    return Response.json({ success: true, invited: successCount, errors: errorCount });
+    return Response.json({ success: true, invited: successCount, skipped: skippedCount, errors: errorCount });
   } catch (error) {
     console.error('[adminBulkFeedbackInvite] Error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });

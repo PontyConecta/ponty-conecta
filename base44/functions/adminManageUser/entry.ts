@@ -193,12 +193,19 @@ Deno.serve(async (req) => {
         if (!tagToAdd) {
           return Response.json({ error: 'tag is required' }, { status: 400 });
         }
+        // FIX #2: Re-read after write to detect concurrent tag modifications
         const usersForTag = await base44.asServiceRole.entities.User.filter({ id: userId });
         const currentTagsAdd = usersForTag[0]?.tags || [];
         if (!currentTagsAdd.includes(tagToAdd)) {
-          await base44.asServiceRole.entities.User.update(userId, { 
-            tags: [...currentTagsAdd, tagToAdd] 
-          });
+          const newTags = [...currentTagsAdd, tagToAdd];
+          await base44.asServiceRole.entities.User.update(userId, { tags: newTags });
+          // Verify write
+          const verifyUser = await base44.asServiceRole.entities.User.filter({ id: userId });
+          const writtenTags = verifyUser[0]?.tags || [];
+          if (!writtenTags.includes(tagToAdd)) {
+            console.warn(`[adminManageUser] Tag write verification failed for user ${userId}. Expected tag "${tagToAdd}" not found. Retrying.`);
+            await base44.asServiceRole.entities.User.update(userId, { tags: [...writtenTags, tagToAdd] });
+          }
         }
         auditAction = 'user_flagged';
         auditDetails = `Tag "${tagToAdd}" added (bulk)`;
@@ -211,11 +218,18 @@ Deno.serve(async (req) => {
         if (!tagToRemove) {
           return Response.json({ error: 'tag is required' }, { status: 400 });
         }
+        // FIX #2: Re-read after write to detect concurrent tag modifications
         const usersForRemTag = await base44.asServiceRole.entities.User.filter({ id: userId });
         const currentTagsRem = usersForRemTag[0]?.tags || [];
-        await base44.asServiceRole.entities.User.update(userId, { 
-          tags: currentTagsRem.filter(t => t !== tagToRemove) 
-        });
+        const filteredTags = currentTagsRem.filter(t => t !== tagToRemove);
+        await base44.asServiceRole.entities.User.update(userId, { tags: filteredTags });
+        // Verify write
+        const verifyRemUser = await base44.asServiceRole.entities.User.filter({ id: userId });
+        const writtenRemTags = verifyRemUser[0]?.tags || [];
+        if (writtenRemTags.includes(tagToRemove)) {
+          console.warn(`[adminManageUser] Tag remove verification failed for user ${userId}. Tag "${tagToRemove}" still present. Retrying.`);
+          await base44.asServiceRole.entities.User.update(userId, { tags: writtenRemTags.filter(t => t !== tagToRemove) });
+        }
         auditAction = 'user_flagged';
         auditDetails = `Tag "${tagToRemove}" removed (bulk)`;
         result = { tag: tagToRemove };
@@ -331,35 +345,56 @@ Deno.serve(async (req) => {
           await base44.asServiceRole.entities.Brand.create(brandData);
         }
 
-        // Cascade: cancel/close related entities before deleting old profile
-        if (entityName === 'Brand') {
-          const campaigns = await base44.asServiceRole.entities.Campaign.filter({ brand_id: profile.id });
-          for (const c of campaigns) {
-            if (c.status !== 'cancelled' && c.status !== 'completed') {
-              await base44.asServiceRole.entities.Campaign.update(c.id, { status: 'cancelled' });
-              const pendingApps = await base44.asServiceRole.entities.Application.filter({ campaign_id: c.id, status: 'pending' });
-              for (const app of pendingApps) {
-                await base44.asServiceRole.entities.Application.update(app.id, { status: 'rejected', rejection_reason: 'Perfil convertido' });
-              }
-              const deliveries = await base44.asServiceRole.entities.Delivery.filter({ campaign_id: c.id });
-              for (const del of deliveries) {
-                if (del.status === 'pending' || del.status === 'submitted') {
-                  await base44.asServiceRole.entities.Delivery.update(del.id, { status: 'closed' });
+        // FIX #2: Cascade with rollback tracking
+        const cascadeRollback = [];
+
+        try {
+          if (entityName === 'Brand') {
+            const campaigns = await base44.asServiceRole.entities.Campaign.filter({ brand_id: profile.id });
+            for (const c of campaigns) {
+              if (c.status !== 'cancelled' && c.status !== 'completed') {
+                const oldStatus = c.status;
+                await base44.asServiceRole.entities.Campaign.update(c.id, { status: 'cancelled' });
+                cascadeRollback.push(async () => { await base44.asServiceRole.entities.Campaign.update(c.id, { status: oldStatus }); });
+
+                const pendingApps = await base44.asServiceRole.entities.Application.filter({ campaign_id: c.id, status: 'pending' });
+                for (const app of pendingApps) {
+                  await base44.asServiceRole.entities.Application.update(app.id, { status: 'rejected', rejection_reason: 'Perfil convertido' });
+                  cascadeRollback.push(async () => { await base44.asServiceRole.entities.Application.update(app.id, { status: 'pending', rejection_reason: null }); });
+                }
+                const deliveries = await base44.asServiceRole.entities.Delivery.filter({ campaign_id: c.id });
+                for (const del of deliveries) {
+                  if (del.status === 'pending' || del.status === 'submitted') {
+                    const oldDelStatus = del.status;
+                    await base44.asServiceRole.entities.Delivery.update(del.id, { status: 'closed' });
+                    cascadeRollback.push(async () => { await base44.asServiceRole.entities.Delivery.update(del.id, { status: oldDelStatus }); });
+                  }
                 }
               }
             }
-          }
-        } else if (entityName === 'Creator') {
-          const pendingApps = await base44.asServiceRole.entities.Application.filter({ creator_id: profile.id, status: 'pending' });
-          for (const app of pendingApps) {
-            await base44.asServiceRole.entities.Application.update(app.id, { status: 'withdrawn' });
-          }
-          const deliveries = await base44.asServiceRole.entities.Delivery.filter({ creator_id: profile.id });
-          for (const del of deliveries) {
-            if (del.status === 'pending' || del.status === 'submitted') {
-              await base44.asServiceRole.entities.Delivery.update(del.id, { status: 'closed' });
+          } else if (entityName === 'Creator') {
+            const pendingApps = await base44.asServiceRole.entities.Application.filter({ creator_id: profile.id, status: 'pending' });
+            for (const app of pendingApps) {
+              await base44.asServiceRole.entities.Application.update(app.id, { status: 'withdrawn' });
+              cascadeRollback.push(async () => { await base44.asServiceRole.entities.Application.update(app.id, { status: 'pending' }); });
+            }
+            const deliveries = await base44.asServiceRole.entities.Delivery.filter({ creator_id: profile.id });
+            for (const del of deliveries) {
+              if (del.status === 'pending' || del.status === 'submitted') {
+                const oldDelStatus = del.status;
+                await base44.asServiceRole.entities.Delivery.update(del.id, { status: 'closed' });
+                cascadeRollback.push(async () => { await base44.asServiceRole.entities.Delivery.update(del.id, { status: oldDelStatus }); });
+              }
             }
           }
+        } catch (cascadeError) {
+          console.error(`[adminManageUser] Cascade failed at step, rolling back ${cascadeRollback.length} changes:`, cascadeError.message);
+          for (let i = cascadeRollback.length - 1; i >= 0; i--) {
+            try { await cascadeRollback[i](); } catch (rbErr) {
+              console.error(`[adminManageUser] Rollback step ${i} failed:`, rbErr.message);
+            }
+          }
+          return Response.json({ error: 'Cascade operation failed and was rolled back' }, { status: 500 });
         }
 
         // Delete old profile

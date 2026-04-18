@@ -1,4 +1,8 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+// FIX #4: Paginated queries — max 500, no unbounded .filter({})
+
+const MAX_PAGE = 500;
 
 Deno.serve(async (req) => {
   try {
@@ -13,15 +17,22 @@ Deno.serve(async (req) => {
 
     // ── LIST feedbacks ──
     if (mode === 'list') {
-      const allFeedbacks = await base44.asServiceRole.entities.Feedback.filter({});
-      let filtered = [...allFeedbacks];
+      const limit = Math.min(filters?.limit || 50, MAX_PAGE);
+      const offset = Math.max(filters?.offset || 0, 0);
 
+      // Build server-side filter for status if provided
+      const dbFilter = {};
       if (filters?.status_admin && filters.status_admin !== 'all') {
-        filtered = filtered.filter(f => f.status_admin === filters.status_admin);
+        dbFilter.status_admin = filters.status_admin;
       }
       if (filters?.type && filters.type !== 'all') {
-        filtered = filtered.filter(f => f.type === filters.type);
+        dbFilter.type = filters.type;
       }
+
+      const allFeedbacks = await base44.asServiceRole.entities.Feedback.filter(dbFilter, '-created_date', MAX_PAGE);
+      let filtered = [...allFeedbacks];
+
+      // Client-side filters for search and dates (not supported in DB query)
       if (filters?.search) {
         const s = filters.search.toLowerCase();
         filtered = filtered.filter(f =>
@@ -40,36 +51,40 @@ Deno.serve(async (req) => {
       // Sort newest first
       filtered.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
 
-      // Enrich with user info
-      const userIds = [...new Set(filtered.map(f => f.user_id))];
-      const allUsers = await base44.asServiceRole.entities.User.filter({});
-      const userMap = {};
-      allUsers.forEach(u => { userMap[u.id] = { full_name: u.full_name, email: u.email }; });
+      const total = filtered.length;
+      const page = filtered.slice(offset, offset + limit);
 
-      const enriched = filtered.map(f => ({
+      // Enrich with user info — only for the page, not all users
+      const userIds = [...new Set(page.map(f => f.user_id))];
+      const userResults = await Promise.all(
+        userIds.map(id => base44.asServiceRole.entities.User.filter({ id }))
+      );
+      const userMap = {};
+      userResults.flat().forEach(u => { userMap[u.id] = { full_name: u.full_name, email: u.email }; });
+
+      const enriched = page.map(f => ({
         ...f,
         user_name: userMap[f.user_id]?.full_name || 'Desconhecido',
         user_email: userMap[f.user_id]?.email || '',
       }));
 
-      // Pagination
-      const limit = filters?.limit || 50;
-      const offset = filters?.offset || 0;
-      const page = enriched.slice(offset, offset + limit);
-
-      return Response.json({ feedbacks: page, total: enriched.length });
+      return Response.json({
+        feedbacks: enriched,
+        total,
+        has_more: allFeedbacks.length === MAX_PAGE,
+      });
     }
 
     // ── READ single feedback ──
     if (mode === 'read') {
       if (!feedback_id) return Response.json({ error: 'feedback_id required' }, { status: 400 });
-      const allFb = await base44.asServiceRole.entities.Feedback.filter({});
-      const fb = allFb.find(f => String(f.id) === String(feedback_id));
-      if (!fb) return Response.json({ error: 'Feedback not found' }, { status: 404 });
+      const fbArr = await base44.asServiceRole.entities.Feedback.filter({ id: feedback_id });
+      if (fbArr.length === 0) return Response.json({ error: 'Feedback not found' }, { status: 404 });
+      const fb = fbArr[0];
 
-      // Get user info
-      const allUsers = await base44.asServiceRole.entities.User.filter({});
-      const u = allUsers.find(x => String(x.id) === String(fb.user_id));
+      // Get user info by ID
+      const userArr = await base44.asServiceRole.entities.User.filter({ id: fb.user_id });
+      const u = userArr[0];
 
       return Response.json({
         ...fb,

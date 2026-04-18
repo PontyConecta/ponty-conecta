@@ -69,7 +69,7 @@ export default function AdminDisputes() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [filterStatus]);
 
   const loadData = async () => {
     try {
@@ -82,8 +82,9 @@ export default function AdminDisputes() {
         return;
       }
 
-      // Load disputes
-      const disputesData = await base44.entities.Dispute.list('-created_date', 200);
+      // FIX #12: Pass status filter to backend query instead of fetching all and filtering client-side
+      const disputeFilter = filterStatus !== 'all' ? { status: filterStatus } : {};
+      const disputesData = await base44.entities.Dispute.filter(disputeFilter, '-created_date', 500);
       setDisputes(disputesData);
 
       // Load related entities

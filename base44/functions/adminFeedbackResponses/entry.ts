@@ -1,4 +1,13 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+// FIX #4: Replace hardcoded 10000 with paginated MAX_PAGE of 500
+
+const MAX_PAGE = 500;
+
+async function fetchPaginated(entityApi, filter, sort, limit) {
+  const cap = Math.min(limit || MAX_PAGE, MAX_PAGE);
+  return entityApi.filter(filter, sort || '-created_date', cap);
+}
 
 Deno.serve(async (req) => {
   try {
@@ -15,7 +24,8 @@ Deno.serve(async (req) => {
     // ── LIST ──
     if (mode === 'list') {
       const { filters = {}, page = 1, pageSize = 50 } = body;
-      const allResponses = await base44.asServiceRole.entities.FeedbackResponse.filter({}, '-created_date', 10000);
+      const allResponses = await fetchPaginated(base44.asServiceRole.entities.FeedbackResponse, {}, '-created_date', MAX_PAGE);
+      const dbTruncated = allResponses.length === MAX_PAGE;
       let filtered = [...allResponses];
 
       if (filters.status && filters.status !== 'all') {
@@ -63,19 +73,24 @@ Deno.serve(async (req) => {
         if (f.recommend_ponty) facets.recommend_ponty[f.recommend_ponty] = (facets.recommend_ponty[f.recommend_ponty] || 0) + 1;
       });
 
-      // Enrich with user info
-      const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 10000);
-      const userMap = {};
-      allUsers.forEach(u => { userMap[String(u.id)] = { full_name: u.full_name, email: u.email }; });
-
+      // Enrich only the visible page with user info
       const offset = (page - 1) * pageSize;
-      const rows = filtered.slice(offset, offset + pageSize).map(f => ({
+      const pageRows = filtered.slice(offset, offset + pageSize);
+
+      const userIds = [...new Set(pageRows.map(f => f.user_id))];
+      const userResults = await Promise.all(
+        userIds.map(id => base44.asServiceRole.entities.User.filter({ id }))
+      );
+      const userMap = {};
+      userResults.flat().forEach(u => { userMap[String(u.id)] = { full_name: u.full_name, email: u.email }; });
+
+      const rows = pageRows.map(f => ({
         ...f,
         user_name: userMap[String(f.user_id)]?.full_name || 'Desconhecido',
         user_email: userMap[String(f.user_id)]?.email || '',
       }));
 
-      return Response.json({ rows, total: filtered.length, facets });
+      return Response.json({ rows, total: filtered.length, facets, has_more: dbTruncated });
     }
 
     // ── UPDATE ──
@@ -104,16 +119,21 @@ Deno.serve(async (req) => {
     // ── EXPORT ──
     if (mode === 'export') {
       const { format = 'csv', filters = {} } = body;
-      const allResponses = await base44.asServiceRole.entities.FeedbackResponse.filter({}, '-created_date', 10000);
+      const allResponses = await fetchPaginated(base44.asServiceRole.entities.FeedbackResponse, {}, '-created_date', MAX_PAGE);
+      const exportTruncated = allResponses.length === MAX_PAGE;
       let filtered = [...allResponses];
 
       // Apply same filters
       if (filters.status && filters.status !== 'all') filtered = filtered.filter(f => f.status === filters.status);
       if (filters.category && filters.category !== 'all') filtered = filtered.filter(f => f.category === filters.category);
 
-      const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 10000);
+      // Enrich all exported rows with user info
+      const exportUserIds = [...new Set(filtered.map(f => f.user_id))];
+      const exportUserResults = await Promise.all(
+        exportUserIds.map(id => base44.asServiceRole.entities.User.filter({ id }))
+      );
       const userMap = {};
-      allUsers.forEach(u => { userMap[String(u.id)] = { full_name: u.full_name, email: u.email }; });
+      exportUserResults.flat().forEach(u => { userMap[String(u.id)] = { full_name: u.full_name, email: u.email }; });
 
       const rows = filtered.map(f => ({
         id: f.id,
@@ -143,11 +163,11 @@ Deno.serve(async (req) => {
       }));
 
       if (format === 'json') {
-        return Response.json({ data: rows, total: rows.length });
+        return Response.json({ data: rows, total: rows.length, has_more: exportTruncated });
       }
 
       // CSV
-      if (rows.length === 0) return Response.json({ csv: '', total: 0 });
+      if (rows.length === 0) return Response.json({ csv: '', total: 0, has_more: exportTruncated });
       const headers = Object.keys(rows[0]);
       const csvLines = [headers.join(',')];
       rows.forEach(row => {
@@ -157,14 +177,15 @@ Deno.serve(async (req) => {
         }).join(','));
       });
 
-      return Response.json({ csv: csvLines.join('\n'), total: rows.length });
+      return Response.json({ csv: csvLines.join('\n'), total: rows.length, has_more: exportTruncated });
     }
 
     // ── IMPORT ──
     if (mode === 'import') {
       const { records = [], commit = false } = body;
 
-      const allUsers = await base44.asServiceRole.entities.User.filter({});
+      // Fetch users needed for import resolution — paginated
+      const allUsers = await fetchPaginated(base44.asServiceRole.entities.User, {}, '-created_date', MAX_PAGE);
       const userByEmail = {};
       const userById = {};
       allUsers.forEach(u => {

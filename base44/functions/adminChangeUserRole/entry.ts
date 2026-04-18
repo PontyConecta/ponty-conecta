@@ -1,4 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+// FIX #3: Rollback on delete failure — if old profile delete fails, delete newly created profile
 
 Deno.serve(async (req) => {
   try {
@@ -65,11 +67,25 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Failed to create new profile' }, { status: 500 });
     }
 
-    // Only delete old profile AFTER new one is confirmed created
-    if (currentRole === 'brand' && existingBrand) {
-      await base44.asServiceRole.entities.Brand.delete(existingBrand.id);
-    } else if (currentRole === 'creator' && existingCreator) {
-      await base44.asServiceRole.entities.Creator.delete(existingCreator.id);
+    // Delete old profile — if this fails, rollback by deleting the new one
+    try {
+      if (currentRole === 'brand' && existingBrand) {
+        await base44.asServiceRole.entities.Brand.delete(existingBrand.id);
+      } else if (currentRole === 'creator' && existingCreator) {
+        await base44.asServiceRole.entities.Creator.delete(existingCreator.id);
+      }
+    } catch (deleteError) {
+      console.error(`[adminChangeUserRole] Delete old profile failed: ${deleteError.message}. Rolling back new profile.`);
+      // Rollback: delete the newly created profile
+      const newEntityName = new_role === 'brand' ? 'Brand' : 'Creator';
+      try {
+        await base44.asServiceRole.entities[newEntityName].delete(newProfile.id);
+        console.log(`[adminChangeUserRole] Rollback successful: deleted new ${newEntityName} ${newProfile.id}`);
+      } catch (rollbackError) {
+        // Both failed — log critical inconsistency
+        console.error(`[adminChangeUserRole] CRITICAL: Rollback also failed! User ${user_id} now has TWO profiles. Old ${currentRole} ${oldProfile.id} + New ${newEntityName} ${newProfile.id}. Manual fix required.`);
+      }
+      return Response.json({ error: `Failed to delete old profile: ${deleteError.message}` }, { status: 500 });
     }
 
     // Log action

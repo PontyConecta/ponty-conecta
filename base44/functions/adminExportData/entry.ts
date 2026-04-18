@@ -1,4 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+
+// FIX #5: Indicate truncation — include total vs exported counts + warning row in CSV
 
 const LIMIT = 1000;
 
@@ -25,6 +27,8 @@ Deno.serve(async (req) => {
 
     let csvData = '';
     let filename = '';
+    let exportedCount = 0;
+    let wasTruncated = false;
 
     switch (exportType) {
       case 'users': {
@@ -33,6 +37,9 @@ Deno.serve(async (req) => {
           base44.asServiceRole.entities.Brand.list('-created_date', LIMIT),
           base44.asServiceRole.entities.Creator.list('-created_date', LIMIT)
         ]);
+
+        wasTruncated = users.length === LIMIT;
+        exportedCount = users.length;
 
         csvData = 'User ID,Email,Full Name,Role,Created Date,Account State,Subscription Status\n';
         
@@ -57,6 +64,9 @@ Deno.serve(async (req) => {
         const appCountMap = {};
         allApps.forEach(a => { appCountMap[a.campaign_id] = (appCountMap[a.campaign_id] || 0) + 1; });
         
+        wasTruncated = campaigns.length === LIMIT;
+        exportedCount = campaigns.length;
+
         csvData = 'Campaign ID,Title,Status,Brand ID,Created Date,Deadline,Remuneration Type,Budget Min,Budget Max,Slots Total,Slots Filled,Total Applications\n';
         
         for (const c of campaigns) {
@@ -70,6 +80,9 @@ Deno.serve(async (req) => {
       case 'applications': {
         const applications = await base44.asServiceRole.entities.Application.list('-created_date', LIMIT);
         
+        wasTruncated = applications.length === LIMIT;
+        exportedCount = applications.length;
+
         csvData = 'Application ID,Campaign ID,Creator ID,Brand ID,Status,Created Date,Invited,Proposed Rate,Agreed Rate\n';
         
         for (const a of applications) {
@@ -83,6 +96,9 @@ Deno.serve(async (req) => {
       case 'deliveries': {
         const deliveries = await base44.asServiceRole.entities.Delivery.list('-created_date', LIMIT);
         
+        wasTruncated = deliveries.length === LIMIT;
+        exportedCount = deliveries.length;
+
         csvData = 'Delivery ID,Campaign ID,Creator ID,Brand ID,Status,Submitted At,Deadline,On Time,Payment Status\n';
         
         for (const d of deliveries) {
@@ -94,19 +110,28 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Append truncation warning as last row if data was capped
+    if (wasTruncated) {
+      csvData += `\n"AVISO: Este export foi limitado a ${LIMIT} registros. Existem mais registros no banco de dados."\n`;
+    }
+
     await base44.asServiceRole.entities.AuditLog.create({
       admin_id: admin.id,
       admin_email: admin.email,
       action: 'data_export',
-      details: `Exported ${exportType} data`,
+      details: `Exported ${exportType}: ${exportedCount} records${wasTruncated ? ' (TRUNCATED — more data exists)' : ''}`,
       timestamp: new Date().toISOString()
     });
 
+    // Return CSV with metadata headers
     return new Response(csvData, {
       status: 200,
       headers: {
         'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="${filename}"`
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'X-Exported-Count': String(exportedCount),
+        'X-Was-Truncated': String(wasTruncated),
+        'X-Export-Limit': String(LIMIT),
       }
     });
 
