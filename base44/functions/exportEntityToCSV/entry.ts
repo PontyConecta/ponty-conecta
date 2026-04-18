@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 Deno.serve(async (req) => {
   try {
@@ -22,19 +22,24 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Entidade não permitida para exportação', code: 'FORBIDDEN_ENTITY' }, { status: 403 });
     }
 
-    // Fetch all records from the entity
-    const records = await base44.asServiceRole.entities[entityName].list();
+    // Fetch records with limit
+    const records = await base44.asServiceRole.entities[entityName].list('-created_date', 10000);
 
     if (!records || records.length === 0) {
       return Response.json({ error: 'No records found' }, { status: 404 });
+    }
+
+    if (records.length === 10000) {
+      return Response.json({ error: 'Dataset muito grande — use filtros para exportar' }, { status: 400 });
     }
 
     // Get entity schema to know field names
     const schema = await base44.asServiceRole.entities[entityName].schema();
     const fieldNames = Object.keys(schema.properties || {});
 
-    // Build CSV header
-    const headers = ['id', 'created_date', 'updated_date', 'created_by', ...fieldNames];
+    // Build CSV header — filter out sensitive fields
+    const allHeaders = ['id', 'created_date', 'updated_date', 'created_by', ...fieldNames];
+    const headers = allHeaders.filter(h => !/(password|token|secret|hash|key)/i.test(h));
     const csvHeader = headers.map(h => `"${h}"`).join(',');
 
     // Build CSV rows
@@ -53,6 +58,9 @@ Deno.serve(async (req) => {
 
     // Combine header and rows
     const csvContent = [csvHeader, ...csvRows].join('\n');
+
+    // Audit log
+    console.log(JSON.stringify({ event: 'admin_export_csv', admin_id: user.id, entity: entityName, record_count: records.length, timestamp: new Date().toISOString() }));
 
     // Return CSV file
     const filename = `${entityName}_export_${new Date().toISOString().split('T')[0]}.csv`;

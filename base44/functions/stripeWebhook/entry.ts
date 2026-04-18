@@ -63,6 +63,14 @@ async function findProfile(base44, customerId, metadata) {
     try {
       const profiles = await base44.asServiceRole.entities[entityName].filter({ id: metadata.base44_profile_id });
       if (profiles.length > 0) {
+        // Hijack check: verify user_id matches metadata
+        if (metadata.base44_user_id && profiles[0].user_id !== metadata.base44_user_id) {
+          console.error('[stripeWebhook] HIJACK ATTEMPT', {
+            metadata_user_id: metadata.base44_user_id,
+            profile_user_id: profiles[0].user_id
+          });
+          return null;
+        }
         console.log(`Found profile via metadata: ${entityName} ${profiles[0].id}`);
         return { profile: profiles[0], profileType: metadata.base44_profile_type, entityName };
       }
