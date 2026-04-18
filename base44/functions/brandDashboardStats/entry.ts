@@ -1,6 +1,8 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+// FIX #9: Reduced page size, hard cap at 2000 records per brand (scoped query)
 const PAGE_SIZE = 200;
+const MAX_PAGES = 10; // 2000 records max per entity per brand
 
 async function fetchAll(entityApi, filter, sort) {
   const allItems = [];
@@ -10,7 +12,7 @@ async function fetchAll(entityApi, filter, sort) {
     allItems.push(...batch);
     if (batch.length < PAGE_SIZE) break;
     page++;
-    if (page > 50) break; // safety: max 10k records
+    if (page >= MAX_PAGES) break;
   }
   return allItems;
 }

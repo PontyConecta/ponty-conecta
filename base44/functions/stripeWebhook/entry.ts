@@ -168,7 +168,7 @@ async function handleCheckoutCompleted(base44, session) {
   const result = await findProfile(base44, session.customer, metadata);
   if (!result) {
     console.error('CRITICAL: Cannot activate subscription - profile not found. customer:', session.customer, 'metadata:', JSON.stringify(metadata));
-    return;
+    throw new Error(`PROFILE_NOT_FOUND: checkout ${session.id}, customer ${session.customer}`);
   }
 
   const { profile, profileType, entityName } = result;
@@ -270,8 +270,8 @@ async function handleSubscriptionUpdate(base44, subscription) {
   const result = await findProfile(base44, subscription.customer, metadata);
   
   if (!result) {
-    console.error('Profile not found for subscription update');
-    return;
+    console.error('CRITICAL: Profile not found for subscription update:', subscription.id);
+    throw new Error(`PROFILE_NOT_FOUND: subscription.updated ${subscription.id}, customer ${subscription.customer}`);
   }
 
   const { profile, profileType, entityName } = result;
@@ -359,8 +359,8 @@ async function handleSubscriptionDeleted(base44, subscription) {
   const result = await findProfile(base44, subscription.customer, metadata);
   
   if (!result) {
-    console.error('Profile not found for subscription deletion');
-    return;
+    console.error('CRITICAL: Profile not found for subscription deletion:', subscription.id);
+    throw new Error(`PROFILE_NOT_FOUND: subscription.deleted ${subscription.id}, customer ${subscription.customer}`);
   }
 
   const { profile, profileType, entityName } = result;

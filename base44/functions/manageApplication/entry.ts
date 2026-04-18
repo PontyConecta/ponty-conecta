@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 // ─── Template: Auth → Validate → Ownership → Execute → Respond ───
 
@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
       await base44.entities.Application.update(application_id, {
         status: 'rejected',
         rejected_at: new Date().toISOString(),
-        rejection_reason: (typeof data?.rejection_reason === 'string' ? data.rejection_reason.trim() : '') || '',
+        rejection_reason: (typeof data?.rejection_reason === 'string' ? data.rejection_reason.replace(/<[^>]*>/g, '').slice(0, 1000).trim() : '') || '',
       });
 
       // If was accepted, decrement slots_filled

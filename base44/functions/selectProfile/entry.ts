@@ -1,6 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-// ─── Template: Auth → Validate → Ownership → Sanitize → Execute → Respond ───
+// FIX #6: Race condition — double-check after create, delete duplicate if found
 
 const FN = 'selectProfile';
 
@@ -57,7 +57,20 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ── 5. RESPOND ──
+    // ── 5. POST-CREATE DUPLICATE CHECK (race condition guard) ──
+    const entityName = profile_type === 'brand' ? 'Brand' : 'Creator';
+    const postCheck = await base44.entities[entityName].filter({ user_id: user.id });
+    if (postCheck.length > 1) {
+      // Keep the oldest, delete the rest
+      const sorted = postCheck.sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
+      for (let i = 1; i < sorted.length; i++) {
+        console.warn(`[${FN}] Deleting duplicate ${entityName} ${sorted[i].id} for user ${user.id}`);
+        await base44.entities[entityName].delete(sorted[i].id);
+      }
+      profile = sorted[0];
+    }
+
+    // ── 6. RESPOND ──
     console.log(`[${FN}] Created ${profile_type} profile for user ${user.id}`);
     return Response.json({ success: true, profile, profile_type });
   } catch (error) {

@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 const FN = 'adminAnalyticsV2';
 
@@ -101,14 +101,16 @@ async function handleSummary(base44, range, filters) {
   const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+  // FIX #2: Add explicit limits to prevent unbounded queries
+  const SUMMARY_CAP = 5000;
   const [allUsers, allBrands, allCreators, allCampaigns, allApps, allDeliveries, allDisputes] = await Promise.all([
-    base44.asServiceRole.entities.User.list(),
-    base44.asServiceRole.entities.Brand.list(),
-    base44.asServiceRole.entities.Creator.list(),
-    base44.asServiceRole.entities.Campaign.list(),
-    base44.asServiceRole.entities.Application.list(),
-    base44.asServiceRole.entities.Delivery.list(),
-    base44.asServiceRole.entities.Dispute.list(),
+    base44.asServiceRole.entities.User.list('-created_date', SUMMARY_CAP),
+    base44.asServiceRole.entities.Brand.list('-created_date', SUMMARY_CAP),
+    base44.asServiceRole.entities.Creator.list('-created_date', SUMMARY_CAP),
+    base44.asServiceRole.entities.Campaign.list('-created_date', SUMMARY_CAP),
+    base44.asServiceRole.entities.Application.list('-created_date', SUMMARY_CAP),
+    base44.asServiceRole.entities.Delivery.list('-created_date', SUMMARY_CAP),
+    base44.asServiceRole.entities.Dispute.list('-created_date', SUMMARY_CAP),
   ]);
 
   // Apply profile filters
@@ -637,16 +639,29 @@ async function handleLists(base44, range, listType, limit, cursor) {
   }
 
   if (listType === 'list_users') {
+    // FIX #2: Paginated, sanitized — no raw email dump
+    const LIST_CAP = 500;
     const [users, brands, creators] = await Promise.all([
-      base44.asServiceRole.entities.User.list(),
-      base44.asServiceRole.entities.Brand.list(),
-      base44.asServiceRole.entities.Creator.list(),
+      base44.asServiceRole.entities.User.list('-created_date', LIST_CAP),
+      base44.asServiceRole.entities.Brand.list('-created_date', LIST_CAP),
+      base44.asServiceRole.entities.Creator.list('-created_date', LIST_CAP),
     ]);
+    // Audit log for data access
+    await base44.asServiceRole.entities.AuditLog.create({
+      admin_id: (await base44.auth.me()).id,
+      admin_email: (await base44.auth.me()).email,
+      action: 'data_export',
+      details: `list_users accessed (${users.length} users)`,
+      timestamp: new Date().toISOString(),
+    });
     return Response.json({
       list_type: listType,
-      users,
-      brands,
-      creators,
+      users: users.map(u => ({ id: u.id, email: u.email, full_name: u.full_name, role: u.role, created_date: u.created_date, last_active: u.last_active })),
+      brands: brands.map(b => ({ id: b.id, user_id: b.user_id, company_name: b.company_name, account_state: b.account_state, subscription_status: b.subscription_status, state: b.state })),
+      creators: creators.map(c => ({ id: c.id, user_id: c.user_id, display_name: c.display_name, account_state: c.account_state, subscription_status: c.subscription_status, state: c.state, profile_size: c.profile_size })),
+      total_users: users.length,
+      total_brands: brands.length,
+      total_creators: creators.length,
     });
   }
 
@@ -689,9 +704,9 @@ async function handleLists(base44, range, listType, limit, cursor) {
 }
 
 async function handleUser360(base44, targetId) {
-  // Find user
-  const allUsers = await base44.asServiceRole.entities.User.list();
-  const user = allUsers.find(u => String(u.id) === String(targetId));
+  // FIX #2: Direct filter instead of loading all users
+  const users = await base44.asServiceRole.entities.User.filter({ id: targetId });
+  const user = users[0];
   if (!user) return err('User not found', 'NOT_FOUND', 404);
 
   const [brands, creators] = await Promise.all([

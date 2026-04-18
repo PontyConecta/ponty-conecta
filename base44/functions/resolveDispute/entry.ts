@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 // ─── Template: Auth → Validate → Ownership → Execute → Audit → Respond ───
 
@@ -45,57 +45,95 @@ Deno.serve(async (req) => {
     const now = new Date().toISOString();
     const cleanResolution = resolution.trim();
 
-    // ── 4. EXECUTE ──
-    // 4a. Update dispute
-    await base44.asServiceRole.entities.Dispute.update(dispute.id, {
-      status: resolution_type,
-      resolution: cleanResolution,
-      resolved_by: user.email,
-      resolved_at: now,
-    });
+    // ── 4. EXECUTE (with rollback tracking) ──
+    const rollbackActions = [];
 
-    // 4b. Update delivery based on resolution
-    if (dispute.delivery_id) {
-      const deliveries = await base44.asServiceRole.entities.Delivery.filter({ id: dispute.delivery_id });
-      if (deliveries.length > 0) {
-        const delivery = deliveries[0];
-        const newDeliveryStatus = resolution_type === 'resolved_creator_favor' ? 'approved' : 'closed';
+    try {
+      // 4a. Update dispute
+      await base44.asServiceRole.entities.Dispute.update(dispute.id, {
+        status: resolution_type,
+        resolution: cleanResolution,
+        resolved_by: user.email,
+        resolved_at: now,
+      });
+      rollbackActions.push(async () => {
+        await base44.asServiceRole.entities.Dispute.update(dispute.id, {
+          status: dispute.status,
+          resolution: dispute.resolution || null,
+          resolved_by: dispute.resolved_by || null,
+          resolved_at: dispute.resolved_at || null,
+        });
+      });
 
-        // Compute on_time for creator-favor resolution
-        const deliveryUpdate = {
-          status: newDeliveryStatus,
-          approved_at: resolution_type === 'resolved_creator_favor' ? now : delivery.approved_at,
-          payment_status: resolution_type === 'resolved_creator_favor' ? 'completed' : 'disputed',
-        };
-        if (resolution_type === 'resolved_creator_favor') {
-          deliveryUpdate.on_time = delivery.deadline
-            ? new Date(delivery.submitted_at || delivery.updated_date) <= new Date(delivery.deadline)
-            : true;
-        }
-        await base44.asServiceRole.entities.Delivery.update(delivery.id, deliveryUpdate);
+      // 4b. Update delivery based on resolution
+      if (dispute.delivery_id) {
+        const deliveries = await base44.asServiceRole.entities.Delivery.filter({ id: dispute.delivery_id });
+        if (deliveries.length > 0) {
+          const delivery = deliveries[0];
+          const newDeliveryStatus = resolution_type === 'resolved_creator_favor' ? 'approved' : 'closed';
 
-        // 4c. If creator won → complete application + recalculate on_time_rate
-        // NOTE: Do NOT increment completed_campaigns — already counted at first approval.
-        if (resolution_type === 'resolved_creator_favor') {
-          if (delivery.application_id) {
-            await base44.asServiceRole.entities.Application.update(delivery.application_id, {
-              status: 'completed',
-            });
+          const deliveryUpdate = {
+            status: newDeliveryStatus,
+            approved_at: resolution_type === 'resolved_creator_favor' ? now : delivery.approved_at,
+            payment_status: resolution_type === 'resolved_creator_favor' ? 'completed' : 'disputed',
+          };
+          if (resolution_type === 'resolved_creator_favor') {
+            deliveryUpdate.on_time = delivery.deadline
+              ? new Date(delivery.submitted_at || delivery.updated_date) <= new Date(delivery.deadline)
+              : true;
           }
-          if (delivery.creator_id) {
-            const creators = await base44.asServiceRole.entities.Creator.filter({ id: delivery.creator_id });
-            if (creators.length > 0) {
-              const creator = creators[0];
-              const allApproved = await base44.asServiceRole.entities.Delivery.filter({ creator_id: creator.id, status: 'approved' });
-              const onTimeDels = allApproved.filter(d => d.on_time === true);
-              const newRate = allApproved.length > 0 ? Math.round((onTimeDels.length / allApproved.length) * 100) : 100;
-              await base44.asServiceRole.entities.Creator.update(creator.id, {
-                on_time_rate: newRate,
+          await base44.asServiceRole.entities.Delivery.update(delivery.id, deliveryUpdate);
+          rollbackActions.push(async () => {
+            await base44.asServiceRole.entities.Delivery.update(delivery.id, {
+              status: delivery.status,
+              approved_at: delivery.approved_at,
+              payment_status: delivery.payment_status,
+              on_time: delivery.on_time,
+            });
+          });
+
+          // 4c. If creator won → complete application + recalculate on_time_rate
+          if (resolution_type === 'resolved_creator_favor') {
+            if (delivery.application_id) {
+              const apps = await base44.asServiceRole.entities.Application.filter({ id: delivery.application_id });
+              const oldAppStatus = apps[0]?.status;
+              await base44.asServiceRole.entities.Application.update(delivery.application_id, {
+                status: 'completed',
               });
+              rollbackActions.push(async () => {
+                if (oldAppStatus) {
+                  await base44.asServiceRole.entities.Application.update(delivery.application_id, { status: oldAppStatus });
+                }
+              });
+            }
+            if (delivery.creator_id) {
+              const creators = await base44.asServiceRole.entities.Creator.filter({ id: delivery.creator_id });
+              if (creators.length > 0) {
+                const creator = creators[0];
+                const allApproved = await base44.asServiceRole.entities.Delivery.filter({ creator_id: creator.id, status: 'approved' });
+                const onTimeDels = allApproved.filter(d => d.on_time === true);
+                const newRate = allApproved.length > 0 ? Math.round((onTimeDels.length / allApproved.length) * 100) : 100;
+                await base44.asServiceRole.entities.Creator.update(creator.id, {
+                  on_time_rate: newRate,
+                });
+                rollbackActions.push(async () => {
+                  await base44.asServiceRole.entities.Creator.update(creator.id, {
+                    on_time_rate: creator.on_time_rate,
+                  });
+                });
+              }
             }
           }
         }
       }
+    } catch (opError) {
+      console.error(`[${FN}] Operation failed, rolling back: ${opError.message}`);
+      for (let i = rollbackActions.length - 1; i >= 0; i--) {
+        try { await rollbackActions[i](); } catch (rbErr) {
+          console.error(`[${FN}] Rollback step ${i} failed: ${rbErr.message}`);
+        }
+      }
+      return err('Operation failed and was rolled back', 'INTERNAL_ERROR', 500);
     }
 
     // ── 5. AUDIT LOG (always) ──

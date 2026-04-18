@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const delivery_id = body.delivery_id;
-    const reason = typeof body.reason === 'string' ? body.reason.slice(0, 2000).trim() : '';
+    const reason = typeof body.reason === 'string' ? body.reason.replace(/<[^>]*>/g, '').slice(0, 1000).trim() : '';
     console.log(`[contestDelivery] userId=${user.id} deliveryId=${delivery_id}`);
     if (!delivery_id || !reason) {
       return Response.json({ error: 'delivery_id and reason are required' }, { status: 400 });

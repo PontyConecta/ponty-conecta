@@ -1,6 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-// ─── Template: Auth → Validate → Ownership → Sanitize → Execute → Respond ───
+// FIX #8: Whitelist-only update — creator cannot inject approved_at, payment_status, etc.
 
 const FN = 'submitDelivery';
 
@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
       return err('Only pending deliveries can be submitted', 'INVALID_TRANSITION');
     }
 
-    // ── 5. SANITIZE & EXECUTE ──
+    // ── 5. SANITIZE & EXECUTE (WHITELIST ONLY) ──
     function isValidUrl(u) {
       if (!u || typeof u !== 'string' || !u.trim()) return false;
       try { new URL(u); return true; } catch { return false; }
@@ -53,12 +53,13 @@ Deno.serve(async (req) => {
       return err('Pelo menos uma URL de prova válida é necessária', 'INVALID_PROOF_URLS');
     }
 
+    // WHITELIST: Only these fields can be set by the creator
     const updateData = {
       status: 'submitted',
       submitted_at: new Date().toISOString(),
       proof_urls: validProofUrls,
       content_urls: (Array.isArray(content_urls) ? content_urls : []).filter(isValidUrl),
-      proof_notes: typeof proof_notes === 'string' ? proof_notes.trim() : '',
+      proof_notes: typeof proof_notes === 'string' ? proof_notes.slice(0, 2000).trim() : '',
       on_time: delivery.deadline ? new Date() <= new Date(delivery.deadline) : true,
     };
 

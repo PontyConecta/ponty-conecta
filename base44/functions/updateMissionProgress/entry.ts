@@ -1,5 +1,6 @@
 // Mission progress tracker - auto-updates missions on entity events
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+// FIX #1: Idempotency via event_id dedup using entity_id+eventType+status as dedup key
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -7,8 +8,6 @@ Deno.serve(async (req) => {
   const body = await req.json();
   const { event, data, old_data } = body;
 
-  // This function is an entity automation trigger — called by the system,
-  // not by users directly. We validate the payload structure instead of auth.
   // Validate event source — only allow known entity types
   const ALLOWED_ENTITIES = ['Campaign', 'Application', 'Delivery'];
   if (!event?.entity_name || !ALLOWED_ENTITIES.includes(event.entity_name)) {
@@ -21,11 +20,17 @@ Deno.serve(async (req) => {
 
   const { type: eventType, entity_name, entity_id } = event;
 
-  console.log(`[MissionProgress] Event: ${eventType} on ${entity_name} (${entity_id})`);
+  // ── IDEMPOTENCY: Build a dedup key from entity_id + eventType + relevant status ──
+  const dedupKey = `mission_${entity_name}_${entity_id}_${eventType}_${data.status || 'none'}`;
 
-  // Map entity events to mission target_actions
-  // Brand missions: create_campaign, accept_application, approve_delivery
-  // Creator missions: apply_campaign, get_accepted, submit_delivery
+  console.log(`[MissionProgress] Event: ${eventType} on ${entity_name} (${entity_id}), dedupKey: ${dedupKey}`);
+
+  // Check if we already processed this exact event
+  const existing = await base44.asServiceRole.entities.AuditLog.filter({ note: dedupKey });
+  if (existing.length > 0) {
+    console.log(`[MissionProgress] Already processed: ${dedupKey}. Skipping.`);
+    return Response.json({ success: true, skipped: true, reason: 'already_processed' });
+  }
 
   const updates = [];
 
@@ -33,14 +38,9 @@ Deno.serve(async (req) => {
   if (entity_name === 'Campaign' && eventType === 'create') {
     const brandId = data.brand_id;
     if (brandId) {
-      // Find the brand to get user_id
       const brands = await base44.asServiceRole.entities.Brand.filter({ id: brandId });
       if (brands.length > 0) {
-        updates.push({
-          user_id: brands[0].user_id,
-          profile_type: 'brand',
-          target_action: 'create_campaign'
-        });
+        updates.push({ user_id: brands[0].user_id, profile_type: 'brand', target_action: 'create_campaign' });
       }
     }
   }
@@ -51,11 +51,7 @@ Deno.serve(async (req) => {
     if (creatorId) {
       const creators = await base44.asServiceRole.entities.Creator.filter({ id: creatorId });
       if (creators.length > 0) {
-        updates.push({
-          user_id: creators[0].user_id,
-          profile_type: 'creator',
-          target_action: 'apply_campaign'
-        });
+        updates.push({ user_id: creators[0].user_id, profile_type: 'creator', target_action: 'apply_campaign' });
       }
     }
   }
@@ -71,30 +67,21 @@ Deno.serve(async (req) => {
       if (brandId) {
         const brands = await base44.asServiceRole.entities.Brand.filter({ id: brandId });
         if (brands.length > 0) {
-          updates.push({
-            user_id: brands[0].user_id,
-            profile_type: 'brand',
-            target_action: 'accept_application'
-          });
+          updates.push({ user_id: brands[0].user_id, profile_type: 'brand', target_action: 'accept_application' });
         }
       }
-
       // Creator mission: get_accepted
       const creatorId = data.creator_id;
       if (creatorId) {
         const creators = await base44.asServiceRole.entities.Creator.filter({ id: creatorId });
         if (creators.length > 0) {
-          updates.push({
-            user_id: creators[0].user_id,
-            profile_type: 'creator',
-            target_action: 'get_accepted'
-          });
+          updates.push({ user_id: creators[0].user_id, profile_type: 'creator', target_action: 'get_accepted' });
         }
       }
     }
   }
 
-  // === DELIVERY SUBMITTED via update (status changed to submitted) ===
+  // === DELIVERY SUBMITTED / APPROVED ===
   if (entity_name === 'Delivery' && eventType === 'update') {
     const wasNotSubmitted = !old_data || old_data.status !== 'submitted';
     const isNowSubmitted = data.status === 'submitted';
@@ -104,16 +91,11 @@ Deno.serve(async (req) => {
       if (creatorId) {
         const creators = await base44.asServiceRole.entities.Creator.filter({ id: creatorId });
         if (creators.length > 0) {
-          updates.push({
-            user_id: creators[0].user_id,
-            profile_type: 'creator',
-            target_action: 'submit_delivery'
-          });
+          updates.push({ user_id: creators[0].user_id, profile_type: 'creator', target_action: 'submit_delivery' });
         }
       }
     }
 
-    // Brand mission: approve_delivery
     const wasNotApproved = !old_data || old_data.status !== 'approved';
     const isNowApproved = data.status === 'approved';
 
@@ -122,15 +104,26 @@ Deno.serve(async (req) => {
       if (brandId) {
         const brands = await base44.asServiceRole.entities.Brand.filter({ id: brandId });
         if (brands.length > 0) {
-          updates.push({
-            user_id: brands[0].user_id,
-            profile_type: 'brand',
-            target_action: 'approve_delivery'
-          });
+          updates.push({ user_id: brands[0].user_id, profile_type: 'brand', target_action: 'approve_delivery' });
         }
       }
     }
   }
+
+  if (updates.length === 0) {
+    return Response.json({ success: true, updates: [] });
+  }
+
+  // ── Record dedup marker BEFORE processing (prevents double-fire) ──
+  await base44.asServiceRole.entities.AuditLog.create({
+    admin_id: 'system',
+    admin_email: 'system@ponty.app',
+    action: 'feedback_beta_changed', // reuse existing enum value for system events
+    target_entity_id: entity_id,
+    details: `MissionProgress dedup marker`,
+    note: dedupKey,
+    timestamp: new Date().toISOString(),
+  });
 
   // Now process all mission updates
   const results = [];
@@ -146,10 +139,7 @@ Deno.serve(async (req) => {
       const newProgress = (mission.current_progress || 0) + 1;
       const isComplete = newProgress >= (mission.target_value || 1);
 
-      const updateData = {
-        current_progress: newProgress,
-      };
-
+      const updateData = { current_progress: newProgress };
       if (isComplete) {
         updateData.status = 'completed';
         updateData.completed_at = new Date().toISOString();
