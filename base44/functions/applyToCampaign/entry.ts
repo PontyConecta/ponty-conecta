@@ -51,8 +51,8 @@ Deno.serve(async (req) => {
       return err('Campanha não está aceitando candidaturas', 'CAMPAIGN_NOT_ACTIVE');
     }
 
-    // 5b. SLOT CAPACITY CHECK
-    if (campaign.slots_filled >= campaign.slots_total) {
+    // 5b. SLOT CAPACITY CHECK (initial check — re-validated after duplicate check)
+    if ((campaign.slots_filled || 0) >= (campaign.slots_total || 1)) {
       return err('Campanha sem vagas disponíveis', 'CAMPAIGN_FULL');
     }
 
@@ -73,7 +73,19 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 8. CREATE APPLICATION
+    // 8. RE-READ CAMPAIGN (race condition guard — slots may have changed)
+    const freshCampaigns = await base44.entities.Campaign.filter({ id: campaign_id });
+    if (freshCampaigns.length > 0) {
+      const fresh = freshCampaigns[0];
+      if ((fresh.slots_filled || 0) >= (fresh.slots_total || 1)) {
+        return err('Campanha sem vagas disponíveis', 'CAMPAIGN_FULL');
+      }
+      if (fresh.status !== 'active') {
+        return err('Campanha não está aceitando candidaturas', 'CAMPAIGN_NOT_ACTIVE');
+      }
+    }
+
+    // 9. CREATE APPLICATION
     const application = await base44.entities.Application.create({
       campaign_id,
       creator_id: creator.id,

@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import Stripe from 'npm:stripe@17.5.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
@@ -402,29 +402,32 @@ async function handleInvoicePaid(base44, invoice) {
   const metadata = invoice.subscription_details?.metadata || {};
   const result = await findProfile(base44, invoice.customer, metadata);
   
-  if (result) {
-    const { profile, profileType: resultProfileType, entityName } = result;
-    // Brand is free-forever — ignore Stripe events for brands
-    if (resultProfileType === 'brand') {
-      console.log('[stripeWebhook] Ignoring invoice.paid for Brand profile — brands are free-forever');
-      return;
+  if (!result) {
+    console.error('CRITICAL: Profile not found for invoice.paid:', invoice.id);
+    throw new Error(`PROFILE_NOT_FOUND: invoice.paid ${invoice.id}, customer ${invoice.customer}`);
+  }
+
+  const { profile, profileType: resultProfileType, entityName } = result;
+  // Brand is free-forever — ignore Stripe events for brands
+  if (resultProfileType === 'brand') {
+    console.log('[stripeWebhook] Ignoring invoice.paid for Brand profile — brands are free-forever');
+    return;
+  }
+  if (profile.subscription_status !== 'premium') {
+    // Derive plan_level from subscription interval
+    let planLevel = 'premium_monthly';
+    try {
+      const sub = await stripe.subscriptions.retrieve(subscriptionId);
+      const interval = sub.items?.data?.[0]?.price?.recurring?.interval;
+      planLevel = interval === 'year' ? 'premium_annual' : 'premium_monthly';
+    } catch (e) {
+      console.error('Could not derive plan interval in invoice.paid:', e.message);
     }
-    if (profile.subscription_status !== 'premium') {
-      // Derive plan_level from subscription interval
-      let planLevel = 'premium_monthly';
-      try {
-        const sub = await stripe.subscriptions.retrieve(subscriptionId);
-        const interval = sub.items?.data?.[0]?.price?.recurring?.interval;
-        planLevel = interval === 'year' ? 'premium_annual' : 'premium_monthly';
-      } catch (e) {
-        console.error('Could not derive plan interval in invoice.paid:', e.message);
-      }
-      await base44.asServiceRole.entities[entityName].update(profile.id, {
-        subscription_status: 'premium',
-        plan_level: planLevel
-      });
-      console.log('Profile updated to premium via invoice.paid, plan_level:', planLevel);
-    }
+    await base44.asServiceRole.entities[entityName].update(profile.id, {
+      subscription_status: 'premium',
+      plan_level: planLevel
+    });
+    console.log('Profile updated to premium via invoice.paid, plan_level:', planLevel);
   }
 
   const subs = await base44.asServiceRole.entities.Subscription.filter({ 
