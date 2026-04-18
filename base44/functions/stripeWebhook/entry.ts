@@ -124,6 +124,13 @@ async function findProfile(base44, customerId, metadata) {
         if (users.length > 0) {
           const userId = users[0].id;
           console.log('Found user by email, id:', userId);
+
+          // Consistency check: if metadata specified a user_id, it must match
+          if (metadata?.base44_user_id && metadata.base44_user_id !== userId) {
+            console.error('[stripeWebhook] EMAIL MISMATCH: metadata user_id', metadata.base44_user_id, '!= email-resolved user_id', userId);
+            return null;
+          }
+
           const [brands, creators] = await Promise.all([
             base44.asServiceRole.entities.Brand.filter({ user_id: userId }),
             base44.asServiceRole.entities.Creator.filter({ user_id: userId })
@@ -293,21 +300,37 @@ async function handleSubscriptionUpdate(base44, subscription) {
     mappedStatus = 'premium';
   }
 
-  // Update subscription record
+  // Update or create subscription record (idempotent)
   const subs = await base44.asServiceRole.entities.Subscription.filter({ 
     stripe_subscription_id: subscription.id 
   });
 
+  const subRecordData = {
+    status: mappedStatus,
+    next_billing_date: new Date(subscription.current_period_end * 1000).toISOString(),
+    last_billing_date: new Date(subscription.current_period_start * 1000).toISOString(),
+    auto_renew: !subscription.cancel_at_period_end,
+    end_date: subscription.cancel_at_period_end 
+      ? new Date(subscription.current_period_end * 1000).toISOString().split('T')[0] 
+      : null
+  };
+
   if (subs.length > 0) {
-    await base44.asServiceRole.entities.Subscription.update(subs[0].id, {
-      status: mappedStatus,
-      next_billing_date: new Date(subscription.current_period_end * 1000).toISOString(),
-      last_billing_date: new Date(subscription.current_period_start * 1000).toISOString(),
-      auto_renew: !subscription.cancel_at_period_end,
-      end_date: subscription.cancel_at_period_end 
-        ? new Date(subscription.current_period_end * 1000).toISOString().split('T')[0] 
-        : null
+    await base44.asServiceRole.entities.Subscription.update(subs[0].id, subRecordData);
+    console.log('Subscription record updated (idempotent)');
+  } else {
+    // No record yet — create one
+    await base44.asServiceRole.entities.Subscription.create({
+      ...subRecordData,
+      user_id: profile.user_id,
+      plan_type: metadata.base44_plan_type || `${profileType}_monthly`,
+      stripe_subscription_id: subscription.id,
+      stripe_customer_id: subscription.customer,
+      start_date: new Date(subscription.current_period_start * 1000).toISOString().split('T')[0],
+      currency: (subscription.currency || 'brl').toUpperCase(),
+      plan_name: profileType === 'brand' ? 'Ponty Marcas' : 'Ponty Criadores'
     });
+    console.log('Subscription record created via subscription.updated/created (idempotent)');
   }
 
   // Derive plan_level from subscription interval

@@ -116,20 +116,18 @@ Deno.serve(async (req) => {
 
         console.log(`[adminManageUser] set_user_role: adminId=${admin.id} targetUserId=${userId} newRole=${newRole}`);
 
-        // Fetch all users and find target by ID
-        const allUsersForRole = await base44.asServiceRole.entities.User.filter({});
-        console.log(`[adminManageUser] Total users fetched: ${allUsersForRole.length}`);
-        
-        const targetUser = allUsersForRole.find(u => String(u.id) === String(userId));
+        // Fetch target user directly by ID
+        const usersForRole = await base44.asServiceRole.entities.User.filter({ id: userId });
+        const targetUser = usersForRole[0];
         
         if (!targetUser) {
-          console.error(`[adminManageUser] User NOT found. userId="${userId}" (type: ${typeof userId}). Available IDs: ${allUsersForRole.slice(0, 5).map(u => `${u.id}(${typeof u.id})`).join(', ')}...`);
+          console.error(`[adminManageUser] User NOT found. userId="${userId}"`);
           return Response.json({ error: 'User not found' }, { status: 404 });
         }
 
         // Protect last admin from downgrade
         if (newRole === 'user' && targetUser.role === 'admin') {
-          const admins = allUsersForRole.filter(u => u.role === 'admin');
+          const admins = await base44.asServiceRole.entities.User.filter({ role: 'admin' });
           if (admins.length <= 1) {
             return Response.json(
               { error: 'Não é possível remover o último administrador', code: 'LAST_ADMIN' },
@@ -157,12 +155,6 @@ Deno.serve(async (req) => {
 
       case 'set_exclude_financials': {
         const excludeValue = data?.exclude_from_financials;
-        // User entity has special security - use admin-level update
-        const allUsersForExclude = await base44.asServiceRole.entities.User.filter({});
-        const targetUserForExclude = allUsersForExclude.find(u => u.id === userId);
-        if (!targetUserForExclude) {
-          return Response.json({ error: 'User not found' }, { status: 404 });
-        }
         await base44.asServiceRole.entities.User.update(userId, { 
           exclude_from_financials: !!excludeValue 
         });
@@ -201,9 +193,8 @@ Deno.serve(async (req) => {
         if (!tagToAdd) {
           return Response.json({ error: 'tag is required' }, { status: 400 });
         }
-        const allUsersTag = await base44.asServiceRole.entities.User.filter({});
-        const targetForTag = allUsersTag.find(u => u.id === userId);
-        const currentTagsAdd = targetForTag?.tags || [];
+        const usersForTag = await base44.asServiceRole.entities.User.filter({ id: userId });
+        const currentTagsAdd = usersForTag[0]?.tags || [];
         if (!currentTagsAdd.includes(tagToAdd)) {
           await base44.asServiceRole.entities.User.update(userId, { 
             tags: [...currentTagsAdd, tagToAdd] 
@@ -220,9 +211,8 @@ Deno.serve(async (req) => {
         if (!tagToRemove) {
           return Response.json({ error: 'tag is required' }, { status: 400 });
         }
-        const allUsersRemTag = await base44.asServiceRole.entities.User.filter({});
-        const targetForRemTag = allUsersRemTag.find(u => u.id === userId);
-        const currentTagsRem = targetForRemTag?.tags || [];
+        const usersForRemTag = await base44.asServiceRole.entities.User.filter({ id: userId });
+        const currentTagsRem = usersForRemTag[0]?.tags || [];
         await base44.asServiceRole.entities.User.update(userId, { 
           tags: currentTagsRem.filter(t => t !== tagToRemove) 
         });
@@ -287,6 +277,20 @@ Deno.serve(async (req) => {
         }
         if (!profile) {
           return Response.json({ error: 'User profile not found' }, { status: 404 });
+        }
+
+        // Check for pending operations that block conversion
+        if (profileType === 'brand') {
+          const activeCampaigns = await base44.asServiceRole.entities.Campaign.filter({ brand_id: profile.id });
+          const blocking = activeCampaigns.filter(c => c.status === 'active' || c.status === 'applications_closed');
+          if (blocking.length > 0) {
+            return Response.json({ error: `Conversão bloqueada: ${blocking.length} campanha(s) ativa(s). Finalize ou cancele antes de converter.`, code: 'PENDING_OPERATIONS' }, { status: 409 });
+          }
+          const brandDeliveries = await base44.asServiceRole.entities.Delivery.filter({ brand_id: profile.id });
+          const pendingDeliveries = brandDeliveries.filter(d => d.status === 'pending' || d.status === 'submitted');
+          if (pendingDeliveries.length > 0) {
+            return Response.json({ error: `Conversão bloqueada: ${pendingDeliveries.length} entrega(s) pendente(s). Revise antes de converter.`, code: 'PENDING_OPERATIONS' }, { status: 409 });
+          }
         }
 
         // Shared fields that transfer between Brand and Creator
