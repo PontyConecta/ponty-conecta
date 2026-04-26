@@ -1,0 +1,79 @@
+{
+  "name": "Dispute",
+  "type": "object",
+  "properties": {
+    "delivery_id": {
+      "type": "string",
+      "description": "Reference to the disputed Delivery"
+    },
+    "campaign_id": {
+      "type": "string",
+      "description": "Reference to the Campaign"
+    },
+    "brand_id": {
+      "type": "string",
+      "description": "Reference to the Brand"
+    },
+    "creator_id": {
+      "type": "string",
+      "description": "Reference to the Creator"
+    },
+    "raised_by": {
+      "type": "string",
+      "enum": [
+        "brand",
+        "creator"
+      ],
+      "description": "Who raised the dispute"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Detailed reason for the dispute"
+    },
+    "evidence_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Supporting evidence files"
+    },
+    "brand_statement": {
+      "type": "string",
+      "description": "Brand's statement in the dispute"
+    },
+    "creator_statement": {
+      "type": "string",
+      "description": "Creator's statement in the dispute"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "under_review",
+        "resolved_brand_favor",
+        "resolved_creator_favor",
+        "closed"
+      ],
+      "default": "open",
+      "description": "Dispute status"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "Platform's resolution decision and reasoning"
+    },
+    "resolved_by": {
+      "type": "string",
+      "description": "Platform moderator who resolved the dispute"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the dispute was resolved"
+    }
+  },
+  "required": [
+    "delivery_id",
+    "raised_by",
+    "reason"
+  ]
+}

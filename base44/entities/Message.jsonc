@@ -1,0 +1,42 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "application_id": {
+      "type": "string",
+      "description": "Reference to the Application (thread context)"
+    },
+    "sender_id": {
+      "type": "string",
+      "description": "ID of the sender (user id)"
+    },
+    "sender_type": {
+      "type": "string",
+      "enum": [
+        "brand",
+        "creator"
+      ],
+      "description": "Profile type of the sender"
+    },
+    "recipient_id": {
+      "type": "string",
+      "description": "ID of the recipient (user id)"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the message was read (null if unread)"
+    }
+  },
+  "required": [
+    "application_id",
+    "sender_id",
+    "sender_type",
+    "recipient_id",
+    "content"
+  ]
+}

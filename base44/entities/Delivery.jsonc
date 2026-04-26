@@ -1,0 +1,104 @@
+{
+  "name": "Delivery",
+  "type": "object",
+  "properties": {
+    "application_id": {
+      "type": "string",
+      "description": "Reference to the Application"
+    },
+    "campaign_id": {
+      "type": "string",
+      "description": "Reference to the Campaign"
+    },
+    "creator_id": {
+      "type": "string",
+      "description": "Reference to the Creator"
+    },
+    "brand_id": {
+      "type": "string",
+      "description": "Reference to the Brand"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "submitted",
+        "approved",
+        "contested",
+        "in_dispute",
+        "resolved",
+        "closed"
+      ],
+      "default": "pending",
+      "description": "Delivery status"
+    },
+    "proof_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs to proof of delivery (screenshots, links, etc.)"
+    },
+    "proof_notes": {
+      "type": "string",
+      "description": "Additional notes about the delivery"
+    },
+    "content_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Direct links to published content"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When delivery was submitted"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Delivery deadline (copied from campaign)"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When brand reviewed the delivery"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When delivery was approved"
+    },
+    "contest_reason": {
+      "type": "string",
+      "description": "Reason if delivery was contested"
+    },
+    "contested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When delivery was contested"
+    },
+    "on_time": {
+      "type": "boolean",
+      "description": "Whether delivery was on time"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "disputed"
+      ],
+      "default": "pending",
+      "description": "External payment status"
+    }
+  },
+  "required": [
+    "application_id",
+    "campaign_id",
+    "creator_id",
+    "brand_id"
+  ]
+}

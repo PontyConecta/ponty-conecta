@@ -17,8 +17,8 @@ export default function BottomNav({ profileType, currentPageName, unreadCount = 
   const brandNavItems = [
     { name: 'Início', page: 'BrandDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'CampaignManager', icon: Megaphone, alsoActive: ['Applications'] },
-    { name: 'Entregas', page: 'DeliveriesManager', icon: FileText },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
+    { name: 'Descobrir', page: 'DiscoverCreators', icon: Search },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 
@@ -26,7 +26,7 @@ export default function BottomNav({ profileType, currentPageName, unreadCount = 
     { name: 'Início', page: 'CreatorDashboard', icon: LayoutDashboard },
     { name: 'Campanhas', page: 'OpportunityFeed', icon: Megaphone, alsoActive: ['MyApplications'] },
     { name: 'Direct', page: 'Inbox', icon: MessageCircle },
-    { name: 'Entregas', page: 'MyDeliveries', icon: PackageCheck },
+    { name: 'Descobrir', page: 'DiscoverBrands', icon: Building2 },
     { name: 'Perfil', page: 'Profile', icon: User },
   ];
 

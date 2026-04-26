@@ -1,0 +1,59 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "admin_id": {
+      "type": "string",
+      "description": "ID of the admin who performed the action"
+    },
+    "admin_email": {
+      "type": "string",
+      "description": "Email of the admin"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "role_switch",
+        "user_role_change",
+        "user_activated",
+        "user_deactivated",
+        "subscription_override",
+        "user_flagged",
+        "data_export",
+        "campaign_status_change",
+        "dispute_resolved",
+        "profile_update",
+        "feedback_beta_changed",
+        "feedback_status_update"
+      ],
+      "description": "Type of action performed"
+    },
+    "target_user_id": {
+      "type": "string",
+      "description": "ID of the user affected by this action"
+    },
+    "target_entity_id": {
+      "type": "string",
+      "description": "ID of the entity affected (campaign, dispute, etc.)"
+    },
+    "details": {
+      "type": "string",
+      "description": "Detailed description of the action"
+    },
+    "note": {
+      "type": "string",
+      "description": "Admin's note about why this action was taken"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the action was performed"
+    }
+  },
+  "required": [
+    "admin_id",
+    "admin_email",
+    "action",
+    "timestamp"
+  ]
+}

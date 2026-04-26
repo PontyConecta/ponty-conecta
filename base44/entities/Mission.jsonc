@@ -1,0 +1,92 @@
+{
+  "name": "Mission",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Refer\u00eancia ao usu\u00e1rio"
+    },
+    "profile_type": {
+      "type": "string",
+      "enum": [
+        "brand",
+        "creator"
+      ],
+      "description": "Tipo de perfil a qual a miss\u00e3o pertence"
+    },
+    "title": {
+      "type": "string",
+      "description": "T\u00edtulo da miss\u00e3o"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descri\u00e7\u00e3o detalhada da miss\u00e3o"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "onboarding",
+        "engagement",
+        "milestone"
+      ],
+      "description": "Tipo de miss\u00e3o"
+    },
+    "target_action": {
+      "type": "string",
+      "description": "A\u00e7\u00e3o-alvo (ex: 'complete_profile', 'create_campaign', 'submit_delivery')"
+    },
+    "target_action_url": {
+      "type": "string",
+      "description": "Nome da p\u00e1gina para onde a miss\u00e3o deve levar (ex: 'Profile', 'CampaignManager')"
+    },
+    "target_value": {
+      "type": "number",
+      "description": "Valor-alvo a atingir"
+    },
+    "current_progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Progresso atual na miss\u00e3o"
+    },
+    "reward_points": {
+      "type": "number",
+      "default": 10,
+      "description": "Pontos ganhos ao completar"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "failed"
+      ],
+      "default": "active",
+      "description": "Status da miss\u00e3o"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Quando a miss\u00e3o foi completada"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Quando a miss\u00e3o expira"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Nome do \u00edcone lucide-react"
+    },
+    "order": {
+      "type": "number",
+      "default": 0,
+      "description": "Ordem de exibi\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "user_id",
+    "profile_type",
+    "title",
+    "target_action"
+  ]
+}

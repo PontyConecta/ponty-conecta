@@ -1,0 +1,56 @@
+{
+  "name": "Voucher",
+  "type": "object",
+  "properties": {
+    "delivery_id": {
+      "type": "string",
+      "description": "Reference to the Delivery"
+    },
+    "campaign_id": {
+      "type": "string",
+      "description": "Reference to the Campaign"
+    },
+    "brand_id": {
+      "type": "string",
+      "description": "Reference to the Brand"
+    },
+    "creator_id": {
+      "type": "string",
+      "description": "Reference to the Creator"
+    },
+    "benefit_description": {
+      "type": "string",
+      "description": "Description of the barter benefit"
+    },
+    "benefit_value": {
+      "type": "string",
+      "description": "Estimated value of the benefit"
+    },
+    "code": {
+      "type": "string",
+      "description": "Unique voucher code (auto-generated)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "redeemed"
+      ],
+      "default": "pending",
+      "description": "Voucher lifecycle status"
+    },
+    "redeemed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the voucher was redeemed"
+    }
+  },
+  "required": [
+    "delivery_id",
+    "campaign_id",
+    "brand_id",
+    "creator_id",
+    "code"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "name": "Application",
+  "type": "object",
+  "properties": {
+    "campaign_id": {
+      "type": "string",
+      "description": "Reference to the Campaign"
+    },
+    "creator_id": {
+      "type": "string",
+      "description": "Reference to the Creator applying"
+    },
+    "brand_id": {
+      "type": "string",
+      "description": "Reference to the Brand (for easier querying)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected",
+        "withdrawn",
+        "completed"
+      ],
+      "default": "pending",
+      "description": "Application status"
+    },
+    "message": {
+      "type": "string",
+      "description": "Creator's pitch or message"
+    },
+    "proposed_rate": {
+      "type": "number",
+      "description": "Rate proposed by creator (if negotiable)"
+    },
+    "invited": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this was a brand invitation vs application"
+    },
+    "accepted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the application was accepted"
+    },
+    "rejected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the application was rejected"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "description": "Reason for rejection if applicable"
+    },
+    "agreed_rate": {
+      "type": "number",
+      "description": "Final agreed rate after acceptance"
+    },
+    "agreed_terms": {
+      "type": "string",
+      "description": "Any special terms agreed upon"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "creator_id",
+    "brand_id"
+  ]
+}

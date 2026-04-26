@@ -1,0 +1,90 @@
+{
+  "name": "Reputation",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Reference to the User"
+    },
+    "profile_type": {
+      "type": "string",
+      "enum": [
+        "brand",
+        "creator"
+      ],
+      "description": "Whether this is brand or creator reputation"
+    },
+    "total_score": {
+      "type": "number",
+      "default": 100,
+      "description": "Overall reputation score (0-100)"
+    },
+    "campaigns_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total campaigns completed"
+    },
+    "on_time_deliveries": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of on-time deliveries"
+    },
+    "late_deliveries": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of late deliveries"
+    },
+    "disputes_raised": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of disputes raised by this user"
+    },
+    "disputes_won": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of disputes won"
+    },
+    "disputes_lost": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of disputes lost"
+    },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Record of rule violations"
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Earned badges/achievements"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last reputation update"
+    }
+  },
+  "required": [
+    "user_id",
+    "profile_type"
+  ]
+}

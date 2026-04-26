@@ -1,0 +1,89 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "last_active": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time the user was active on the platform"
+    },
+    "first_active": {
+      "type": "string",
+      "format": "date-time",
+      "description": "First time the user accessed the platform after signup"
+    },
+    "phone": {
+      "type": "string",
+      "description": "User's phone number"
+    },
+    "location": {
+      "type": "string",
+      "description": "User's location (city, state)"
+    },
+    "exclude_from_financials": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, this user's subscriptions are excluded from financial metrics calculations"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Admin tags for organizing, signaling and controlling users"
+    },
+    "visibility_status": {
+      "type": "string",
+      "enum": [
+        "visible",
+        "hidden"
+      ],
+      "default": "visible",
+      "description": "Controls whether this user appears in public discovery"
+    },
+    "hidden_reason": {
+      "type": "string",
+      "description": "Reason why the user was hidden"
+    },
+    "feedback_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "eligible",
+        "invited",
+        "submitted"
+      ],
+      "default": "none",
+      "description": "Feedback beta program status"
+    },
+    "feedback_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Tags espec\u00edficas do programa de feedback beta"
+    },
+    "feedback_invited_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the user was invited to the feedback beta"
+    },
+    "feedback_submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the user last submitted feedback"
+    },
+    "beta_cohort_id": {
+      "type": "string",
+      "description": "ID do cohort beta ao qual o usu\u00e1rio pertence"
+    },
+    "feedback_snoozed_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data at\u00e9 a qual o nudge de feedback est\u00e1 silenciado"
+    }
+  },
+  "required": []
+}

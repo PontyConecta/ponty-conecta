@@ -1,0 +1,182 @@
+{
+  "name": "Campaign",
+  "type": "object",
+  "properties": {
+    "brand_id": {
+      "type": "string",
+      "description": "Reference to the Brand creating this campaign"
+    },
+    "title": {
+      "type": "string",
+      "description": "Campaign title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed campaign description"
+    },
+    "requirements": {
+      "type": "string",
+      "description": "Specific requirements and deliverables"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Target platforms (Instagram, TikTok, YouTube, etc.)"
+    },
+    "content_type": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required content types (photo, video, story, reel, etc.)"
+    },
+    "niche_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Preferred creator niches"
+    },
+    "location": {
+      "type": "string",
+      "description": "Geographic targeting"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Final delivery deadline"
+    },
+    "application_deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Deadline for creator applications"
+    },
+    "remuneration_type": {
+      "type": "string",
+      "enum": [
+        "cash",
+        "barter",
+        "mixed"
+      ],
+      "description": "Type of payment offered"
+    },
+    "budget_min": {
+      "type": "number",
+      "description": "Minimum budget per creator"
+    },
+    "budget_max": {
+      "type": "number",
+      "description": "Maximum budget per creator"
+    },
+    "barter_description": {
+      "type": "string",
+      "description": "Description of barter/product offering"
+    },
+    "barter_value": {
+      "type": "number",
+      "description": "Estimated value of barter items"
+    },
+    "slots_total": {
+      "type": "number",
+      "default": 1,
+      "description": "Total number of creator slots"
+    },
+    "slots_filled": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of slots already filled"
+    },
+    "profile_size_min": {
+      "type": "string",
+      "enum": [
+        "nano",
+        "micro",
+        "mid",
+        "macro",
+        "mega"
+      ],
+      "description": "Minimum creator profile size"
+    },
+    "proof_requirements": {
+      "type": "string",
+      "description": "How creators should prove delivery"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "under_review",
+        "active",
+        "paused",
+        "applications_closed",
+        "completed",
+        "cancelled"
+      ],
+      "default": "draft",
+      "description": "Campaign lifecycle status"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "description": "Reason if campaign was rejected during review"
+    },
+    "cover_image_url": {
+      "type": "string",
+      "description": "Campaign cover image"
+    },
+    "total_applications": {
+      "type": "number",
+      "default": 0,
+      "description": "Total applications received"
+    },
+    "target_audience": {
+      "type": "string",
+      "description": "Specific target audience for this campaign"
+    },
+    "content_guidelines": {
+      "type": "string",
+      "description": "Detailed content guidelines"
+    },
+    "dos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of things creators SHOULD do"
+    },
+    "donts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of things creators should NOT do"
+    },
+    "hashtags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required hashtags"
+    },
+    "mentions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required mentions/tags"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured campaign on opportunity feed"
+    }
+  },
+  "required": [
+    "brand_id",
+    "title",
+    "description",
+    "deadline",
+    "remuneration_type"
+  ]
+}
