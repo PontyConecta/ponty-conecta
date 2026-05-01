@@ -2,14 +2,35 @@ import * as Sentry from '@sentry/react';
 
 const DSN = import.meta.env.VITE_SENTRY_DSN;
 
-if (import.meta.env.PROD && DSN) {
+// Init sempre que houver DSN. Removemos a checagem de PROD porque algumas
+// plataformas de hosting não setam import.meta.env.PROD corretamente.
+if (DSN) {
   Sentry.init({
     dsn: DSN,
-    environment: 'production',
+    environment: import.meta.env.MODE || 'production',
+
+    // Error Monitoring — base
     integrations: [
       Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: false,
+        blockAllMedia: false,
+      }),
+      // Captura console.error e console.warn como eventos
+      Sentry.captureConsoleIntegration({
+        levels: ['error', 'warn'],
+      }),
     ],
+
+    // Performance: 20% das transações
     tracesSampleRate: 0.2,
+
+    // Session Replay
+    // 10% das sessões normais (sample), 100% das sessões com erro
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+
+    // Privacidade
     sendDefaultPii: false,
     beforeSend(event) {
       if (event.request?.cookies) delete event.request.cookies;
@@ -19,6 +40,11 @@ if (import.meta.env.PROD && DSN) {
       return event;
     },
   });
+
+  // Marcador para validação manual no console do navegador
+  if (typeof window !== 'undefined') {
+    window.__pontySentryReady = true;
+  }
 }
 
 export { Sentry };
