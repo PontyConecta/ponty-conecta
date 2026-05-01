@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 
-const DSN = import.meta.env.VITE_SENTRY_DSN;
+const DSN = import.meta.env.VITE_SENTRY_DSN || "https://b71fe61294ea4eb54b9efb31d0bd4207@o4511316924563456.ingest.de.sentry.io/4511316939767888";
 
 // Init sempre que houver DSN. Removemos a checagem de PROD porque algumas
 // plataformas de hosting não setam import.meta.env.PROD corretamente.
