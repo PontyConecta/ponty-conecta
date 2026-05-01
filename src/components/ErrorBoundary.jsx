@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sentry } from '@/sentry';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
@@ -14,11 +15,9 @@ export class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    Sentry.captureException(error, { extra: errorInfo });
     console.error('ErrorBoundary capturou erro:', error, errorInfo);
     this.setState({ error, errorInfo });
-    
-    // Aqui você pode enviar para Sentry/LogRocket
-    // Sentry.captureException(error, { contexts: { react: { componentStack: errorInfo.componentStack } } });
   }
 
   handleReset = () => {
