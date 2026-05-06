@@ -3,6 +3,15 @@ import Stripe from 'npm:stripe@17.5.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
+// Stripe API 2025-03-31.basil moved billing periods to subscription items.
+// Read from items first, fallback to root for older API versions.
+function getSubscriptionPeriod(subscription) {
+  const item = subscription?.items?.data?.[0];
+  const periodStart = item?.current_period_start ?? subscription?.current_period_start;
+  const periodEnd = item?.current_period_end ?? subscription?.current_period_end;
+  return { periodStart, periodEnd };
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   
@@ -196,7 +205,8 @@ async function handleCheckoutCompleted(base44, session) {
         }
       });
       const sub = await stripe.subscriptions.retrieve(subscriptionId);
-      nextBillingDate = new Date(sub.current_period_end * 1000).toISOString();
+      const { periodEnd } = getSubscriptionPeriod(sub);
+      nextBillingDate = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
       console.log('Subscription metadata updated, next billing:', nextBillingDate);
     } catch (e) {
       console.error('Could not update/retrieve subscription:', e.message);
@@ -305,13 +315,14 @@ async function handleSubscriptionUpdate(base44, subscription) {
     stripe_subscription_id: subscription.id 
   });
 
+  const { periodStart, periodEnd } = getSubscriptionPeriod(subscription);
   const subRecordData = {
     status: mappedStatus,
-    next_billing_date: new Date(subscription.current_period_end * 1000).toISOString(),
-    last_billing_date: new Date(subscription.current_period_start * 1000).toISOString(),
+    next_billing_date: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+    last_billing_date: periodStart ? new Date(periodStart * 1000).toISOString() : null,
     auto_renew: !subscription.cancel_at_period_end,
-    end_date: subscription.cancel_at_period_end 
-      ? new Date(subscription.current_period_end * 1000).toISOString().split('T')[0] 
+    end_date: subscription.cancel_at_period_end && periodEnd
+      ? new Date(periodEnd * 1000).toISOString().split('T')[0]
       : null
   };
 
@@ -326,7 +337,9 @@ async function handleSubscriptionUpdate(base44, subscription) {
       plan_type: metadata.base44_plan_type || `${profileType}_monthly`,
       stripe_subscription_id: subscription.id,
       stripe_customer_id: subscription.customer,
-      start_date: new Date(subscription.current_period_start * 1000).toISOString().split('T')[0],
+      start_date: periodStart
+        ? new Date(periodStart * 1000).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0],
       currency: (subscription.currency || 'brl').toUpperCase(),
       plan_name: profileType === 'brand' ? 'Ponty Marcas' : 'Ponty Criadores'
     });
