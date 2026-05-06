@@ -30,6 +30,12 @@ if (DSN) {
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
 
+    // FIX 6: Ignore React Router future flag warnings (cosmetic, not actionable)
+    ignoreErrors: [
+      /React Router Future Flag Warning/,
+      /Relative route resolution within Splat routes/,
+    ],
+
     // Privacidade
     sendDefaultPii: false,
     beforeSend(event) {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, CheckCircle2, Mail, Phone, ExternalLink, Lock, MessageCircle, UserPlus } from 'lucide-react';
 import { TYPE_LABELS } from '@/components/utils/creatorTypeConfig';
 import { getStateLabel } from '@/components/common/BrazilStateSelect';
@@ -152,7 +152,8 @@ export default function CreatorProfileModal({ creator, isSubscribed, formatFollo
 
       {lightboxUrl && (
         <Dialog open={!!lightboxUrl} onOpenChange={() => setLightboxUrl(null)}>
-          <DialogContent className="max-w-4xl p-2 bg-black/90">
+          <DialogContent className="max-w-4xl p-2 bg-black/90" aria-describedby={undefined}>
+            <DialogTitle className="sr-only">Imagem do portfólio</DialogTitle>
             <img src={lightboxUrl} alt="Portfolio" className="max-h-[85dvh] w-auto mx-auto rounded-lg" />
           </DialogContent>
         </Dialog>

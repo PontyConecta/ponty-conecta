@@ -53,21 +53,45 @@ export default function Subscription() {
     if (urlParams.get('success') !== 'true') return;
 
     setProcessingPayment(true);
-    let attempts = 0;
     let cancelled = false;
     let timeoutId;
-    const poll = async () => {
-      if (cancelled) return;
-      attempts++;
-      await refreshProfile();
-      if (cancelled) return;
-      if (attempts < 15) {
-        timeoutId = setTimeout(poll, 2000);
-      } else {
-        setProcessingPayment(false);
-      }
+
+    const startPolling = () => {
+      let attempts = 0;
+      const poll = async () => {
+        if (cancelled) return;
+        attempts++;
+        await refreshProfile();
+        if (cancelled) return;
+        if (attempts < 15) {
+          timeoutId = setTimeout(poll, 2000);
+        } else {
+          setProcessingPayment(false);
+        }
+      };
+      poll();
     };
-    poll();
+
+    // FIX 1: Try server-side verification first (works even if webhook is down)
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) {
+      base44.functions.invoke('verifyCheckoutSession', { session_id: sessionId })
+        .then((res) => {
+          if (cancelled) return;
+          if (res.data?.verified) {
+            refreshProfile();
+            // polling will stop via isSubscribedEarly effect
+          } else {
+            startPolling();
+          }
+        })
+        .catch(() => {
+          if (!cancelled) startPolling();
+        });
+    } else {
+      startPolling();
+    }
+
     return () => { cancelled = true; clearTimeout(timeoutId); };
   }, [profile?.id, profileType]);
 

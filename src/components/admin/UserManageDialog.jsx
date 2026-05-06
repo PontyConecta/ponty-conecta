@@ -30,14 +30,14 @@ import FeedbackBetaSection from './FeedbackBetaSection';
 
 export default function UserManageDialog({ open, onOpenChange, user, profile, profileType, onActionComplete }) {
   const [actionLoading, setActionLoading] = useState(false);
-  const [newSubscriptionStatus, setNewSubscriptionStatus] = useState(profile?.subscription_status || 'starter');
-  const [newAccountState, setNewAccountState] = useState(profile?.account_state || 'incomplete');
-  const [newVerified, setNewVerified] = useState(profile?.is_verified || false);
+  const [newSubscriptionStatus, setNewSubscriptionStatus] = useState(profile?.subscription_status ?? 'starter');
+  const [newAccountState, setNewAccountState] = useState(profile?.account_state ?? 'incomplete');
+  const [newVerified, setNewVerified] = useState(profile?.is_verified ?? false);
   const [auditNote, setAuditNote] = useState('');
   const [trialDays, setTrialDays] = useState(30);
-  const [newRole, setNewRole] = useState(user?.role || 'user');
-  const [excludeFromFinancials, setExcludeFromFinancials] = useState(user?.exclude_from_financials || false);
-  const [isHidden, setIsHidden] = useState(profile?.is_hidden || false);
+  const [newRole, setNewRole] = useState(user?.role ?? 'user');
+  const [excludeFromFinancials, setExcludeFromFinancials] = useState(user?.exclude_from_financials ?? false);
+  const [isHidden, setIsHidden] = useState(profile?.is_hidden ?? false);
   const [hiddenReason, setHiddenReason] = useState('');
   const [showHideForm, setShowHideForm] = useState(false);
   const [showConvertConfirm, setShowConvertConfirm] = useState(false);
@@ -45,12 +45,12 @@ export default function UserManageDialog({ open, onOpenChange, user, profile, pr
 
   React.useEffect(() => {
     if (user && profile) {
-      setNewSubscriptionStatus(profile.subscription_status || 'starter');
-      setNewAccountState(profile.account_state || 'incomplete');
-      setNewVerified(profile.is_verified || false);
-      setNewRole(user.role || 'user');
-      setExcludeFromFinancials(user.exclude_from_financials || false);
-      setIsHidden(profile.is_hidden || false);
+      setNewSubscriptionStatus(profile.subscription_status ?? 'starter');
+      setNewAccountState(profile.account_state ?? 'incomplete');
+      setNewVerified(profile.is_verified ?? false);
+      setNewRole(user.role ?? 'user');
+      setExcludeFromFinancials(user.exclude_from_financials ?? false);
+      setIsHidden(profile.is_hidden ?? false);
       setHiddenReason('');
       setShowHideForm(false);
       setAuditNote('');

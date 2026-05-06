@@ -59,7 +59,15 @@ export default function Profile() {
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    accepts_barter: true,
+    industry: '',
+    company_size: '',
+    marketing_budget: '',
+    creator_type: 'ugc',
+    state: '',
+    city: '',
+  });
 
   // Creator-specific states
   const [newPlatform, setNewPlatform] = useState({ name: '', handle: '', followers: '' });
